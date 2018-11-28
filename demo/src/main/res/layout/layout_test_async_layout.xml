@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="?custom_color"
+    android:fitsSystemWindows="true"
+    android:orientation="vertical">
+
+    <ProgressBar
+        style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"
+        android:background="@color/brown_300"
+        android:indeterminate="true"
+        android:max="100"
+        android:progress="50" />
+
+    <ImageView
+        android:id="@+id/imageview"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:src="@drawable/avd_clock_rotate" />
+
+    <Button
+        style="@style/TestButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="测试背景色" />
+
+    <com.bytedance.scenedemo.async_inflate.TestAsyncView
+        android:layout_width="100dp"
+        android:layout_height="100dp" />
+
+</LinearLayout>

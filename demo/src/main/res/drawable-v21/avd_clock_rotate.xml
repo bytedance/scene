@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<animated-vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:drawable="@drawable/vd_clock">
+
+    <!-- animates strokeWidth of the outer ring-->
+    <target
+        android:name="@string/circle"
+        android:animation="@animator/change_width" />
+
+    <!-- animates alpha of the outer ring-->
+    <target
+        android:name="@string/circle"
+        android:animation="@animator/change_alpha" />
+</animated-vector>

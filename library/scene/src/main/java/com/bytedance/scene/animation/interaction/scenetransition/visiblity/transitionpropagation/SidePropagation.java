@@ -1,0 +1,136 @@
+package com.bytedance.scene.animation.interaction.scenetransition.visiblity.transitionpropagation;
+
+import android.graphics.Rect;
+import android.support.v4.view.ViewCompat;
+import android.view.Gravity;
+import android.view.View;
+import android.view.ViewGroup;
+
+import com.bytedance.scene.animation.interaction.scenetransition.visiblity.SceneVisibilityTransition;
+import com.bytedance.scene.animation.interaction.scenetransition.visiblity.Slide;
+
+public class SidePropagation extends VisibilityPropagation {
+
+    private float mPropagationSpeed = 3.0f;
+    private int mSide = Gravity.BOTTOM;
+
+    /**
+     * Sets the side that is used to calculate the transition propagation. If the transitioning
+     * View is visible in the start of the transition, then it will transition sooner when
+     * closer to the side and later when farther. If the view is not visible in the start of
+     * the transition, then it will transition later when closer to the side and sooner when
+     * farther from the edge. The default is {@link Gravity#BOTTOM}.
+     *
+     * @param side The side that is used to calculate the transition propagation. Must be one of
+     *             {@link Gravity#LEFT}, {@link Gravity#TOP}, {@link Gravity#RIGHT},
+     *             {@link Gravity#BOTTOM}, {@link Gravity#START}, or {@link Gravity#END}.
+     */
+    public void setSide(@Slide.GravityFlag int side) {
+        mSide = side;
+    }
+
+    /**
+     * Sets the speed at which transition propagation happens, relative to the duration of the
+     * Transition. A <code>propagationSpeed</code> of 1 means that a View centered at the side
+     * set in {@link #setSide(int)} and View centered at the opposite edge will have a difference
+     * in start delay of approximately the duration of the Transition. A speed of 2 means the
+     * start delay difference will be approximately half of the duration of the transition. A
+     * value of 0 is illegal, but negative values will invert the propagation.
+     *
+     * @param propagationSpeed The speed at which propagation occurs, relative to the duration
+     *                         of the transition. A speed of 4 means it works 4 times as fast
+     *                         as the duration of the transition. May not be 0.
+     */
+    public void setPropagationSpeed(float propagationSpeed) {
+        if (propagationSpeed == 0) {
+            throw new IllegalArgumentException("propagationSpeed may not be 0");
+        }
+        mPropagationSpeed = propagationSpeed;
+    }
+
+    @Override
+    public long getStartDelay(ViewGroup sceneRoot, SceneVisibilityTransition transition, TransitionPropagationResult result, boolean appear) {
+        int directionMultiplier = 1;
+        Rect epicenter = transition.getEpicenter();
+        if (!appear) {
+            directionMultiplier = -1;
+        }
+
+        int viewCenterX = getViewX(result);
+        int viewCenterY = getViewY(result);
+
+        int[] loc = new int[2];
+        sceneRoot.getLocationOnScreen(loc);
+        int left = loc[0] + Math.round(sceneRoot.getTranslationX());
+        int top = loc[1] + Math.round(sceneRoot.getTranslationY());
+        int right = left + sceneRoot.getWidth();
+        int bottom = top + sceneRoot.getHeight();
+
+        int epicenterX;
+        int epicenterY;
+        if (epicenter != null) {
+            epicenterX = epicenter.centerX();
+            epicenterY = epicenter.centerY();
+        } else {
+            epicenterX = (left + right) / 2;
+            epicenterY = (top + bottom) / 2;
+        }
+
+        float distance = distance(sceneRoot, viewCenterX, viewCenterY, epicenterX, epicenterY,
+                left, top, right, bottom);
+        float maxDistance = getMaxDistance(sceneRoot);
+        float distanceFraction = distance / maxDistance;
+
+        long duration = transition.getDuration();
+        if (duration < 0) {
+            duration = 300;
+        }
+
+        return Math.round(duration * directionMultiplier / mPropagationSpeed * distanceFraction);
+    }
+
+    private int distance(View sceneRoot, int viewX, int viewY, int epicenterX, int epicenterY,
+                         int left, int top, int right, int bottom) {
+        final int side;
+        if (mSide == Gravity.START) {
+            final boolean isRtl = ViewCompat.getLayoutDirection(sceneRoot)
+                    == ViewCompat.LAYOUT_DIRECTION_RTL;
+            side = isRtl ? Gravity.RIGHT : Gravity.LEFT;
+        } else if (mSide == Gravity.END) {
+            final boolean isRtl = ViewCompat.getLayoutDirection(sceneRoot)
+                    == ViewCompat.LAYOUT_DIRECTION_RTL;
+            side = isRtl ? Gravity.LEFT : Gravity.RIGHT;
+        } else {
+            side = mSide;
+        }
+        int distance = 0;
+        switch (side) {
+            case Gravity.LEFT:
+                distance = right - viewX + Math.abs(epicenterY - viewY);
+                break;
+            case Gravity.TOP:
+                distance = bottom - viewY + Math.abs(epicenterX - viewX);
+                break;
+            case Gravity.RIGHT:
+                distance = viewX - left + Math.abs(epicenterY - viewY);
+                break;
+            case Gravity.BOTTOM:
+                distance = viewY - top + Math.abs(epicenterX - viewX);
+                break;
+        }
+        return distance;
+    }
+
+    private int getMaxDistance(ViewGroup sceneRoot) {
+        switch (mSide) {
+            case Gravity.LEFT:
+            case Gravity.RIGHT:
+            case Gravity.START:
+            case Gravity.END:
+                return sceneRoot.getWidth();
+            default:
+                return sceneRoot.getHeight();
+        }
+    }
+
+}

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    android:orientation="vertical">
+
+    <Button
+        android:id="@+id/btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:layout_marginBottom="170dp"
+        android:layout_marginLeft="100dp"
+        android:text="打开新页面"
+        android:transitionName="wo" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top|right"
+        android:text="无关按钮0" />
+
+    <FrameLayout
+        android:layout_width="170dp"
+        android:layout_height="170dp"
+        android:layout_gravity="bottom|right"
+        android:layout_marginBottom="40dp"
+        android:layout_marginRight="60dp"
+        android:background="@android:color/holo_green_light"
+        android:paddingLeft="10dp">
+
+        <com.bytedance.scenedemo.TestImageView
+            android:id="@+id/test"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:background="@color/colorAccent"
+            android:rotation="45"
+            android:transitionName="imageview" />
+    </FrameLayout>
+
+</FrameLayout>

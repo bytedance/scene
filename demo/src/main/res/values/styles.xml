@@ -1,0 +1,37 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="windowNoTitle">true</item>
+
+        <item name="custom_color">@color/colorAccent</item>
+        <item name="button_custom_color">@color/deep_orange_300</item>
+    </style>
+
+    <style name="TestButton" parent="@style/Widget.AppCompat.Button">
+        <item name="android:background">?button_custom_color</item>
+    </style>
+
+    <style name="AlertDialogCustom2" parent="Theme.AppCompat.Dialog.Alert"></style>
+
+
+    <style name="AlertDialogCustom" parent="@android:style/Theme.Material.Dialog"></style>
+
+
+
+    <style name="AppTheme.Test0">
+        <item name="android:windowBackground">@android:color/holo_orange_light</item>
+    </style>
+
+    <style name="AppTheme.Test1">
+        <item name="android:windowBackground">@android:color/holo_green_light</item>
+    </style>
+
+    <style name="AppTheme.Test2">
+        <item name="android:windowBackground">@android:color/holo_blue_light</item>
+    </style>
+</resources>

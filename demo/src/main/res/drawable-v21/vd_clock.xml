@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:height="48dp"
+    android:viewportHeight="12"
+    android:viewportWidth="12"
+    android:width="48dp">
+
+  <!-- This draws the circle for the clock-->
+  <path
+      android:name="@string/circle"
+      android:pathData="M 2,6 C 2,3.8 3.8,2 6,2 C 8.2,2 10,3.8 10,6 C 10,8.2 8.2,10 6,10 C 3.8,10 2,8.2 2,6"
+      android:strokeColor="@android:color/darker_gray"
+      android:strokeWidth=".1" />
+
+  <!-- minute-hand path's group-->
+  <!-- This path is placed inside a group to take advantage of group level animations such as rotation in this case-->
+  <!-- pivotX and pivotY assigns the pivotal point around which it has to rotate-->
+  <group
+      android:name="@string/minute_hand"
+      android:pivotX="6"
+      android:pivotY="6">
+    <!-- minute-hand path-->
+    <path
+        android:pathData="M 5.5,6 L 8.5,6"
+        android:strokeColor="@android:color/darker_gray"
+        android:strokeWidth=".2" />
+  </group>
+
+  <!-- similarly we draw second-hand path-->
+  <group
+      android:name="@string/second_hand"
+      android:pivotX="6"
+      android:pivotY="6">
+    <path
+        android:pathData="M 6,5.5 L 6,9.4"
+        android:strokeColor="@android:color/darker_gray"
+        android:strokeWidth=".2" />
+  </group>
+</vector>

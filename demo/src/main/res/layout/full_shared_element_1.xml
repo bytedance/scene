@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/holo_red_light"
+    android:orientation="vertical">
+
+    <FrameLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="left|bottom"
+        android:background="@android:color/holo_green_light"
+        android:paddingBottom="50dp"
+        android:paddingLeft="80dp"
+        android:paddingRight="50dp"
+        android:paddingTop="0dp"
+        android:rotation="10"
+        android:transitionName="haha_parent">
+
+        <Button
+            android:id="@+id/haha2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:rotation="30"
+            android:text="哈哈哈哈哈哈哈哈哈哈哈哈哈11111111111"
+            android:transitionName="haha" />
+    </FrameLayout>
+
+    <Button
+        android:id="@+id/haha3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="left|bottom"
+        android:layout_marginBottom="300dp"
+        android:background="@android:color/holo_blue_light"
+        android:text="点击移动" />
+
+    <FrameLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@android:color/background_light"
+        android:padding="50dp">
+
+        <ImageView
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_gravity="center"
+            android:background="@android:color/holo_green_dark"
+            android:scaleType="centerCrop"
+            android:src="@drawable/lion"
+            android:transitionName="imageView" />
+    </FrameLayout>
+
+    <TextView
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_gravity="center"
+        android:background="@android:color/holo_green_light"
+        android:text="控件大小没有改变的共享元素View，位移加背景变色"
+        android:textColor="@color/blue_300"
+        android:transitionName="shared_element_text_no_size_change" />
+</FrameLayout>

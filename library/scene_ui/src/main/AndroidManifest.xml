@@ -1,0 +1,10 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.ixigua.scene.ui">
+
+    <uses-sdk android:minSdkVersion="14" />
+    <application>
+        <activity
+            android:name="com.bytedance.scene.ui.SceneContainerActivity"
+            android:theme="@style/Theme.AppCompat.NoActionBar" />
+    </application>
+</manifest>

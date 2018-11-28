@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">SceneDemo</string>
+
+
+    <string name="minute_hand">minute_hand</string>
+    <string name="second_hand">second_hand</string>
+    <string name="start">START</string>
+    <string name="stop">STOP</string>
+    <string name="circle">circle</string>
+</resources>

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <FrameLayout
+        android:id="@+id/haha_parent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="100dp"
+        android:background="@android:color/holo_red_light"
+        android:paddingBottom="50dp"
+        android:paddingLeft="50dp"
+        android:paddingRight="50dp"
+        android:paddingTop="50dp"
+        android:scaleX="1.2"
+        android:scaleY="1.2"
+        android:rotation="90"
+        android:transitionName="haha_parent">
+
+        <Button
+            android:id="@+id/haha"
+            android:translationX="200px"
+            android:scaleY="2.0"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:rotation="10"
+            android:text="哈哈哈哈哈哈哈哈哈哈哈哈哈"
+            android:transitionName="haha" />
+    </FrameLayout>
+
+    <ImageView
+        android:id="@+id/imageview"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_gravity="right|top"
+        android:background="@android:color/holo_green_dark"
+        android:src="@drawable/lion"
+        android:transitionName="imageView" />
+
+
+    <TextView
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_gravity="bottom|center_horizontal"
+        android:background="@android:color/holo_orange_dark"
+        android:text="控件大小没有改变的共享元素View，位移加背景变色"
+        android:transitionName="shared_element_text_no_size_change" />
+</FrameLayout>
