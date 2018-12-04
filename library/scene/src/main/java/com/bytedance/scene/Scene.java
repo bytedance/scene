@@ -518,13 +518,13 @@ public abstract class Scene implements LifecycleOwner, ViewModelStoreOwner {
 
     @NonNull
     @Override
-    public Lifecycle getLifecycle() {
+    public final Lifecycle getLifecycle() {
         return mLifecycleRegistry;
     }
 
     @NonNull
     @Override
-    public ViewModelStore getViewModelStore() {
+    public final ViewModelStore getViewModelStore() {
         Scope scope = getScope();
         if (scope.hasServiceInMyScope(ViewModelStoreHolder.class)) {
             return ((ViewModelStoreHolder) scope.getService(ViewModelStoreHolder.class)).get();
