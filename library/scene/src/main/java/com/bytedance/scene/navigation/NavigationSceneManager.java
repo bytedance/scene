@@ -488,6 +488,20 @@ public class NavigationSceneManager {
                 returnRecord.mPushResultCallback = null;
             }
 
+            //多个半透明的叠加一个不透明的Scene，返回后，必然需要把之前的半透明Scene都切到RESUMED
+            if (returnRecord.mIsTranslucent) {
+                final List<Record> currentRecordList = mBackStackList.getCurrentRecordList();
+                if (currentRecordList.size() > 1) {
+                    for (int i = currentRecordList.size() - 2; i >= 0; i--) {
+                        Record record = currentRecordList.get(i);
+                        moveState(mNavigationScene, record.mScene, State.RESUMED, null, false, null);
+                        if (!record.mIsTranslucent) {
+                            break;
+                        }
+                    }
+                }
+            }
+
             restoreActivityStatus(returnRecord.mActivityStatusRecord);
             mNavigationListener.navigationChange(currentRecord.mScene, returnRecord.mScene, false);
 
@@ -727,6 +741,18 @@ public class NavigationSceneManager {
                 Scene currentScene = currentRecord.mScene;
                 State dstState = pushOptions.isIsTranslucent() ? State.STARTED : State.STOPPED;
                 moveState(mNavigationScene, currentScene, dstState, null, false, null);
+
+                //多个半透明的叠加一个不透明的Scene，必然需要把之前的半透明Scene都切到STOPPED
+                final List<Record> currentRecordList = mBackStackList.getCurrentRecordList();
+                if (currentRecordList.size() > 1 && !pushOptions.isIsTranslucent() && currentRecord.mIsTranslucent) {
+                    for (int i = currentRecordList.size() - 2; i >= 0; i--) {
+                        Record record = currentRecordList.get(i);
+                        moveState(mNavigationScene, record.mScene, State.STOPPED, null, false, null);
+                        if (!record.mIsTranslucent) {
+                            break;
+                        }
+                    }
+                }
             }
 
             final NavigationAnimationExecutor animationFactory = pushOptions.getNavigationAnimationFactory();
