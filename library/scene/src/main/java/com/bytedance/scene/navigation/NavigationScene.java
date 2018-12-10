@@ -226,6 +226,8 @@ public final class NavigationScene extends Scene implements SceneNavigation, Nav
 
     @Override
     public void push(@NonNull Scene scene, @Nullable PushOptions pushOptions) {
+        ThreadUtility.checkUIThread();
+
         if (getActivity() != null && !Utility.isActivityStatusValid(getActivity())) {
             return;
         }
@@ -263,6 +265,8 @@ public final class NavigationScene extends Scene implements SceneNavigation, Nav
 
     @Override
     public boolean pop() {
+        ThreadUtility.checkUIThread();
+
         if (getActivity() != null && !Utility.isActivityStatusValid(getActivity())) {
             return false;
         }
@@ -288,6 +292,8 @@ public final class NavigationScene extends Scene implements SceneNavigation, Nav
 
     @Override
     public void pop(PopOptions popOptions) {
+        ThreadUtility.checkUIThread();
+
         if (getActivity() != null && !Utility.isActivityStatusValid(getActivity())) {
             return;
         }
@@ -303,6 +309,8 @@ public final class NavigationScene extends Scene implements SceneNavigation, Nav
 
     @Override
     public void popTo(@NonNull Class<? extends Scene> clazz, NavigationAnimationExecutor animationFactory) {
+        ThreadUtility.checkUIThread();
+
         if (getActivity() != null && !Utility.isActivityStatusValid(getActivity())) {
             return;
         }
@@ -313,16 +321,12 @@ public final class NavigationScene extends Scene implements SceneNavigation, Nav
 
     @Override
     public void popToRoot() {
-        if (getActivity() != null && !Utility.isActivityStatusValid(getActivity())) {
-            return;
-        }
-        hideSoftInputIfNeeded();
-        cancelPendingInputEventsIfNeeded();
         popToRoot(null);
     }
 
     @Override
     public void popToRoot(NavigationAnimationExecutor animationFactory) {
+        ThreadUtility.checkUIThread();
         if (getActivity() != null && !Utility.isActivityStatusValid(getActivity())) {
             return;
         }
@@ -333,6 +337,8 @@ public final class NavigationScene extends Scene implements SceneNavigation, Nav
 
     @Override
     public void remove(Scene scene) {
+        ThreadUtility.checkUIThread();
+
         if (getActivity() != null && !Utility.isActivityStatusValid(getActivity())) {
             return;
         }
@@ -597,6 +603,8 @@ public final class NavigationScene extends Scene implements SceneNavigation, Nav
 
     //todo 抽到SceneNavigation
     public boolean pop(final InteractionNavigationPopAnimationFactory animationFactory) {
+        ThreadUtility.checkUIThread();
+
         animationFactory.setCallback(mInteractionCallback);
         boolean result = mNavigationSceneManager.pop(animationFactory);
         if (!result) {
