@@ -8,7 +8,6 @@ import android.support.annotation.Nullable;
 
 import com.bytedance.scene.Scene;
 import com.bytedance.scene.animation.NavigationAnimationExecutor;
-import com.bytedance.scene.group.ChildSceneLifecycleCallbacks;
 import com.bytedance.scene.navigation.ConfigurationChangedListener;
 import com.bytedance.scene.navigation.PopListener;
 

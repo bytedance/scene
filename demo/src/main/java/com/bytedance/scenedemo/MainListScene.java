@@ -13,7 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.bytedance.scene.Scene;
-import com.bytedance.scene.group.ChildSceneLifecycleCallbacks;
+import com.bytedance.scene.interfaces.ChildSceneLifecycleCallbacks;
 import com.bytedance.scene.group.GroupScene;
 import com.bytedance.scene.group.UserVisibleHintGroupScene;
 import com.bytedance.scene.ui.GroupSceneUtility;

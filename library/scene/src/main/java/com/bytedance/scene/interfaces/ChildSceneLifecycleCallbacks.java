@@ -1,4 +1,4 @@
-package com.bytedance.scene.group;
+package com.bytedance.scene.interfaces;
 
 import android.os.Bundle;
 

@@ -4,12 +4,14 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.Configuration;
+import android.graphics.SurfaceTexture;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.support.annotation.NonNull;
+import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -29,10 +31,7 @@ import com.bytedance.scene.utlity.NonNullPair;
 import com.bytedance.scene.utlity.Predicate;
 import com.bytedance.scene.utlity.Utility;
 
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 /**
  * 优先保证生命周期正确，后保证动画连贯

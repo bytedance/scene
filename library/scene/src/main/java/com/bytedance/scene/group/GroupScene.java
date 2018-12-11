@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 
 import com.bytedance.scene.Scene;
 import com.bytedance.scene.State;
+import com.bytedance.scene.interfaces.ChildSceneLifecycleCallbacks;
 import com.bytedance.scene.interfaces.SceneGroup;
 import com.bytedance.scene.navigation.NavigationScene;
 import com.bytedance.scene.utlity.NonNullPair;

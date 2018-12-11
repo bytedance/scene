@@ -11,7 +11,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bytedance.scene.Scene;
-import com.bytedance.scene.group.ChildSceneLifecycleCallbacks;
+import com.bytedance.scene.interfaces.ChildSceneLifecycleCallbacks;
 import com.bytedance.scene.group.GroupScene;
 import com.bytedance.scenedemo.utility.ColorUtil;
 

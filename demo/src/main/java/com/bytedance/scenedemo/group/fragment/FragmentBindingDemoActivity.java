@@ -15,7 +15,7 @@ import com.bytedance.scene.SceneDelegate;
 import com.bytedance.scene.NavigationSceneAvailableCallback;
 import com.bytedance.scene.Scene;
 import com.bytedance.scene.SceneComponentFactory;
-import com.bytedance.scene.group.ChildSceneLifecycleAdapterCallbacks;
+import com.bytedance.scene.interfaces.ChildSceneLifecycleAdapterCallbacks;
 import com.bytedance.scene.interfaces.SceneNavigation;
 import com.bytedance.scene.navigation.NavigationScene;
 import com.bytedance.scene.ui.NavigationSceneCompatUtility;

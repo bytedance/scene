@@ -5,7 +5,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import com.bytedance.scene.Scene;
-import com.bytedance.scene.group.ChildSceneLifecycleCallbacks;
 
 import java.util.List;
 

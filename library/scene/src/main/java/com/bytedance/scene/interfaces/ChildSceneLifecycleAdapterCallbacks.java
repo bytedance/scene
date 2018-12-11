@@ -1,8 +1,9 @@
-package com.bytedance.scene.group;
+package com.bytedance.scene.interfaces;
 
 import android.os.Bundle;
 
 import com.bytedance.scene.Scene;
+import com.bytedance.scene.interfaces.ChildSceneLifecycleCallbacks;
 
 /**
  * Created by JiangQi on 8/1/18.
