@@ -22,9 +22,11 @@ class Record implements Parcelable {
     NavigationAnimationExecutor mNavigationAnimationExecutor;
     @Nullable
     Object mPushResult;
+    /**
+     * A启动B，附加的回调会被放入B的Record的mPushResultCallback
+     */
     @Nullable
     PushResultCallback mPushResultCallback;
-    int mPushForResultTargetHashCode = 0;
 
     String className;
 

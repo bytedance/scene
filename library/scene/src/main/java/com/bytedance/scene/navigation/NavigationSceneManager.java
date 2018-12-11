@@ -479,13 +479,8 @@ public class NavigationSceneManager {
 
             moveState(mNavigationScene, dstScene, State.RESUMED, null, false, null);
             //保证请求的Scene是正确的
-            if (returnRecord.mPushResultCallback != null) {
-                if (returnRecord.mPushForResultTargetHashCode == currentRecord.mScene.hashCode()) {
-                    returnRecord.mPushResultCallback.onResult(currentRecord.mPushResult);
-                } else {
-                    returnRecord.mPushResultCallback.onResult(null);
-                }
-                returnRecord.mPushResultCallback = null;
+            if (currentRecord.mPushResultCallback != null) {
+                currentRecord.mPushResultCallback.onResult(currentRecord.mPushResult);
             }
 
             //多个半透明的叠加一个不透明的Scene，返回后，必然需要把之前的半透明Scene都切到RESUMED
@@ -736,9 +731,6 @@ public class NavigationSceneManager {
 
             if (currentRecord != null && mBackStackList.getCurrentRecordList().contains(currentRecord)) {
                 currentRecord.saveActivityStatus();
-                currentRecord.mPushResultCallback = pushOptions.getPushResultCallback();
-                //todo 销毁恢复过来肯定不行了，类似Activity
-                currentRecord.mPushForResultTargetHashCode = scene.hashCode();
                 Scene currentScene = currentRecord.mScene;
                 State dstState = pushOptions.isIsTranslucent() ? State.STARTED : State.STOPPED;
                 moveState(mNavigationScene, currentScene, dstState, null, false, null);
@@ -758,6 +750,7 @@ public class NavigationSceneManager {
 
             final NavigationAnimationExecutor animationFactory = pushOptions.getNavigationAnimationFactory();
             final Record record = Record.newInstance(scene, pushOptions.isIsTranslucent(), animationFactory);
+            record.mPushResultCallback = pushOptions.getPushResultCallback();
             mBackStackList.push(record);
 
             if (isTaskRootReplaced) {
