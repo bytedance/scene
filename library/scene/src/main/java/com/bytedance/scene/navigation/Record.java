@@ -16,7 +16,7 @@ class Record implements Parcelable {
     @NonNull
     Scene mScene;
     boolean mIsTranslucent;
-    @NonNull
+    @Nullable
     ActivityStatusRecord mActivityStatusRecord;
     @Nullable
     NavigationAnimationExecutor mNavigationAnimationExecutor;
@@ -60,7 +60,9 @@ class Record implements Parcelable {
     }
 
     public void saveActivityStatus() {
-        mActivityStatusRecord = ActivityStatusRecord.newInstance(mScene.getActivity());
+        if (mActivityStatusRecord == null) {
+            mActivityStatusRecord = ActivityStatusRecord.newInstance(mScene.requireActivity());
+        }
     }
 
     @Override

@@ -737,6 +737,7 @@ public class NavigationSceneManager {
             if (currentRecord != null && mBackStackList.getCurrentRecordList().contains(currentRecord)) {
                 currentRecord.saveActivityStatus();
                 currentRecord.mPushResultCallback = pushOptions.getPushResultCallback();
+                //todo 销毁恢复过来肯定不行了，类似Activity
                 currentRecord.mPushForResultTargetHashCode = scene.hashCode();
                 Scene currentScene = currentRecord.mScene;
                 State dstState = pushOptions.isIsTranslucent() ? State.STARTED : State.STOPPED;
