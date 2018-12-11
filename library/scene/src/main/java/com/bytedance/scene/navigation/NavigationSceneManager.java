@@ -435,6 +435,10 @@ public class NavigationSceneManager {
                 throw new IllegalArgumentException("Can't push after NavigationScene is pause");
             }
 
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                mNavigationScene.getView().cancelPendingInputEvents();
+            }
+
             List<Record> recordList = mBackStackList.getCurrentRecordList();
             if (this.popCount <= 0) {
                 throw new IllegalArgumentException("popCount can not be " + this.popCount + " stackSize is " + recordList.size());
@@ -464,9 +468,6 @@ public class NavigationSceneManager {
             //这里的做法应该是先移除中间的那些Scene，然后拿前后这2个Scene做动画
             for (final Record record : destroyRecordList) {
                 Scene scene = record.mScene;
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                    scene.getView().cancelPendingInputEvents();
-                }
                 moveState(mNavigationScene, scene, State.NONE, null, false, null);
                 mBackStackList.remove(record);
                 //如果是个可复用的Scene，那么存起来
@@ -703,6 +704,10 @@ public class NavigationSceneManager {
             cancelCurrentRunningAnimation();
             if (mNavigationScene.getState().value < State.RESUMED.value) {
                 throw new IllegalArgumentException("Can't push after NavigationScene is pause");
+            }
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                mNavigationScene.getView().cancelPendingInputEvents();
             }
 
             final Record currentRecord = mBackStackList.getCurrentRecord();
