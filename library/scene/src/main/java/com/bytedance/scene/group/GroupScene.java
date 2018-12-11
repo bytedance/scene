@@ -55,6 +55,8 @@ public abstract class GroupScene extends Scene implements SceneGroup {
 
     @Override
     public final void add(@IdRes final int viewId, @NonNull final Scene scene, @NonNull final String tag) {
+        ThreadUtility.checkUIThread();
+
         if (TextUtils.isEmpty(tag)) {
             throw new IllegalArgumentException("tag can't be empty");
         }
@@ -77,6 +79,8 @@ public abstract class GroupScene extends Scene implements SceneGroup {
 
     @Override
     public final <T extends Scene> T findSceneByTag(@NonNull String tag) {
+        ThreadUtility.checkUIThread();
+        
         if (tag == null) {
             return null;
         }
@@ -91,11 +95,13 @@ public abstract class GroupScene extends Scene implements SceneGroup {
 
     @Override
     public final void remove(@NonNull Scene scene) {
+        ThreadUtility.checkUIThread();
         this.mGroupSceneManager.remove(scene);
     }
 
     @Override
     public final void hide(@NonNull Scene scene) {
+        ThreadUtility.checkUIThread();
         if (scene.getState() == State.STOPPED) {
             return;
         }
@@ -104,6 +110,7 @@ public abstract class GroupScene extends Scene implements SceneGroup {
 
     @Override
     public final void show(@NonNull Scene scene) {
+        ThreadUtility.checkUIThread();
         if (scene.getState() == State.RESUMED) {
             return;
         }
