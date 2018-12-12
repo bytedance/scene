@@ -11,6 +11,8 @@ import com.bytedance.scene.animation.NavigationAnimationExecutor;
 import com.bytedance.scene.navigation.ConfigurationChangedListener;
 import com.bytedance.scene.navigation.PopListener;
 
+import java.util.List;
+
 /**
  * Created by JiangQi on 8/1/18.
  * 要求是Class，不支持复用Scene
@@ -53,7 +55,11 @@ public interface SceneNavigation {
     @NonNull
     String getStackHistory();
 
+    @Nullable
     Scene getCurrentScene();
+
+    @NonNull
+    List<Scene> getSceneList();
 
     void startActivity(@NonNull Intent intent);
 

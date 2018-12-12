@@ -70,7 +70,7 @@ class AsyncHandler extends Handler {
     }
 }
 
-public class NavigationSceneManager {
+class NavigationSceneManager {
     private NavigationScene mNavigationScene;
     private final RecordStack mBackStackList = new RecordStack();
     private NavigationListener mNavigationListener;
@@ -82,7 +82,7 @@ public class NavigationSceneManager {
 
     private final CancellationSignalManager mCancellationSignalManager = new CancellationSignalManager();
 
-    public NavigationSceneManager(NavigationScene scene) {
+    NavigationSceneManager(NavigationScene scene) {
         this.mNavigationScene = scene;
         this.mNavigationListener = scene;
     }
@@ -245,6 +245,15 @@ public class NavigationSceneManager {
         } else {
             return null;
         }
+    }
+
+    public List<Scene> getCurrentSceneList() {
+        List<Record> recordList = mBackStackList.getCurrentRecordList();
+        List<Scene> sceneList = new ArrayList<>();
+        for (Record record : recordList) {
+            sceneList.add(record.mScene);
+        }
+        return sceneList;
     }
 
     public Record findRecordByScene(Scene scene) {

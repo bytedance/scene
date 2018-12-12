@@ -136,9 +136,16 @@ public final class NavigationScene extends Scene implements SceneNavigation, Nav
         return mNavigationSceneManager.getStackHistory();
     }
 
+    @Nullable
     @Override
     public Scene getCurrentScene() {
         return mNavigationSceneManager.getCurrentScene();
+    }
+
+    @NonNull
+    @Override
+    public List<Scene> getSceneList() {
+        return mNavigationSceneManager.getCurrentSceneList();
     }
 
     public void setDefaultNavigationAnimationExecutor(NavigationAnimationExecutor defaultNavigationAnimationExecutor) {
