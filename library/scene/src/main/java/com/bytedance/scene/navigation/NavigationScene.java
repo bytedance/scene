@@ -417,6 +417,7 @@ public final class NavigationScene extends Scene implements NavigationListener {
         } else {
             createRootSceneIfNeeded();
         }
+        this.mNavigationSceneManager.executePendingOperation();
 
         NavigationScene parentSceneNavigation = getNavigationScene();
         if (parentSceneNavigation != null) {
@@ -447,7 +448,6 @@ public final class NavigationScene extends Scene implements NavigationListener {
     public void dispatchResume() {
         super.dispatchResume();
         dispatchCurrentChildState(State.RESUMED);
-        this.mNavigationSceneManager.executePendingOperation();//必须在Children更新到onResume之后，保证该还原的Window属性都记录下来了
     }
 
     @RestrictTo(LIBRARY)

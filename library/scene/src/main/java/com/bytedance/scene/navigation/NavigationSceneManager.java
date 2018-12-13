@@ -4,14 +4,12 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.Configuration;
-import android.graphics.SurfaceTexture;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.support.annotation.NonNull;
-import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -121,12 +119,12 @@ class NavigationSceneManager {
     //todo Fragment post缺陷在于onSave后commit会崩溃，如果没有这些限制，post应该还好
     //我唯一想到的是Dialog的问题
     private void scheduleToNextUIThreadLoop(final Operation operation) {
-        if (mNavigationScene.getState() == State.RESUMED) {
+        if (mNavigationScene.getState().value >= State.STOPPED.value) {
             if (mIsNavigationStateChangeInProgress) {
                 Runnable task = new Runnable() {
                     @Override
                     public void run() {
-                        executeNowOrScheduleOperation(operation);
+                        scheduleToNextUIThreadLoop(operation);
                     }
                 };
                 mHandler.postAsyncIfNeeded(task);
@@ -135,17 +133,6 @@ class NavigationSceneManager {
                 operation.execute(EMPTY_RUNNABLE);
                 mIsNavigationStateChangeInProgress = false;
             }
-        } else {
-            mPendingActionList.addLast(operation);
-            mLastPendingActionListItemTimestamp = System.currentTimeMillis();
-        }
-    }
-
-    private void executeNowOrScheduleOperation(Operation operation) {
-        if (mNavigationScene.getState() == State.RESUMED) {
-            mIsNavigationStateChangeInProgress = true;
-            operation.execute(EMPTY_RUNNABLE);
-            mIsNavigationStateChangeInProgress = false;
         } else {
             mPendingActionList.addLast(operation);
             mLastPendingActionListItemTimestamp = System.currentTimeMillis();
@@ -205,7 +192,7 @@ class NavigationSceneManager {
     private boolean mDisableNavigationAnimation = false;
 
     public void executePendingOperation() {
-        if (this.mPendingActionList.size() == 0 || mNavigationScene.getState() != State.RESUMED) {
+        if (this.mPendingActionList.size() == 0 || mNavigationScene.getState() != State.STOPPED) {
             return;
         }
 
@@ -286,10 +273,8 @@ class NavigationSceneManager {
         List<NonNullPair<Scene, PopListener>> copy = new ArrayList<>(mPopListenerList);
         for (int i = copy.size() - 1; i >= 0; i--) {
             NonNullPair<Scene, PopListener> pair = copy.get(i);
-            if (pair.first.getState() == State.RESUMED) {
-                if (pair.second.onPop()) {
-                    return true;
-                }
+            if (pair.second.onPop()) {
+                return true;
             }
         }
         return false;
@@ -439,8 +424,8 @@ class NavigationSceneManager {
         public void execute(final Runnable operationEndAction) {
             cancelCurrentRunningAnimation();
 
-            if (mNavigationScene.getState().value < State.RESUMED.value) {
-                throw new IllegalArgumentException("Can't push after NavigationScene is pause");
+            if (mNavigationScene.getState().value < State.STOPPED.value) {
+                throw new IllegalArgumentException("Can't pop before NavigationScene create view");
             }
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
@@ -485,8 +470,10 @@ class NavigationSceneManager {
             }
 
             final Scene dstScene = returnRecord.mScene;
+            final boolean isNavigationSceneInAnimationState = mNavigationScene.getState().value >= State.STARTED.value;
+            final State dstState = mNavigationScene.getState();
 
-            moveState(mNavigationScene, dstScene, State.RESUMED, null, false, null);
+            moveState(mNavigationScene, dstScene, dstState, null, false, null);
             //保证请求的Scene是正确的
             if (currentRecord.mPushResultCallback != null) {
                 currentRecord.mPushResultCallback.onResult(currentRecord.mPushResult);
@@ -498,7 +485,7 @@ class NavigationSceneManager {
                 if (currentRecordList.size() > 1) {
                     for (int i = currentRecordList.size() - 2; i >= 0; i--) {
                         Record record = currentRecordList.get(i);
-                        moveState(mNavigationScene, record.mScene, State.STARTED, null, false, null);
+                        moveState(mNavigationScene, record.mScene, findMinState(mNavigationScene.getState(), State.STARTED), null, false, null);
                         if (!record.mIsTranslucent) {
                             break;
                         }
@@ -523,7 +510,7 @@ class NavigationSceneManager {
                 navigationAnimationExecutor = mNavigationScene.getDefaultNavigationAnimationExecutor();
             }
 
-            if (!mDisableNavigationAnimation && navigationAnimationExecutor != null && navigationAnimationExecutor.isSupport(currentRecord.mScene.getClass(), returnRecord.mScene.getClass())) {
+            if (!mDisableNavigationAnimation && isNavigationSceneInAnimationState && navigationAnimationExecutor != null && navigationAnimationExecutor.isSupport(currentRecord.mScene.getClass(), returnRecord.mScene.getClass())) {
                 ViewGroup animationContainer = mNavigationScene.getAnimationContainer();
                 AnimatorUtility.bringToFrontIfNeeded(animationContainer);//保证Z轴正确
                 navigationAnimationExecutor.setAnimationViewGroup(animationContainer);
@@ -699,6 +686,14 @@ class NavigationSceneManager {
         }
     }
 
+    private static State findMinState(State left, State right) {
+        if (left.value > right.value) {
+            return right;
+        } else {
+            return left;
+        }
+    }
+
     private class PushOptionOperation implements Operation {
         private final Scene scene;
         private final PushOptions pushOptions;
@@ -711,8 +706,8 @@ class NavigationSceneManager {
         @Override
         public void execute(final Runnable operationEndAction) {
             cancelCurrentRunningAnimation();
-            if (mNavigationScene.getState().value < State.RESUMED.value) {
-                throw new IllegalArgumentException("Can't push after NavigationScene is pause");
+            if (mNavigationScene.getState().value < State.STOPPED.value) {
+                throw new IllegalArgumentException("Can't push before NavigationScene create view");
             }
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
@@ -747,6 +742,7 @@ class NavigationSceneManager {
                 currentRecord.saveActivityStatus();
                 Scene currentScene = currentRecord.mScene;
                 State dstState = pushOptions.isIsTranslucent() ? State.STARTED : State.STOPPED;
+                dstState = findMinState(dstState, mNavigationScene.getState());
                 moveState(mNavigationScene, currentScene, dstState, null, false, null);
 
                 //多个半透明的叠加一个不透明的Scene，必然需要把之前的半透明Scene都切到STOPPED
@@ -754,7 +750,7 @@ class NavigationSceneManager {
                 if (currentRecordList.size() > 1 && !pushOptions.isIsTranslucent() && currentRecord.mIsTranslucent) {
                     for (int i = currentRecordList.size() - 2; i >= 0; i--) {
                         Record record = currentRecordList.get(i);
-                        moveState(mNavigationScene, record.mScene, State.STOPPED, null, false, null);
+                        moveState(mNavigationScene, record.mScene, findMinState(State.STOPPED, mNavigationScene.getState()), null, false, null);
                         if (!record.mIsTranslucent) {
                             break;
                         }
@@ -772,11 +768,13 @@ class NavigationSceneManager {
             }
 
             //todo，其实moveState到指定状态，就是需要支持的，因为销毁恢复，必然不可能直接到RESUMED
-            moveState(mNavigationScene, scene, State.RESUMED, null, false, null);
+            moveState(mNavigationScene, scene, mNavigationScene.getState(), null, false, null);
 
             mNavigationListener.navigationChange(currentRecord != null ? currentRecord.mScene : null, scene, true);
 
-            if (!mDisableNavigationAnimation && currentRecord != null) {
+            //Navigation animation only execute when NavigationScene is visible, otherwise skip
+            final boolean isNavigationSceneInAnimationState = mNavigationScene.getState().value >= State.STARTED.value;
+            if (!mDisableNavigationAnimation && isNavigationSceneInAnimationState && currentRecord != null) {
                 NavigationAnimationExecutor navigationAnimationExecutor = null;
                 if (animationFactory != null && animationFactory.isSupport(currentRecord.mScene.getClass(), scene.getClass())) {
                     navigationAnimationExecutor = animationFactory;
