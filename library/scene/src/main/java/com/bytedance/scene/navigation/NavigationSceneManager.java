@@ -492,13 +492,13 @@ class NavigationSceneManager {
                 currentRecord.mPushResultCallback.onResult(currentRecord.mPushResult);
             }
 
-            //多个半透明的叠加一个不透明的Scene，返回后，必然需要把之前的半透明Scene都切到RESUMED
+            //多个半透明的叠加一个不透明的Scene，返回后，必然需要把之前的半透明Scene都切到STARTED
             if (returnRecord.mIsTranslucent) {
                 final List<Record> currentRecordList = mBackStackList.getCurrentRecordList();
                 if (currentRecordList.size() > 1) {
                     for (int i = currentRecordList.size() - 2; i >= 0; i--) {
                         Record record = currentRecordList.get(i);
-                        moveState(mNavigationScene, record.mScene, State.RESUMED, null, false, null);
+                        moveState(mNavigationScene, record.mScene, State.STARTED, null, false, null);
                         if (!record.mIsTranslucent) {
                             break;
                         }
