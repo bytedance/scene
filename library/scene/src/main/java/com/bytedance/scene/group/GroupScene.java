@@ -15,7 +15,6 @@ import android.view.ViewGroup;
 import com.bytedance.scene.Scene;
 import com.bytedance.scene.State;
 import com.bytedance.scene.interfaces.ChildSceneLifecycleCallbacks;
-import com.bytedance.scene.interfaces.SceneGroup;
 import com.bytedance.scene.navigation.NavigationScene;
 import com.bytedance.scene.utlity.NonNullPair;
 import com.bytedance.scene.utlity.SceneInstanceUtility;
@@ -30,7 +29,7 @@ import static android.support.annotation.RestrictTo.Scope.LIBRARY_GROUP;
  * Created by JiangQi on 8/1/18.
  */
 //todo 一定要支持tranaction，这样可以做到add又hide，那么不触发onResume，不然ViewPager很难办
-public abstract class GroupScene extends Scene implements SceneGroup {
+public abstract class GroupScene extends Scene {
     private final GroupSceneManager mGroupSceneManager = new GroupSceneManager();
     private final List<NonNullPair<ChildSceneLifecycleCallbacks, Boolean>> mLifecycleCallbacks = new ArrayList<>();
 
@@ -39,22 +38,18 @@ public abstract class GroupScene extends Scene implements SceneGroup {
     }
 
     @NonNull
-    @Override
     public final List<Scene> getSceneList() {
         return this.mGroupSceneManager.getChildSceneList();
     }
 
-    @Override
     public final void beginTransaction() {
         this.mGroupSceneManager.beginTransaction();
     }
 
-    @Override
     public final void commitTransaction() {
         this.mGroupSceneManager.commitTransaction();
     }
 
-    @Override
     public final void add(@IdRes final int viewId, @NonNull final Scene scene, @NonNull final String tag) {
         ThreadUtility.checkUIThread();
 
@@ -78,10 +73,9 @@ public abstract class GroupScene extends Scene implements SceneGroup {
         mGroupSceneManager.add(viewId, scene, tag);
     }
 
-    @Override
     public final <T extends Scene> T findSceneByTag(@NonNull String tag) {
         ThreadUtility.checkUIThread();
-        
+
         if (tag == null) {
             return null;
         }
@@ -94,13 +88,11 @@ public abstract class GroupScene extends Scene implements SceneGroup {
         }
     }
 
-    @Override
     public final void remove(@NonNull Scene scene) {
         ThreadUtility.checkUIThread();
         this.mGroupSceneManager.remove(scene);
     }
 
-    @Override
     public final void hide(@NonNull Scene scene) {
         ThreadUtility.checkUIThread();
         if (scene.getState() == State.STOPPED) {
@@ -109,7 +101,6 @@ public abstract class GroupScene extends Scene implements SceneGroup {
         this.mGroupSceneManager.hide(scene);
     }
 
-    @Override
     public final void show(@NonNull Scene scene) {
         ThreadUtility.checkUIThread();
         if (scene.getState() == State.RESUMED) {
@@ -118,12 +109,10 @@ public abstract class GroupScene extends Scene implements SceneGroup {
         this.mGroupSceneManager.show(scene);
     }
 
-    @Override
     public final boolean isAdded(@NonNull Scene scene) {
         return this.mGroupSceneManager.findByScene(scene) != null;
     }
 
-    @Override
     public final boolean isShow(@NonNull Scene scene) {
         GroupRecord record = this.mGroupSceneManager.findByScene(scene);
         if (record == null) {
@@ -237,13 +226,11 @@ public abstract class GroupScene extends Scene implements SceneGroup {
         return (T) scene;
     }
 
-    @Override
     public void registerChildSceneLifecycleCallbacks(@NonNull ChildSceneLifecycleCallbacks cb, boolean recursive) {
         ThreadUtility.checkUIThread();
         this.mLifecycleCallbacks.add(NonNullPair.create(cb, recursive));
     }
 
-    @Override
     public void unregisterChildSceneLifecycleCallbacks(@NonNull ChildSceneLifecycleCallbacks cb) {
         ThreadUtility.checkUIThread();
         NonNullPair<ChildSceneLifecycleCallbacks, Boolean> target = null;
