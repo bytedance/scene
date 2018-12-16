@@ -25,7 +25,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 
-import com.bytedance.scene.interfaces.SceneNavigation;
+import com.bytedance.scene.navigation.NavigationScene;
 import com.bytedance.scene.parcel.ParcelConstants;
 import com.bytedance.scene.utlity.ViewIdGenerator;
 
@@ -47,7 +47,7 @@ public abstract class Scene implements LifecycleOwner, ViewModelStoreOwner {
     private Scene mParentScene;
     private Scope.RootScopeFactory mRootScopeFactory = Scope.DEFAULT_ROOT_SCOPE_FACTORY;
     private Scope mScope;
-    private SceneNavigation mNavigationScene;
+    private NavigationScene mNavigationScene;
     private State mState = State.NONE;
     private StringBuilder mStateHistoryBuilder = new StringBuilder(mState.name);
     private Bundle mArguments;
@@ -87,8 +87,8 @@ public abstract class Scene implements LifecycleOwner, ViewModelStoreOwner {
     public void dispatchAttachScene(@Nullable Scene parentScene) {
         if (parentScene != null) {
             this.mParentScene = parentScene;
-            if (this.mParentScene instanceof SceneNavigation) {
-                this.mNavigationScene = (SceneNavigation) this.mParentScene;
+            if (this.mParentScene instanceof NavigationScene) {
+                this.mNavigationScene = (NavigationScene) this.mParentScene;
             } else {
                 this.mNavigationScene = this.mParentScene.getNavigationScene();
             }
@@ -439,7 +439,7 @@ public abstract class Scene implements LifecycleOwner, ViewModelStoreOwner {
         return this.mParentScene;
     }
 
-    public SceneNavigation getNavigationScene() {
+    public NavigationScene getNavigationScene() {
         return this.mNavigationScene;
     }
 

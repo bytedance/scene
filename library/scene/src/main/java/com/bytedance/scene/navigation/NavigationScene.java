@@ -35,7 +35,6 @@ import com.bytedance.scene.interfaces.ActivityResultCallback;
 import com.bytedance.scene.interfaces.PermissionResultCallback;
 import com.bytedance.scene.interfaces.PopOptions;
 import com.bytedance.scene.interfaces.PushOptions;
-import com.bytedance.scene.interfaces.SceneNavigation;
 import com.bytedance.scene.utlity.DispatchWindowInsetsListener;
 import com.bytedance.scene.utlity.NonNullPair;
 import com.bytedance.scene.utlity.SceneInstanceUtility;
@@ -54,7 +53,7 @@ import static android.support.annotation.RestrictTo.Scope.LIBRARY_GROUP;
 /**
  * Created by JiangQi on 7/30/18.
  */
-public final class NavigationScene extends Scene implements SceneNavigation, NavigationListener {
+public final class NavigationScene extends Scene implements NavigationListener {
     public static interface NavigationSceneHost {
         boolean isSupportRestore();
 
@@ -94,7 +93,6 @@ public final class NavigationScene extends Scene implements SceneNavigation, Nav
     }
 
     @UiThread
-    @Override
     public void addPopListener(@NonNull Scene scene, @NonNull final PopListener popListener) {
         ThreadUtility.checkUIThread();
         if (scene.getState().value > State.NONE.value) {
@@ -109,14 +107,12 @@ public final class NavigationScene extends Scene implements SceneNavigation, Nav
     }
 
     @UiThread
-    @Override
     public void removePopListener(@NonNull PopListener popListener) {
         ThreadUtility.checkUIThread();
         this.mNavigationSceneManager.removePopListenerList(popListener);
     }
 
     @UiThread
-    @Override
     public void addConfigurationChangedListener(@NonNull Scene scene, @NonNull final ConfigurationChangedListener configurationChangedListener) {
         ThreadUtility.checkUIThread();
         if (scene.getState().value > State.NONE.value) {
@@ -131,19 +127,16 @@ public final class NavigationScene extends Scene implements SceneNavigation, Nav
     }
 
     @NonNull
-    @Override
     public String getStackHistory() {
         return mNavigationSceneManager.getStackHistory();
     }
 
     @Nullable
-    @Override
     public Scene getCurrentScene() {
         return mNavigationSceneManager.getCurrentScene();
     }
 
     @NonNull
-    @Override
     public List<Scene> getSceneList() {
         return mNavigationSceneManager.getCurrentSceneList();
     }
@@ -180,12 +173,10 @@ public final class NavigationScene extends Scene implements SceneNavigation, Nav
         mNavigationSceneManager.push(rootScene, new PushOptions.Builder().build());
     }
 
-    @Override
     public void push(@NonNull Class<? extends Scene> clazz) {
         push(clazz, null, new PushOptions.Builder().build());
     }
 
-    @Override
     public void push(@NonNull Class<? extends Scene> clazz, Bundle argument) {
         push(clazz, argument, new PushOptions.Builder().build());
     }
@@ -196,7 +187,6 @@ public final class NavigationScene extends Scene implements SceneNavigation, Nav
         mLruCache.put(scene.getClass(), scene);
     }
 
-    @Override
     public void push(@NonNull Class<? extends Scene> clazz, Bundle argument, PushOptions pushOptions) {
         if (getActivity() != null && !Utility.isActivityStatusValid(getActivity())) {
             return;
@@ -216,7 +206,6 @@ public final class NavigationScene extends Scene implements SceneNavigation, Nav
         push(scene, pushOptions);
     }
 
-    @Override
     public void push(@NonNull Scene scene) {
         push(scene, new PushOptions.Builder().build());
     }
@@ -231,7 +220,6 @@ public final class NavigationScene extends Scene implements SceneNavigation, Nav
         }
     }
 
-    @Override
     public void push(@NonNull Scene scene, @Nullable PushOptions pushOptions) {
         ThreadUtility.checkUIThread();
 
@@ -265,12 +253,10 @@ public final class NavigationScene extends Scene implements SceneNavigation, Nav
         }
     }
 
-    @Override
     public void setResult(@NonNull Scene scene, Object result) {
         mNavigationSceneManager.setResult(scene, result);
     }
 
-    @Override
     public boolean pop() {
         ThreadUtility.checkUIThread();
 
@@ -297,7 +283,6 @@ public final class NavigationScene extends Scene implements SceneNavigation, Nav
         requireActivity().onBackPressed();
     }
 
-    @Override
     public void pop(PopOptions popOptions) {
         ThreadUtility.checkUIThread();
 
@@ -309,12 +294,10 @@ public final class NavigationScene extends Scene implements SceneNavigation, Nav
         mNavigationSceneManager.pop(popOptions);
     }
 
-    @Override
     public void popTo(@NonNull Class<? extends Scene> clazz) {
         popTo(clazz, null);
     }
 
-    @Override
     public void popTo(@NonNull Class<? extends Scene> clazz, NavigationAnimationExecutor animationFactory) {
         ThreadUtility.checkUIThread();
 
@@ -326,12 +309,10 @@ public final class NavigationScene extends Scene implements SceneNavigation, Nav
         mNavigationSceneManager.popTo(clazz, animationFactory);
     }
 
-    @Override
     public void popToRoot() {
         popToRoot(null);
     }
 
-    @Override
     public void popToRoot(NavigationAnimationExecutor animationFactory) {
         ThreadUtility.checkUIThread();
         if (getActivity() != null && !Utility.isActivityStatusValid(getActivity())) {
@@ -342,7 +323,6 @@ public final class NavigationScene extends Scene implements SceneNavigation, Nav
         mNavigationSceneManager.popToRoot(animationFactory);
     }
 
-    @Override
     public void remove(Scene scene) {
         ThreadUtility.checkUIThread();
 
@@ -395,7 +375,7 @@ public final class NavigationScene extends Scene implements SceneNavigation, Nav
 
     @NonNull
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         NavigationFrameLayout frameLayout = new NavigationFrameLayout(requireSceneContext());
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             frameLayout.setOnApplyWindowInsetsListener(new DispatchWindowInsetsListener());
@@ -437,7 +417,7 @@ public final class NavigationScene extends Scene implements SceneNavigation, Nav
             createRootSceneIfNeeded();
         }
 
-        SceneNavigation parentSceneNavigation = getNavigationScene();
+        NavigationScene parentSceneNavigation = getNavigationScene();
         if (parentSceneNavigation != null) {
             parentSceneNavigation.addPopListener(this, new PopListener() {
                 @Override
@@ -538,7 +518,6 @@ public final class NavigationScene extends Scene implements SceneNavigation, Nav
 
     //todo 万一Activity是空的怎么处理
     //todo 直接存对象内存泄漏怎么办
-    @Override
     public void startActivityForResult(@NonNull Intent intent, int requestCode, ActivityResultCallback resultCallback) {
         if (requestCode < 0) {
             startActivity(intent);
@@ -551,7 +530,7 @@ public final class NavigationScene extends Scene implements SceneNavigation, Nav
             return;
         }
 
-        SceneNavigation parentSceneNavigation = getNavigationScene();
+        NavigationScene parentSceneNavigation = getNavigationScene();
         if (parentSceneNavigation == null) {
             mResultCallbackMap.put(requestCode, resultCallback);
             this.mNavigationSceneHost.startActivityForResult(intent, requestCode);
@@ -576,7 +555,6 @@ public final class NavigationScene extends Scene implements SceneNavigation, Nav
         }
     }
 
-    @Override
     public void startActivity(@NonNull Intent intent) {
         Activity activity = getActivity();
         if (!Utility.isActivityStatusValid(activity)) {
@@ -586,7 +564,6 @@ public final class NavigationScene extends Scene implements SceneNavigation, Nav
     }
 
     @RequiresApi(api = Build.VERSION_CODES.M)
-    @Override
     public void requestPermissions(@NonNull String[] permissions, int requestCode, PermissionResultCallback resultCallback) {
         ThreadUtility.checkUIThread();
         Activity activity = getActivity();
@@ -594,7 +571,7 @@ public final class NavigationScene extends Scene implements SceneNavigation, Nav
             return;
         }
 
-        SceneNavigation parentSceneNavigation = getNavigationScene();
+        NavigationScene parentSceneNavigation = getNavigationScene();
         if (parentSceneNavigation == null) {
             mPermissionResultCallbackMap.put(requestCode, resultCallback);
             this.mNavigationSceneHost.requestPermissions(permissions, requestCode);
@@ -603,7 +580,6 @@ public final class NavigationScene extends Scene implements SceneNavigation, Nav
         }
     }
 
-    @Override
     public void onConfigurationChanged(Configuration newConfig) {
         mNavigationSceneManager.onConfigurationChanged(newConfig);
     }
@@ -661,13 +637,11 @@ public final class NavigationScene extends Scene implements SceneNavigation, Nav
         this.mInteractionListenerList.remove(callback);
     }
 
-    @Override
     public void registerChildSceneLifecycleCallbacks(@NonNull ChildSceneLifecycleCallbacks cb, boolean recursive) {
         ThreadUtility.checkUIThread();
         this.mLifecycleCallbacks.add(NonNullPair.create(cb, recursive));
     }
 
-    @Override
     public void unregisterChildSceneLifecycleCallbacks(@NonNull ChildSceneLifecycleCallbacks cb) {
         ThreadUtility.checkUIThread();
         NonNullPair<ChildSceneLifecycleCallbacks, Boolean> target = null;

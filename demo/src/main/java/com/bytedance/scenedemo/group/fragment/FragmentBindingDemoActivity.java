@@ -16,7 +16,6 @@ import com.bytedance.scene.NavigationSceneAvailableCallback;
 import com.bytedance.scene.Scene;
 import com.bytedance.scene.SceneComponentFactory;
 import com.bytedance.scene.interfaces.ChildSceneLifecycleAdapterCallbacks;
-import com.bytedance.scene.interfaces.SceneNavigation;
 import com.bytedance.scene.navigation.NavigationScene;
 import com.bytedance.scene.ui.NavigationSceneCompatUtility;
 import com.bytedance.scene.utlity.ViewIdGenerator;
@@ -67,7 +66,7 @@ public class FragmentBindingDemoActivity extends AppCompatActivity {
                     Log.e("ddd", "sss");
                 }
             });
-            SceneNavigation navigation = delegate.getNavigationScene();
+            NavigationScene navigation = delegate.getNavigationScene();
             Log.e("ddd", "sss");
         }
     }

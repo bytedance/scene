@@ -1,12 +1,12 @@
 package com.bytedance.scene.ui;
 
-import com.bytedance.scene.interfaces.SceneNavigation;
+import com.bytedance.scene.navigation.NavigationScene;
 
 /**
  * Created by JiangQi on 9/20/18.
  */
 public interface SceneNavigationContainer {
-    SceneNavigation getNavigationScene();
+    NavigationScene getNavigationScene();
 
     boolean isVisible();
 

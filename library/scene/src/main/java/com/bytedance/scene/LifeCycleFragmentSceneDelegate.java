@@ -3,7 +3,6 @@ package com.bytedance.scene;
 import android.app.Activity;
 import android.support.annotation.NonNull;
 
-import com.bytedance.scene.interfaces.SceneNavigation;
 import com.bytedance.scene.navigation.NavigationScene;
 
 /**
@@ -28,7 +27,7 @@ public class LifeCycleFragmentSceneDelegate implements SceneDelegate, Navigation
     }
 
     @Override
-    public SceneNavigation getNavigationScene() {
+    public NavigationScene getNavigationScene() {
         return mLifeCycleFragment.getNavigationScene();
     }
 

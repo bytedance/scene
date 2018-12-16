@@ -13,7 +13,6 @@ import com.bytedance.scene.NavigationSceneAvailableCallback;
 import com.bytedance.scene.Scene;
 import com.bytedance.scene.SceneComponentFactory;
 import com.bytedance.scene.Scope;
-import com.bytedance.scene.interfaces.SceneNavigation;
 import com.bytedance.scene.navigation.NavigationScene;
 import com.bytedance.scene.navigation.NavigationSceneOptions;
 import com.bytedance.scene.utlity.SceneInstanceUtility;
@@ -115,7 +114,7 @@ public class NavigationSceneCompatUtility {
             }
 
             @Override
-            public SceneNavigation getNavigationScene() {
+            public NavigationScene getNavigationScene() {
                 return finalLifeCycleFragment.getNavigationScene();
             }
         };

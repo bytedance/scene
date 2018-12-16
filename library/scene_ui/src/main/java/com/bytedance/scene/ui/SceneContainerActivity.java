@@ -19,7 +19,7 @@ import com.bytedance.scene.SingeProcessMessengerHandler;
 import com.bytedance.scene.animation.animatorexecutor.NoAnimationExecutor;
 import com.bytedance.scene.interfaces.PushOptions;
 import com.bytedance.scene.interfaces.PushResultCallback;
-import com.bytedance.scene.interfaces.SceneNavigation;
+import com.bytedance.scene.navigation.NavigationScene;
 import com.bytedance.scene.navigation.NavigationSceneOptions;
 import com.bytedance.scene.utlity.NonNullPair;
 
@@ -140,7 +140,7 @@ public class SceneContainerActivity extends AppCompatActivity implements SceneNa
     }
 
     @Override
-    public SceneNavigation getNavigationScene() {
+    public NavigationScene getNavigationScene() {
         return this.mDelegate.getNavigationScene();
     }
 
