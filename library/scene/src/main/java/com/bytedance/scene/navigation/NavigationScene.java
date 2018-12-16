@@ -48,6 +48,7 @@ import com.bytedance.scene.view.NoneTouchFrameLayout;
 import java.util.ArrayList;
 import java.util.List;
 
+import static android.support.annotation.RestrictTo.Scope.LIBRARY;
 import static android.support.annotation.RestrictTo.Scope.LIBRARY_GROUP;
 
 /**
@@ -434,12 +435,14 @@ public final class NavigationScene extends Scene implements NavigationListener {
         }
     }
 
+    @RestrictTo(LIBRARY)
     @Override
     public void dispatchStart() {
         super.dispatchStart();
         dispatchCurrentChildState(State.STARTED);
     }
 
+    @RestrictTo(LIBRARY)
     @Override
     public void dispatchResume() {
         super.dispatchResume();
@@ -447,6 +450,7 @@ public final class NavigationScene extends Scene implements NavigationListener {
         this.mNavigationSceneManager.executePendingOperation();//必须在Children更新到onResume之后，保证该还原的Window属性都记录下来了
     }
 
+    @RestrictTo(LIBRARY)
     @Override
     public void dispatchPause() {
         dispatchCurrentChildState(State.STARTED);
@@ -465,6 +469,7 @@ public final class NavigationScene extends Scene implements NavigationListener {
         this.mNavigationSceneManager.cancelCurrentRunningAnimation();//终止动画，避免有可能之后走到onDestroyView后，有动画还在执行引发的崩溃或者内存泄漏
     }
 
+    @RestrictTo(LIBRARY)
     @Override
     public void dispatchStop() {
         dispatchCurrentChildState(State.STOPPED);
