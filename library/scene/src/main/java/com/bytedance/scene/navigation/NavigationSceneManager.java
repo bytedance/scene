@@ -664,8 +664,8 @@ class NavigationSceneManager {
     }
 
     private class PopToOperation implements Operation {
-        private Class<? extends Scene> clazz;
-        private NavigationAnimationExecutor animationFactory;
+        private final Class<? extends Scene> clazz;
+        private final NavigationAnimationExecutor animationFactory;
 
         private PopToOperation(Class<? extends Scene> clazz, NavigationAnimationExecutor animationFactory) {
             this.clazz = clazz;
@@ -676,12 +676,14 @@ class NavigationSceneManager {
         public void execute(final Runnable operationEndAction) {
             List<Record> recordList = mBackStackList.getCurrentRecordList();
             Record returnRecord = null;
+            int popCount = 0;
             for (int i = recordList.size() - 1; i >= 0; i--) {
                 Record record = recordList.get(i);
                 if (record.mScene.getClass() == clazz) {
                     returnRecord = record;
                     break;
                 }
+                popCount++;
             }
 
             //说明根本没有
@@ -689,12 +691,11 @@ class NavigationSceneManager {
                 throw new IllegalArgumentException("Cant find " + clazz.getSimpleName() + " in backStack");
             }
 
-            int count = recordList.size() - 1;
-            if (count == 0) {
+            if (popCount == 0) {
                 operationEndAction.run();
                 return;
             }
-            new PopCountOperation(animationFactory, count).execute(operationEndAction);
+            new PopCountOperation(animationFactory, popCount).execute(operationEndAction);
         }
     }
 
