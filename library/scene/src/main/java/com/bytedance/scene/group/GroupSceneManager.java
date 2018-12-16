@@ -382,11 +382,11 @@ class GroupSceneManager {
     }
 
     private abstract class Operation {
-        Scene scene;
-        State state;
-        boolean forceShow = false;
-        boolean forceHide = false;//必须把强制显示和隐藏跟普通的跟生命周期有关的显示和隐藏区分开，不能只根据DstState来，不然很容易出错，混在一起各种乱
-        boolean forceRemove = false;
+        final Scene scene;
+        final State state;
+        final boolean forceShow;
+        final boolean forceHide;//必须把强制显示和隐藏跟普通的跟生命周期有关的显示和隐藏区分开，不能只根据DstState来，不然很容易出错，混在一起各种乱
+        final boolean forceRemove;
 
         Operation(Scene scene, State state, boolean forceShow, boolean forceHide, boolean forceRemove) {
             this.scene = scene;
@@ -400,9 +400,9 @@ class GroupSceneManager {
     }
 
     private class MoveStateOperation extends Operation {
-        int viewId;
-        String tag;
-        State dstState;
+        final int viewId;
+        final String tag;
+        final State dstState;
 
         MoveStateOperation(Scene scene, int viewId, String tag, State dstState, boolean forceShow, boolean forceHide, boolean forceRemove) {
             super(scene, dstState, forceShow, forceHide, forceRemove);
@@ -413,8 +413,6 @@ class GroupSceneManager {
             this.viewId = viewId;
             this.tag = tag;
             this.dstState = dstState;
-            this.forceShow = forceShow;
-            this.forceHide = forceHide;
         }
 
         @Override
@@ -449,13 +447,12 @@ class GroupSceneManager {
     }
 
     private class AddOperation extends MoveStateOperation {
-        int viewId;
-        String tag;
+        final int viewId;
+        final String tag;
 
         private AddOperation(int viewId, Scene scene, String tag) {
             super(scene, viewId, tag, getMinState(State.RESUMED, mGroupScene.getState()), true, false, false);
             this.viewId = viewId;
-            this.scene = scene;
             this.tag = tag;
         }
     }
