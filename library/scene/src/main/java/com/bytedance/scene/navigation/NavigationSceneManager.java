@@ -399,9 +399,9 @@ class NavigationSceneManager {
     }
 
     private class PopOptionOperation implements Operation {
-        private PopOptions mPopOptions;
+        private final PopOptions mPopOptions;
 
-        public PopOptionOperation(PopOptions popOptions) {
+        private PopOptionOperation(PopOptions popOptions) {
             this.mPopOptions = popOptions;
         }
 
@@ -427,10 +427,10 @@ class NavigationSceneManager {
     }
 
     private class PopCountOperation implements Operation {
-        private NavigationAnimationExecutor animationFactory;
-        private int popCount;
+        private final NavigationAnimationExecutor animationFactory;
+        private final int popCount;
 
-        public PopCountOperation(NavigationAnimationExecutor animationFactory, int popCount) {
+        private PopCountOperation(NavigationAnimationExecutor animationFactory, int popCount) {
             this.animationFactory = animationFactory;
             this.popCount = popCount;
         }
@@ -592,7 +592,7 @@ class NavigationSceneManager {
      * 3，移除的是根怎么办
      */
     private class RemoveOperation implements Operation {
-        private Scene mScene;
+        private final Scene mScene;
 
         private RemoveOperation(Scene scene) {
             this.mScene = scene;
@@ -631,9 +631,9 @@ class NavigationSceneManager {
     }
 
     private class PopOperation implements Operation {
-        private NavigationAnimationExecutor animationFactory;
+        private final NavigationAnimationExecutor animationFactory;
 
-        public PopOperation(NavigationAnimationExecutor animationFactory) {
+        private PopOperation(NavigationAnimationExecutor animationFactory) {
             this.animationFactory = animationFactory;
         }
 
@@ -644,9 +644,9 @@ class NavigationSceneManager {
     }
 
     private class PopToRootOperation implements Operation {
-        private NavigationAnimationExecutor animationFactory;
+        private final NavigationAnimationExecutor animationFactory;
 
-        public PopToRootOperation(NavigationAnimationExecutor animationFactory) {
+        private PopToRootOperation(NavigationAnimationExecutor animationFactory) {
             this.animationFactory = animationFactory;
         }
 
@@ -700,10 +700,10 @@ class NavigationSceneManager {
     }
 
     private class PushOptionOperation implements Operation {
-        private Scene scene;
-        private PushOptions pushOptions;
+        private final Scene scene;
+        private final PushOptions pushOptions;
 
-        private PushOptionOperation(final Scene scene, PushOptions pushOptions) {
+        private PushOptionOperation(Scene scene, PushOptions pushOptions) {
             this.scene = scene;
             this.pushOptions = pushOptions;
         }
@@ -817,7 +817,7 @@ class NavigationSceneManager {
     }
 
     private class SyncCurrentSceneStateOperation implements Operation {
-        private State state;
+        private final State state;
 
         private SyncCurrentSceneStateOperation(State state) {
             this.state = state;
@@ -863,7 +863,7 @@ class NavigationSceneManager {
     }
 
     private class SyncAllSceneStateOperation implements Operation {
-        private State state;
+        private final State state;
 
         private SyncAllSceneStateOperation(State state) {
             this.state = state;
