@@ -23,6 +23,7 @@ import com.bytedance.scene.utlity.ThreadUtility;
 import java.util.ArrayList;
 import java.util.List;
 
+import static android.support.annotation.RestrictTo.Scope.LIBRARY;
 import static android.support.annotation.RestrictTo.Scope.LIBRARY_GROUP;
 
 /**
@@ -33,7 +34,7 @@ public abstract class GroupScene extends Scene {
     private final GroupSceneManager mGroupSceneManager = new GroupSceneManager();
     private final List<NonNullPair<ChildSceneLifecycleCallbacks, Boolean>> mLifecycleCallbacks = new ArrayList<>();
 
-    public GroupSceneManager getGroupSceneManager() {
+    GroupSceneManager getGroupSceneManager() {
         return mGroupSceneManager;
     }
 
@@ -180,41 +181,46 @@ public abstract class GroupScene extends Scene {
         this.mGroupSceneManager.saveToBundle(outState);
     }
 
+    @RestrictTo(LIBRARY)
     @Override
     public void dispatchStart() {
         super.dispatchStart();
         dispatchVisibleChildrenState(State.STARTED);
     }
 
+    @RestrictTo(LIBRARY)
     @Override
     public void dispatchResume() {
         super.dispatchResume();
         dispatchVisibleChildrenState(State.RESUMED);
     }
 
+    @RestrictTo(LIBRARY)
     @Override
     public void dispatchPause() {
         dispatchVisibleChildrenState(State.STARTED);
         super.dispatchPause();
     }
 
+    @RestrictTo(LIBRARY)
     @Override
     public void dispatchStop() {
         dispatchVisibleChildrenState(State.STOPPED);
         super.dispatchStop();
     }
 
+    @RestrictTo(LIBRARY)
     @Override
     public void dispatchDestroyView() {
         dispatchChildrenState(State.NONE, null);
         super.dispatchDestroyView();
     }
 
-    private void dispatchChildrenState(State state, @Nullable Bundle savedInstanceState) {
+    private void dispatchChildrenState(@NonNull State state, @Nullable Bundle savedInstanceState) {
         this.mGroupSceneManager.dispatchChildrenState(state, savedInstanceState);
     }
 
-    private void dispatchVisibleChildrenState(State state) {
+    private void dispatchVisibleChildrenState(@NonNull State state) {
         this.mGroupSceneManager.dispatchVisibleChildrenState(state);
     }
 

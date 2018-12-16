@@ -158,13 +158,13 @@ class GroupRecordList {
     }
 }
 
-public class GroupSceneManager {
+class GroupSceneManager {
     private GroupScene mGroupScene;
     private ViewGroup mView;
     private GroupRecordList mSceneList = new GroupRecordList();
     private Handler mHandler = new Handler(Looper.getMainLooper());
 
-    public GroupSceneManager() {
+    GroupSceneManager() {
 
     }
 
