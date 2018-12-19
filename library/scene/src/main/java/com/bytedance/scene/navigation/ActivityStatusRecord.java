@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.os.Build;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.support.v4.view.ViewCompat;
 import android.view.View;
 import android.view.Window;
 
@@ -66,15 +65,7 @@ class ActivityStatusRecord implements Parcelable {
             record.mStatusBarColor = window.getStatusBarColor();
             record.mNavigationBarColor = window.getNavigationBarColor();
         }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-            if (ViewCompat.isAttachedToWindow(decorView)) {
-                record.mSystemUiVisibility = decorView.getWindowSystemUiVisibility();
-            } else {
-                record.mSystemUiVisibility = decorView.getSystemUiVisibility();
-            }
-        } else {
-            record.mSystemUiVisibility = decorView.getSystemUiVisibility();
-        }
+        record.mSystemUiVisibility = decorView.getSystemUiVisibility();
         record.mSoftInputMode = window.getAttributes().softInputMode;
         record.mWindowFlags = window.getAttributes().flags;
         return record;
