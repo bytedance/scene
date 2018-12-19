@@ -61,10 +61,9 @@ class Record implements Parcelable {
         return record;
     }
 
+    //必须每次生成，因为有可能作为透明页面用来占位
     public void saveActivityStatus() {
-        if (mActivityStatusRecord == null) {
-            mActivityStatusRecord = ActivityStatusRecord.newInstance(mScene.requireActivity());
-        }
+        mActivityStatusRecord = ActivityStatusRecord.newInstance(mScene.requireActivity());
     }
 
     @Override
