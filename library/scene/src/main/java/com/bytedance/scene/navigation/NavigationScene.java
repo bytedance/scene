@@ -189,7 +189,7 @@ public final class NavigationScene extends Scene implements NavigationListener {
     }
 
     public void push(@NonNull Class<? extends Scene> clazz, Bundle argument, PushOptions pushOptions) {
-        if (getActivity() != null && !Utility.isActivityStatusValid(getActivity())) {
+        if (!Utility.isActivityStatusValid(getActivity())) {
             return;
         }
 
@@ -224,7 +224,7 @@ public final class NavigationScene extends Scene implements NavigationListener {
     public void push(@NonNull Scene scene, @Nullable PushOptions pushOptions) {
         ThreadUtility.checkUIThread();
 
-        if (getActivity() != null && !Utility.isActivityStatusValid(getActivity())) {
+        if (!Utility.isActivityStatusValid(getActivity())) {
             return;
         }
 
@@ -261,7 +261,7 @@ public final class NavigationScene extends Scene implements NavigationListener {
     public boolean pop() {
         ThreadUtility.checkUIThread();
 
-        if (getActivity() != null && !Utility.isActivityStatusValid(getActivity())) {
+        if (!Utility.isActivityStatusValid(getActivity())) {
             return false;
         }
         if (mNavigationSceneManager.interceptPop()) {
@@ -287,7 +287,7 @@ public final class NavigationScene extends Scene implements NavigationListener {
     public void pop(PopOptions popOptions) {
         ThreadUtility.checkUIThread();
 
-        if (getActivity() != null && !Utility.isActivityStatusValid(getActivity())) {
+        if (!Utility.isActivityStatusValid(getActivity())) {
             return;
         }
         hideSoftInputIfNeeded();
@@ -302,7 +302,7 @@ public final class NavigationScene extends Scene implements NavigationListener {
     public void popTo(@NonNull Class<? extends Scene> clazz, NavigationAnimationExecutor animationFactory) {
         ThreadUtility.checkUIThread();
 
-        if (getActivity() != null && !Utility.isActivityStatusValid(getActivity())) {
+        if (!Utility.isActivityStatusValid(getActivity())) {
             return;
         }
         hideSoftInputIfNeeded();
@@ -316,7 +316,7 @@ public final class NavigationScene extends Scene implements NavigationListener {
 
     public void popToRoot(NavigationAnimationExecutor animationFactory) {
         ThreadUtility.checkUIThread();
-        if (getActivity() != null && !Utility.isActivityStatusValid(getActivity())) {
+        if (!Utility.isActivityStatusValid(getActivity())) {
             return;
         }
         hideSoftInputIfNeeded();
@@ -327,7 +327,7 @@ public final class NavigationScene extends Scene implements NavigationListener {
     public void remove(Scene scene) {
         ThreadUtility.checkUIThread();
 
-        if (getActivity() != null && !Utility.isActivityStatusValid(getActivity())) {
+        if (!Utility.isActivityStatusValid(getActivity())) {
             return;
         }
         if (mNavigationSceneManager.getCurrentScene() == scene) {
