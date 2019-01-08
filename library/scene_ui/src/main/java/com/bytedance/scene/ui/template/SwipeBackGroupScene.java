@@ -19,7 +19,7 @@ import com.bytedance.scene.animation.interaction.progressanimation.InteractionAn
 import com.bytedance.scene.group.GroupScene;
 import com.bytedance.scene.interfaces.PopOptions;
 import com.bytedance.scene.navigation.NavigationScene;
-import com.bytedance.scene.navigation.PopListener;
+import com.bytedance.scene.navigation.OnBackPressedListener;
 import com.bytedance.scene.utlity.Utility;
 import com.bytedance.scene.view.SlidePercentFrameLayout;
 
@@ -86,11 +86,11 @@ public abstract class SwipeBackGroupScene extends GroupScene {
             }
         };
 
-        final PopListener popListener = new PopListener() {
+        final OnBackPressedListener onBackPressedListener = new OnBackPressedListener() {
             @Override
-            public boolean onPop() {
+            public boolean onBackPressed() {
                 interactionNavigationPopAnimationFactory.forceCancel();
-                getNavigationScene().removePopListener(this);
+                getNavigationScene().removeOnBackPressedListener(this);
                 return true;
             }
         };
@@ -108,13 +108,13 @@ public abstract class SwipeBackGroupScene extends GroupScene {
                     float px = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8, r.getDisplayMetrics());
                     ViewCompat.setElevation(swipeContainerView, px);
                     backgroundView.setVisibility(View.VISIBLE);
-                    getNavigationScene().addPopListener(SwipeBackGroupScene.this, popListener);
+                    getNavigationScene().addOnBackPressedListener(SwipeBackGroupScene.this, onBackPressedListener);
                 }
             }
 
             @Override
             public void onFinish() {
-                getNavigationScene().removePopListener(popListener);
+                getNavigationScene().removeOnBackPressedListener(onBackPressedListener);
                 interactionNavigationPopAnimationFactory.finish();
             }
 

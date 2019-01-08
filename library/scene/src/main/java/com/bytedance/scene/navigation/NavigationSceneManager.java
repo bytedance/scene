@@ -251,29 +251,29 @@ class NavigationSceneManager {
         return mBackStackList.getCurrentRecord();
     }
 
-    private List<NonNullPair<Scene, PopListener>> mPopListenerList = new ArrayList<>();
+    private List<NonNullPair<Scene, OnBackPressedListener>> mOnBackPressedListenerList = new ArrayList<>();
 
-    public void addPopListener(Scene scene, PopListener popListener) {
-        mPopListenerList.add(NonNullPair.create(scene, popListener));
+    public void addOnBackPressedListener(Scene scene, OnBackPressedListener onBackPressedListener) {
+        mOnBackPressedListenerList.add(NonNullPair.create(scene, onBackPressedListener));
     }
 
-    public void removePopListenerList(PopListener popListenerList) {
-        NonNullPair<Scene, PopListener> target = null;
-        for (int i = mPopListenerList.size() - 1; i >= 0; i--) {
-            NonNullPair<Scene, PopListener> pair = mPopListenerList.get(i);
-            if (pair.second == popListenerList) {
+    public void removeOnBackPressedListener(OnBackPressedListener onBackPressedListener) {
+        NonNullPair<Scene, OnBackPressedListener> target = null;
+        for (int i = mOnBackPressedListenerList.size() - 1; i >= 0; i--) {
+            NonNullPair<Scene, OnBackPressedListener> pair = mOnBackPressedListenerList.get(i);
+            if (pair.second == onBackPressedListener) {
                 target = pair;
                 break;
             }
         }
-        mPopListenerList.remove(target);
+        mOnBackPressedListenerList.remove(target);
     }
 
-    public boolean interceptPop() {
-        List<NonNullPair<Scene, PopListener>> copy = new ArrayList<>(mPopListenerList);
+    public boolean interceptOnBackPressed() {
+        List<NonNullPair<Scene, OnBackPressedListener>> copy = new ArrayList<>(mOnBackPressedListenerList);
         for (int i = copy.size() - 1; i >= 0; i--) {
-            NonNullPair<Scene, PopListener> pair = copy.get(i);
-            if (pair.second.onPop()) {
+            NonNullPair<Scene, OnBackPressedListener> pair = copy.get(i);
+            if (pair.second.onBackPressed()) {
                 return true;
             }
         }

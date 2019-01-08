@@ -110,7 +110,7 @@ public class NavigationSceneCompatUtility {
             @Override
             public boolean onBackPressed() {
                 NavigationScene navigationScene = finalLifeCycleFragment.getNavigationScene();
-                return navigationScene != null && navigationScene.pop();
+                return navigationScene != null && navigationScene.onBackPressed();
             }
 
             @Override

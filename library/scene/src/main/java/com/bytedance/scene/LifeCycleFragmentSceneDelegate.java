@@ -23,7 +23,7 @@ public class LifeCycleFragmentSceneDelegate implements SceneDelegate, Navigation
     @Override
     public boolean onBackPressed() {
         NavigationScene navigationScene = mLifeCycleFragment.getNavigationScene();
-        return navigationScene != null && navigationScene.pop();
+        return navigationScene != null && navigationScene.onBackPressed();
     }
 
     @Override

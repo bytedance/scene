@@ -10,7 +10,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.bytedance.scene.Scene;
-import com.bytedance.scene.navigation.PopListener;
+import com.bytedance.scene.navigation.OnBackPressedListener;
 import com.bytedance.scenedemo.R;
 import com.bytedance.scenedemo.utility.ColorUtil;
 
@@ -52,9 +52,9 @@ public class PushPopDemoScene extends Scene {
             }
         });
 
-        getNavigationScene().addPopListener(this, new PopListener() {
+        getNavigationScene().addOnBackPressedListener(this, new OnBackPressedListener() {
             @Override
-            public boolean onPop() {
+            public boolean onBackPressed() {
                 return false;
             }
         });

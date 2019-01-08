@@ -15,7 +15,6 @@ import android.support.annotation.RequiresApi;
 import android.support.annotation.RestrictTo;
 import android.support.annotation.UiThread;
 import android.support.v4.util.LruCache;
-import android.support.v4.util.Pair;
 import android.support.v4.util.SparseArrayCompat;
 import android.support.v4.view.ViewCompat;
 import android.view.LayoutInflater;
@@ -76,9 +75,6 @@ public final class NavigationScene extends Scene implements NavigationListener {
     private final List<NonNullPair<ChildSceneLifecycleCallbacks, Boolean>> mLifecycleCallbacks = new ArrayList<>();
     private final List<InteractionNavigationPopAnimationFactory.InteractionCallback> mInteractionListenerList = new ArrayList<>();
 
-    //todo 得保证顺序
-    private List<Pair<Scene, PopListener>> mPopListenerList = new ArrayList<>();
-
     NavigationSceneOptions mNavigationSceneOptions;
 
     @UiThread
@@ -94,23 +90,23 @@ public final class NavigationScene extends Scene implements NavigationListener {
     }
 
     @UiThread
-    public void addPopListener(@NonNull Scene scene, @NonNull final PopListener popListener) {
+    public void addOnBackPressedListener(@NonNull Scene scene, @NonNull final OnBackPressedListener onBackPressedListener) {
         ThreadUtility.checkUIThread();
         if (scene.getState().value > State.NONE.value) {
-            this.mNavigationSceneManager.addPopListener(scene, popListener);
+            this.mNavigationSceneManager.addOnBackPressedListener(scene, onBackPressedListener);
             scene.getLifecycle().addObserver(new LifecycleObserver() {
                 @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
                 void onDestroy() {
-                    mNavigationSceneManager.removePopListenerList(popListener);
+                    mNavigationSceneManager.removeOnBackPressedListener(onBackPressedListener);
                 }
             });
         }
     }
 
     @UiThread
-    public void removePopListener(@NonNull PopListener popListener) {
+    public void removeOnBackPressedListener(@NonNull OnBackPressedListener onBackPressedListener) {
         ThreadUtility.checkUIThread();
-        this.mNavigationSceneManager.removePopListenerList(popListener);
+        this.mNavigationSceneManager.removeOnBackPressedListener(onBackPressedListener);
     }
 
     @UiThread
@@ -258,22 +254,31 @@ public final class NavigationScene extends Scene implements NavigationListener {
         mNavigationSceneManager.setResult(scene, result);
     }
 
-    public boolean pop() {
+    public boolean onBackPressed() {
         ThreadUtility.checkUIThread();
 
         if (!Utility.isActivityStatusValid(getActivity())) {
             return false;
         }
-        if (mNavigationSceneManager.interceptPop()) {
+        if (mNavigationSceneManager.interceptOnBackPressed()) {
             return true;
         } else if (mNavigationSceneManager.canPop()) {
-            hideSoftInputIfNeeded();
-            cancelPendingInputEventsIfNeeded();
-            mNavigationSceneManager.pop();
+            pop();
             return true;
         } else {
             return false;
         }
+    }
+
+    public void pop() {
+        ThreadUtility.checkUIThread();
+
+        if (!Utility.isActivityStatusValid(getActivity())) {
+            return;
+        }
+        hideSoftInputIfNeeded();
+        cancelPendingInputEventsIfNeeded();
+        mNavigationSceneManager.pop();
     }
 
     /**
@@ -421,10 +426,10 @@ public final class NavigationScene extends Scene implements NavigationListener {
 
         NavigationScene parentSceneNavigation = getNavigationScene();
         if (parentSceneNavigation != null) {
-            parentSceneNavigation.addPopListener(this, new PopListener() {
+            parentSceneNavigation.addOnBackPressedListener(this, new OnBackPressedListener() {
                 @Override
-                public boolean onPop() {
-                    return pop();
+                public boolean onBackPressed() {
+                    return NavigationScene.this.onBackPressed();
                 }
             });
             parentSceneNavigation.addConfigurationChangedListener(this, new ConfigurationChangedListener() {
