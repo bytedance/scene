@@ -18,7 +18,6 @@ import com.bytedance.scene.Scene;
 import com.bytedance.scene.SingeProcessMessengerHandler;
 import com.bytedance.scene.animation.AnimationInfo;
 import com.bytedance.scene.animation.NavigationAnimationExecutor;
-import com.bytedance.scene.animation.animatorexecutor.NoAnimationExecutor;
 import com.bytedance.scene.interfaces.PushOptions;
 import com.bytedance.scene.interfaces.PushResultCallback;
 import com.bytedance.scene.navigation.NavigationScene;
@@ -27,8 +26,11 @@ import com.bytedance.scene.utlity.AnimatorUtility;
 import com.bytedance.scene.utlity.CancellationSignal;
 import com.bytedance.scene.utlity.NonNullPair;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by JiangQi on 9/3/18.
@@ -48,16 +50,24 @@ public class SceneContainerActivity extends AppCompatActivity implements SceneNa
         return intent;
     }
 
+    private static final Set<PushResultCallback> PUSH_RESULT_CALLBACK_SET = new HashSet<>();
+
     public static Intent newIntentForResult(Context context, int themeId, Class<? extends Scene> clazz, Bundle bundle,
                                             final PushResultCallback pushResultCallback) {
         Intent intent = new Intent(context, SceneContainerActivity.class);
         intent.putExtra(EXTRA_CLASS_NAME, clazz.getName());
         intent.putExtra(EXTRA_THEME, themeId);
         intent.putExtra(EXTRA_ARGUMENTS, bundle);
+        PUSH_RESULT_CALLBACK_SET.add(pushResultCallback);
+        final WeakReference<PushResultCallback> reference = new WeakReference<>(pushResultCallback);
         SingeProcessMessengerHandler.put(intent, new SingeProcessMessengerHandler.Callback() {
             @Override
             public void onResult(Object result) {
-                pushResultCallback.onResult(result);
+                PushResultCallback callback = reference.get();
+                if (callback != null) {
+                    callback.onResult(result);
+                    PUSH_RESULT_CALLBACK_SET.remove(callback);
+                }
             }
         });
         return intent;
