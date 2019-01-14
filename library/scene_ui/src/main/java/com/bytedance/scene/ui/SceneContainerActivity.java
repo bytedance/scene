@@ -16,11 +16,15 @@ import com.bytedance.scene.SceneDelegate;
 import com.bytedance.scene.NavigationSceneUtility;
 import com.bytedance.scene.Scene;
 import com.bytedance.scene.SingeProcessMessengerHandler;
+import com.bytedance.scene.animation.AnimationInfo;
+import com.bytedance.scene.animation.NavigationAnimationExecutor;
 import com.bytedance.scene.animation.animatorexecutor.NoAnimationExecutor;
 import com.bytedance.scene.interfaces.PushOptions;
 import com.bytedance.scene.interfaces.PushResultCallback;
 import com.bytedance.scene.navigation.NavigationScene;
 import com.bytedance.scene.navigation.NavigationSceneOptions;
+import com.bytedance.scene.utlity.AnimatorUtility;
+import com.bytedance.scene.utlity.CancellationSignal;
 import com.bytedance.scene.utlity.NonNullPair;
 
 import java.util.ArrayList;
@@ -28,9 +32,6 @@ import java.util.List;
 
 /**
  * Created by JiangQi on 9/3/18.
- * <p>
- * todo Activity怎么从Scene拿结果
- * <p>
  * todo 同时启动多个怎么处理
  * 不能用singleTop因为还需要判断主题是否一致，而且sInstance可以做到singleTop的效果
  */
@@ -97,7 +98,7 @@ public class SceneContainerActivity extends AppCompatActivity implements SceneNa
     public static class DelegateScene extends Scene {
         @NonNull
         @Override
-        public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
             return new View(requireActivity());
         }
 
@@ -107,7 +108,7 @@ public class SceneContainerActivity extends AppCompatActivity implements SceneNa
             Intent intent = requireActivity().getIntent();
             NonNullPair<? extends Class<? extends Scene>, Bundle> pair = getSceneDataFromIntent(intent);
             getNavigationScene().push(pair.first,
-                    pair.second, new PushOptions.Builder().setAnimation(new NoAnimationExecutor())
+                    pair.second, new PushOptions.Builder().setAnimation(new KeepAnimationExecutor())
                             .setPushResultCallback(new PushResultCallback() {
                                 @Override
                                 public void onResult(@Nullable Object result) {
@@ -116,6 +117,36 @@ public class SceneContainerActivity extends AppCompatActivity implements SceneNa
                                     requireActivity().finish();
                                 }
                             }).build());
+        }
+    }
+
+    private static class KeepAnimationExecutor extends NavigationAnimationExecutor {
+        @Override
+        public boolean isSupport(@NonNull Class<? extends Scene> from, @NonNull Class<? extends Scene> to) {
+            return true;
+        }
+
+        @Override
+        public void executePushChangeCancelable(@NonNull AnimationInfo fromInfo, @NonNull AnimationInfo toInfo, @NonNull Runnable endAction, @NonNull CancellationSignal cancellationSignal) {
+            endAction.run();
+        }
+
+        @Override
+        public void executePopChangeCancelable(@NonNull AnimationInfo fromInfo, @NonNull AnimationInfo toInfo, @NonNull Runnable endAction, @NonNull CancellationSignal cancellationSignal) {
+            final View fromView = fromInfo.mSceneView;
+            final View toView = toInfo.mSceneView;
+
+            AnimatorUtility.resetViewStatus(fromView);
+            AnimatorUtility.resetViewStatus(toView);
+
+            fromView.setVisibility(View.VISIBLE);
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+                mAnimationViewGroup.getOverlay().add(fromView);
+            } else {
+                mAnimationViewGroup.addView(fromView);
+            }
+            endAction.run();
         }
     }
 
