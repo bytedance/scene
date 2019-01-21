@@ -17,6 +17,7 @@ class ActivityStatusRecord implements Parcelable {
     private int mSystemUiVisibility;
     private int mSoftInputMode;
     private int mWindowFlags;
+    private int mRequestedOrientation;
 
     private ActivityStatusRecord() {
 
@@ -28,6 +29,7 @@ class ActivityStatusRecord implements Parcelable {
         mSystemUiVisibility = in.readInt();
         mSoftInputMode = in.readInt();
         mWindowFlags = in.readInt();
+        mRequestedOrientation = in.readInt();
     }
 
     @Override
@@ -42,6 +44,7 @@ class ActivityStatusRecord implements Parcelable {
         dest.writeInt(mSystemUiVisibility);
         dest.writeInt(mSoftInputMode);
         dest.writeInt(mWindowFlags);
+        dest.writeInt(mRequestedOrientation);
     }
 
     @SuppressWarnings("unused")
@@ -68,6 +71,7 @@ class ActivityStatusRecord implements Parcelable {
         record.mSystemUiVisibility = decorView.getSystemUiVisibility();
         record.mSoftInputMode = window.getAttributes().softInputMode;
         record.mWindowFlags = window.getAttributes().flags;
+        record.mRequestedOrientation = activity.getRequestedOrientation();
         return record;
     }
 
@@ -88,5 +92,7 @@ class ActivityStatusRecord implements Parcelable {
 
         int addFlags = currentFlags & ~commonFlags;
         window.clearFlags(addFlags);
+
+        activity.setRequestedOrientation(mRequestedOrientation);
     }
 }
