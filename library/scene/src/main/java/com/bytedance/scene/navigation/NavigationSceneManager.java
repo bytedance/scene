@@ -4,12 +4,14 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.Configuration;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -299,11 +301,11 @@ class NavigationSceneManager {
         }
     }
 
-    private static void moveState(NavigationScene navigationScene,
-                                  Scene scene, State to,
-                                  Bundle bundle,
+    private static void moveState(@NonNull NavigationScene navigationScene,
+                                  @NonNull Scene scene, @NonNull State to,
+                                  @Nullable Bundle bundle,
                                   boolean causedByActivityLifeCycle,
-                                  Runnable endAction) {
+                                  @Nullable Runnable endAction) {
         State currentState = scene.getState();
         if (currentState == to) {
             if (endAction != null) {
@@ -321,14 +323,26 @@ class NavigationSceneManager {
                     ViewGroup containerView = navigationScene.getPageContainer();
                     scene.dispatchCreateView(bundle, containerView);
                     if (!causedByActivityLifeCycle) {
-                        if (scene.getView().getBackground() == null) {
-                            Record record = navigationScene.findRecordByScene(scene);
-                            if (!record.mIsTranslucent && navigationScene.mNavigationSceneOptions.fixSceneBackground()) {
-                                int resId = navigationScene.mNavigationSceneOptions.getSceneBackgroundResId();
-                                if (resId > 0) {
-                                    scene.getView().setBackgroundDrawable(scene.requireSceneContext().getResources().getDrawable(resId));
-                                } else {
-                                    scene.getView().setBackgroundDrawable(Utility.getWindowBackground(scene.requireSceneContext()));
+                        Drawable sceneBackground = scene.getView().getBackground();
+                        Record record = navigationScene.findRecordByScene(scene);
+                        if (!record.mIsTranslucent) {
+                            if (sceneBackground == null) {
+                                if (navigationScene.mNavigationSceneOptions.fixSceneBackground()) {
+                                    int resId = navigationScene.mNavigationSceneOptions.getSceneBackgroundResId();
+                                    Drawable fixDrawable = null;
+                                    if (resId > 0) {
+                                        fixDrawable = scene.requireSceneContext().getResources().getDrawable(resId);
+                                    } else {
+                                        fixDrawable = Utility.getWindowBackground(scene.requireSceneContext());
+                                    }
+                                    if (fixDrawable != null) {
+                                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT && fixDrawable.getAlpha() != 255) {
+                                            fixDrawable.setAlpha(255);
+                                        } else {
+                                            fixDrawable.setAlpha(255);
+                                        }
+                                    }
+                                    scene.getView().setBackgroundDrawable(fixDrawable);
                                 }
                             }
                         }
@@ -349,6 +363,18 @@ class NavigationSceneManager {
                 case STARTED:
                     scene.dispatchResume();
                     moveState(navigationScene, scene, to, bundle, causedByActivityLifeCycle, endAction);
+
+                    if (!causedByActivityLifeCycle) {
+                        Record record = navigationScene.findRecordByScene(scene);
+                        Drawable sceneBackground = scene.getView().getBackground();
+                        if (sceneBackground != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT && sceneBackground.getAlpha() != 255) {
+                            String drawableClazzName = sceneBackground.getClass().getSimpleName();
+                            float drawableAlpha = sceneBackground.getAlpha();
+                            if (!record.mIsTranslucent) {
+                                throw new IllegalArgumentException("Scene view background drawable " + drawableClazzName + " is transparent alpha " + drawableAlpha + ", but PushOption's isIsTranslucent is false");
+                            }
+                        }
+                    }
                     break;
             }
         } else {
