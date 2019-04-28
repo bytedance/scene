@@ -418,7 +418,7 @@ public abstract class Scene implements LifecycleOwner, ViewModelStoreOwner {
     }
 
     public Resources getResources() {
-        return this.mActivity.getResources();
+        return requireActivity().getResources();
     }
 
     public final CharSequence getText(@StringRes int resId) {
