@@ -8,21 +8,20 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.bytedance.scene.Scene;
 import com.bytedance.scene.State;
+import com.bytedance.scene.animation.AnimationOrAnimator;
+import com.bytedance.scene.animation.AnimationOrAnimatorFactory;
 import com.bytedance.scene.parcel.ParcelConstants;
+import com.bytedance.scene.utlity.CancellationSignal;
 import com.bytedance.scene.utlity.SceneInstanceUtility;
 import com.bytedance.scene.utlity.Utility;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created by JiangQi on 7/30/18.
@@ -174,6 +173,7 @@ class GroupSceneManager {
     private ViewGroup mView;
     private GroupRecordList mSceneList = new GroupRecordList();
     private Handler mHandler = new Handler(Looper.getMainLooper());
+    private static final HashMap<Scene, CancellationSignal> SCENE_RUNNING_ANIMATION_CANCELLATION_SIGNAL_MAP = new HashMap<>();
 
     GroupSceneManager() {
 
@@ -274,8 +274,8 @@ class GroupSceneManager {
         return null;
     }
 
-    public void add(int viewId, Scene scene, String tag) {
-        final Operation operation = new AddOperation(viewId, scene, tag);
+    public void add(int viewId, Scene scene, String tag, AnimationOrAnimatorFactory animationOrAnimatorFactory) {
+        final Operation operation = new AddOperation(viewId, scene, tag, animationOrAnimatorFactory);
         if (mIsInTransaction) {
             mOperationTransactionList.add(operation);
         } else {
@@ -283,8 +283,8 @@ class GroupSceneManager {
         }
     }
 
-    public void remove(Scene scene) {
-        final Operation operation = new RemoveOperation(scene);
+    public void remove(Scene scene, AnimationOrAnimatorFactory animationOrAnimatorFactory) {
+        final Operation operation = new RemoveOperation(scene, animationOrAnimatorFactory);
         if (mIsInTransaction) {
             mOperationTransactionList.add(operation);
         } else {
@@ -296,11 +296,11 @@ class GroupSceneManager {
         mSceneList.clear();
     }
 
-    public void hide(Scene scene) {
+    public void hide(Scene scene, AnimationOrAnimatorFactory animationOrAnimatorFactory) {
         if (!mIsInTransaction && mSceneList.findByScene(scene) == null) {
             throw new IllegalStateException("Target scene is not find");
         }
-        final Operation operation = new HideOperation(scene);
+        final Operation operation = new HideOperation(scene, animationOrAnimatorFactory);
         if (mIsInTransaction) {
             mOperationTransactionList.add(operation);
         } else {
@@ -308,11 +308,11 @@ class GroupSceneManager {
         }
     }
 
-    public void show(Scene scene) {
+    public void show(Scene scene, AnimationOrAnimatorFactory animationOrAnimatorFactory) {
         if (!mIsInTransaction && mSceneList.findByScene(scene) == null) {
             throw new IllegalStateException("Target scene is not find");
         }
-        final Operation operation = new ShowOperation(scene);
+        final Operation operation = new ShowOperation(scene, animationOrAnimatorFactory);
         if (mIsInTransaction) {
             mOperationTransactionList.add(operation);
         } else {
@@ -436,8 +436,17 @@ class GroupSceneManager {
 
         @Override
         void execute(@NonNull Runnable operationEndAction) {
+            CancellationSignal cancellationSignal = SCENE_RUNNING_ANIMATION_CANCELLATION_SIGNAL_MAP.get(scene);
+            if (cancellationSignal != null) {
+                cancellationSignal.cancel();
+            }
             if (scene.getState() == State.NONE) {
                 mSceneList.add(GroupRecord.newInstance(viewId, scene, tag));
+            }
+
+            boolean executeStateChange = scene.getState() != dstState;
+            if (executeStateChange) {
+                executeOnStart();
             }
 
             moveState(mGroupScene, scene, dstState, null, true, null);
@@ -445,15 +454,25 @@ class GroupSceneManager {
             if (forceShow) {
                 mSceneList.findByScene(scene).isHidden = false;
             }
-
             if (forceHide) {
                 mSceneList.findByScene(scene).isHidden = true;
             }
-
             if (forceRemove) {
                 mSceneList.remove(mSceneList.findByScene(scene));
             }
+
+            if (executeStateChange) {
+                executeOnFinish();
+            }
             operationEndAction.run();
+        }
+
+        protected void executeOnStart() {
+
+        }
+
+        protected void executeOnFinish() {
+
         }
     }
 
@@ -468,29 +487,191 @@ class GroupSceneManager {
     private class AddOperation extends MoveStateOperation {
         final int viewId;
         final String tag;
+        final AnimationOrAnimatorFactory animationOrAnimatorFactory;
 
-        private AddOperation(int viewId, Scene scene, String tag) {
+        private AddOperation(int viewId, Scene scene, String tag, AnimationOrAnimatorFactory animationOrAnimatorFactory) {
             super(scene, viewId, tag, getMinState(State.RESUMED, mGroupScene.getState()), true, false, false);
             this.viewId = viewId;
             this.tag = tag;
+            this.animationOrAnimatorFactory = animationOrAnimatorFactory;
+        }
+
+        @Override
+        protected void executeOnFinish() {
+            super.executeOnFinish();
+            final AnimationOrAnimator animationOrAnimator = animationOrAnimatorFactory.getAnimationOrAnimator();
+            if (animationOrAnimator == null) {
+                return;
+            }
+            View view = this.scene.getView();
+            if (view == null) {
+                return;
+            }
+            animationOrAnimator.addEndAction(new Runnable() {
+                @Override
+                public void run() {
+                    SCENE_RUNNING_ANIMATION_CANCELLATION_SIGNAL_MAP.remove(scene);
+                }
+            });
+            SCENE_RUNNING_ANIMATION_CANCELLATION_SIGNAL_MAP.put(this.scene, new CancellationSignal() {
+                @Override
+                public void cancel() {
+                    super.cancel();
+                    animationOrAnimator.end();
+                }
+            });
+            animationOrAnimator.start(view);
         }
     }
 
     private class RemoveOperation extends MoveStateOperation {
-        private RemoveOperation(Scene scene) {
+        private final AnimationOrAnimatorFactory animationOrAnimatorFactory;
+        private final boolean canAnimation;
+        private final View sceneView;
+        private final ViewGroup parentViewGroup;
+        private boolean isAnimating = false;
+        private int dstVisibility = View.VISIBLE;
+
+        private RemoveOperation(Scene scene, AnimationOrAnimatorFactory animationOrAnimatorFactory) {
             super(scene, View.NO_ID, null, State.NONE, false, false, true);
+            this.animationOrAnimatorFactory = animationOrAnimatorFactory;
+            this.canAnimation = scene.getView() != null && scene.getView().getParent() != null;
+            if (this.canAnimation) {
+                this.sceneView = scene.getView();
+                this.parentViewGroup = (ViewGroup) this.sceneView.getParent();
+            } else {
+                this.sceneView = null;
+                this.parentViewGroup = null;
+            }
+        }
+
+        @Override
+        protected void executeOnStart() {
+            super.executeOnStart();
+            if (!canAnimation) {
+                return;
+            }
+
+            final AnimationOrAnimator animationOrAnimator = this.animationOrAnimatorFactory.getAnimationOrAnimator();
+            if (animationOrAnimator == null) {
+                return;
+            }
+
+            //View还没measure+layout又执行了remove，就会导致高宽是0，无法做动画
+            if (this.parentViewGroup != null && (this.sceneView.getWidth() == 0 || this.sceneView.getHeight() == 0)) {
+                Log.w("GroupScene", "Scene view width or height is zero, skip animation");
+                return;
+            }
+
+            animationOrAnimator.addEndAction(new Runnable() {
+                @Override
+                public void run() {
+                    SCENE_RUNNING_ANIMATION_CANCELLATION_SIGNAL_MAP.remove(scene);
+                    parentViewGroup.endViewTransition(sceneView);
+                    sceneView.setVisibility(dstVisibility);
+                }
+            });
+
+            SCENE_RUNNING_ANIMATION_CANCELLATION_SIGNAL_MAP.put(scene, new CancellationSignal() {
+                @Override
+                public void cancel() {
+                    super.cancel();
+                    animationOrAnimator.end();
+                }
+            });
+            this.parentViewGroup.startViewTransition(this.sceneView);
+            animationOrAnimator.start(this.sceneView);
+            this.isAnimating = true;
+        }
+
+        @Override
+        protected void executeOnFinish() {
+            super.executeOnFinish();
+            if (!this.isAnimating) {
+                return;
+            }
+            this.dstVisibility = this.sceneView.getVisibility();
+            this.sceneView.setVisibility(View.VISIBLE);
         }
     }
 
     private class HideOperation extends MoveStateOperation {
-        private HideOperation(Scene scene) {
+        private final AnimationOrAnimatorFactory animationOrAnimatorFactory;
+
+        private HideOperation(Scene scene, AnimationOrAnimatorFactory animationOrAnimatorFactory) {
             super(scene, View.NO_ID, null, getMinState(State.STOPPED, mGroupScene.getState()), false, true, false);
+            this.animationOrAnimatorFactory = animationOrAnimatorFactory;
+        }
+
+        @Override
+        protected void executeOnFinish() {
+            super.executeOnFinish();
+            final View sceneView = this.scene.getView();
+            if (sceneView == null) {
+                return;
+            }
+
+            final AnimationOrAnimator animationOrAnimator = this.animationOrAnimatorFactory.getAnimationOrAnimator();
+            if (animationOrAnimator == null) {
+                return;
+            }
+
+            final int dstVisibility = sceneView.getVisibility();
+            sceneView.setVisibility(View.VISIBLE);
+            animationOrAnimator.addEndAction(new Runnable() {
+                @Override
+                public void run() {
+                    SCENE_RUNNING_ANIMATION_CANCELLATION_SIGNAL_MAP.remove(scene);
+                    sceneView.setVisibility(dstVisibility);
+                }
+            });
+
+            SCENE_RUNNING_ANIMATION_CANCELLATION_SIGNAL_MAP.put(scene, new CancellationSignal() {
+                @Override
+                public void cancel() {
+                    super.cancel();
+                    animationOrAnimator.end();
+                }
+            });
+            animationOrAnimator.start(this.scene.getView());
         }
     }
 
     private class ShowOperation extends MoveStateOperation {
-        private ShowOperation(Scene scene) {
+        private final AnimationOrAnimatorFactory animationOrAnimatorFactory;
+
+        private ShowOperation(Scene scene, AnimationOrAnimatorFactory animationOrAnimatorFactory) {
             super(scene, View.NO_ID, null, getMinState(State.RESUMED, mGroupScene.getState()), true, false, false);
+            this.animationOrAnimatorFactory = animationOrAnimatorFactory;
+        }
+
+        @Override
+        protected void executeOnFinish() {
+            super.executeOnFinish();
+            final View sceneView = this.scene.getView();
+            if (sceneView == null) {
+                return;
+            }
+
+            final AnimationOrAnimator animationOrAnimator = this.animationOrAnimatorFactory.getAnimationOrAnimator();
+            if (animationOrAnimator == null) {
+                return;
+            }
+            animationOrAnimator.addEndAction(new Runnable() {
+                @Override
+                public void run() {
+                    SCENE_RUNNING_ANIMATION_CANCELLATION_SIGNAL_MAP.remove(scene);
+                }
+            });
+
+            SCENE_RUNNING_ANIMATION_CANCELLATION_SIGNAL_MAP.put(scene, new CancellationSignal() {
+                @Override
+                public void cancel() {
+                    super.cancel();
+                    animationOrAnimator.end();
+                }
+            });
+            animationOrAnimator.start(sceneView);
         }
     }
 

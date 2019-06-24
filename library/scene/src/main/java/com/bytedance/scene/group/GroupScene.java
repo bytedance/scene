@@ -1,19 +1,20 @@
 package com.bytedance.scene.group;
 
+import android.animation.Animator;
+import android.annotation.SuppressLint;
 import android.content.res.Resources;
 import android.os.Bundle;
-import android.support.annotation.CallSuper;
-import android.support.annotation.IdRes;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.annotation.RestrictTo;
+import android.support.annotation.*;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import android.view.animation.Animation;
 import com.bytedance.scene.Scene;
 import com.bytedance.scene.State;
+import com.bytedance.scene.animation.AnimationOrAnimator;
+import com.bytedance.scene.animation.AnimationOrAnimatorFactory;
 import com.bytedance.scene.interfaces.ChildSceneLifecycleCallbacks;
 import com.bytedance.scene.navigation.NavigationScene;
 import com.bytedance.scene.utlity.NonNullPair;
@@ -52,6 +53,14 @@ public abstract class GroupScene extends Scene {
     }
 
     public final void add(@IdRes final int viewId, @NonNull final Scene scene, @NonNull final String tag) {
+        add(viewId, scene, tag, EMPTY_ANIMATION_FACTORY);
+    }
+
+    public final void add(@IdRes final int viewId, @NonNull final Scene scene, @NonNull final String tag, @AnimRes @AnimatorRes final int animationResId) {
+        add(viewId, scene, tag, buildAnimatorFactory(scene, animationResId));
+    }
+
+    private void add(@IdRes final int viewId, @NonNull final Scene scene, @NonNull final String tag, @NonNull AnimationOrAnimatorFactory animationOrAnimatorFactory) {
         ThreadUtility.checkUIThread();
 
         if (TextUtils.isEmpty(tag)) {
@@ -89,7 +98,7 @@ public abstract class GroupScene extends Scene {
             throw new IllegalArgumentException("Scene must have only empty argument constructor when support restore");
         }
 
-        mGroupSceneManager.add(viewId, scene, tag);
+        mGroupSceneManager.add(viewId, scene, tag, animationOrAnimatorFactory);
     }
 
     @Nullable
@@ -108,19 +117,62 @@ public abstract class GroupScene extends Scene {
         }
     }
 
+    private static final AnimationOrAnimatorFactory EMPTY_ANIMATION_FACTORY = new AnimationOrAnimatorFactory() {
+        @Override
+        public AnimationOrAnimator getAnimationOrAnimator() {
+            return null;
+        }
+    };
+
     public final void remove(@NonNull Scene scene) {
+        this.remove(scene, EMPTY_ANIMATION_FACTORY);
+    }
+
+    public final void remove(@NonNull final Scene scene, @AnimRes @AnimatorRes final int animationResId) {
+        this.remove(scene, buildAnimatorFactory(scene, animationResId));
+    }
+
+    private static AnimationOrAnimatorFactory buildAnimatorFactory(final Scene scene, @AnimRes @AnimatorRes final int animationResId) {
+        return new AnimationOrAnimatorFactory() {
+            @Override
+            public AnimationOrAnimator getAnimationOrAnimator() {
+                if (animationResId == 0) {
+                    return null;
+                }
+                return AnimationOrAnimator.loadAnimation(scene.requireActivity(), animationResId);
+            }
+        };
+    }
+
+    private void remove(@NonNull final Scene scene, final AnimationOrAnimatorFactory factory) {
         ThreadUtility.checkUIThread();
-        this.mGroupSceneManager.remove(scene);
+        this.mGroupSceneManager.remove(scene, factory);
     }
 
     public final void hide(@NonNull Scene scene) {
+        this.hide(scene, EMPTY_ANIMATION_FACTORY);
+    }
+
+    public final void hide(@NonNull final Scene scene, @AnimRes @AnimatorRes final int animationResId) {
+        this.hide(scene, buildAnimatorFactory(scene, animationResId));
+    }
+
+    private void hide(@NonNull Scene scene, @NonNull AnimationOrAnimatorFactory factory) {
         ThreadUtility.checkUIThread();
-        this.mGroupSceneManager.hide(scene);
+        this.mGroupSceneManager.hide(scene, factory);
     }
 
     public final void show(@NonNull Scene scene) {
+        this.show(scene, EMPTY_ANIMATION_FACTORY);
+    }
+
+    public final void show(@NonNull final Scene scene, @AnimRes @AnimatorRes final int animationResId) {
+        this.show(scene, buildAnimatorFactory(scene, animationResId));
+    }
+
+    private void show(@NonNull Scene scene, @NonNull AnimationOrAnimatorFactory factory) {
         ThreadUtility.checkUIThread();
-        this.mGroupSceneManager.show(scene);
+        this.mGroupSceneManager.show(scene, factory);
     }
 
     public final boolean isAdded(@NonNull Scene scene) {

@@ -9,7 +9,21 @@
         android:id="@+id/btn_0"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="隐藏第一个Child Scene" />
+        android:text="显示/隐藏第一个Child Scene" />
+
+    <Button
+        android:id="@+id/btn_1"
+        android:textAllCaps="false"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="动画show/hide第一个Child Scene" />
+
+    <Button
+        android:id="@+id/btn_2"
+        android:textAllCaps="false"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="动画add/remove第一个Child Scene" />
 
     <FrameLayout
         android:id="@+id/block_0"

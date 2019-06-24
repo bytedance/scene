@@ -7,6 +7,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AlphaAnimation;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
@@ -86,6 +87,28 @@ public class PageBlockGroupScene extends GroupScene {
                     hide(finalScene);
                 } else {
                     show(finalScene);
+                }
+            }
+        });
+
+        findViewById(R.id.btn_1).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (isShow(finalScene)) {
+                    hide(finalScene, android.R.anim.slide_out_right);
+                } else {
+                    show(finalScene, android.R.anim.slide_in_left);
+                }
+            }
+        });
+
+        findViewById(R.id.btn_2).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (isAdded(finalScene)) {
+                    remove(finalScene, R.anim.slide_out_to_left);
+                } else {
+                    add(R.id.block_0, finalScene, "0", R.anim.slide_in_from_right);
                 }
             }
         });
