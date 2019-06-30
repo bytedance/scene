@@ -154,6 +154,11 @@ public abstract class Scene implements LifecycleOwner, ViewModelStoreOwner {
         if (view == null) {
             throw new IllegalArgumentException("onCreateView cant return null");
         }
+
+        if (view.getParent() != null) {
+            throw new IllegalArgumentException("onCreateView return view already has a parent. You must call removeView() on the view's parent first.");
+        }
+
         if (view.getId() == View.NO_ID) {
             view.setId(ViewIdGenerator.generateViewId());
         }
