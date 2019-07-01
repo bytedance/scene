@@ -151,6 +151,18 @@ public abstract class GroupScene extends Scene {
             } catch (Resources.NotFoundException exception) {
                 throw new IllegalArgumentException(" " + viewId + " view not found");
             }
+        } else {
+            ViewGroup tmp = viewGroup;
+            while (tmp != null) {
+                if (tmp == getView()) {
+                    break;
+                }
+                GroupRecord record = mGroupSceneManager.findByView(tmp);
+                if (record != null) {
+                    throw new IllegalArgumentException(String.format("cant add Scene to child Scene %s view hierarchy ", record.scene.toString()));
+                }
+                tmp = (ViewGroup) tmp.getParent();
+            }
         }
         return viewGroup;
     }

@@ -130,6 +130,17 @@ class GroupRecordList {
         return groupRecord;
     }
 
+    public GroupRecord findByView(View view) {
+        GroupRecord groupRecord = null;
+        for (GroupRecord record : mSceneList) {
+            if (view.equals(record.scene.getView())) {
+                groupRecord = record;
+                break;
+            }
+        }
+        return groupRecord;
+    }
+
     public List<Scene> getChildSceneList() {
         List<Scene> sceneList = new ArrayList<>();
         for (GroupRecord record : mSceneList) {
@@ -333,6 +344,10 @@ class GroupSceneManager {
 
     public GroupRecord findByTag(String tag) {
         return mSceneList.findByTag(tag);
+    }
+
+    public GroupRecord findByView(View view) {
+        return mSceneList.findByView(view);
     }
 
     public int findSceneViewId(Scene scene) {
