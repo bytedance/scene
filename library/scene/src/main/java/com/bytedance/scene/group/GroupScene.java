@@ -65,6 +65,24 @@ public abstract class GroupScene extends Scene {
             throw new IllegalArgumentException("already have a Scene with tag " + tag);
         }
 
+        if (isAdded(scene)) {
+            int currentSceneContainerViewId = mGroupSceneManager.findSceneViewId(scene);
+            if (currentSceneContainerViewId != viewId) {
+                String currentViewIdName = null;
+                try {
+                    currentViewIdName = getResources().getResourceName(currentSceneContainerViewId);
+                } catch (Resources.NotFoundException exception) {
+                    currentViewIdName = String.valueOf(currentSceneContainerViewId);
+                }
+                throw new IllegalArgumentException("Scene is already added to another container, viewId " + currentViewIdName);
+            }
+
+            String currentSceneTag = mGroupSceneManager.findSceneTag(scene);
+            if (!currentSceneTag.equals(tag)) {
+                throw new IllegalArgumentException("Scene is already added, tag " + currentSceneTag);
+            }
+        }
+
         if (getNavigationScene() != null
                 && ((NavigationScene) getNavigationScene()).isSupportRestore()
                 && !SceneInstanceUtility.isSupportRestore(scene)) {

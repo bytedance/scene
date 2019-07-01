@@ -335,8 +335,12 @@ class GroupSceneManager {
         return mSceneList.findByTag(tag);
     }
 
-    public int findBySceneViewId(Scene scene) {
+    public int findSceneViewId(Scene scene) {
         return mSceneList.findByScene(scene).viewId;
+    }
+
+    public String findSceneTag(Scene scene) {
+        return mSceneList.findByScene(scene).tag;
     }
 
     public List<Scene> getChildSceneList() {
@@ -501,7 +505,7 @@ class GroupSceneManager {
                     scene.dispatchAttachActivity(groupScene.getActivity());
                     scene.dispatchAttachScene(groupScene);
                     scene.dispatchCreate(bundle);
-                    ViewGroup containerView = groupScene.findContainerById(groupScene.getGroupSceneManager().findBySceneViewId(scene));
+                    ViewGroup containerView = groupScene.findContainerById(groupScene.getGroupSceneManager().findSceneViewId(scene));
                     scene.dispatchCreateView(bundle, containerView);
                     //通常来说因为生命周期触发的状态不会修改View状态，但是如果这个Scene很早之前就添加了，那么一开始就没在View树中，需要添加进来
                     if (modifyViewHierarchy || scene.getView().getParent() == null) {
