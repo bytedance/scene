@@ -429,6 +429,9 @@ public final class NavigationScene extends Scene implements NavigationListener {
             parentSceneNavigation.addOnBackPressedListener(this, new OnBackPressedListener() {
                 @Override
                 public boolean onBackPressed() {
+                    if (getState().value < State.STARTED.value) {
+                        return false;
+                    }
                     return NavigationScene.this.onBackPressed();
                 }
             });
