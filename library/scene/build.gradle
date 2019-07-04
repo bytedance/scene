@@ -21,4 +21,12 @@ task javadoc(type: Javadoc) {
     classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
     destinationDir = file("../javadoc/scene/")
     failOnError false
+    title = null
+
+    options {
+        doclet = "com.google.doclava.Doclava"
+        docletpath(new File(project.rootDir, "tools/doclava-1.0.6.jar"))
+        locale "en_US"
+        encoding "UTF-8"
+    }
 }
