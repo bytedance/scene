@@ -16,4 +16,9 @@ dependencies {
     api 'android.arch.lifecycle:runtime:1.1.0'
 }
 
-
+task javadoc(type: Javadoc) {
+    source = android.sourceSets.main.java.srcDirs
+    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+    destinationDir = file("../javadoc/scene/")
+    failOnError false
+}
