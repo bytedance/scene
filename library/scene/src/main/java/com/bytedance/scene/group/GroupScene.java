@@ -141,7 +141,7 @@ public abstract class GroupScene extends Scene {
     }
 
     @NonNull
-    public final ViewGroup findContainerById(int viewId) {
+    final ViewGroup findContainerById(int viewId) {
         ViewGroup viewGroup = (ViewGroup) getView().findViewById(viewId);
         if (viewGroup == null) {
             try {
@@ -158,6 +158,10 @@ public abstract class GroupScene extends Scene {
         mGroupSceneManager.setGroupScene(this);
     }
 
+    /**
+     * @hide
+     */
+    @RestrictTo(LIBRARY_GROUP)
     @Override
     public final void dispatchCreateView(@Nullable Bundle savedInstanceState, @NonNull ViewGroup container) {
         super.dispatchCreateView(savedInstanceState, container);
@@ -173,6 +177,11 @@ public abstract class GroupScene extends Scene {
                                            @Nullable Bundle savedInstanceState);
 
     //todo 把restore提早到dispatchCreate
+
+    /**
+     * @hide
+     */
+    @RestrictTo(LIBRARY_GROUP)
     @Override
     public void dispatchActivityCreated(@Nullable Bundle savedInstanceState) {
         super.dispatchActivityCreated(savedInstanceState);
@@ -199,6 +208,9 @@ public abstract class GroupScene extends Scene {
         this.mGroupSceneManager.saveToBundle(outState);
     }
 
+    /**
+     * @hide
+     */
     @RestrictTo(LIBRARY)
     @Override
     public void dispatchStart() {
@@ -206,6 +218,9 @@ public abstract class GroupScene extends Scene {
         dispatchVisibleChildrenState(State.STARTED);
     }
 
+    /**
+     * @hide
+     */
     @RestrictTo(LIBRARY)
     @Override
     public void dispatchResume() {
@@ -213,6 +228,9 @@ public abstract class GroupScene extends Scene {
         dispatchVisibleChildrenState(State.RESUMED);
     }
 
+    /**
+     * @hide
+     */
     @RestrictTo(LIBRARY)
     @Override
     public void dispatchPause() {
@@ -220,6 +238,9 @@ public abstract class GroupScene extends Scene {
         super.dispatchPause();
     }
 
+    /**
+     * @hide
+     */
     @RestrictTo(LIBRARY)
     @Override
     public void dispatchStop() {
@@ -227,6 +248,9 @@ public abstract class GroupScene extends Scene {
         super.dispatchStop();
     }
 
+    /**
+     * @hide
+     */
     @RestrictTo(LIBRARY)
     @Override
     public void dispatchDestroyView() {
@@ -269,6 +293,9 @@ public abstract class GroupScene extends Scene {
         }
     }
 
+    /**
+     * @hide
+     */
     @RestrictTo(LIBRARY_GROUP)
     public void dispatchOnSceneCreated(@NonNull Scene scene, Bundle savedInstanceState, boolean directChild) {
         if (scene != this) {
@@ -282,6 +309,9 @@ public abstract class GroupScene extends Scene {
         super.dispatchOnSceneCreated(scene, savedInstanceState, directChild);
     }
 
+    /**
+     * @hide
+     */
     @RestrictTo(LIBRARY_GROUP)
     public void dispatchOnSceneStarted(@NonNull Scene scene, boolean directChild) {
         if (scene != this) {
@@ -295,6 +325,9 @@ public abstract class GroupScene extends Scene {
         super.dispatchOnSceneStarted(scene, directChild);
     }
 
+    /**
+     * @hide
+     */
     @RestrictTo(LIBRARY_GROUP)
     public void dispatchOnSceneResumed(@NonNull Scene scene, boolean directChild) {
         if (scene != this) {
@@ -308,6 +341,9 @@ public abstract class GroupScene extends Scene {
         super.dispatchOnSceneResumed(scene, directChild);
     }
 
+    /**
+     * @hide
+     */
     @RestrictTo(LIBRARY_GROUP)
     public void dispatchOnSceneStopped(@NonNull Scene scene, boolean directChild) {
         if (scene != this) {
@@ -321,6 +357,9 @@ public abstract class GroupScene extends Scene {
         super.dispatchOnSceneStopped(scene, directChild);
     }
 
+    /**
+     * @hide
+     */
     @RestrictTo(LIBRARY_GROUP)
     public void dispatchOnScenePaused(@NonNull Scene scene, boolean directChild) {
         if (scene != this) {
@@ -334,6 +373,9 @@ public abstract class GroupScene extends Scene {
         super.dispatchOnScenePaused(scene, directChild);
     }
 
+    /**
+     * @hide
+     */
     @RestrictTo(LIBRARY_GROUP)
     public void dispatchOnSceneSaveInstanceState(@NonNull Scene scene, Bundle outState, boolean directChild) {
         if (scene != this) {
@@ -347,6 +389,9 @@ public abstract class GroupScene extends Scene {
         super.dispatchOnSceneSaveInstanceState(scene, outState, directChild);
     }
 
+    /**
+     * @hide
+     */
     @RestrictTo(LIBRARY_GROUP)
     public void dispatchOnSceneDestroyed(@NonNull Scene scene, boolean directChild) {
         if (scene != this) {

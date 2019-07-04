@@ -2,11 +2,19 @@ package com.bytedance.scene.utlity;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.support.annotation.RestrictTo;
 import android.view.View;
+
+import static android.support.annotation.RestrictTo.Scope.LIBRARY_GROUP;
 
 /**
  * Created by JiangQi on 8/7/18.
  */
+
+/**
+ * @hide
+ */
+@RestrictTo(LIBRARY_GROUP)
 public class EnableLayerAnimationListener extends AnimatorListenerAdapter {
     private View mView;
     private int mInitLayerType;

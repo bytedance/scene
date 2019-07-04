@@ -8,11 +8,18 @@ import android.arch.lifecycle.OnLifecycleEvent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.RestrictTo;
+
+import static android.support.annotation.RestrictTo.Scope.LIBRARY_GROUP;
 
 /**
  * Created by JiangQi on 8/23/18.
  */
 public abstract class UserVisibleHintGroupScene extends GroupScene {
+    /**
+     * @hide
+     */
+    @RestrictTo(LIBRARY_GROUP)
     public static final String KEY_SCENE_USER_VISIBLE_HINT = "bd-scene-nav:scene_user_visible_hint";
 
     private LifecycleRegistry mUserVisibleHintLifecycleRegistry = new LifecycleRegistry(new LifecycleOwner() {

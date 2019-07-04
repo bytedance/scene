@@ -5,12 +5,17 @@ import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.RestrictTo;
 import android.util.AttributeSet;
 import android.util.TypedValue;
+
+import static android.support.annotation.RestrictTo.Scope.LIBRARY_GROUP;
 
 /**
  * Created by JiangQi on 7/30/18.
  */
+/** @hide */
+@RestrictTo(LIBRARY_GROUP)
 public class SceneBackgroundLayout extends NoneTouchFrameLayout {
     public SceneBackgroundLayout(@NonNull Context context) {
         super(context);

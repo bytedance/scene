@@ -27,7 +27,7 @@ public class CancellationSignal {
     }
 
     /**
-     * Throws {@link OperationCanceledException} if the operation has been canceled.
+     * Throws {@link android.support.v4.os.OperationCanceledException} if the operation has been canceled.
      *
      * @throws OperationCanceledException if the operation has been canceled.
      */

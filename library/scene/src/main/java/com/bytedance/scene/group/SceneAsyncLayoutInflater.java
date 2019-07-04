@@ -3,10 +3,7 @@ package com.bytedance.scene.group;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Message;
-import android.support.annotation.LayoutRes;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.annotation.UiThread;
+import android.support.annotation.*;
 import android.support.v4.util.Pools;
 import android.support.v7.view.ContextThemeWrapper;
 import android.util.AttributeSet;
@@ -17,6 +14,10 @@ import android.view.ViewGroup;
 
 import java.util.concurrent.ArrayBlockingQueue;
 
+import static android.support.annotation.RestrictTo.Scope.LIBRARY_GROUP;
+
+/** @hide */
+@RestrictTo(LIBRARY_GROUP)
 public final class SceneAsyncLayoutInflater {
     private static final String TAG = "AsyncLayoutInflater";
 

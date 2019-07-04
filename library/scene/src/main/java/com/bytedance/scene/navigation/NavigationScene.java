@@ -207,6 +207,7 @@ public final class NavigationScene extends Scene implements NavigationListener {
         push(scene, new PushOptions.Builder().build());
     }
 
+    /** @hide */
     @RestrictTo(LIBRARY_GROUP)
     public boolean isSupportRestore() {
         NavigationScene navigationScene = (NavigationScene) getNavigationScene();
@@ -346,10 +347,14 @@ public final class NavigationScene extends Scene implements NavigationListener {
         ((NavigationFrameLayout) getView()).setTouchEnabled(!disable);
     }
 
+    /** @hide */
+    @RestrictTo(LIBRARY_GROUP)
     public ViewGroup getPageContainer() {
         return this.mPageContainer;
     }
 
+    /** @hide */
+    @RestrictTo(LIBRARY_GROUP)
     public ViewGroup getAnimationContainer() {
         return this.mAnimationContainer;
     }
@@ -444,6 +449,7 @@ public final class NavigationScene extends Scene implements NavigationListener {
         }
     }
 
+    /** @hide */
     @RestrictTo(LIBRARY)
     @Override
     public void dispatchStart() {
@@ -451,6 +457,7 @@ public final class NavigationScene extends Scene implements NavigationListener {
         dispatchCurrentChildState(State.STARTED);
     }
 
+    /** @hide */
     @RestrictTo(LIBRARY)
     @Override
     public void dispatchResume() {
@@ -458,6 +465,7 @@ public final class NavigationScene extends Scene implements NavigationListener {
         dispatchCurrentChildState(State.RESUMED);
     }
 
+    /** @hide */
     @RestrictTo(LIBRARY)
     @Override
     public void dispatchPause() {
@@ -477,6 +485,7 @@ public final class NavigationScene extends Scene implements NavigationListener {
         this.mNavigationSceneManager.cancelCurrentRunningAnimation();//终止动画，避免有可能之后走到onDestroyView后，有动画还在执行引发的崩溃或者内存泄漏
     }
 
+    /** @hide */
     @RestrictTo(LIBRARY)
     @Override
     public void dispatchStop() {
@@ -669,6 +678,7 @@ public final class NavigationScene extends Scene implements NavigationListener {
         }
     }
 
+    /** @hide */
     @RestrictTo(LIBRARY_GROUP)
     public void dispatchOnSceneCreated(@NonNull Scene scene, Bundle savedInstanceState, boolean directChild) {
         if (scene != this) {
@@ -682,6 +692,7 @@ public final class NavigationScene extends Scene implements NavigationListener {
         super.dispatchOnSceneCreated(scene, savedInstanceState, directChild);
     }
 
+    /** @hide */
     @RestrictTo(LIBRARY_GROUP)
     public void dispatchOnSceneStarted(@NonNull Scene scene, boolean directChild) {
         if (scene != this) {
@@ -695,6 +706,7 @@ public final class NavigationScene extends Scene implements NavigationListener {
         super.dispatchOnSceneStarted(scene, directChild);
     }
 
+    /** @hide */
     @RestrictTo(LIBRARY_GROUP)
     public void dispatchOnSceneResumed(@NonNull Scene scene, boolean directChild) {
         if (scene != this) {
@@ -708,6 +720,7 @@ public final class NavigationScene extends Scene implements NavigationListener {
         super.dispatchOnSceneResumed(scene, directChild);
     }
 
+    /** @hide */
     @RestrictTo(LIBRARY_GROUP)
     public void dispatchOnSceneStopped(@NonNull Scene scene, boolean directChild) {
         if (scene != this) {
@@ -720,6 +733,7 @@ public final class NavigationScene extends Scene implements NavigationListener {
         super.dispatchOnSceneStopped(scene, directChild);
     }
 
+    /** @hide */
     @RestrictTo(LIBRARY_GROUP)
     public void dispatchOnScenePaused(@NonNull Scene scene, boolean directChild) {
         if (scene != this) {
@@ -733,6 +747,7 @@ public final class NavigationScene extends Scene implements NavigationListener {
         super.dispatchOnScenePaused(scene, directChild);
     }
 
+    /** @hide */
     @RestrictTo(LIBRARY_GROUP)
     public void dispatchOnSceneSaveInstanceState(@NonNull Scene scene, Bundle outState, boolean directChild) {
         if (scene != this) {
@@ -746,6 +761,7 @@ public final class NavigationScene extends Scene implements NavigationListener {
         super.dispatchOnSceneSaveInstanceState(scene, outState, directChild);
     }
 
+    /** @hide */
     @RestrictTo(LIBRARY_GROUP)
     public void dispatchOnSceneDestroyed(@NonNull Scene scene, boolean directChild) {
         if (scene != this) {

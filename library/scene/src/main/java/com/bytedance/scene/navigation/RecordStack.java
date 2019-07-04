@@ -16,7 +16,7 @@ import java.util.List;
 /**
  * Created by JiangQi on 8/1/18.
  */
-public class RecordStack {
+class RecordStack {
     private List<Record> mBackStackList = new ArrayList<>();
 
     public void push(Record record) {

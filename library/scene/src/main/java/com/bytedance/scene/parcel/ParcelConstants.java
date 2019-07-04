@@ -3,6 +3,15 @@ package com.bytedance.scene.parcel;
 /**
  * Created by JiangQi on 8/8/18.
  */
+
+import android.support.annotation.RestrictTo;
+
+import static android.support.annotation.RestrictTo.Scope.LIBRARY_GROUP;
+
+/**
+ * @hide
+ */
+@RestrictTo(LIBRARY_GROUP)
 public class ParcelConstants {
     public static final String KEY_SCENE_HAS_ARGUMENT = "bd-scene-nav:scene_argument_has";
     public static final String KEY_SCENE_ARGUMENT = "bd-scene-nav:scene_argument";

@@ -12,12 +12,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.support.annotation.CallSuper;
-import android.support.annotation.IdRes;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.annotation.StringRes;
-import android.support.annotation.StyleRes;
+import android.support.annotation.*;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
@@ -31,6 +26,8 @@ import com.bytedance.scene.utlity.ViewIdGenerator;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static android.support.annotation.RestrictTo.Scope.LIBRARY_GROUP;
 
 /**
  * Created by JiangQi on 7/30/18.
@@ -68,6 +65,8 @@ public abstract class Scene implements LifecycleOwner, ViewModelStoreOwner {
         this.mStateHistoryBuilder.append(" - " + state.name);
     }
 
+    /** @hide */
+    @RestrictTo(LIBRARY_GROUP)
     public void setRootScopeFactory(Scope.RootScopeFactory rootScopeFactory) {
         this.mRootScopeFactory = rootScopeFactory;
     }
@@ -80,10 +79,14 @@ public abstract class Scene implements LifecycleOwner, ViewModelStoreOwner {
         return this.mArguments;
     }
 
+    /** @hide */
+    @RestrictTo(LIBRARY_GROUP)
     public void dispatchAttachActivity(Activity activity) {
         this.mActivity = activity;
     }
 
+    /** @hide */
+    @RestrictTo(LIBRARY_GROUP)
     public void dispatchAttachScene(@Nullable Scene parentScene) {
         if (parentScene != null) {
             this.mParentScene = parentScene;
@@ -101,6 +104,8 @@ public abstract class Scene implements LifecycleOwner, ViewModelStoreOwner {
         }
     }
 
+    /** @hide */
+    @RestrictTo(LIBRARY_GROUP)
     public void dispatchCreate(@Nullable Bundle savedInstanceState) {
         if (mParentScene == null) {
             mScope = mRootScopeFactory.getRootScope();
@@ -145,6 +150,8 @@ public abstract class Scene implements LifecycleOwner, ViewModelStoreOwner {
         return this.mActivity.getLayoutInflater().cloneInContext(requireSceneContext());
     }
 
+    /** @hide */
+    @RestrictTo(LIBRARY_GROUP)
     public void dispatchCreateView(@Nullable Bundle savedInstanceState, @NonNull ViewGroup container) {
         if (this.mView != null) {
             throw new IllegalArgumentException("Scene already call onCreateView");
@@ -172,6 +179,8 @@ public abstract class Scene implements LifecycleOwner, ViewModelStoreOwner {
         }
     }
 
+    /** @hide */
+    @RestrictTo(LIBRARY_GROUP)
     public void dispatchActivityCreated(Bundle savedInstanceState) {
         setState(State.STOPPED);
         mCalled = false;
@@ -183,6 +192,8 @@ public abstract class Scene implements LifecycleOwner, ViewModelStoreOwner {
         mLifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_CREATE);
     }
 
+    /** @hide */
+    @RestrictTo(LIBRARY_GROUP)
     public void dispatchStart() {
         setState(State.STARTED);
         mCalled = false;
@@ -195,6 +206,8 @@ public abstract class Scene implements LifecycleOwner, ViewModelStoreOwner {
         dispatchOnSceneStarted(this, false);
     }
 
+    /** @hide */
+    @RestrictTo(LIBRARY_GROUP)
     public void dispatchViewStateRestored(@Nullable Bundle savedInstanceState) {
         mCalled = false;
         onViewStateRestored(savedInstanceState);
@@ -204,6 +217,8 @@ public abstract class Scene implements LifecycleOwner, ViewModelStoreOwner {
         }
     }
 
+    /** @hide */
+    @RestrictTo(LIBRARY_GROUP)
     public void dispatchResume() {
         setState(State.RESUMED);
         mCalled = false;
@@ -216,6 +231,8 @@ public abstract class Scene implements LifecycleOwner, ViewModelStoreOwner {
         dispatchOnSceneResumed(this, false);
     }
 
+    /** @hide */
+    @RestrictTo(LIBRARY_GROUP)
     public void dispatchPause() {
         mLifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_PAUSE);
         setState(State.STARTED);
@@ -228,10 +245,14 @@ public abstract class Scene implements LifecycleOwner, ViewModelStoreOwner {
         dispatchOnScenePaused(this, false);
     }
 
+    /** @hide */
+    @RestrictTo(LIBRARY_GROUP)
     public void dispatchSaveInstanceState(Bundle outState) {
         onSaveInstanceState(outState);
     }
 
+    /** @hide */
+    @RestrictTo(LIBRARY_GROUP)
     public void dispatchStop() {
         mLifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_STOP);
         setState(State.STOPPED);
@@ -244,6 +265,8 @@ public abstract class Scene implements LifecycleOwner, ViewModelStoreOwner {
         dispatchOnSceneStopped(this, false);
     }
 
+    /** @hide */
+    @RestrictTo(LIBRARY_GROUP)
     public void dispatchDestroyView() {
         mLifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_DESTROY);
         setState(State.NONE);
@@ -260,6 +283,8 @@ public abstract class Scene implements LifecycleOwner, ViewModelStoreOwner {
         this.mLayoutInflater = null;
     }
 
+    /** @hide */
+    @RestrictTo(LIBRARY_GROUP)
     public void dispatchDestroy() {
         mCalled = false;
         onDestroy();
@@ -270,10 +295,14 @@ public abstract class Scene implements LifecycleOwner, ViewModelStoreOwner {
         dispatchOnSceneDestroyed(this, false);
     }
 
+    /** @hide */
+    @RestrictTo(LIBRARY_GROUP)
     public void dispatchDetachScene() {
         this.mParentScene = null;
     }
 
+    /** @hide */
+    @RestrictTo(LIBRARY_GROUP)
     public void dispatchDetachActivity() {
         Activity activity = this.mActivity;
         this.mActivity = null;
@@ -575,6 +604,8 @@ public abstract class Scene implements LifecycleOwner, ViewModelStoreOwner {
         return getState().value >= State.STARTED.value;
     }
 
+    /** @hide */
+    @RestrictTo(LIBRARY_GROUP)
     protected void dispatchVisibleChanged() {
         boolean visible = isVisible();
         if (visible == mVisibleDispatched) {
@@ -612,6 +643,8 @@ public abstract class Scene implements LifecycleOwner, ViewModelStoreOwner {
         return this.mScope;
     }
 
+    /** @hide */
+    @RestrictTo(LIBRARY_GROUP)
     //通知Parent自己的生命周期触发，响应的那些回调应该只判断Child变化而非自身变化
     public void dispatchOnSceneCreated(@NonNull Scene scene, Bundle savedInstanceState, boolean directChild) {
         Scene parentScene = getParentScene();
@@ -620,6 +653,8 @@ public abstract class Scene implements LifecycleOwner, ViewModelStoreOwner {
         }
     }
 
+    /** @hide */
+    @RestrictTo(LIBRARY_GROUP)
     public void dispatchOnSceneStarted(@NonNull Scene scene, boolean directChild) {
         Scene parentScene = getParentScene();
         if (parentScene != null) {
@@ -627,6 +662,8 @@ public abstract class Scene implements LifecycleOwner, ViewModelStoreOwner {
         }
     }
 
+    /** @hide */
+    @RestrictTo(LIBRARY_GROUP)
     public void dispatchOnSceneResumed(@NonNull Scene scene, boolean directChild) {
         Scene parentScene = getParentScene();
         if (parentScene != null) {
@@ -634,6 +671,8 @@ public abstract class Scene implements LifecycleOwner, ViewModelStoreOwner {
         }
     }
 
+    /** @hide */
+    @RestrictTo(LIBRARY_GROUP)
     public void dispatchOnSceneStopped(@NonNull Scene scene, boolean directChild) {
         Scene parentScene = getParentScene();
         if (parentScene != null) {
@@ -641,6 +680,8 @@ public abstract class Scene implements LifecycleOwner, ViewModelStoreOwner {
         }
     }
 
+    /** @hide */
+    @RestrictTo(LIBRARY_GROUP)
     public void dispatchOnScenePaused(@NonNull Scene scene, boolean directChild) {
         Scene parentScene = getParentScene();
         if (parentScene != null) {
@@ -648,6 +689,8 @@ public abstract class Scene implements LifecycleOwner, ViewModelStoreOwner {
         }
     }
 
+    /** @hide */
+    @RestrictTo(LIBRARY_GROUP)
     public void dispatchOnSceneSaveInstanceState(@NonNull Scene scene, Bundle outState, boolean directChild) {
         Scene parentScene = getParentScene();
         if (parentScene != null) {
@@ -655,6 +698,8 @@ public abstract class Scene implements LifecycleOwner, ViewModelStoreOwner {
         }
     }
 
+    /** @hide */
+    @RestrictTo(LIBRARY_GROUP)
     public void dispatchOnSceneDestroyed(@NonNull Scene scene, boolean directChild) {
         Scene parentScene = getParentScene();
         if (parentScene != null) {

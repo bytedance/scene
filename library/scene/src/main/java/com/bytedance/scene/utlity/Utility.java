@@ -20,6 +20,7 @@ import static android.support.annotation.RestrictTo.Scope.LIBRARY_GROUP;
 /**
  * Created by JiangQi on 7/30/18.
  */
+/** @hide */
 @RestrictTo(LIBRARY_GROUP)
 public class Utility {
     public static Drawable getWindowBackground(Context context) {

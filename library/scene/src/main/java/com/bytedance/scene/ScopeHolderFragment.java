@@ -7,10 +7,15 @@ import android.app.FragmentTransaction;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.annotation.RestrictTo;
+
+import static android.support.annotation.RestrictTo.Scope.LIBRARY_GROUP;
 
 /**
  * Created by JiangQi on 9/12/18.
  */
+/** @hide */
+@RestrictTo(LIBRARY_GROUP)
 public class ScopeHolderFragment extends Fragment {
     private static final String TAG = "ScopeHolderFragment";
     private final Scope mRootScope = Scope.DEFAULT_ROOT_SCOPE_FACTORY.getRootScope();

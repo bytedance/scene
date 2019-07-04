@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.RestrictTo;
 import android.support.v4.util.SimpleArrayMap;
 
 import com.bytedance.scene.Scene;
@@ -11,9 +12,16 @@ import com.bytedance.scene.Scene;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
+import static android.support.annotation.RestrictTo.Scope.LIBRARY_GROUP;
+
 /**
  * Created by JiangQi on 9/10/18.
  */
+
+/**
+ * @hide
+ */
+@RestrictTo(LIBRARY_GROUP)
 public class SceneInstanceUtility {
     private static final SimpleArrayMap<String, Class<?>> sClassMap =
             new SimpleArrayMap<String, Class<?>>();
