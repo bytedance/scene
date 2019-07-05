@@ -129,11 +129,13 @@ public class NavigationSceneCompatUtility {
     }
 
     private static abstract class FragmentDelegateProxy implements SceneDelegate, NavigationSceneAvailableCallback {
+        @Nullable
         private NavigationScene mNavigationScene;
+        @Nullable
         private NavigationSceneAvailableCallback mNavigationSceneAvailableCallback;
 
         @Override
-        public final void onNavigationSceneAvailable(NavigationScene navigationScene) {
+        public final void onNavigationSceneAvailable(@NonNull NavigationScene navigationScene) {
             this.mNavigationScene = navigationScene;
             if (this.mNavigationSceneAvailableCallback != null) {
                 this.mNavigationSceneAvailableCallback.onNavigationSceneAvailable(navigationScene);
@@ -141,7 +143,7 @@ public class NavigationSceneCompatUtility {
         }
 
         @Override
-        public final void setNavigationSceneAvailableCallback(NavigationSceneAvailableCallback callback) {
+        public final void setNavigationSceneAvailableCallback(@NonNull NavigationSceneAvailableCallback callback) {
             this.mNavigationSceneAvailableCallback = callback;
             if (this.mNavigationScene != null) {
                 this.mNavigationSceneAvailableCallback.onNavigationSceneAvailable(this.mNavigationScene);

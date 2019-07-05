@@ -92,6 +92,7 @@ public abstract class GroupScene extends Scene {
         mGroupSceneManager.add(viewId, scene, tag);
     }
 
+    @Nullable
     public final <T extends Scene> T findSceneByTag(@NonNull String tag) {
         ThreadUtility.checkUIThread();
 

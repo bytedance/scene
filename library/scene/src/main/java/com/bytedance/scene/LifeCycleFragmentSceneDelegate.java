@@ -8,7 +8,7 @@ import com.bytedance.scene.navigation.NavigationScene;
 /**
  * Created by JiangQi on 9/11/18.
  */
-public class LifeCycleFragmentSceneDelegate implements SceneDelegate, NavigationSceneAvailableCallback {
+class LifeCycleFragmentSceneDelegate implements SceneDelegate, NavigationSceneAvailableCallback {
     private Activity mActivity;
     private LifeCycleFragment mLifeCycleFragment;
 
@@ -32,7 +32,7 @@ public class LifeCycleFragmentSceneDelegate implements SceneDelegate, Navigation
     }
 
     @Override
-    public final void onNavigationSceneAvailable(NavigationScene navigationScene) {
+    public final void onNavigationSceneAvailable(@NonNull NavigationScene navigationScene) {
         this.mNavigationScene = navigationScene;
         if (this.mNavigationSceneAvailableCallback != null) {
             this.mNavigationSceneAvailableCallback.onNavigationSceneAvailable(navigationScene);
@@ -40,7 +40,7 @@ public class LifeCycleFragmentSceneDelegate implements SceneDelegate, Navigation
     }
 
     @Override
-    public final void setNavigationSceneAvailableCallback(NavigationSceneAvailableCallback callback) {
+    public final void setNavigationSceneAvailableCallback(@NonNull NavigationSceneAvailableCallback callback) {
         this.mNavigationSceneAvailableCallback = callback;
         if (this.mNavigationScene != null) {
             this.mNavigationSceneAvailableCallback.onNavigationSceneAvailable(this.mNavigationScene);

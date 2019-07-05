@@ -557,6 +557,8 @@ public abstract class Scene implements LifecycleOwner, ViewModelStoreOwner {
         return this.mStateHistoryBuilder.toString();
     }
 
+    /** @hide */
+    @RestrictTo(LIBRARY_GROUP)
     public void executeNowOrScheduleAtNextResume(Runnable runnable) {
         if (getState() == State.RESUMED) {
             runnable.run();

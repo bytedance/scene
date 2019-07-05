@@ -6,6 +6,7 @@ import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.RestrictTo;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,9 +15,14 @@ import android.widget.FrameLayout;
 import com.bytedance.scene.navigation.NavigationScene;
 import com.bytedance.scene.utlity.SceneInstanceUtility;
 
+import static android.support.annotation.RestrictTo.Scope.LIBRARY_GROUP;
+
 /**
  * Created by JiangQi on 7/30/18.
- */
+ *
+ * @hide
+ **/
+@RestrictTo(LIBRARY_GROUP)
 public class LifeCycleFragment extends Fragment implements NavigationScene.NavigationSceneHost {
     public static LifeCycleFragment newInstance(boolean supportRestore) {
         LifeCycleFragment fragment = new LifeCycleFragment();
