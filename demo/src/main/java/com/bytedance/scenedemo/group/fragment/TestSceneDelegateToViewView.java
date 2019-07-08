@@ -11,8 +11,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import android.widget.Toast;
 import com.bytedance.scene.LifeCycleFrameLayout;
 import com.bytedance.scene.Scene;
+import com.bytedance.scene.SceneComponentFactory;
 import com.bytedance.scene.navigation.NavigationScene;
 import com.bytedance.scene.navigation.NavigationSceneOptions;
 import com.bytedance.scene.utlity.SceneInstanceUtility;
@@ -48,6 +50,13 @@ public class TestSceneDelegateToViewView extends LifeCycleFrameLayout {
         NavigationScene navigationScene = (NavigationScene) SceneInstanceUtility.getInstanceFromClass(NavigationScene.class,
                 options.toBundle());
         setNavigationScene(navigationScene);
+        setSceneComponentFactory(new SceneComponentFactory() {
+            @Override
+            public Scene instantiateScene(ClassLoader cl, String className, Bundle bundle) {
+                Toast.makeText(getContext(), "创建 " + className, Toast.LENGTH_SHORT).show();
+                return null;
+            }
+        });
     }
 
     @Override

@@ -37,10 +37,15 @@ public abstract class LifeCycleFrameLayout extends FrameLayout implements Naviga
     }
 
     private NavigationScene mNavigationScene;
+    private SceneComponentFactory mSceneComponentFactory;
     private final SceneLifecycleManager mLifecycleManager = new SceneLifecycleManager();
 
     public void setNavigationScene(NavigationScene rootScene) {
         this.mNavigationScene = rootScene;
+    }
+
+    public void setSceneComponentFactory(SceneComponentFactory sceneComponentFactory) {
+        this.mSceneComponentFactory = sceneComponentFactory;
     }
 
     public NavigationScene getNavigationScene() {
@@ -71,7 +76,7 @@ public abstract class LifeCycleFrameLayout extends FrameLayout implements Naviga
                 this.mNavigationScene,
                 this,
                 rootScopeFactory,
-                null,
+                this.mSceneComponentFactory,
                 savedInstanceState);
     }
 
