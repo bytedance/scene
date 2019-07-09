@@ -109,7 +109,7 @@ public class LifeCycleFragment extends Fragment implements NavigationScene.Navig
         }
         this.mLifecycleManager.onActivityCreated(getActivity(), this.mFragmentRootView,
                 this.mNavigationScene, this, this.mRootScopeFactory,
-                this.mRootSceneComponentFactory, savedInstanceState);
+                this.mRootSceneComponentFactory, this.mSupportRestore ? savedInstanceState : null);
     }
 
     @Override

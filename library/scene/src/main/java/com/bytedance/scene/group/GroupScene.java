@@ -204,7 +204,7 @@ public abstract class GroupScene extends Scene {
     }
 
     @CallSuper
-    public void onSaveInstanceState(Bundle outState) {
+    public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         this.mGroupSceneManager.saveToBundle(outState);
     }

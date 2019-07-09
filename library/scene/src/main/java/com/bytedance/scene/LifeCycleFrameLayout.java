@@ -114,12 +114,15 @@ public abstract class LifeCycleFrameLayout extends FrameLayout implements Naviga
                 this,
                 this.mRootScopeFactory,
                 this.mRootSceneComponentFactory,
-                savedInstanceState);
+                isSupportRestore() ? savedInstanceState : null);
         this.mDelayOnStartInvokeAfterOnViewStateRestored = isSupportRestore() && savedInstanceState != null;
         this.mInvokeOnStartMethod = false;
     }
 
     public void onViewStateRestored(@NonNull Bundle savedInstanceState) {
+        if (!isSupportRestore()) {
+            return;
+        }
         this.mLifecycleManager.onViewStateRestored(savedInstanceState);
         if (this.mDelayOnStartInvokeAfterOnViewStateRestored && this.mInvokeOnStartMethod) {
             this.mLifecycleManager.onStart();
@@ -148,6 +151,9 @@ public abstract class LifeCycleFrameLayout extends FrameLayout implements Naviga
     }
 
     public void onSaveInstanceState(@NonNull Bundle outState) {
+        if (!isSupportRestore()) {
+            return;
+        }
         this.mLifecycleManager.onSaveInstanceState(outState);
     }
 

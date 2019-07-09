@@ -388,6 +388,7 @@ public final class NavigationScene extends Scene implements NavigationListener {
             frameLayout.setOnApplyWindowInsetsListener(new DispatchWindowInsetsListener());
         }
         frameLayout.setId(ViewIdGenerator.generateViewId());
+        frameLayout.setSupportRestore(isSupportRestore());
 
         mPageContainer = new FrameLayout(requireSceneContext());
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -480,7 +481,7 @@ public final class NavigationScene extends Scene implements NavigationListener {
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState) {
+    public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         this.mNavigationSceneManager.saveToBundle(outState);
     }

@@ -18,6 +18,7 @@ public class SceneLifecycleManager {
     private static final String TAG = "SceneLifecycleManager";
 
     private NavigationScene mNavigationScene;
+    private boolean mSupportRestore = false;
 
     public void onActivityCreated(@NonNull Activity activity,
                                   @NonNull ViewGroup viewGroup,
@@ -29,7 +30,6 @@ public class SceneLifecycleManager {
         if (navigationScene.getState() != State.NONE) {
             throw new IllegalStateException("NavigationScene state must be NONE");
         }
-        log("onActivityCreated");
         if (activity == null) {
             throw new NullPointerException("activity can't be null");
         }
@@ -45,6 +45,14 @@ public class SceneLifecycleManager {
         if (navigationScene == null) {
             throw new NullPointerException("rootScopeFactory can't be null");
         }
+
+        this.mSupportRestore = navigationSceneHost.isSupportRestore();
+        if (!this.mSupportRestore && savedInstanceState != null) {
+            throw new IllegalArgumentException("savedInstanceState should be null when not support restore");
+        }
+
+        log("onActivityCreated");
+
         this.mNavigationScene = navigationScene;
         this.mNavigationScene.setRootScopeFactory(rootScopeFactory);
         this.mNavigationScene.setNavigationSceneHost(navigationSceneHost);
@@ -108,6 +116,11 @@ public class SceneLifecycleManager {
         if (this.mNavigationScene.getState() != State.STARTED) {
             throw new IllegalStateException("NavigationScene state must be STARTED");
         }
+
+        if (!this.mSupportRestore) {
+            throw new IllegalArgumentException("cant invoke onSaveInstanceState when not support restore");
+        }
+
         log("onSaveInstanceState");
         this.mNavigationScene.dispatchSaveInstanceState(outState);
     }
@@ -116,6 +129,11 @@ public class SceneLifecycleManager {
         if (this.mNavigationScene.getState() != State.STOPPED) {
             throw new IllegalStateException("NavigationScene state must be STOPPED");
         }
+
+        if (!this.mSupportRestore) {
+            throw new IllegalArgumentException("cant invoke onViewStateRestored when not support restore");
+        }
+
         log("onViewStateRestored");
         this.mNavigationScene.dispatchViewStateRestored(savedInstanceState);
     }

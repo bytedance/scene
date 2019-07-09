@@ -2,6 +2,7 @@ package com.bytedance.scene.ui;
 
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -33,6 +34,7 @@ public abstract class SceneActivity extends AppCompatActivity {
         }
     }
 
+    @NonNull
     protected abstract Class<? extends Scene> getHomeSceneClass();
 
     protected abstract boolean supportRestore();

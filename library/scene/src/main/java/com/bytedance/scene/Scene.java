@@ -532,7 +532,7 @@ public abstract class Scene implements LifecycleOwner, ViewModelStoreOwner {
     }
 
     @CallSuper
-    public void onSaveInstanceState(Bundle outState) {
+    public void onSaveInstanceState(@NonNull Bundle outState) {
         if (getArguments() != null) {
             outState.putBoolean(ParcelConstants.KEY_SCENE_HAS_ARGUMENT, true);
             outState.putBundle(ParcelConstants.KEY_SCENE_ARGUMENT, getArguments());

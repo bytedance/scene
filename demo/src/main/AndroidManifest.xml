@@ -24,6 +24,7 @@
         <activity android:name=".group.fragment.TestSceneToViewActivity" />
         <activity android:name="com.bytedance.scenedemo.navigation.forresult.TestActivityResultActivity" />
         <activity android:name="com.bytedance.scenedemo.navigation.forresult.ActivityToSceneDemoActivity" />
+        <activity android:name=".restore.SupportRestoreActivity" />
     </application>
 
 </manifest>

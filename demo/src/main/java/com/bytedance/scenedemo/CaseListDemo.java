@@ -1,5 +1,6 @@
 package com.bytedance.scenedemo;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -17,6 +18,7 @@ import com.bytedance.scenedemo.case0.Case2Scene;
 import com.bytedance.scenedemo.case0.Case3Scene;
 import com.bytedance.scenedemo.case0.Case4Scene;
 import com.bytedance.scenedemo.case0.Case5Scene;
+import com.bytedance.scenedemo.restore.SupportRestoreActivity;
 
 /**
  * Created by JiangQi on 8/21/18.
@@ -33,6 +35,18 @@ public class CaseListDemo extends UserVisibleHintGroupScene {
         scrollView.addView(layout);
 
         Button button = new Button(getActivity());
+
+        button = new Button(getActivity());
+        button.setAllCaps(false);
+        button.setText("销毁恢复");
+        layout.addView(button);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getNavigationScene().startActivity(new Intent(requireActivity(), SupportRestoreActivity.class));
+            }
+        });
+
         button = new Button(getActivity());
         button.setAllCaps(false);
         button.setText("Push后立刻Pop，循环100次，动画要正确");

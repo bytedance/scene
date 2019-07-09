@@ -35,7 +35,7 @@ public abstract class UserVisibleHintGroupScene extends GroupScene {
     private boolean mStart = false;
 
     @Override
-    public void onSaveInstanceState(Bundle outState) {
+    public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putBoolean(KEY_SCENE_USER_VISIBLE_HINT, this.mUserVisibleHint);
     }
