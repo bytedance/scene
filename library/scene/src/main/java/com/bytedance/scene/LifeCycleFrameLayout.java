@@ -36,31 +36,53 @@ public abstract class LifeCycleFrameLayout extends FrameLayout implements Naviga
         super(context, attrs, defStyleAttr, defStyleRes);
     }
 
+    @Nullable
     private NavigationScene mNavigationScene;
-    private SceneComponentFactory mSceneComponentFactory;
+    @Nullable
+    private SceneComponentFactory mRootSceneComponentFactory;
+    @NonNull
+    private Scope.RootScopeFactory mRootScopeFactory = new Scope.RootScopeFactory() {
+        @Override
+        public Scope getRootScope() {
+            return Scope.DEFAULT_ROOT_SCOPE_FACTORY.getRootScope();
+        }
+    };
     private final SceneLifecycleManager mLifecycleManager = new SceneLifecycleManager();
 
-    public void setNavigationScene(NavigationScene rootScene) {
+    public void setNavigationScene(@NonNull NavigationScene rootScene) {
         this.mNavigationScene = rootScene;
     }
 
-    public void setSceneComponentFactory(SceneComponentFactory sceneComponentFactory) {
-        this.mSceneComponentFactory = sceneComponentFactory;
+    public void setRootSceneComponentFactory(@NonNull SceneComponentFactory rootSceneComponentFactory) {
+        this.mRootSceneComponentFactory = rootSceneComponentFactory;
     }
 
+    public void setRootScopeFactory(@NonNull Scope.RootScopeFactory rootScopeFactory) {
+        this.mRootScopeFactory = rootScopeFactory;
+    }
+
+    @Nullable
     public NavigationScene getNavigationScene() {
         return mNavigationScene;
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        this.mNavigationScene.onActivityResult(requestCode, resultCode, data);
+        if (this.mNavigationScene != null) {
+            this.mNavigationScene.onActivityResult(requestCode, resultCode, data);
+        }
     }
 
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        this.mNavigationScene.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (this.mNavigationScene != null) {
+            this.mNavigationScene.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
     }
 
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        if (this.mNavigationScene == null) {
+            throw new NullPointerException("NavigationScene is null");
+        }
+
         Activity activity = null;
         Context context = getContext();
         while (context instanceof ContextWrapper) {
@@ -71,21 +93,18 @@ public abstract class LifeCycleFrameLayout extends FrameLayout implements Naviga
             context = ((ContextWrapper) context).getBaseContext();
         }
 
+        if (activity == null) {
+            throw new IllegalStateException("cant find Activity attached to this View");
+        }
+
         this.mLifecycleManager.onActivityCreated(activity,
                 this,
                 this.mNavigationScene,
                 this,
-                rootScopeFactory,
-                this.mSceneComponentFactory,
+                this.mRootScopeFactory,
+                this.mRootSceneComponentFactory,
                 savedInstanceState);
     }
-
-    private final Scope.RootScopeFactory rootScopeFactory = new Scope.RootScopeFactory() {
-        @Override
-        public Scope getRootScope() {
-            return Scope.DEFAULT_ROOT_SCOPE_FACTORY.getRootScope();
-        }
-    };
 
     public void onStart() {
         this.mLifecycleManager.onStart();
@@ -110,10 +129,5 @@ public abstract class LifeCycleFrameLayout extends FrameLayout implements Naviga
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         this.mLifecycleManager.onConfigurationChanged(newConfig);
-    }
-
-    @Override
-    public boolean isSupportRestore() {
-        return false;
     }
 }
