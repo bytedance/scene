@@ -32,6 +32,23 @@ import static android.support.annotation.RestrictTo.Scope.LIBRARY_GROUP;
 /**
  * Created by JiangQi on 7/30/18.
  * 没有BackStack管理
+ *
+ * onAttach
+ * onCreate
+ * onCreateView
+ * onViewCreated
+ * onActivityCreated
+ * onViewStateRestored (only when App restore)
+ * onStart
+ * onResume
+ *
+ * onPause
+ * onSaveInstanceState (only when Activity or Fragment is invisible)
+ * onStop
+ * onDestroyView
+ * onDestroy
+ * onDetach
+ *
  */
 public abstract class Scene implements LifecycleOwner, ViewModelStoreOwner {
     public static final String SCENE_SERVICE = "scene";

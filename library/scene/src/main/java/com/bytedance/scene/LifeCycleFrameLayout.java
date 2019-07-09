@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.widget.FrameLayout;
 
 import com.bytedance.scene.navigation.NavigationScene;
@@ -19,6 +20,9 @@ import com.bytedance.scene.navigation.NavigationScene;
  * Created by JiangQi on 11/6/18.
  */
 public abstract class LifeCycleFrameLayout extends FrameLayout implements NavigationScene.NavigationSceneHost {
+    private static final boolean DEBUG = false;
+    private static final String TAG = "LifeCycleFrameLayout";
+
     public LifeCycleFrameLayout(@NonNull Context context) {
         super(context);
     }
@@ -48,6 +52,13 @@ public abstract class LifeCycleFrameLayout extends FrameLayout implements Naviga
         }
     };
     private final SceneLifecycleManager mLifecycleManager = new SceneLifecycleManager();
+
+    /**
+     * 为了解决手动管理生命周期和自动用Fragment管理生命周期时onViewStateRestored时机不同，Activity中先onStart再onRestoreInstanceState，
+     * Fragment中先onViewStateRestored再onStart，Scene的流程中，统一都是先onViewStateRestored再onStart
+     */
+    private boolean mDelayOnStartInvokeAfterOnViewStateRestored = false;
+    private boolean mInvokeOnStartMethod = false;
 
     public void setNavigationScene(@NonNull NavigationScene rootScene) {
         this.mNavigationScene = rootScene;
@@ -104,18 +115,40 @@ public abstract class LifeCycleFrameLayout extends FrameLayout implements Naviga
                 this.mRootScopeFactory,
                 this.mRootSceneComponentFactory,
                 savedInstanceState);
+        this.mDelayOnStartInvokeAfterOnViewStateRestored = isSupportRestore() && savedInstanceState != null;
+        this.mInvokeOnStartMethod = false;
+    }
+
+    public void onViewStateRestored(@NonNull Bundle savedInstanceState) {
+        this.mLifecycleManager.onViewStateRestored(savedInstanceState);
+        if (this.mDelayOnStartInvokeAfterOnViewStateRestored && this.mInvokeOnStartMethod) {
+            this.mLifecycleManager.onStart();
+            this.mInvokeOnStartMethod = false;
+        }
+        this.mDelayOnStartInvokeAfterOnViewStateRestored = false;
     }
 
     public void onStart() {
+        if (this.mDelayOnStartInvokeAfterOnViewStateRestored) {
+            this.mInvokeOnStartMethod = true;
+            return;
+        }
         this.mLifecycleManager.onStart();
     }
 
     public void onResume() {
+        if (this.mDelayOnStartInvokeAfterOnViewStateRestored) {
+            throw new IllegalStateException("when app is restored, invoke onViewStateRestored before onResume");
+        }
         this.mLifecycleManager.onResume();
     }
 
     public void onPause() {
         this.mLifecycleManager.onPause();
+    }
+
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        this.mLifecycleManager.onSaveInstanceState(outState);
     }
 
     public void onStop() {
@@ -126,8 +159,14 @@ public abstract class LifeCycleFrameLayout extends FrameLayout implements Naviga
         this.mLifecycleManager.onDestroyView();
     }
 
-    public void onConfigurationChanged(Configuration newConfig) {
+    public void onConfigurationChanged(@NonNull Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         this.mLifecycleManager.onConfigurationChanged(newConfig);
+    }
+
+    private void log(String log) {
+        if (DEBUG) {
+            Log.d(TAG, log);
+        }
     }
 }

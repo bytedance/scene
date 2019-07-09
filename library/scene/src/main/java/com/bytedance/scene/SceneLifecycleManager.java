@@ -5,6 +5,7 @@ import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.ViewGroup;
 
 import com.bytedance.scene.navigation.NavigationScene;
@@ -13,6 +14,9 @@ import com.bytedance.scene.navigation.NavigationScene;
  * Created by JiangQi on 11/6/18.
  */
 public class SceneLifecycleManager {
+    private static final boolean DEBUG = false;
+    private static final String TAG = "SceneLifecycleManager";
+
     private NavigationScene mNavigationScene;
 
     public void onActivityCreated(@NonNull Activity activity,
@@ -25,6 +29,7 @@ public class SceneLifecycleManager {
         if (navigationScene.getState() != State.NONE) {
             throw new IllegalStateException("NavigationScene state must be NONE");
         }
+        log("onActivityCreated");
         if (activity == null) {
             throw new NullPointerException("activity can't be null");
         }
@@ -56,6 +61,7 @@ public class SceneLifecycleManager {
         if (this.mNavigationScene.getState() != State.STOPPED) {
             throw new IllegalStateException("NavigationScene state must be STOPPED");
         }
+        log("onStart");
         this.mNavigationScene.dispatchStart();
     }
 
@@ -63,6 +69,7 @@ public class SceneLifecycleManager {
         if (this.mNavigationScene.getState() != State.STARTED) {
             throw new IllegalStateException("NavigationScene state must be STARTED");
         }
+        log("onResume");
         this.mNavigationScene.dispatchResume();
     }
 
@@ -70,6 +77,7 @@ public class SceneLifecycleManager {
         if (this.mNavigationScene.getState() != State.RESUMED) {
             throw new IllegalStateException("NavigationScene state must be RESUMED");
         }
+        log("onPause");
         this.mNavigationScene.dispatchPause();
     }
 
@@ -77,6 +85,7 @@ public class SceneLifecycleManager {
         if (this.mNavigationScene.getState() != State.STARTED) {
             throw new IllegalStateException("NavigationScene state must be STARTED");
         }
+        log("onStop");
         this.mNavigationScene.dispatchStop();
     }
 
@@ -84,6 +93,7 @@ public class SceneLifecycleManager {
         if (this.mNavigationScene.getState() != State.STOPPED) {
             throw new IllegalStateException("NavigationScene state must be STOPPED");
         }
+        log("onDestroyView");
         this.mNavigationScene.dispatchDestroyView();
         this.mNavigationScene.dispatchDestroy();
         this.mNavigationScene.dispatchDetachScene();
@@ -94,17 +104,32 @@ public class SceneLifecycleManager {
         this.mNavigationScene = null;
     }
 
-    public void onSaveInstanceState(Bundle outState) {
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        if (this.mNavigationScene.getState() != State.STARTED) {
+            throw new IllegalStateException("NavigationScene state must be STARTED");
+        }
+        log("onSaveInstanceState");
         this.mNavigationScene.dispatchSaveInstanceState(outState);
     }
 
-    public void onViewStateRestored(Bundle savedInstanceState) {
+    public void onViewStateRestored(@NonNull Bundle savedInstanceState) {
+        if (this.mNavigationScene.getState() != State.STOPPED) {
+            throw new IllegalStateException("NavigationScene state must be STOPPED");
+        }
+        log("onViewStateRestored");
         this.mNavigationScene.dispatchViewStateRestored(savedInstanceState);
     }
 
-    public void onConfigurationChanged(Configuration newConfig) {
+    public void onConfigurationChanged(@NonNull Configuration newConfig) {
+        log("onConfigurationChanged");
         if (this.mNavigationScene != null) {
             this.mNavigationScene.onConfigurationChanged(newConfig);
+        }
+    }
+
+    private void log(String log) {
+        if (DEBUG) {
+            Log.d(TAG + "#" + hashCode(), log);
         }
     }
 }

@@ -109,7 +109,7 @@ public class LifeCycleFragment extends Fragment implements NavigationScene.Navig
     @Override
     public void onViewStateRestored(Bundle savedInstanceState) {
         super.onViewStateRestored(savedInstanceState);
-        if (this.mSupportRestore) {
+        if (this.mSupportRestore && savedInstanceState != null) {
             this.mLifecycleManager.onViewStateRestored(savedInstanceState);
         }
     }
