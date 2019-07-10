@@ -9,11 +9,7 @@ import android.content.res.Configuration;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.annotation.RequiresApi;
-import android.support.annotation.RestrictTo;
-import android.support.annotation.UiThread;
+import android.support.annotation.*;
 import android.support.v4.util.LruCache;
 import android.support.v4.util.SparseArrayCompat;
 import android.support.v4.view.ViewCompat;
@@ -446,6 +442,16 @@ public final class NavigationScene extends Scene implements NavigationListener {
                     NavigationScene.this.onConfigurationChanged(newConfig);
                 }
             });
+        }
+    }
+
+    @CallSuper
+    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
+        super.onViewStateRestored(savedInstanceState);
+        List<Scene> childSceneList = this.mNavigationSceneManager.getCurrentSceneList();
+        for (int i = 0; i <= childSceneList.size() - 1; i++) {
+            Scene scene = childSceneList.get(i);
+            scene.onViewStateRestored(savedInstanceState);
         }
     }
 
