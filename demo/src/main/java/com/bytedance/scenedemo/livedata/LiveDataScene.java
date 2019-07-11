@@ -1,12 +1,11 @@
 package com.bytedance.scenedemo.livedata;
 
-import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.MutableLiveData;
-import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.*;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -62,8 +61,47 @@ public class LiveDataScene extends GroupScene {
 
         getScope().register("livedata", liveData);
         Scene scene = new TestShowScene();
+        scene.getLifecycle().addObserver(new LifecycleObserver() {
+            @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
+            public void a1() {
+                Log.e("Lifecycle", "ON_CREATE");
+            }
+
+            @OnLifecycleEvent(Lifecycle.Event.ON_START)
+            public void a2() {
+                Log.e("Lifecycle", "ON_START");
+            }
+
+            @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
+            public void a3() {
+                Log.e("Lifecycle", "ON_RESUME");
+            }
+
+            @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
+            public void a4() {
+                Log.e("Lifecycle", "ON_PAUSE");
+            }
+
+            @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
+            public void a5() {
+                Log.e("Lifecycle", "ON_STOP");
+            }
+
+            @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
+            public void a6() {
+                Log.e("Lifecycle", "ON_DESTROY");
+            }
+
+            @OnLifecycleEvent(Lifecycle.Event.ON_ANY)
+            public void a7() {
+                Log.e("Lifecycle", "ON_ANY");
+            }
+        });
+        Log.e("Lifecycle", "add");
         add(frameLayout.getId(), scene, "TestShowScene");
+        Log.e("Lifecycle", "remove");
         remove(scene);
+        Log.e("Lifecycle", "add");
         add(frameLayout.getId(), scene, "TestShowScene");
 
         Scene hiddenScene = new TestHiddenScene();

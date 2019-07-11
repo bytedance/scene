@@ -1,11 +1,7 @@
 package com.bytedance.scene;
 
 import android.app.Activity;
-import android.arch.lifecycle.Lifecycle;
-import android.arch.lifecycle.LifecycleOwner;
-import android.arch.lifecycle.LifecycleRegistry;
-import android.arch.lifecycle.ViewModelStore;
-import android.arch.lifecycle.ViewModelStoreOwner;
+import android.arch.lifecycle.*;
 import android.content.Context;
 import android.content.res.Resources;
 import android.os.Build;
@@ -52,6 +48,7 @@ import static android.support.annotation.RestrictTo.Scope.LIBRARY_GROUP;
  */
 public abstract class Scene implements LifecycleOwner, ViewModelStoreOwner {
     public static final String SCENE_SERVICE = "scene";
+    private static final String TAG = "Scene";
 
     private Activity mActivity;
     private android.support.v7.view.ContextThemeWrapper mSceneContext;
@@ -100,6 +97,52 @@ public abstract class Scene implements LifecycleOwner, ViewModelStoreOwner {
     @RestrictTo(LIBRARY_GROUP)
     public void dispatchAttachActivity(Activity activity) {
         this.mActivity = activity;
+        //Scene销毁后复用，需要重置状态
+        if (this.mLifecycleRegistry.getCurrentState() != Lifecycle.State.INITIALIZED) {
+            this.mLifecycleRegistry.rest();
+        }
+    }
+
+    private static class FixSceneReuseLifecycleAdapter extends Lifecycle {
+        private final LifecycleRegistry lifecycleRegistry;
+        private final List<LifecycleObserver> lifecycleObservers = new ArrayList<>();
+
+        private FixSceneReuseLifecycleAdapter(LifecycleRegistry lifecycleRegistry) {
+            this.lifecycleRegistry = lifecycleRegistry;
+        }
+
+        @Override
+        public void addObserver(@NonNull LifecycleObserver observer) {
+            this.lifecycleObservers.add(observer);
+            this.lifecycleRegistry.addObserver(observer);
+        }
+
+        @Override
+        public void removeObserver(@NonNull LifecycleObserver observer) {
+            this.lifecycleObservers.remove(observer);
+            this.lifecycleRegistry.removeObserver(observer);
+        }
+
+        @NonNull
+        @Override
+        public State getCurrentState() {
+            return this.lifecycleRegistry.getCurrentState();
+        }
+
+        void handleLifecycleEvent(@NonNull Lifecycle.Event event) {
+            this.lifecycleRegistry.handleLifecycleEvent(event);
+        }
+
+        void rest() {
+            //不然会死循环
+            for (LifecycleObserver lifecycleObserver : lifecycleObservers) {
+                this.lifecycleRegistry.removeObserver(lifecycleObserver);
+            }
+            this.lifecycleRegistry.markState(Lifecycle.State.INITIALIZED);
+            for (LifecycleObserver lifecycleObserver : lifecycleObservers) {
+                this.lifecycleRegistry.addObserver(lifecycleObserver);
+            }
+        }
     }
 
     /** @hide */
@@ -567,7 +610,7 @@ public abstract class Scene implements LifecycleOwner, ViewModelStoreOwner {
         }
     }
 
-    private LifecycleRegistry mLifecycleRegistry = new LifecycleRegistry(this);
+    private FixSceneReuseLifecycleAdapter mLifecycleRegistry = new FixSceneReuseLifecycleAdapter(new LifecycleRegistry(this));
 
     @NonNull
     @Override
