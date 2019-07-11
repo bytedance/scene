@@ -13,6 +13,7 @@ import com.bytedance.scene.group.UserVisibleHintGroupScene;
 import com.bytedance.scenedemo.animation.AnimationResDemoScene;
 import com.bytedance.scenedemo.lifecycle.ChildSceneLifecycleCallbacksDemoScene;
 import com.bytedance.scenedemo.lifecycle.LifeCycleDemoScene;
+import com.bytedance.scenedemo.livedata.LiveDataScene;
 
 /**
  * Created by JiangQi on 8/21/18.
@@ -67,6 +68,7 @@ public class LifeCycleListScene extends UserVisibleHintGroupScene {
             @Override
             public void onClick(View v) {
 //                SceneViewModelProviders.of(LifeCycleListScene.this).get();
+                getNavigationScene().push(LiveDataScene.class);
             }
         });
 
