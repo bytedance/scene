@@ -115,17 +115,11 @@ public abstract class GroupScene extends Scene {
 
     public final void hide(@NonNull Scene scene) {
         ThreadUtility.checkUIThread();
-        if (scene.getState() == State.STOPPED) {
-            return;
-        }
         this.mGroupSceneManager.hide(scene);
     }
 
     public final void show(@NonNull Scene scene) {
         ThreadUtility.checkUIThread();
-        if (scene.getState() == State.RESUMED) {
-            return;
-        }
         this.mGroupSceneManager.show(scene);
     }
 
