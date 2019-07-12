@@ -70,6 +70,10 @@ public abstract class Scene implements LifecycleOwner, ViewModelStoreOwner {
 
     private int mThemeResource;
 
+    /**
+     * @hide
+     */
+    @RestrictTo(LIBRARY_GROUP)
     public State getState() {
         return this.mState;
     }
