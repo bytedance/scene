@@ -385,16 +385,28 @@ public abstract class Scene implements LifecycleOwner, ViewModelStoreOwner {
         mPendingActionList.clear();//必须最后才做，万一有人在onDestroy/onDetach里面操作add会难办，虽然上面executeNowOrScheduleAtNextResume可以改逻辑到CREATED之后就不管了
     }
 
+    /**
+     * use {@link #onActivityCreated(Bundle)} instead
+     */
+    @Deprecated
     @CallSuper
     public void onAttach() {
         mCalled = true;
     }
 
+    /**
+     * use {@link #onActivityCreated(Bundle)} instead
+     */
+    @Deprecated
     @CallSuper
     public void onCreate(@Nullable Bundle savedInstanceState) {
         mCalled = true;
     }
 
+    /**
+     * use {@link #onDestroyView()} instead
+     */
+    @Deprecated
     @CallSuper
     public void onDetach() {
         mCalled = true;
@@ -414,6 +426,10 @@ public abstract class Scene implements LifecycleOwner, ViewModelStoreOwner {
         mCalled = true;
     }
 
+    /**
+     * use {@link #onDestroyView()} instead
+     */
+    @Deprecated
     @CallSuper
     public void onDestroy() {
         mCalled = true;
