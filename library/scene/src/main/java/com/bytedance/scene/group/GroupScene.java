@@ -92,6 +92,10 @@ public abstract class GroupScene extends Scene {
             }
         }
 
+        if (scene.getParentScene() != null && scene.getParentScene() != this) {
+            throw new IllegalArgumentException("Scene already has a parent, parent " + scene.getParentScene());
+        }
+
         if (getNavigationScene() != null
                 && ((NavigationScene) getNavigationScene()).isSupportRestore()
                 && !SceneInstanceUtility.isSupportRestore(scene)) {

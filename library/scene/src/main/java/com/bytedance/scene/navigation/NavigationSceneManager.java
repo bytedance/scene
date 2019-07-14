@@ -717,6 +717,16 @@ class NavigationSceneManager {
             final Record currentRecord = mBackStackList.getCurrentRecord();
             final View currentView = currentRecord != null ? currentRecord.mScene.getView() : null;
 
+            //有可能性重复把同个Scene对象在多个NavigationScene里面进行多次Push，但因为Push操作不一定是立刻执行，Push那边的异常判断不一定起作用
+            //所以会延迟到这里抛异常
+            if (this.scene.getParentScene() != null) {
+                if (this.scene.getParentScene() == mNavigationScene) {
+                    operationEndAction.run();
+                    return;
+                }
+                throw new IllegalArgumentException("Scene already has a parent, parent " + scene.getParentScene());
+            }
+
             Predicate<Scene> removePredicate = pushOptions.getRemovePredicate();
             boolean isTaskRootReplaced = false;
             Record newTaskRoot = null;

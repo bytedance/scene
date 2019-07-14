@@ -231,6 +231,13 @@ public final class NavigationScene extends Scene implements NavigationListener {
             return;
         }
 
+        if (scene.getParentScene() != null) {
+            if (scene.getParentScene() == this) {
+                throw new IllegalArgumentException("Scene is already pushed");
+            }
+            throw new IllegalArgumentException("Scene already has a parent, parent " + scene.getParentScene());
+        }
+
         if (isSupportRestore() && !SceneInstanceUtility.isSupportRestore(scene)) {
             throw new IllegalArgumentException("Scene must have only empty argument constructor when support restore");
         }
