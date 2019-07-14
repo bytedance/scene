@@ -26,6 +26,7 @@ public class SceneInstanceUtility {
     private static final SimpleArrayMap<String, Class<?>> sClassMap =
             new SimpleArrayMap<String, Class<?>>();
 
+    @NonNull
     public static Scene getInstanceFromClassName(Context context, String clazzName, Bundle arguments) {
         Class<?> clazz = sClassMap.get(clazzName);
         try {
@@ -41,6 +42,7 @@ public class SceneInstanceUtility {
         }
     }
 
+    @NonNull
     public static Scene getInstanceFromClass(@NonNull Class<?> clazz, @Nullable Bundle arguments) {
         try {
             Scene scene = (Scene) clazz.getConstructor().newInstance();

@@ -79,13 +79,19 @@ class RecordStack {
         this.mBackStackList = new ArrayList<>(list);
         for (int i = 0; i < this.mBackStackList.size(); i++) {
             Record record = this.mBackStackList.get(i);
+            Scene scene = null;
             //第一个Scene优先用SceneComponentFactory生成
             if (i == 0 && rootSceneComponentFactory != null) {
-                record.mScene = rootSceneComponentFactory.instantiateScene(context.getClassLoader(), record.className, null);
+                Scene rootScene = rootSceneComponentFactory.instantiateScene(context.getClassLoader(), record.className, null);
+                if (rootScene != null && rootScene.getParentScene() != null) {
+                    throw new IllegalArgumentException("SceneComponentFactory instantiateScene return Scene already has a parent");
+                }
+                scene = rootScene;
             }
-            if (record.mScene == null) {
-                record.mScene = SceneInstanceUtility.getInstanceFromClassName(context, record.className, null);
+            if (scene == null) {
+                scene = SceneInstanceUtility.getInstanceFromClassName(context, record.className, null);
             }
+            record.mScene = scene;
         }
     }
 

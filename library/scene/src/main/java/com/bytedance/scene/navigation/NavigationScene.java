@@ -163,6 +163,9 @@ public final class NavigationScene extends Scene implements NavigationListener {
         if (this.mRootSceneComponentFactory != null) {
             ClassLoader classLoader = requireActivity().getClassLoader();
             rootScene = this.mRootSceneComponentFactory.instantiateScene(classLoader, clazzName, arguments);
+            if (rootScene != null && rootScene.getParentScene() != null) {
+                throw new IllegalArgumentException("SceneComponentFactory instantiateScene return Scene already has a parent");
+            }
         }
 
         if (rootScene == null) {
