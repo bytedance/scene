@@ -6,6 +6,15 @@ package com.bytedance.scene;
  * STARTED 局部显示
  * RESUMED 全部显示
  */
+
+import android.support.annotation.RestrictTo;
+
+import static android.support.annotation.RestrictTo.Scope.LIBRARY_GROUP;
+
+/**
+ * @hide
+ */
+@RestrictTo(LIBRARY_GROUP)
 public enum State {
     NONE(0, "NONE"), STOPPED(1, "STOPPED"), STARTED(2, "STARTED"), RESUMED(3, "RESUMED");
 
