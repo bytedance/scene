@@ -1,11 +1,12 @@
 package com.bytedance.scene.navigation;
 
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import android.support.annotation.*;
 import android.text.TextUtils;
 
 import com.bytedance.scene.Scene;
+
+import static android.support.annotation.RestrictTo.Scope.LIBRARY_GROUP;
 
 /**
  * Created by JiangQi on 9/5/18.
@@ -16,36 +17,45 @@ public class NavigationSceneOptions {
     private static final String EXTRA_DRAW_WINDOW_BACKGROUND = "extra_drawWindowBackground";
     private static final String EXTRA_FIX_SCENE_BACKGROUND_ENABLED = "extra_fixSceneBackground_enabled";
     private static final String EXTRA_SCENE_BACKGROUND = "extra_sceneBackground";
-    private String mRootSceneClassName;
-    private Bundle mRootSceneArguments;
+    @NonNull
+    private final String mRootSceneClassName;
+    @Nullable
+    private final Bundle mRootSceneArguments;
     private boolean mDrawWindowBackground = true;
     private boolean mFixSceneBackgroundEnabled = true;
     private int mSceneBackgroundResId;
 
-    public NavigationSceneOptions() {
-
-    }
-
-    public NavigationSceneOptions setRootScene(@NonNull Class<? extends Scene> clazz, @Nullable Bundle bundle) {
-        if (clazz.isAssignableFrom(NavigationScene.class)) {
+    public NavigationSceneOptions(@NonNull Class<? extends Scene> rootSceneClazz, @Nullable Bundle rootSceneArguments) {
+        if (rootSceneClazz.isAssignableFrom(NavigationScene.class)) {
             throw new IllegalArgumentException("cant use NavigationScene as root scene");
         }
-        this.mRootSceneClassName = clazz.getName();
-        this.mRootSceneArguments = bundle;
-        return this;
+        this.mRootSceneClassName = rootSceneClazz.getName();
+        this.mRootSceneArguments = rootSceneArguments;
     }
 
+    public NavigationSceneOptions(@NonNull Class<? extends Scene> rootSceneClazz) {
+        this(rootSceneClazz, null);
+    }
+
+    private NavigationSceneOptions(@NonNull String rootSceneClassName, @Nullable Bundle rootSceneArguments) {
+        this.mRootSceneClassName = rootSceneClassName;
+        this.mRootSceneArguments = rootSceneArguments;
+    }
+
+    @NonNull
     public NavigationSceneOptions setDrawWindowBackground(boolean drawWindowBackground) {
         this.mDrawWindowBackground = drawWindowBackground;
         return this;
     }
 
+    @NonNull
     public NavigationSceneOptions setFixSceneWindowBackgroundEnabled(boolean fixSceneBackground) {
         this.mFixSceneBackgroundEnabled = fixSceneBackground;
         return this;
     }
 
-    public NavigationSceneOptions setSceneBackground(int resId) {
+    @NonNull
+    public NavigationSceneOptions setSceneBackground(@DrawableRes int resId) {
         this.mSceneBackgroundResId = resId;
         return this;
     }
@@ -72,16 +82,25 @@ public class NavigationSceneOptions {
         return this.mSceneBackgroundResId;
     }
 
-    public static NavigationSceneOptions fromBundle(Bundle bundle) {
-        NavigationSceneOptions navigationSceneOptions = new NavigationSceneOptions();
-        navigationSceneOptions.mRootSceneClassName = bundle.getString(EXTRA_ROOT_SCENE);
-        navigationSceneOptions.mRootSceneArguments = bundle.getBundle(EXTRA_ROOT_SCENE_ARGUMENTS);
+    /**
+     * @hide
+     */
+    @RestrictTo(LIBRARY_GROUP)
+    @NonNull
+    public static NavigationSceneOptions fromBundle(@NonNull Bundle bundle) {
+        String rootSceneClassName = bundle.getString(EXTRA_ROOT_SCENE);
+        if (rootSceneClassName == null) {
+            throw new IllegalStateException("root scene class name cant be null");
+        }
+        Bundle rootSceneArguments = bundle.getBundle(EXTRA_ROOT_SCENE_ARGUMENTS);
+        NavigationSceneOptions navigationSceneOptions = new NavigationSceneOptions(rootSceneClassName, rootSceneArguments);
         navigationSceneOptions.mDrawWindowBackground = bundle.getBoolean(EXTRA_DRAW_WINDOW_BACKGROUND);
         navigationSceneOptions.mFixSceneBackgroundEnabled = bundle.getBoolean(EXTRA_FIX_SCENE_BACKGROUND_ENABLED);
         navigationSceneOptions.mSceneBackgroundResId = bundle.getInt(EXTRA_SCENE_BACKGROUND);
         return navigationSceneOptions;
     }
 
+    @NonNull
     public Bundle toBundle() {
         if (TextUtils.isEmpty(mRootSceneClassName)) {
             throw new IllegalArgumentException("call setRootScene first");

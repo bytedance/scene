@@ -97,11 +97,11 @@ public class SceneContainerActivity extends AppCompatActivity implements SceneNa
         SingeProcessMessengerHandler singeProcessMessengerHandler = SingeProcessMessengerHandler.from(getIntent());
         if (singeProcessMessengerHandler != null) {
             this.mDelegate = NavigationSceneUtility.setupWithActivity(this, savedInstanceState,
-                    new NavigationSceneOptions().setRootScene(DelegateScene.class, null), false);
+                    new NavigationSceneOptions(DelegateScene.class, null), false);
         } else {
             NonNullPair<? extends Class<? extends Scene>, Bundle> pair = getSceneDataFromIntent(getIntent());
             this.mDelegate = NavigationSceneUtility.setupWithActivity(this, savedInstanceState,
-                    new NavigationSceneOptions().setRootScene(pair.first, pair.second), false);
+                    new NavigationSceneOptions(pair.first, pair.second), false);
         }
     }
 

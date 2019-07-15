@@ -29,7 +29,7 @@ public class NavigationSceneUtility {
                                                   @NonNull Class<? extends Scene> rootScene,
                                                   boolean supportRestore) {
         return setupWithActivity(activity, savedInstanceState,
-                new NavigationSceneOptions().setRootScene(rootScene, null), null, supportRestore);
+                new NavigationSceneOptions(rootScene, null), null, supportRestore);
     }
 
     @NonNull
@@ -38,7 +38,7 @@ public class NavigationSceneUtility {
                                                   @Nullable SceneComponentFactory rootSceneComponentFactory,
                                                   boolean supportRestore) {
         return setupWithActivity(activity, savedInstanceState,
-                new NavigationSceneOptions().setRootScene(rootScene, null), rootSceneComponentFactory, supportRestore);
+                new NavigationSceneOptions(rootScene, null), rootSceneComponentFactory, supportRestore);
     }
 
     @NonNull

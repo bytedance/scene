@@ -32,18 +32,18 @@ public class MultiStackTabGroupScene extends BottomNavigationViewScene {
         Bundle bundle = new Bundle();
         bundle.putInt("index", 0);
 
-        NavigationScene navigationScene = (NavigationScene) SceneInstanceUtility.getInstanceFromClass(NavigationScene.class, new NavigationSceneOptions()
-                .setRootScene(MultiStackTabChildScene.class, getBundle(0)).toBundle());
+        NavigationScene navigationScene = (NavigationScene) SceneInstanceUtility.getInstanceFromClass(NavigationScene.class,
+                new NavigationSceneOptions(MultiStackTabChildScene.class, getBundle(0)).toBundle());
 
         sparseArrayCompat.put(R.id.menu_home, navigationScene);
 
-        navigationScene = (NavigationScene) SceneInstanceUtility.getInstanceFromClass(NavigationScene.class, new NavigationSceneOptions()
-                .setRootScene(MultiStackTabChildScene.class, getBundle(1)).toBundle());
+        navigationScene = (NavigationScene) SceneInstanceUtility.getInstanceFromClass(NavigationScene.class,
+                new NavigationSceneOptions(MultiStackTabChildScene.class, getBundle(1)).toBundle());
 
         sparseArrayCompat.put(R.id.menu_search, navigationScene);
 
-        navigationScene = (NavigationScene) SceneInstanceUtility.getInstanceFromClass(NavigationScene.class, new NavigationSceneOptions()
-                .setRootScene(MultiStackTabChildScene.class, getBundle(2)).toBundle());
+        navigationScene = (NavigationScene) SceneInstanceUtility.getInstanceFromClass(NavigationScene.class,
+                new NavigationSceneOptions(MultiStackTabChildScene.class, getBundle(2)).toBundle());
 
         sparseArrayCompat.put(R.id.menu_notifications, navigationScene);
         return sparseArrayCompat;

@@ -35,7 +35,7 @@ public class NavigationSceneCompatUtility {
                                                   @NonNull Class<? extends Scene> rootScene,
                                                   @Nullable Bundle bundle) {
         return setupWithFragment(fragment, containerId, savedInstanceState,
-                new NavigationSceneOptions().setRootScene(rootScene, bundle),
+                new NavigationSceneOptions(rootScene, bundle),
                 null,
                 false);
     }
@@ -48,7 +48,7 @@ public class NavigationSceneCompatUtility {
                                                   @Nullable Bundle bundle,
                                                   boolean supportRestore) {
         return setupWithFragment(fragment, containerId, savedInstanceState,
-                new NavigationSceneOptions().setRootScene(rootScene, bundle),
+                new NavigationSceneOptions(rootScene, bundle),
                 null,
                 supportRestore);
     }
@@ -62,7 +62,7 @@ public class NavigationSceneCompatUtility {
                                                   @Nullable Bundle bundle,
                                                   boolean supportRestore) {
         return setupWithFragment(fragment, containerId, savedInstanceState,
-                new NavigationSceneOptions().setRootScene(rootScene, bundle),
+                new NavigationSceneOptions(rootScene, bundle),
                 rootSceneComponentFactory,
                 supportRestore);
     }

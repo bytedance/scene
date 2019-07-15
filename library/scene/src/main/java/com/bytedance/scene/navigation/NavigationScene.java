@@ -421,12 +421,6 @@ public final class NavigationScene extends Scene implements NavigationListener {
         return frameLayout;
     }
 
-    private static NavigationSceneOptions generateDefaultOptions() {
-        NavigationSceneOptions navigationSceneOptions = new NavigationSceneOptions();
-        navigationSceneOptions.setDrawWindowBackground(true);
-        return navigationSceneOptions;
-    }
-
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);

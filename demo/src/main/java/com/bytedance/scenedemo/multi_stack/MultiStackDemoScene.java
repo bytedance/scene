@@ -42,7 +42,7 @@ public class MultiStackDemoScene extends GroupScene {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getNavigationScene().push(NavigationScene.class, new NavigationSceneOptions().setRootScene(MainListScene.class, null).toBundle());
+                getNavigationScene().push(NavigationScene.class, new NavigationSceneOptions(MainListScene.class, null).toBundle());
             }
         });
 
@@ -53,7 +53,7 @@ public class MultiStackDemoScene extends GroupScene {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getNavigationScene().push(NavigationScene.class, new NavigationSceneOptions().setRootScene(MainListScene.class, null).toBundle()
+                getNavigationScene().push(NavigationScene.class, new NavigationSceneOptions(MainListScene.class, null).toBundle()
                         , new PushOptions.Builder().setAnimation(new HorizontalTransitionAnimatorExecutor()).build());
             }
         });

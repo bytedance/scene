@@ -51,9 +51,8 @@ public class TestSceneDelegateToViewView extends LifeCycleFrameLayout {
     }
 
     private void init() {
-        NavigationSceneOptions options = new NavigationSceneOptions();
+        NavigationSceneOptions options = new NavigationSceneOptions(MainListScene.class);
         options.setDrawWindowBackground(false);
-        options.setRootScene(MainListScene.class, null);
         NavigationScene navigationScene = (NavigationScene) SceneInstanceUtility.getInstanceFromClass(NavigationScene.class,
                 options.toBundle());
         setNavigationScene(navigationScene);
