@@ -31,8 +31,20 @@ public abstract class NavigationAnimatorExecutor extends NavigationAnimationExec
         final View fromView = fromInfo.mSceneView;
         final View toView = toInfo.mSceneView;
 
-        AnimatorUtility.resetViewStatus(fromView);
-        AnimatorUtility.resetViewStatus(toView);
+        AnimatorUtility.AnimatorInfo fromViewAnimatorInfo = null;
+        if (fromInfo.mIsTranslucent) {
+            fromViewAnimatorInfo = AnimatorUtility.captureViewStatus(fromView);
+        } else {
+            AnimatorUtility.resetViewStatus(fromView);
+        }
+
+        AnimatorUtility.AnimatorInfo toViewAnimatorInfo = null;
+        if (toInfo.mIsTranslucent) {
+            toViewAnimatorInfo = AnimatorUtility.captureViewStatus(toView);
+        } else {
+            AnimatorUtility.resetViewStatus(toView);
+        }
+
         fromView.setVisibility(View.VISIBLE);
 
         final float fromViewElevation = ViewCompat.getElevation(fromView);
@@ -44,6 +56,8 @@ public abstract class NavigationAnimatorExecutor extends NavigationAnimationExec
         if (!disableConfigAnimationDuration()) {
             animator.setDuration(DURATION);
         }
+        final AnimatorUtility.AnimatorInfo finalFromViewAnimatorInfo = fromViewAnimatorInfo;
+        final AnimatorUtility.AnimatorInfo finalToViewAnimatorInfo = toViewAnimatorInfo;
         animator.addListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationEnd(Animator animation) {
@@ -56,8 +70,16 @@ public abstract class NavigationAnimatorExecutor extends NavigationAnimationExec
                     ViewCompat.setElevation(fromView, fromViewElevation);
                 }
 
-                AnimatorUtility.resetViewStatus(fromView);
-                AnimatorUtility.resetViewStatus(toView);
+                if (fromInfo.mIsTranslucent) {
+                    AnimatorUtility.resetViewStatus(fromView, finalFromViewAnimatorInfo);
+                } else {
+                    AnimatorUtility.resetViewStatus(fromView);
+                }
+                if (toInfo.mIsTranslucent) {
+                    AnimatorUtility.resetViewStatus(toView, finalToViewAnimatorInfo);
+                } else {
+                    AnimatorUtility.resetViewStatus(toView);
+                }
 
                 endAction.run();
             }
@@ -85,8 +107,19 @@ public abstract class NavigationAnimatorExecutor extends NavigationAnimationExec
         final View fromView = fromInfo.mSceneView;
         final View toView = toInfo.mSceneView;
 
-        AnimatorUtility.resetViewStatus(fromView);
-        AnimatorUtility.resetViewStatus(toView);
+        AnimatorUtility.AnimatorInfo fromViewAnimatorInfo = null;
+        if (fromInfo.mIsTranslucent) {
+            fromViewAnimatorInfo = AnimatorUtility.captureViewStatus(fromView);
+        } else {
+            AnimatorUtility.resetViewStatus(fromView);
+        }
+
+        AnimatorUtility.AnimatorInfo toViewAnimatorInfo = null;
+        if (toInfo.mIsTranslucent) {
+            toViewAnimatorInfo = AnimatorUtility.captureViewStatus(toView);
+        } else {
+            AnimatorUtility.resetViewStatus(toView);
+        }
 
         fromView.setVisibility(View.VISIBLE);
 
@@ -100,13 +133,23 @@ public abstract class NavigationAnimatorExecutor extends NavigationAnimationExec
         if (!disableConfigAnimationDuration()) {
             animator.setDuration(DURATION);
         }
+        final AnimatorUtility.AnimatorInfo finalFromViewAnimatorInfo = fromViewAnimatorInfo;
+        final AnimatorUtility.AnimatorInfo finalToViewAnimatorInfo = toViewAnimatorInfo;
         animator.addListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationEnd(Animator animation) {
                 super.onAnimationEnd(animation);
                 //todo child是不是也得reset
-                AnimatorUtility.resetViewStatus(fromView);
-                AnimatorUtility.resetViewStatus(toView);
+                if (fromInfo.mIsTranslucent) {
+                    AnimatorUtility.resetViewStatus(fromView, finalFromViewAnimatorInfo);
+                } else {
+                    AnimatorUtility.resetViewStatus(fromView);
+                }
+                if (toInfo.mIsTranslucent) {
+                    AnimatorUtility.resetViewStatus(toView, finalToViewAnimatorInfo);
+                } else {
+                    AnimatorUtility.resetViewStatus(toView);
+                }
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
                     mAnimationViewGroup.getOverlay().remove(fromView);

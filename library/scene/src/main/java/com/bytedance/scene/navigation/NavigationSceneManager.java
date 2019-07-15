@@ -527,8 +527,8 @@ class NavigationSceneManager {
                     }
                 };
 
-                final AnimationInfo fromInfo = new AnimationInfo(currentScene, currentSceneView, currentScene.getState(), false);
-                final AnimationInfo toInfo = new AnimationInfo(returnRecord.mScene, returnRecord.mScene.getView(), returnRecord.mScene.getState(), false);
+                final AnimationInfo fromInfo = new AnimationInfo(currentScene, currentSceneView, currentScene.getState(), currentRecord.mIsTranslucent);
+                final AnimationInfo toInfo = new AnimationInfo(returnRecord.mScene, returnRecord.mScene.getView(), returnRecord.mScene.getState(), returnRecord.mIsTranslucent);
 
                 mCancellationSignalManager.add(cancellationSignalList);
                 //Push后立刻Pop的极端Case，我们有可能抢在Push的View在layout之前执行到Pop，这个时候高宽都是0，也没Parent，动画没法执行，需要修正

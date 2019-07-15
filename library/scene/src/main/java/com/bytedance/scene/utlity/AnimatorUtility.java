@@ -1,5 +1,6 @@
 package com.bytedance.scene.utlity;
 
+import android.support.annotation.NonNull;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -7,7 +8,7 @@ import android.view.ViewGroup;
  * Created by JiangQi on 8/2/18.
  */
 public class AnimatorUtility {
-    public static void resetViewStatus(View view) {
+    public static void resetViewStatus(@NonNull View view) {
         view.setTranslationX(0);
         view.setTranslationY(0);
         view.setScaleX(1.0f);
@@ -19,12 +20,60 @@ public class AnimatorUtility {
         view.clearAnimation();
     }
 
-    public static void bringToFrontIfNeeded(View view) {
+    @NonNull
+    public static AnimatorInfo captureViewStatus(@NonNull View view) {
+        return new AnimatorInfo(view.getTranslationX(),
+                view.getTranslationY(),
+                view.getScaleX(),
+                view.getScaleY(),
+                view.getRotation(),
+                view.getRotationX(),
+                view.getRotationY(),
+                view.getAlpha());
+    }
+
+    public static void resetViewStatus(@NonNull View view, @NonNull AnimatorInfo animatorInfo) {
+        view.setTranslationX(animatorInfo.translationX);
+        view.setTranslationY(animatorInfo.translationY);
+        view.setScaleX(animatorInfo.scaleX);
+        view.setScaleY(animatorInfo.scaleY);
+        view.setRotation(animatorInfo.rotation);
+        view.setRotationX(animatorInfo.rotationX);
+        view.setRotationY(animatorInfo.rotationY);
+        view.setAlpha(animatorInfo.alpha);
+    }
+
+    public static void bringToFrontIfNeeded(@NonNull View view) {
         ViewGroup viewGroup = (ViewGroup) view.getParent();
         int childCount = viewGroup.getChildCount();
         int childIndex = viewGroup.indexOfChild(view);
         if (childIndex >= 0 && childIndex != childCount - 1) {
             view.bringToFront();
+        }
+    }
+
+    public static class AnimatorInfo {
+        public final float translationX;
+        public final float translationY;
+        public final float scaleX;
+        public final float scaleY;
+        public final float rotation;
+        public final float rotationX;
+        public final float rotationY;
+        public final float alpha;
+
+        public AnimatorInfo(float translationX, float translationY,
+                            float scaleX, float scaleY,
+                            float rotation, float rotationX, float rotationY,
+                            float alpha) {
+            this.translationX = translationX;
+            this.translationY = translationY;
+            this.scaleX = scaleX;
+            this.scaleY = scaleY;
+            this.rotation = rotation;
+            this.rotationX = rotationX;
+            this.rotationY = rotationY;
+            this.alpha = alpha;
         }
     }
 }
