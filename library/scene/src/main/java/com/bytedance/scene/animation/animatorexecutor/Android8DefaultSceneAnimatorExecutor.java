@@ -20,6 +20,8 @@ import com.bytedance.scene.animation.TransitionUtils;
  * Created by JiangQi on 8/3/18.
  */
 public class Android8DefaultSceneAnimatorExecutor extends NavigationAnimatorExecutor {
+    private DialogSceneAnimatorExecutor mDialogSceneAnimatorExecutor = new DialogSceneAnimatorExecutor();
+
     @Override
     public boolean isSupport(@NonNull Class<? extends Scene> from, @NonNull Class<? extends Scene> to) {
         return true;
@@ -33,6 +35,9 @@ public class Android8DefaultSceneAnimatorExecutor extends NavigationAnimatorExec
     @NonNull
     @Override
     protected Animator onPushAnimator(AnimationInfo from, final AnimationInfo to) {
+        if (to.mIsTranslucent) {
+            return mDialogSceneAnimatorExecutor.onPushAnimator(from, to);
+        }
         final View fromView = from.mSceneView;
         final View toView = to.mSceneView;
 
@@ -53,6 +58,9 @@ public class Android8DefaultSceneAnimatorExecutor extends NavigationAnimatorExec
     @NonNull
     @Override
     protected Animator onPopAnimator(final AnimationInfo fromInfo, final AnimationInfo toInfo) {
+        if (fromInfo.mIsTranslucent) {
+            return mDialogSceneAnimatorExecutor.onPopAnimator(fromInfo, toInfo);
+        }
         final View toView = toInfo.mSceneView;
         final View fromView = fromInfo.mSceneView;
 
