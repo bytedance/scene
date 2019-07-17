@@ -361,6 +361,32 @@ public final class NavigationScene extends Scene implements NavigationListener {
     }
 
     /**
+     * Push animation priority:
+     * 1.NavigationScene.overrideNavigationAnimationExecutor
+     * 2.PushOptions.setAnimation
+     * 3.NavigationScene.setDefaultNavigationAnimationExecutor
+     * 4.default
+     * <p>
+     * Pop animation priority:
+     * 1.PopOptions.setAnimation
+     * 2.NavigationScene.overrideNavigationAnimationExecutor
+     * 3.PushOptions.setAnimation
+     * 4.NavigationScene.setDefaultNavigationAnimationExecutor
+     * 5.default
+     **/
+    public void overrideNavigationAnimationExecutor(@NonNull Scene scene, @Nullable NavigationAnimationExecutor navigationAnimationExecutor) {
+        ThreadUtility.checkUIThread();
+        if (scene.getLifecycle().getCurrentState() == DESTROYED) {
+            // ignore
+            return;
+        }
+        Record record = mNavigationSceneManager.findRecordByScene(scene);
+        if (record != null) {
+            record.mNavigationAnimationExecutor = navigationAnimationExecutor;
+        }
+    }
+
+    /**
      * @hide
      */
     @RestrictTo(LIBRARY_GROUP)

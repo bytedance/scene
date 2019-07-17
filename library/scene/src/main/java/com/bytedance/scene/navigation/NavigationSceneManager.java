@@ -786,10 +786,14 @@ class NavigationSceneManager {
             final boolean isNavigationSceneInAnimationState = mNavigationScene.getState().value >= State.STARTED.value;
             if (!mDisableNavigationAnimation && isNavigationSceneInAnimationState && currentRecord != null) {
                 NavigationAnimationExecutor navigationAnimationExecutor = null;
-                if (animationFactory != null && animationFactory.isSupport(currentRecord.mScene.getClass(), scene.getClass())) {
+                //Scene can override mNavigationAnimationExecutor in moveState method by NavigationScene.overrideNavigationAnimationExecutor
+                NavigationAnimationExecutor recordAnimationExecutor = record.mNavigationAnimationExecutor;
+                if (recordAnimationExecutor != null && recordAnimationExecutor.isSupport(currentRecord.mScene.getClass(), scene.getClass())) {
+                    navigationAnimationExecutor = recordAnimationExecutor;
+                }
+                if (navigationAnimationExecutor == null && animationFactory != null && animationFactory.isSupport(currentRecord.mScene.getClass(), scene.getClass())) {
                     navigationAnimationExecutor = animationFactory;
                 }
-
                 if (navigationAnimationExecutor == null) {
                     navigationAnimationExecutor = mNavigationScene.getDefaultNavigationAnimationExecutor();
                 }
