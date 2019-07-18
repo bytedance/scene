@@ -25,10 +25,6 @@ public abstract class NavigationAnimationExecutor {
         this.mAnimationViewGroup = viewGroup;
     }
 
-    public boolean forceExecuteImmediately() {
-        return false;
-    }
-
     public abstract boolean isSupport(@NonNull Class<? extends Scene> from, @NonNull Class<? extends Scene> to);
 
     public final void executePushChange(@NonNull final NavigationScene navigationScene,

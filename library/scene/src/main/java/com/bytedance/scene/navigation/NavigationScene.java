@@ -387,6 +387,20 @@ public final class NavigationScene extends Scene implements NavigationListener {
     }
 
     /**
+     * {@link com.bytedance.scene.interfaces.PushOptions.Builder#setAnimation(NavigationAnimationExecutor)}
+     * {@link #overrideNavigationAnimationExecutor(Scene,NavigationAnimationExecutor)}
+     */
+    @Nullable
+    public NavigationAnimationExecutor getNavigationAnimationExecutor(@NonNull Scene scene) {
+        Record record = mNavigationSceneManager.findRecordByScene(scene);
+        if (record != null) {
+            return record.mNavigationAnimationExecutor;
+        } else {
+            return null;
+        }
+    }
+
+    /**
      * @hide
      */
     @RestrictTo(LIBRARY_GROUP)

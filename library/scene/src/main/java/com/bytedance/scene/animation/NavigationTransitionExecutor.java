@@ -25,11 +25,6 @@ public abstract class NavigationTransitionExecutor extends NavigationAnimationEx
         return true;
     }
 
-    @Override
-    public boolean forceExecuteImmediately() {
-        return true;
-    }
-
     protected abstract Transition getSharedElementTransition();
 
     protected abstract Transition getOthersTransition();

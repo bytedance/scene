@@ -11,6 +11,7 @@ import com.bytedance.scene.animation.animatorexecutor.Android8DefaultSceneAnimat
 import com.bytedance.scene.animation.interaction.scenetransition.SceneTransition;
 import com.bytedance.scene.animation.interaction.scenetransition.visiblity.SceneVisibilityTransition;
 import com.bytedance.scene.utlity.CancellationSignal;
+import com.bytedance.scene.utlity.CancellationSignalList;
 import com.bytedance.scene.utlity.Utility;
 
 import java.util.Map;
@@ -24,15 +25,12 @@ public class ActivityToSceneSharedElementSceneTransitionExecutor extends Navigat
     private final NavigationAnimationExecutor mFallbackAnimationExecutor;
     @NonNull
     private View mActivityView;
+    private boolean mDelayEnterTransitionExecute = false;
+    private Runnable mEnterTransitionRunnable = null;
 
     @Override
     public boolean isSupport(@NonNull Class<? extends Scene> from, @NonNull Class<? extends Scene> to) {
         return true;
-    }
-
-    @Override
-    public boolean forceExecuteImmediately() {
-        return false;
     }
 
     public ActivityToSceneSharedElementSceneTransitionExecutor(@NonNull View fromView,
@@ -49,6 +47,16 @@ public class ActivityToSceneSharedElementSceneTransitionExecutor extends Navigat
                                                                @NonNull Map<String, SceneTransition> sharedElementTransition,
                                                                @Nullable SceneVisibilityTransition otherTransition) {
         this(fromView, sharedElementTransition, otherTransition, new Android8DefaultSceneAnimatorExecutor());
+    }
+
+    public void delayEnterTransitionExecute() {
+        this.mDelayEnterTransitionExecute = true;
+    }
+
+    public void postponeEnterTransition() {
+        if (this.mEnterTransitionRunnable != null) {
+            this.mEnterTransitionRunnable.run();
+        }
     }
 
     @Override
@@ -71,15 +79,40 @@ public class ActivityToSceneSharedElementSceneTransitionExecutor extends Navigat
             toInfo, @NonNull final Runnable endAction, @NonNull CancellationSignal cancellationSignal) {
         final View fromView = this.mActivityView;
         final View toView = toInfo.mSceneView;
-
         fromView.setVisibility(View.VISIBLE);
 
-        new SharedElementViewTransitionExecutor(mSharedElementTransition, mOtherTransition).executePushChange(fromView, toView, new Runnable() {
-            @Override
-            public void run() {
-                endAction.run();
-            }
-        }, cancellationSignal);
+        final SharedElementViewTransitionExecutor sharedElementViewTransitionExecutor = new SharedElementViewTransitionExecutor(mSharedElementTransition, mOtherTransition);
+        if (this.mDelayEnterTransitionExecute) {
+            toView.setVisibility(View.INVISIBLE);
+            final CancellationSignalList cancellationSignalListAdapter = new CancellationSignalList();
+            this.mEnterTransitionRunnable = new Runnable() {
+                @Override
+                public void run() {
+                    toView.setVisibility(View.VISIBLE);
+                    sharedElementViewTransitionExecutor.executePushChange(fromView, toView, new Runnable() {
+                        @Override
+                        public void run() {
+                            endAction.run();
+                        }
+                    }, cancellationSignalListAdapter.getChildCancellationSignal());
+                }
+            };
+            cancellationSignal.setOnCancelListener(new CancellationSignal.OnCancelListener() {
+                @Override
+                public void onCancel() {
+                    mEnterTransitionRunnable = null;
+                    toView.setVisibility(View.VISIBLE);
+                    cancellationSignalListAdapter.cancel();
+                }
+            });
+        } else {
+            sharedElementViewTransitionExecutor.executePushChange(fromView, toView, new Runnable() {
+                @Override
+                public void run() {
+                    endAction.run();
+                }
+            }, cancellationSignal);
+        }
     }
 
     @Override

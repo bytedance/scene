@@ -11,6 +11,7 @@ import com.bytedance.scene.animation.animatorexecutor.Android8DefaultSceneAnimat
 import com.bytedance.scene.animation.interaction.scenetransition.SceneTransition;
 import com.bytedance.scene.animation.interaction.scenetransition.visiblity.SceneVisibilityTransition;
 import com.bytedance.scene.utlity.CancellationSignal;
+import com.bytedance.scene.utlity.CancellationSignalList;
 import com.bytedance.scene.utlity.Utility;
 
 import java.util.Map;
@@ -25,6 +26,8 @@ public class SharedElementSceneTransitionExecutor extends NavigationAnimationExe
     private final SceneVisibilityTransition mOtherTransition;
     @NonNull
     private NavigationAnimationExecutor mFallbackAnimationExecutor;
+    private boolean mDelayEnterTransitionExecute = false;
+    private Runnable mEnterTransitionRunnable = null;
 
     public SharedElementSceneTransitionExecutor(@NonNull Map<String, SceneTransition> sharedElementTransition,
                                                 @Nullable SceneVisibilityTransition otherTransition,
@@ -43,14 +46,19 @@ public class SharedElementSceneTransitionExecutor extends NavigationAnimationExe
         return true;
     }
 
-    @Override
-    public boolean forceExecuteImmediately() {
-        return false;
+    public void delayEnterTransitionExecute() {
+        this.mDelayEnterTransitionExecute = true;
     }
 
+    public void postponeEnterTransition() {
+        if (this.mEnterTransitionRunnable != null) {
+            this.mEnterTransitionRunnable.run();
+            this.mEnterTransitionRunnable = null;
+        }
+    }
 
     @Override
-    public final void executePushChangeCancelable(@NonNull AnimationInfo fromInfo, @NonNull final AnimationInfo toInfo, @NonNull final Runnable endAction, @NonNull CancellationSignal cancellationSignal) {
+    public final void executePushChangeCancelable(@NonNull final AnimationInfo fromInfo, @NonNull final AnimationInfo toInfo, @NonNull final Runnable endAction, @NonNull final CancellationSignal cancellationSignal) {
         if (fromInfo.mIsTranslucent || toInfo.mIsTranslucent) {
             throw new IllegalArgumentException("SharedElement animation don't support translucent scene");
         }
@@ -66,20 +74,46 @@ public class SharedElementSceneTransitionExecutor extends NavigationAnimationExe
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     private void executePushChangeV21(@NonNull AnimationInfo fromInfo, @NonNull AnimationInfo
-            toInfo, @NonNull final Runnable endAction, @NonNull CancellationSignal cancellationSignal) {
+            toInfo, @NonNull final Runnable endAction, @NonNull final CancellationSignal cancellationSignal) {
         final View fromView = fromInfo.mSceneView;
-
         fromView.setVisibility(View.VISIBLE);
-
         final View toView = toInfo.mSceneView;
 
-        new SharedElementViewTransitionExecutor(mSharedElementTransition, mOtherTransition).executePushChange(fromView, toView, new Runnable() {
-            @Override
-            public void run() {
-                fromView.setVisibility(View.GONE);
-                endAction.run();
-            }
-        }, cancellationSignal);
+        final SharedElementViewTransitionExecutor sharedElementViewTransitionExecutor = new SharedElementViewTransitionExecutor(mSharedElementTransition, mOtherTransition);
+        if (this.mDelayEnterTransitionExecute) {
+            toView.setVisibility(View.INVISIBLE);
+            final CancellationSignalList cancellationSignalListAdapter = new CancellationSignalList();
+            this.mEnterTransitionRunnable = new Runnable() {
+                @Override
+                public void run() {
+                    toView.setVisibility(View.VISIBLE);
+                    sharedElementViewTransitionExecutor.executePushChange(fromView, toView, new Runnable() {
+                        @Override
+                        public void run() {
+                            fromView.setVisibility(View.GONE);
+                            endAction.run();
+                        }
+                    }, cancellationSignalListAdapter.getChildCancellationSignal());
+                }
+            };
+            cancellationSignal.setOnCancelListener(new CancellationSignal.OnCancelListener() {
+                @Override
+                public void onCancel() {
+                    mEnterTransitionRunnable = null;
+                    toView.setVisibility(View.VISIBLE);
+                    fromView.setVisibility(View.GONE);
+                    cancellationSignalListAdapter.cancel();
+                }
+            });
+        } else {
+            sharedElementViewTransitionExecutor.executePushChange(fromView, toView, new Runnable() {
+                @Override
+                public void run() {
+                    fromView.setVisibility(View.GONE);
+                    endAction.run();
+                }
+            }, cancellationSignal);
+        }
     }
 
     @Override
