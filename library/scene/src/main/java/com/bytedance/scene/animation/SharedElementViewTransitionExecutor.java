@@ -57,14 +57,22 @@ public class SharedElementViewTransitionExecutor {
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     public void executePushChange(@NonNull final View fromView, @NonNull final View toView,
-                                  @NonNull final Runnable endAction, @NonNull CancellationSignal cancellationSignal) {
+                                  @NonNull final Runnable endAction, @NonNull CancellationSignal cancellationSignal,
+                                  @NonNull SharedElementNotFoundPolicy sharedElementNotFoundPolicy,
+                                  @NonNull Runnable fallbackAction) {
         Set<String> keySet = this.mSharedElementTransition.keySet();
         //要排序，不要让Parent盖住Child
         ArrayMap<String, View> map = new ArrayMap<>();
         for (String transitionName : keySet) {
             View dstView = SharedElementUtils.getViewByTransitionName(toView, transitionName, true);
             if (dstView == null) {
-                throw new IllegalArgumentException("cant find " + transitionName + " View");
+                switch (sharedElementNotFoundPolicy) {
+                    case ABORT:
+                        throw new IllegalArgumentException("cant find " + transitionName + " View");
+                    case FALLBACK:
+                        fallbackAction.run();
+                        return;
+                }
             }
             map.put(transitionName, dstView);
         }
@@ -80,7 +88,13 @@ public class SharedElementViewTransitionExecutor {
             View dstView = list.get(i).second;
 
             if (srcView == null) {
-                throw new IllegalArgumentException("cant find " + transitionName + " View");
+                switch (sharedElementNotFoundPolicy) {
+                    case ABORT:
+                        throw new IllegalArgumentException("cant find " + transitionName + " View");
+                    case FALLBACK:
+                        fallbackAction.run();
+                        return;
+                }
             }
 
             infoList.add(new Info(srcView, dstView, sceneTransition));
@@ -159,7 +173,9 @@ public class SharedElementViewTransitionExecutor {
     }
 
     public void executePopChange(@NonNull final View fromView, @NonNull final View toView,
-                                 @NonNull final Runnable endAction, @NonNull CancellationSignal cancellationSignal) {
+                                 @NonNull final Runnable endAction, @NonNull CancellationSignal cancellationSignal,
+                                 @NonNull SharedElementNotFoundPolicy sharedElementNotFoundPolicy,
+                                 @NonNull Runnable fallbackAction) {
         final List<Info> infoList = new ArrayList<>();
         List<View> sharedElementViewList = new ArrayList<>();
         Set<String> keySet = this.mSharedElementTransition.keySet();
@@ -167,7 +183,14 @@ public class SharedElementViewTransitionExecutor {
         for (String transitionName : keySet) {
             View srcView = SharedElementUtils.getViewByTransitionName(fromView, transitionName, true);
             if (srcView == null) {
-                throw new IllegalArgumentException("cant find " + transitionName + " View");
+                switch (sharedElementNotFoundPolicy) {
+                    case ABORT:
+                        throw new IllegalArgumentException("cant find " + transitionName + " View");
+                    case FALLBACK:
+                        fallbackAction.run();
+                        return;
+
+                }
             }
             map.put(transitionName, srcView);
         }
@@ -179,7 +202,13 @@ public class SharedElementViewTransitionExecutor {
             View dstView = SharedElementUtils.getViewByTransitionName(toView, pair.first, false);
 
             if (dstView == null) {
-                throw new IllegalArgumentException("cant find " + pair.first + " View");
+                switch (sharedElementNotFoundPolicy) {
+                    case ABORT:
+                        throw new IllegalArgumentException("cant find " + pair.first + " View");
+                    case FALLBACK:
+                        fallbackAction.run();
+                        return;
+                }
             }
 
             infoList.add(new Info(srcView, dstView, sceneTransition));

@@ -22,6 +22,8 @@ public class ActivityToSceneSharedElementSceneTransitionExecutor extends Navigat
     @Nullable
     private final SceneVisibilityTransition mOtherTransition;
     @NonNull
+    private SharedElementNotFoundPolicy mSharedElementNotFoundPolicy;
+    @NonNull
     private final NavigationAnimationExecutor mFallbackAnimationExecutor;
     @NonNull
     private View mActivityView;
@@ -36,17 +38,23 @@ public class ActivityToSceneSharedElementSceneTransitionExecutor extends Navigat
     public ActivityToSceneSharedElementSceneTransitionExecutor(@NonNull View fromView,
                                                                @NonNull Map<String, SceneTransition> sharedElementTransition,
                                                                @Nullable SceneVisibilityTransition otherTransition,
-                                                               @NonNull NavigationAnimationExecutor fallbackAnimationExecutor) {
+                                                               @NonNull NavigationAnimationExecutor fallbackAnimationExecutor,
+                                                               @NonNull SharedElementNotFoundPolicy sharedElementNotFoundPolicy) {
         this.mActivityView = fromView;
         this.mSharedElementTransition = sharedElementTransition;
         this.mOtherTransition = otherTransition;
+        this.mSharedElementNotFoundPolicy = sharedElementNotFoundPolicy;
         this.mFallbackAnimationExecutor = fallbackAnimationExecutor;
     }
 
     public ActivityToSceneSharedElementSceneTransitionExecutor(@NonNull View fromView,
                                                                @NonNull Map<String, SceneTransition> sharedElementTransition,
                                                                @Nullable SceneVisibilityTransition otherTransition) {
-        this(fromView, sharedElementTransition, otherTransition, new Android8DefaultSceneAnimatorExecutor());
+        this(fromView, sharedElementTransition, otherTransition, new Android8DefaultSceneAnimatorExecutor(), SharedElementNotFoundPolicy.FALLBACK);
+    }
+
+    public void setSharedElementNotFoundPolicy(@NonNull SharedElementNotFoundPolicy sharedElementNotFoundPolicy) {
+        this.mSharedElementNotFoundPolicy = sharedElementNotFoundPolicy;
     }
 
     public void delayEnterTransitionExecute() {
@@ -75,13 +83,21 @@ public class ActivityToSceneSharedElementSceneTransitionExecutor extends Navigat
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    private void executePushChangeV21(@NonNull AnimationInfo fromInfo, @NonNull AnimationInfo
-            toInfo, @NonNull final Runnable endAction, @NonNull CancellationSignal cancellationSignal) {
+    private void executePushChangeV21(@NonNull final AnimationInfo fromInfo, @NonNull final AnimationInfo
+            toInfo, @NonNull final Runnable endAction, @NonNull final CancellationSignal cancellationSignal) {
         final View fromView = this.mActivityView;
         final View toView = toInfo.mSceneView;
         fromView.setVisibility(View.VISIBLE);
 
         final SharedElementViewTransitionExecutor sharedElementViewTransitionExecutor = new SharedElementViewTransitionExecutor(mSharedElementTransition, mOtherTransition);
+        final Runnable fallbackAction = new Runnable() {
+            @Override
+            public void run() {
+                mFallbackAnimationExecutor.setAnimationViewGroup(mAnimationViewGroup);
+                mFallbackAnimationExecutor.executePushChangeCancelable(fromInfo, toInfo, endAction, cancellationSignal);
+            }
+        };
+
         if (this.mDelayEnterTransitionExecute) {
             toView.setVisibility(View.INVISIBLE);
             final CancellationSignalList cancellationSignalListAdapter = new CancellationSignalList();
@@ -94,7 +110,7 @@ public class ActivityToSceneSharedElementSceneTransitionExecutor extends Navigat
                         public void run() {
                             endAction.run();
                         }
-                    }, cancellationSignalListAdapter.getChildCancellationSignal());
+                    }, cancellationSignalListAdapter.getChildCancellationSignal(), mSharedElementNotFoundPolicy, fallbackAction);
                 }
             };
             cancellationSignal.setOnCancelListener(new CancellationSignal.OnCancelListener() {
@@ -111,7 +127,7 @@ public class ActivityToSceneSharedElementSceneTransitionExecutor extends Navigat
                 public void run() {
                     endAction.run();
                 }
-            }, cancellationSignal);
+            }, cancellationSignal, mSharedElementNotFoundPolicy, fallbackAction);
         }
     }
 
@@ -133,13 +149,21 @@ public class ActivityToSceneSharedElementSceneTransitionExecutor extends Navigat
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    private void executePopChangeV21(@NonNull AnimationInfo fromInfo, @NonNull AnimationInfo
-            toInfo, @NonNull final Runnable endAction, @NonNull CancellationSignal cancellationSignal) {
+    private void executePopChangeV21(@NonNull final AnimationInfo fromInfo, @NonNull final AnimationInfo
+            toInfo, @NonNull final Runnable endAction, @NonNull final CancellationSignal cancellationSignal) {
         final View fromView = fromInfo.mSceneView;
         final View toView = mActivityView;
 
         mAnimationViewGroup.addView(fromView);
         fromView.setVisibility(View.VISIBLE);
+
+        final Runnable fallbackAction = new Runnable() {
+            @Override
+            public void run() {
+                mFallbackAnimationExecutor.setAnimationViewGroup(mAnimationViewGroup);
+                mFallbackAnimationExecutor.executePopChangeCancelable(fromInfo, toInfo, endAction, cancellationSignal);
+            }
+        };
 
         new SharedElementViewTransitionExecutor(mSharedElementTransition, mOtherTransition).executePopChange(fromView, toView, new Runnable() {
             @Override
@@ -148,6 +172,6 @@ public class ActivityToSceneSharedElementSceneTransitionExecutor extends Navigat
                 Utility.removeFromParentView(fromView);
                 endAction.run();
             }
-        }, cancellationSignal);
+        }, cancellationSignal, mSharedElementNotFoundPolicy, fallbackAction);
     }
 }

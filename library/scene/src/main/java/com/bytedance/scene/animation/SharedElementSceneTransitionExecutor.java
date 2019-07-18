@@ -25,16 +25,26 @@ public class SharedElementSceneTransitionExecutor extends NavigationAnimationExe
     @Nullable
     private final SceneVisibilityTransition mOtherTransition;
     @NonNull
-    private NavigationAnimationExecutor mFallbackAnimationExecutor;
+    private SharedElementNotFoundPolicy mSharedElementNotFoundPolicy;
+    @NonNull
+    private final NavigationAnimationExecutor mFallbackAnimationExecutor;
     private boolean mDelayEnterTransitionExecute = false;
     private Runnable mEnterTransitionRunnable = null;
 
     public SharedElementSceneTransitionExecutor(@NonNull Map<String, SceneTransition> sharedElementTransition,
                                                 @Nullable SceneVisibilityTransition otherTransition,
-                                                @NonNull NavigationAnimationExecutor fallbackAnimationExecutor) {
+                                                @NonNull NavigationAnimationExecutor fallbackAnimationExecutor,
+                                                @NonNull SharedElementNotFoundPolicy sharedElementNotFoundPolicy) {
         this.mSharedElementTransition = sharedElementTransition;
         this.mOtherTransition = otherTransition;
+        this.mSharedElementNotFoundPolicy = sharedElementNotFoundPolicy;
         this.mFallbackAnimationExecutor = fallbackAnimationExecutor;
+    }
+
+    public SharedElementSceneTransitionExecutor(@NonNull Map<String, SceneTransition> sharedElementTransition,
+                                                @Nullable SceneVisibilityTransition otherTransition,
+                                                @NonNull NavigationAnimationExecutor fallbackAnimationExecutor) {
+        this(sharedElementTransition, otherTransition, fallbackAnimationExecutor, SharedElementNotFoundPolicy.FALLBACK);
     }
 
     public SharedElementSceneTransitionExecutor(Map<String, SceneTransition> sharedElementTransition, SceneVisibilityTransition otherTransition) {
@@ -44,6 +54,10 @@ public class SharedElementSceneTransitionExecutor extends NavigationAnimationExe
     @Override
     public boolean isSupport(@NonNull Class<? extends Scene> from, @NonNull Class<? extends Scene> to) {
         return true;
+    }
+
+    public void setSharedElementNotFoundPolicy(@NonNull SharedElementNotFoundPolicy sharedElementNotFoundPolicy) {
+        this.mSharedElementNotFoundPolicy = sharedElementNotFoundPolicy;
     }
 
     public void delayEnterTransitionExecute() {
@@ -64,6 +78,7 @@ public class SharedElementSceneTransitionExecutor extends NavigationAnimationExe
         }
 
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+            this.mFallbackAnimationExecutor.setAnimationViewGroup(mAnimationViewGroup);
             this.mFallbackAnimationExecutor.executePushChangeCancelable(fromInfo, toInfo, endAction, cancellationSignal);
             return;
         }
@@ -73,13 +88,21 @@ public class SharedElementSceneTransitionExecutor extends NavigationAnimationExe
 
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    private void executePushChangeV21(@NonNull AnimationInfo fromInfo, @NonNull AnimationInfo
+    private void executePushChangeV21(@NonNull final AnimationInfo fromInfo, @NonNull final AnimationInfo
             toInfo, @NonNull final Runnable endAction, @NonNull final CancellationSignal cancellationSignal) {
         final View fromView = fromInfo.mSceneView;
         fromView.setVisibility(View.VISIBLE);
         final View toView = toInfo.mSceneView;
 
         final SharedElementViewTransitionExecutor sharedElementViewTransitionExecutor = new SharedElementViewTransitionExecutor(mSharedElementTransition, mOtherTransition);
+        final Runnable fallbackAction = new Runnable() {
+            @Override
+            public void run() {
+                mFallbackAnimationExecutor.setAnimationViewGroup(mAnimationViewGroup);
+                mFallbackAnimationExecutor.executePushChangeCancelable(fromInfo, toInfo, endAction, cancellationSignal);
+            }
+        };
+
         if (this.mDelayEnterTransitionExecute) {
             toView.setVisibility(View.INVISIBLE);
             final CancellationSignalList cancellationSignalListAdapter = new CancellationSignalList();
@@ -93,7 +116,7 @@ public class SharedElementSceneTransitionExecutor extends NavigationAnimationExe
                             fromView.setVisibility(View.GONE);
                             endAction.run();
                         }
-                    }, cancellationSignalListAdapter.getChildCancellationSignal());
+                    }, cancellationSignalListAdapter.getChildCancellationSignal(), mSharedElementNotFoundPolicy, fallbackAction);
                 }
             };
             cancellationSignal.setOnCancelListener(new CancellationSignal.OnCancelListener() {
@@ -112,7 +135,7 @@ public class SharedElementSceneTransitionExecutor extends NavigationAnimationExe
                     fromView.setVisibility(View.GONE);
                     endAction.run();
                 }
-            }, cancellationSignal);
+            }, cancellationSignal, mSharedElementNotFoundPolicy, fallbackAction);
         }
     }
 
@@ -125,6 +148,7 @@ public class SharedElementSceneTransitionExecutor extends NavigationAnimationExe
         }
 
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+            this.mFallbackAnimationExecutor.setAnimationViewGroup(mAnimationViewGroup);
             this.mFallbackAnimationExecutor.executePopChangeCancelable(fromInfo, toInfo, endAction, cancellationSignal);
             return;
         }
@@ -133,13 +157,21 @@ public class SharedElementSceneTransitionExecutor extends NavigationAnimationExe
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    private void executePopChangeV21(@NonNull AnimationInfo fromInfo, @NonNull AnimationInfo
-            toInfo, @NonNull final Runnable endAction, @NonNull CancellationSignal cancellationSignal) {
+    private void executePopChangeV21(@NonNull final AnimationInfo fromInfo, @NonNull final AnimationInfo
+            toInfo, @NonNull final Runnable endAction, @NonNull final CancellationSignal cancellationSignal) {
         final View fromView = fromInfo.mSceneView;
         final View toView = toInfo.mSceneView;
 
         mAnimationViewGroup.addView(fromView);
         fromView.setVisibility(View.VISIBLE);
+
+        final Runnable fallbackAction = new Runnable() {
+            @Override
+            public void run() {
+                mFallbackAnimationExecutor.setAnimationViewGroup(mAnimationViewGroup);
+                mFallbackAnimationExecutor.executePopChangeCancelable(fromInfo, toInfo, endAction, cancellationSignal);
+            }
+        };
 
         new SharedElementViewTransitionExecutor(mSharedElementTransition, mOtherTransition).executePopChange(fromView, toView, new Runnable() {
             @Override
@@ -148,6 +180,6 @@ public class SharedElementSceneTransitionExecutor extends NavigationAnimationExe
                 Utility.removeFromParentView(fromView);
                 endAction.run();
             }
-        }, cancellationSignal);
+        }, cancellationSignal, mSharedElementNotFoundPolicy, fallbackAction);
     }
 }
