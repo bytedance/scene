@@ -99,6 +99,7 @@ public class NavigationSceneUtility {
                     return scopeHolderFragment.getRootScope();
                 }
             });
+            lifeCycleFragment.setRootSceneComponentFactory(rootSceneComponentFactory);
         } else {
             lifeCycleFragment = LifeCycleFragment.newInstance(supportRestore);
             FragmentTransaction transaction = fragmentManager.beginTransaction();
@@ -112,6 +113,7 @@ public class NavigationSceneUtility {
                     return scopeHolderFragment.getRootScope();
                 }
             });
+            lifeCycleFragment.setRootSceneComponentFactory(rootSceneComponentFactory);
             commitFragment(transaction);
             fragmentManager.executePendingTransactions();
         }
@@ -122,7 +124,6 @@ public class NavigationSceneUtility {
                 delegate.onNavigationSceneAvailable(navigationScene);
             }
         });
-        lifeCycleFragment.setRootSceneComponentFactory(rootSceneComponentFactory);
         return delegate;
     }
 
