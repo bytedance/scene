@@ -75,13 +75,23 @@ public final class NavigationScene extends Scene implements NavigationListener {
     NavigationSceneOptions mNavigationSceneOptions;
 
     @UiThread
-    public void addNavigationListener(NavigationListener listener) {
+    public void addNavigationListener(@NonNull Lifecycle lifecycle, @NonNull final NavigationListener listener) {
         ThreadUtility.checkUIThread();
+        if (lifecycle.getCurrentState() == DESTROYED) {
+            // ignore
+            return;
+        }
         this.mNavigationListenerList.add(listener);
+        lifecycle.addObserver(new LifecycleObserver() {
+            @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
+            void onDestroy() {
+                mNavigationListenerList.remove(listener);
+            }
+        });
     }
 
     @UiThread
-    public void removeNavigationListener(NavigationListener listener) {
+    public void removeNavigationListener(@NonNull NavigationListener listener) {
         ThreadUtility.checkUIThread();
         this.mNavigationListenerList.remove(listener);
     }
