@@ -13,6 +13,7 @@ import com.bytedance.scene.Scene;
 import com.bytedance.scene.animation.animatorexecutor.NoAnimationExecutor;
 import com.bytedance.scene.animation.interaction.InteractionNavigationPopAnimationFactory;
 import com.bytedance.scene.animation.interaction.interactionanimation.AlphaDrawableInteractionAnimation;
+import com.bytedance.scene.animation.interaction.progressanimation.DrawableAnimationBuilder;
 import com.bytedance.scene.animation.interaction.progressanimation.InteractionAnimation;
 import com.bytedance.scene.animation.interaction.progressanimation.InteractionAnimationBuilder;
 import com.bytedance.scene.interfaces.PopOptions;
@@ -60,8 +61,7 @@ public class SlideBackButtonDemoScene extends Scene {
 
                 a.add(InteractionAnimationBuilder.with(button).translationXBy(buttonLocation2[0] - buttonLocation[0]).endProgress(0.5f).build());
                 a.add(InteractionAnimationBuilder.with(button).translationYBy(buttonLocation2[1] - buttonLocation[1]).endProgress(0.5f).build());
-
-                a.add(new AlphaDrawableInteractionAnimation(getView().getBackground(), 1.0f, 0.0f, 0.5f));
+                a.add(DrawableAnimationBuilder.with(getView().getBackground()).alpha(255, 0).endProgress(0.5f).build());
                 return a;
             }
 

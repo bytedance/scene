@@ -7,18 +7,21 @@ android {
     defaultConfig {
         minSdkVersion 14
     }
+    resourcePrefix 'scene_'
 }
 
 dependencies {
     api 'com.android.support:appcompat-v7:26.1.0'
+    api 'com.android.support:transition:26.1.0'
     api 'android.arch.lifecycle:extensions:1.1.0'
     api 'android.arch.lifecycle:runtime:1.1.0'
+    compile project(path: ':library:scene')
 }
 
 task javadoc(type: Javadoc) {
     source = android.sourceSets.main.java.srcDirs
     classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
-    destinationDir = file("../javadoc/scene/")
+    destinationDir = file("../javadoc/scene_shared_element_animation/")
     failOnError false
     title = null
 

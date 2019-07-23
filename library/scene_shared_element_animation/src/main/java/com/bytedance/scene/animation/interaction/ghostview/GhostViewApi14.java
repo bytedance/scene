@@ -11,7 +11,7 @@ import android.view.ViewGroup;
 import android.view.ViewParent;
 import android.view.ViewTreeObserver;
 import android.widget.FrameLayout;
-import com.ixigua.scene.R;
+import com.ixigua.scene.shared_element_animation.R;
 
 /**
  * Backport of android.view.GhostView introduced in API level 21.
@@ -176,11 +176,11 @@ class GhostViewApi14 extends View implements GhostViewImpl {
     }
 
     private static void setGhostView(@NonNull View view, GhostViewApi14 ghostView) {
-        view.setTag(R.id.ghost_view, ghostView);
+        view.setTag(R.id.scene_ghost_view, ghostView);
     }
 
     static GhostViewApi14 getGhostView(@NonNull View view) {
-        return (GhostViewApi14) view.getTag(R.id.ghost_view);
+        return (GhostViewApi14) view.getTag(R.id.scene_ghost_view);
     }
 
 }

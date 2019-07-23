@@ -31,4 +31,5 @@ dependencies {
     implementation "android.arch.navigation:navigation-ui:1.0.0-alpha01"
     compile project(path: ':library:scene')
     compile project(path: ':library:scene_ui')
+    compile project(path: ':library:scene_shared_element_animation')
 }

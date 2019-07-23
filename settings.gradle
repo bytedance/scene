@@ -1,3 +1,4 @@
 include ':library:scene'
 include ':library:scene_ui'
+include ':library:scene_shared_element_animation'
 include ':demo'

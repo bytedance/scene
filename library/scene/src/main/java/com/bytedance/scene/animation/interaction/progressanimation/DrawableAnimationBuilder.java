@@ -3,6 +3,7 @@ package com.bytedance.scene.animation.interaction.progressanimation;
 import android.animation.IntEvaluator;
 import android.graphics.drawable.Drawable;
 import android.util.Property;
+import android.view.View;
 
 import java.util.HashMap;
 import java.util.Set;
@@ -11,8 +12,12 @@ import java.util.Set;
  * Created by JiangQi on 9/2/18.
  */
 public class DrawableAnimationBuilder {
-    private Drawable mDrawable;
+    public static DrawableAnimationBuilder with(Drawable drawable) {
+        return new DrawableAnimationBuilder(drawable);
+    }
 
+    private Drawable mDrawable;
+    private float mEndProgress = 1.0f;
     private HashMap<Property, Holder> hashMap = new HashMap<>();
 
     private static Property<Drawable, Integer> property = new Property<Drawable, Integer>(Integer.class, "drawable_alpha") {
@@ -44,8 +49,13 @@ public class DrawableAnimationBuilder {
         return alpha(mDrawable.getAlpha(), value);
     }
 
+    public DrawableAnimationBuilder endProgress(float endProgress) {
+        this.mEndProgress = endProgress;
+        return this;
+    }
+
     public InteractionAnimation build() {
-        return new InteractionAnimation(1.0f) {
+        return new InteractionAnimation(this.mEndProgress) {
             @Override
             public void onProgress(float progress) {
                 Set<Property> set = hashMap.keySet();
