@@ -18,7 +18,7 @@ import android.view.Window;
 
 import com.bytedance.scene.navigation.NavigationScene;
 import com.bytedance.scene.parcel.ParcelConstants;
-import com.bytedance.scene.utlity.ViewIdGenerator;
+import com.ixigua.scene.R;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -231,7 +231,7 @@ public abstract class Scene implements LifecycleOwner, ViewModelStoreOwner {
         }
 
         if (view.getId() == View.NO_ID) {
-            view.setId(ViewIdGenerator.generateViewId());
+
         }
 
         mView = view;

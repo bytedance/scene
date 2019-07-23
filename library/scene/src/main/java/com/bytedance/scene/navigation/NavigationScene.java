@@ -36,9 +36,9 @@ import com.bytedance.scene.utlity.SceneInstanceUtility;
 import com.bytedance.scene.utlity.SoftInputUtility;
 import com.bytedance.scene.utlity.ThreadUtility;
 import com.bytedance.scene.utlity.Utility;
-import com.bytedance.scene.utlity.ViewIdGenerator;
 import com.bytedance.scene.view.NavigationFrameLayout;
 import com.bytedance.scene.view.NoneTouchFrameLayout;
+import com.ixigua.scene.R;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -460,7 +460,7 @@ public final class NavigationScene extends Scene implements NavigationListener {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             frameLayout.setOnApplyWindowInsetsListener(new DispatchWindowInsetsListener());
         }
-        frameLayout.setId(ViewIdGenerator.generateViewId());
+        frameLayout.setId(R.id.navigation_scene_content);
         frameLayout.setSupportRestore(isSupportRestore());
 
         mPageContainer = new FrameLayout(requireSceneContext());
