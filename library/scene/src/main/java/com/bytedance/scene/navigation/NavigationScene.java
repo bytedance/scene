@@ -61,18 +61,21 @@ public final class NavigationScene extends Scene implements NavigationListener {
 
     private NavigationSceneHost mNavigationSceneHost;
     private SceneComponentFactory mRootSceneComponentFactory;//销毁恢复的时候也用这个
-    private NavigationSceneManager mNavigationSceneManager;
+    NavigationSceneOptions mNavigationSceneOptions;
 
+    private NavigationSceneManager mNavigationSceneManager;
     private FrameLayout mPageContainer;
     private FrameLayout mAnimationContainer;
-
+    @NonNull
     private NavigationAnimationExecutor mDefaultNavigationAnimationExecutor = new Android8DefaultSceneAnimatorExecutor();
+    private final List<InteractionNavigationPopAnimationFactory.InteractionCallback> mInteractionListenerList = new ArrayList<>();
+
+    private final LruCache<Class, ReuseGroupScene> mLruCache = new LruCache<>(3);
 
     private final List<NavigationListener> mNavigationListenerList = new ArrayList<>();
     private final List<NonNullPair<ChildSceneLifecycleCallbacks, Boolean>> mLifecycleCallbacks = new ArrayList<>();
-    private final List<InteractionNavigationPopAnimationFactory.InteractionCallback> mInteractionListenerList = new ArrayList<>();
-
-    NavigationSceneOptions mNavigationSceneOptions;
+    private final SparseArrayCompat<ActivityResultCallback> mResultCallbackMap = new SparseArrayCompat<>();
+    private final SparseArrayCompat<PermissionResultCallback> mPermissionResultCallbackMap = new SparseArrayCompat<>();
 
     @UiThread
     public void addNavigationListener(@NonNull Lifecycle lifecycle, @NonNull final NavigationListener listener) {
@@ -149,10 +152,11 @@ public final class NavigationScene extends Scene implements NavigationListener {
         return mNavigationSceneManager.getCurrentSceneList();
     }
 
-    public void setDefaultNavigationAnimationExecutor(NavigationAnimationExecutor defaultNavigationAnimationExecutor) {
+    public void setDefaultNavigationAnimationExecutor(@NonNull NavigationAnimationExecutor defaultNavigationAnimationExecutor) {
         this.mDefaultNavigationAnimationExecutor = defaultNavigationAnimationExecutor;
     }
 
+    @NonNull
     public NavigationAnimationExecutor getDefaultNavigationAnimationExecutor() {
         return this.mDefaultNavigationAnimationExecutor;
     }
@@ -191,8 +195,6 @@ public final class NavigationScene extends Scene implements NavigationListener {
     public void push(@NonNull Class<? extends Scene> clazz, Bundle argument) {
         push(clazz, argument, new PushOptions.Builder().build());
     }
-
-    private LruCache<Class, ReuseGroupScene> mLruCache = new LruCache<>(3);
 
     void addToReusePool(ReuseGroupScene scene) {
         mLruCache.put(scene.getClass(), scene);
@@ -398,7 +400,7 @@ public final class NavigationScene extends Scene implements NavigationListener {
 
     /**
      * {@link com.bytedance.scene.interfaces.PushOptions.Builder#setAnimation(NavigationAnimationExecutor)}
-     * {@link #overrideNavigationAnimationExecutor(Scene,NavigationAnimationExecutor)}
+     * {@link #overrideNavigationAnimationExecutor(Scene, NavigationAnimationExecutor)}
      */
     @Nullable
     public NavigationAnimationExecutor getNavigationAnimationExecutor(@NonNull Scene scene) {
@@ -614,9 +616,6 @@ public final class NavigationScene extends Scene implements NavigationListener {
             ViewCompat.setBackground(getView(), Utility.getWindowBackground(requireSceneContext()));
         }
     }
-
-    private SparseArrayCompat<ActivityResultCallback> mResultCallbackMap = new SparseArrayCompat<>();
-    private SparseArrayCompat<PermissionResultCallback> mPermissionResultCallbackMap = new SparseArrayCompat<>();
 
     //todo 万一Activity是空的怎么处理
     //todo 直接存对象内存泄漏怎么办

@@ -32,6 +32,12 @@ import static android.support.annotation.RestrictTo.Scope.LIBRARY_GROUP;
  */
 //todo 一定要支持tranaction，这样可以做到add又hide，那么不触发onResume，不然ViewPager很难办
 public abstract class GroupScene extends Scene {
+    private static final AnimationOrAnimatorFactory EMPTY_ANIMATION_FACTORY = new AnimationOrAnimatorFactory() {
+        @Override
+        public AnimationOrAnimator getAnimationOrAnimator() {
+            return null;
+        }
+    };
     private final GroupSceneManager mGroupSceneManager = new GroupSceneManager();
     private final List<NonNullPair<ChildSceneLifecycleCallbacks, Boolean>> mLifecycleCallbacks = new ArrayList<>();
 
@@ -120,13 +126,6 @@ public abstract class GroupScene extends Scene {
             return null;
         }
     }
-
-    private static final AnimationOrAnimatorFactory EMPTY_ANIMATION_FACTORY = new AnimationOrAnimatorFactory() {
-        @Override
-        public AnimationOrAnimator getAnimationOrAnimator() {
-            return null;
-        }
-    };
 
     public final void remove(@NonNull Scene scene) {
         this.remove(scene, EMPTY_ANIMATION_FACTORY);

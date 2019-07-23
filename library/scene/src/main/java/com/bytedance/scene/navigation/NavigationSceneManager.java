@@ -79,6 +79,7 @@ class NavigationSceneManager {
     private long mLastPendingActionListItemTimestamp = -1L;
 
     private final CancellationSignalManager mCancellationSignalManager = new CancellationSignalManager();
+    private final List<NonNullPair<Scene, OnBackPressedListener>> mOnBackPressedListenerList = new ArrayList<>();
 
     NavigationSceneManager(NavigationScene scene) {
         this.mNavigationScene = scene;
@@ -250,8 +251,6 @@ class NavigationSceneManager {
     public Record getCurrentRecord() {
         return mBackStackList.getCurrentRecord();
     }
-
-    private List<NonNullPair<Scene, OnBackPressedListener>> mOnBackPressedListenerList = new ArrayList<>();
 
     public void addOnBackPressedListener(Scene scene, OnBackPressedListener onBackPressedListener) {
         mOnBackPressedListenerList.add(NonNullPair.create(scene, onBackPressedListener));
