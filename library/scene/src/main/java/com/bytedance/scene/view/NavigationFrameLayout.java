@@ -35,25 +35,14 @@ public class NavigationFrameLayout extends NoneTouchFrameLayout {
         super(context, attrs, defStyleAttr, defStyleRes);
     }
 
-    private boolean isSupportRestore() {
-        return this.mSupportRestore;
-    }
-
-    public void setSupportRestore(boolean value) {
-        this.mSupportRestore = value;
-    }
-
+    //Scene 框架自己负责View的状态保存，避免多个同类型的Scene因为根布局id相同导致的状态保存异常
     @Override
     protected void dispatchSaveInstanceState(SparseArray<Parcelable> container) {
-        if (isSupportRestore()) {
-            super.dispatchSaveInstanceState(container);
-        }
+        dispatchFreezeSelfOnly(container);
     }
 
     @Override
     protected void dispatchRestoreInstanceState(SparseArray<Parcelable> container) {
-        if (isSupportRestore()) {
-            super.dispatchRestoreInstanceState(container);
-        }
+        dispatchThawSelfOnly(container);
     }
 }

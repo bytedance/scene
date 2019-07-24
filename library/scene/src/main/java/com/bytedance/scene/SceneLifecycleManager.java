@@ -121,19 +121,6 @@ public class SceneLifecycleManager {
         this.mNavigationScene.dispatchSaveInstanceState(outState);
     }
 
-    public void onViewStateRestored(@NonNull Bundle savedInstanceState) {
-        if (this.mNavigationScene.getState() != State.STOPPED) {
-            throw new IllegalStateException("NavigationScene state must be STOPPED");
-        }
-
-        if (!this.mSupportRestore) {
-            throw new IllegalArgumentException("cant invoke onViewStateRestored when not support restore");
-        }
-
-        log("onViewStateRestored");
-        this.mNavigationScene.dispatchViewStateRestored(savedInstanceState);
-    }
-
     public void onConfigurationChanged(@NonNull Configuration newConfig) {
         log("onConfigurationChanged");
         if (this.mNavigationScene != null) {

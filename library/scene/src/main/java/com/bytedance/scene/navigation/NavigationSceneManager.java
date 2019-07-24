@@ -10,6 +10,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -298,11 +299,11 @@ class NavigationSceneManager {
         }
     }
 
-    private static void moveState(NavigationScene navigationScene,
-                                  Scene scene, State to,
-                                  Bundle bundle,
+    private static void moveState(@NonNull NavigationScene navigationScene,
+                                  @NonNull Scene scene, @NonNull State to,
+                                  @Nullable Bundle bundle,
                                   boolean causedByActivityLifeCycle,
-                                  Runnable endAction) {
+                                  @Nullable Runnable endAction) {
         State currentState = scene.getState();
         if (currentState == to) {
             if (endAction != null) {

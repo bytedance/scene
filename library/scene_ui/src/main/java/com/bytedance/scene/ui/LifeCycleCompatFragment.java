@@ -108,14 +108,6 @@ public class LifeCycleCompatFragment extends Fragment implements NavigationScene
     }
 
     @Override
-    public void onViewStateRestored(Bundle savedInstanceState) {
-        super.onViewStateRestored(savedInstanceState);
-        if (isSupportRestore() && savedInstanceState != null) {
-            this.mLifecycleManager.onViewStateRestored(savedInstanceState);
-        }
-    }
-
-    @Override
     public void onStart() {
         super.onStart();
         this.mLifecycleManager.onStart();

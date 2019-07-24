@@ -4,13 +4,12 @@ import android.app.Activity;
 import android.arch.lifecycle.*;
 import android.content.Context;
 import android.content.res.Resources;
-import android.os.Build;
-import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
+import android.os.*;
 import android.support.annotation.*;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.view.ContextThemeWrapper;
+import android.util.Log;
+import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,7 +17,6 @@ import android.view.Window;
 
 import com.bytedance.scene.navigation.NavigationScene;
 import com.bytedance.scene.parcel.ParcelConstants;
-import com.ixigua.scene.R;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -245,10 +243,13 @@ public abstract class Scene implements LifecycleOwner, ViewModelStoreOwner {
 
     /** @hide */
     @RestrictTo(LIBRARY_GROUP)
-    public void dispatchActivityCreated(Bundle savedInstanceState) {
+    public void dispatchActivityCreated(@Nullable Bundle savedInstanceState) {
         setState(State.STOPPED);
         mCalled = false;
         onActivityCreated(savedInstanceState);
+        if (savedInstanceState != null) {
+            dispatchViewStateRestored(savedInstanceState);
+        }
         if (!mCalled) {
             throw new SuperNotCalledException("Scene " + this
                     + " did not call through to super.onActivityCreated()");
@@ -272,7 +273,7 @@ public abstract class Scene implements LifecycleOwner, ViewModelStoreOwner {
 
     /** @hide */
     @RestrictTo(LIBRARY_GROUP)
-    public void dispatchViewStateRestored(@Nullable Bundle savedInstanceState) {
+    private void dispatchViewStateRestored(@NonNull Bundle savedInstanceState) {
         mCalled = false;
         onViewStateRestored(savedInstanceState);
         if (!mCalled) {
@@ -312,7 +313,12 @@ public abstract class Scene implements LifecycleOwner, ViewModelStoreOwner {
     /** @hide */
     @RestrictTo(LIBRARY_GROUP)
     public void dispatchSaveInstanceState(Bundle outState) {
+        mCalled = false;
         onSaveInstanceState(outState);
+        if (!mCalled) {
+            throw new SuperNotCalledException("Scene " + this
+                    + " did not call through to super.onSaveInstanceState()");
+        }
     }
 
     /** @hide */
@@ -579,8 +585,25 @@ public abstract class Scene implements LifecycleOwner, ViewModelStoreOwner {
     }
 
     @CallSuper
-    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
+    public void onViewStateRestored(@NonNull Bundle savedInstanceState) {
         mCalled = true;
+
+        SparseArray<Parcelable> savedStates = savedInstanceState.getSparseParcelableArray(ParcelConstants.KEY_SCENE_VIEWS_TAG);
+        if (savedStates != null) {
+            mView.restoreHierarchyState(savedStates);
+        }
+
+        // restore the focused view
+        int focusedViewId = savedInstanceState.getInt(ParcelConstants.KEY_SCENE_FOCUSED_ID_TAG, View.NO_ID);
+        if (focusedViewId != View.NO_ID) {
+            View needsFocus = mView.findViewById(focusedViewId);
+            if (needsFocus != null) {
+                needsFocus.requestFocus();
+            } else {
+                Log.w(TAG, "Previously focused view reported id " + focusedViewId
+                        + " during save, but can't be found during restore.");
+            }
+        }
     }
 
     @CallSuper
@@ -596,6 +619,8 @@ public abstract class Scene implements LifecycleOwner, ViewModelStoreOwner {
 
     @CallSuper
     public void onSaveInstanceState(@NonNull Bundle outState) {
+        mCalled = true;
+
         if (getArguments() != null) {
             outState.putBoolean(ParcelConstants.KEY_SCENE_HAS_ARGUMENT, true);
             outState.putBundle(ParcelConstants.KEY_SCENE_ARGUMENT, getArguments());
@@ -603,6 +628,16 @@ public abstract class Scene implements LifecycleOwner, ViewModelStoreOwner {
             outState.putBoolean(ParcelConstants.KEY_SCENE_HAS_ARGUMENT, false);
         }
         mScope.saveInstance(outState);
+
+        SparseArray<Parcelable> states = new SparseArray<Parcelable>();
+        mView.saveHierarchyState(states);
+        outState.putSparseParcelableArray(ParcelConstants.KEY_SCENE_VIEWS_TAG, states);
+
+        final View focusedView = mView.findFocus();
+        if (focusedView != null && focusedView.getId() != View.NO_ID) {
+            outState.putInt(ParcelConstants.KEY_SCENE_FOCUSED_ID_TAG, focusedView.getId());
+        }
+
         dispatchOnSceneSaveInstanceState(this, outState, false);
     }
 

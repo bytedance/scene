@@ -255,16 +255,6 @@ public abstract class GroupScene extends Scene {
     }
 
     @CallSuper
-    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
-        super.onViewStateRestored(savedInstanceState);
-        List<Scene> childSceneList = this.mGroupSceneManager.getChildSceneList();
-        for (int i = 0; i <= childSceneList.size() - 1; i++) {
-            Scene scene = childSceneList.get(i);
-            scene.onViewStateRestored(savedInstanceState);
-        }
-    }
-
-    @CallSuper
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         this.mGroupSceneManager.saveToBundle(outState);

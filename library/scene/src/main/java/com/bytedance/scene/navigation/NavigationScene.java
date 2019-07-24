@@ -461,7 +461,6 @@ public final class NavigationScene extends Scene implements NavigationListener {
             frameLayout.setOnApplyWindowInsetsListener(new DispatchWindowInsetsListener());
         }
         frameLayout.setId(R.id.navigation_scene_content);
-        frameLayout.setSupportRestore(isSupportRestore());
 
         mPageContainer = new FrameLayout(requireSceneContext());
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -510,16 +509,6 @@ public final class NavigationScene extends Scene implements NavigationListener {
                     NavigationScene.this.onConfigurationChanged(newConfig);
                 }
             });
-        }
-    }
-
-    @CallSuper
-    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
-        super.onViewStateRestored(savedInstanceState);
-        List<Scene> childSceneList = this.mNavigationSceneManager.getCurrentSceneList();
-        for (int i = 0; i <= childSceneList.size() - 1; i++) {
-            Scene scene = childSceneList.get(i);
-            scene.onViewStateRestored(savedInstanceState);
         }
     }
 
