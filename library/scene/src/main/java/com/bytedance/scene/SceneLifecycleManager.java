@@ -113,10 +113,6 @@ public class SceneLifecycleManager {
     }
 
     public void onSaveInstanceState(@NonNull Bundle outState) {
-        if (this.mNavigationScene.getState() != State.STARTED) {
-            throw new IllegalStateException("NavigationScene state must be STARTED");
-        }
-
         if (!this.mSupportRestore) {
             throw new IllegalArgumentException("cant invoke onSaveInstanceState when not support restore");
         }
