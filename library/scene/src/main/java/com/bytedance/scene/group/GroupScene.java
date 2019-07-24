@@ -1,7 +1,5 @@
 package com.bytedance.scene.group;
 
-import android.animation.Animator;
-import android.annotation.SuppressLint;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.annotation.*;
@@ -10,7 +8,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import android.view.animation.Animation;
 import com.bytedance.scene.Scene;
 import com.bytedance.scene.State;
 import com.bytedance.scene.animation.AnimationOrAnimator;
@@ -220,6 +217,14 @@ public abstract class GroupScene extends Scene {
         mGroupSceneManager.setGroupScene(this);
     }
 
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (savedInstanceState != null) {
+            this.mGroupSceneManager.restoreFromBundle(requireActivity(), savedInstanceState);
+        }
+    }
+
     /**
      * @hide
      */
@@ -237,9 +242,7 @@ public abstract class GroupScene extends Scene {
     @NonNull
     public abstract ViewGroup onCreateView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container,
                                            @Nullable Bundle savedInstanceState);
-
-    //todo 把restore提早到dispatchCreate
-
+    
     /**
      * @hide
      */
@@ -247,11 +250,8 @@ public abstract class GroupScene extends Scene {
     @Override
     public void dispatchActivityCreated(@Nullable Bundle savedInstanceState) {
         super.dispatchActivityCreated(savedInstanceState);
-        if (savedInstanceState != null) {
-            this.mGroupSceneManager.restoreFromBundle(requireActivity(), savedInstanceState);
-        } else {
-            dispatchChildrenState(State.STOPPED, null);
-        }
+        //child Scene的savedInstanceState是单独保存的，存在GroupRecord
+        dispatchChildrenState(State.STOPPED);
     }
 
     @CallSuper
@@ -316,12 +316,12 @@ public abstract class GroupScene extends Scene {
     @RestrictTo(LIBRARY)
     @Override
     public void dispatchDestroyView() {
-        dispatchChildrenState(State.NONE, null);
+        dispatchChildrenState(State.NONE);
         super.dispatchDestroyView();
     }
 
-    private void dispatchChildrenState(@NonNull State state, @Nullable Bundle savedInstanceState) {
-        this.mGroupSceneManager.dispatchChildrenState(state, savedInstanceState);
+    private void dispatchChildrenState(@NonNull State state) {
+        this.mGroupSceneManager.dispatchChildrenState(state);
     }
 
     private void dispatchVisibleChildrenState(@NonNull State state) {

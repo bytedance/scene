@@ -38,6 +38,9 @@ class GroupRecord implements Parcelable {
 
     String className;
 
+    @Nullable
+    Bundle bundle;
+
     protected GroupRecord(Parcel in) {
         viewId = in.readInt();
         tag = in.readString();
@@ -157,6 +160,9 @@ class GroupRecordList {
     }
 
     public void restoreFromBundle(Context context, Bundle bundle) {
+        if (this.mSceneList != null && this.mSceneList.size() > 0) {
+            throw new IllegalStateException("mSceneList size is not zero, Scene is added before restore");
+        }
         this.mSceneList = new ArrayList<>(bundle.<GroupRecord>getParcelableArrayList(KEY_TAG));
         for (GroupRecord record : this.mSceneList) {
             record.scene = SceneInstanceUtility.getInstanceFromClassName(context, record.className, null);
@@ -320,11 +326,11 @@ class GroupSceneManager {
         }
     }
 
-    void dispatchChildrenState(State state, @Nullable Bundle savedInstanceState) {
+    void dispatchChildrenState(State state) {
         List<Scene> childSceneList = this.getChildSceneList();
         for (int i = 0; i <= childSceneList.size() - 1; i++) {
             Scene scene = childSceneList.get(i);
-            GroupSceneManager.moveState(mGroupScene, scene, state, savedInstanceState, false, null);
+            GroupSceneManager.moveState(mGroupScene, scene, state, false, null);
         }
     }
 
@@ -333,7 +339,7 @@ class GroupSceneManager {
         for (int i = 0; i <= list.size() - 1; i++) {
             GroupRecord record = list.get(i);
             if (!record.isHidden) {
-                GroupSceneManager.moveState(mGroupScene, record.scene, state, null, false, null);
+                GroupSceneManager.moveState(mGroupScene, record.scene, state, false, null);
             }
         }
     }
@@ -395,8 +401,8 @@ class GroupSceneManager {
         for (int i = 0; i <= childSceneList.size() - 1; i++) {
             GroupRecord record = childSceneList.get(i);
             Scene scene = record.scene;
-            Bundle sceneBundle = bundleList.get(i);
-            moveState(this.mGroupScene, scene, State.STOPPED, sceneBundle, true, null);
+            record.bundle = bundleList.get(i);
+            moveState(this.mGroupScene, scene, mGroupScene.getState(), true, null);
         }
     }
 
@@ -449,7 +455,7 @@ class GroupSceneManager {
                 executeOnStart();
             }
 
-            moveState(mGroupScene, scene, dstState, null, true, null);
+            moveState(mGroupScene, scene, dstState, true, null);
 
             if (forceShow) {
                 mSceneList.findByScene(scene).isHidden = false;
@@ -682,11 +688,10 @@ class GroupSceneManager {
 
     //原则上，从低到高，那么必须走完流程设置状态
     //从高到底，第一个方法就应该设置好状态
-    private static void moveState(GroupScene groupScene,
-                                  Scene scene, State to,
-                                  Bundle bundle,
+    private static void moveState(@NonNull GroupScene groupScene,
+                                  @NonNull Scene scene, @NonNull State to,
                                   boolean modifyViewHierarchy,
-                                  Runnable endAction) {
+                                  @Nullable Runnable endAction) {
         State currentState = scene.getState();
         if (currentState == to) {
             if (endAction != null) {
@@ -700,39 +705,43 @@ class GroupSceneManager {
                 case NONE:
                     scene.dispatchAttachActivity(groupScene.getActivity());
                     scene.dispatchAttachScene(groupScene);
-                    scene.dispatchCreate(bundle);
+
+                    GroupRecord record = groupScene.getGroupSceneManager().findByScene(scene);
+                    Bundle sceneBundle = record.bundle;
+                    scene.dispatchCreate(sceneBundle);
                     ViewGroup containerView = groupScene.findContainerById(groupScene.getGroupSceneManager().findSceneViewId(scene));
-                    scene.dispatchCreateView(bundle, containerView);
+                    scene.dispatchCreateView(sceneBundle, containerView);
                     //通常来说因为生命周期触发的状态不会修改View状态，但是如果这个Scene很早之前就添加了，那么一开始就没在View树中，需要添加进来
                     if (modifyViewHierarchy || scene.getView().getParent() == null) {
                         containerView.addView(scene.getView());
                         scene.getView().setVisibility(View.GONE);//有可能直接切到这个状态，销毁恢复的时候，所以要设置成GONE
                     }
-                    scene.dispatchActivityCreated(bundle);
-                    moveState(groupScene, scene, to, bundle, modifyViewHierarchy, endAction);
+                    scene.dispatchActivityCreated(sceneBundle);
+                    record.bundle = null;
+                    moveState(groupScene, scene, to, modifyViewHierarchy, endAction);
                     break;
                 case STOPPED:
                     scene.getView().setVisibility(View.VISIBLE);//无论modifyViewHierarchy是否true，都得设置成可见
                     scene.dispatchStart();
-                    moveState(groupScene, scene, to, bundle, modifyViewHierarchy, endAction);
+                    moveState(groupScene, scene, to, modifyViewHierarchy, endAction);
                     break;
                 case STARTED:
                     scene.dispatchResume();
-                    moveState(groupScene, scene, to, bundle, modifyViewHierarchy, endAction);
+                    moveState(groupScene, scene, to, modifyViewHierarchy, endAction);
                     break;
             }
         } else {
             switch (currentState) {
                 case RESUMED:
                     scene.dispatchPause();
-                    moveState(groupScene, scene, to, bundle, modifyViewHierarchy, endAction);
+                    moveState(groupScene, scene, to, modifyViewHierarchy, endAction);
                     break;
                 case STARTED:
                     scene.dispatchStop();
                     if (modifyViewHierarchy) {
                         scene.getView().setVisibility(View.GONE);
                     }
-                    moveState(groupScene, scene, to, bundle, modifyViewHierarchy, endAction);
+                    moveState(groupScene, scene, to, modifyViewHierarchy, endAction);
                     break;
                 case STOPPED:
                     View view = scene.getView();
@@ -743,7 +752,7 @@ class GroupSceneManager {
                     scene.dispatchDestroy();
                     scene.dispatchDetachScene();
                     scene.dispatchDetachActivity();
-                    moveState(groupScene, scene, to, bundle, modifyViewHierarchy, endAction);
+                    moveState(groupScene, scene, to, modifyViewHierarchy, endAction);
                     break;
             }
         }
