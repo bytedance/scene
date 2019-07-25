@@ -26,6 +26,39 @@ import static android.support.annotation.RestrictTo.Scope.LIBRARY_GROUP;
 
 /**
  * Created by JiangQi on 8/1/18.
+ * <p>
+ * 同步子Scene的整个流程
+ * 进入的时候
+ *
+ * 1.先走自己的onAttach onCreate onCreateView onViewCreated
+ * (同步子Scene的状态)
+ * 2.再走子Scene的onAttach onCreate onCreateView onViewCreated
+ * <p>
+ * 3.先走自己的onActivityCreated
+ * (同步子Scene的状态)
+ * 4.再走子Scene的onActivityCreated
+ * <p>
+ * 5.先走自己的onStart
+ * (同步子Scene的状态)
+ * 6.再走子Scene的onStart
+ * <p>
+ * 7.先走自己的onResume
+ * (同步子Scene的状态)
+ * 8.再走子Scene的onResume
+ * <p>
+ * 退出的时候
+ *
+ * 强制调整子Scene的状态到State.STARTED
+ * 1.先走子Scene的onPause
+ * 2.再走自己的onPause
+ * <p>
+ * 强制调整子Scene的状态到State.ACTIVITY_CREATED
+ * 3.先走子Scene的onStop
+ * 4.再走自己的onStop
+ * <p>
+ * 强制调整子Scene的状态到State.NONE
+ * 3.先走子Scene的onDestroyView onDestroy onDetach
+ * 4.再走自己的onDestroyView onDestroy onDetach
  */
 //todo 一定要支持tranaction，这样可以做到add又hide，那么不触发onResume，不然ViewPager很难办
 public abstract class GroupScene extends Scene {
@@ -237,6 +270,7 @@ public abstract class GroupScene extends Scene {
             throw new IllegalArgumentException("GroupScene onCreateView view must be ViewGroup");
         }
         this.mGroupSceneManager.setView((ViewGroup) getView());
+        dispatchChildrenState(State.STOPPED);
     }
 
     @NonNull
@@ -251,7 +285,7 @@ public abstract class GroupScene extends Scene {
     public void dispatchActivityCreated(@Nullable Bundle savedInstanceState) {
         super.dispatchActivityCreated(savedInstanceState);
         //child Scene的savedInstanceState是单独保存的，存在GroupRecord
-        dispatchChildrenState(State.STOPPED);
+        dispatchChildrenState(State.ACTIVITY_CREATED);
     }
 
     @CallSuper
@@ -296,7 +330,7 @@ public abstract class GroupScene extends Scene {
     @RestrictTo(LIBRARY)
     @Override
     public void dispatchStop() {
-        dispatchVisibleChildrenState(State.STOPPED);
+        dispatchVisibleChildrenState(State.ACTIVITY_CREATED);
         super.dispatchStop();
     }
 

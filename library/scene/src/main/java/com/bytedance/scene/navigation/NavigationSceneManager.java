@@ -108,7 +108,7 @@ class NavigationSceneManager {
         for (int i = 0; i <= recordList.size() - 1; i++) {
             Record record = recordList.get(i);
             Bundle sceneBundle = bundleList.get(i);
-            moveState(this.mNavigationScene, record.mScene, State.STOPPED, sceneBundle, false, null);
+            moveState(this.mNavigationScene, record.mScene, State.ACTIVITY_CREATED, sceneBundle, false, null);
         }
     }
 
@@ -121,7 +121,7 @@ class NavigationSceneManager {
     //todo Fragment post缺陷在于onSave后commit会崩溃，如果没有这些限制，post应该还好
     //我唯一想到的是Dialog的问题
     private void scheduleToNextUIThreadLoop(final Operation operation) {
-        if (mNavigationScene.getState().value >= State.STOPPED.value) {
+        if (canExecuteNavigationStackOperation()) {
             if (mIsNavigationStateChangeInProgress) {
                 Runnable task = new Runnable() {
                     @Override
@@ -194,7 +194,7 @@ class NavigationSceneManager {
     private boolean mDisableNavigationAnimation = false;
 
     public void executePendingOperation() {
-        if (this.mPendingActionList.size() == 0 || mNavigationScene.getState() != State.STOPPED) {
+        if (this.mPendingActionList.size() == 0 || !canExecuteNavigationStackOperation()) {
             return;
         }
 
@@ -337,11 +337,12 @@ class NavigationSceneManager {
                         containerView.addView(scene.getView());
                     }
                     scene.getView().setVisibility(View.GONE);
-                    scene.dispatchActivityCreated(bundle);
-
                     moveState(navigationScene, scene, to, bundle, causedByActivityLifeCycle, endAction);
                     break;
                 case STOPPED:
+                    scene.dispatchActivityCreated(bundle);
+                    moveState(navigationScene, scene, to, bundle, causedByActivityLifeCycle, endAction);
+                case ACTIVITY_CREATED:
                     scene.getView().setVisibility(View.VISIBLE);
                     scene.dispatchStart();
                     moveState(navigationScene, scene, to, bundle, causedByActivityLifeCycle, endAction);
@@ -364,6 +365,11 @@ class NavigationSceneManager {
                     }
                     moveState(navigationScene, scene, to, bundle, causedByActivityLifeCycle, endAction);
                     break;
+                case ACTIVITY_CREATED:
+                    if (to == State.STOPPED) {
+                        throw new IllegalArgumentException("cant switch state ACTIVITY_CREATED to STOPPED");
+                    }
+                    //continue
                 case STOPPED:
                     View view = scene.getView();
                     scene.dispatchDestroyView();
@@ -424,8 +430,8 @@ class NavigationSceneManager {
         public void execute(final Runnable operationEndAction) {
             cancelCurrentRunningAnimation();
 
-            if (mNavigationScene.getState().value < State.STOPPED.value) {
-                throw new IllegalArgumentException("Can't pop before NavigationScene create view");
+            if (!canExecuteNavigationStackOperation()) {
+                throw new IllegalArgumentException("Can't pop, current NavigationScene state " + mNavigationScene.getState().name);
             }
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
@@ -694,6 +700,10 @@ class NavigationSceneManager {
         }
     }
 
+    private boolean canExecuteNavigationStackOperation() {
+        return mNavigationScene.getState().value >= State.ACTIVITY_CREATED.value;
+    }
+
     private class PushOptionOperation implements Operation {
         private final Scene scene;
         private final PushOptions pushOptions;
@@ -706,8 +716,8 @@ class NavigationSceneManager {
         @Override
         public void execute(final Runnable operationEndAction) {
             cancelCurrentRunningAnimation();
-            if (mNavigationScene.getState().value < State.STOPPED.value) {
-                throw new IllegalArgumentException("Can't push before NavigationScene create view");
+            if (!canExecuteNavigationStackOperation()) {
+                throw new IllegalArgumentException("Can't push, current NavigationScene state " + mNavigationScene.getState().name);
             }
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
@@ -751,16 +761,16 @@ class NavigationSceneManager {
             if (currentRecord != null && mBackStackList.getCurrentRecordList().contains(currentRecord)) {
                 currentRecord.saveActivityStatus();
                 Scene currentScene = currentRecord.mScene;
-                State dstState = pushOptions.isIsTranslucent() ? State.STARTED : State.STOPPED;
+                State dstState = pushOptions.isIsTranslucent() ? State.STARTED : State.ACTIVITY_CREATED;
                 dstState = findMinState(dstState, mNavigationScene.getState());
                 moveState(mNavigationScene, currentScene, dstState, null, false, null);
 
-                //多个半透明的叠加一个不透明的Scene，必然需要把之前的半透明Scene都切到STOPPED
+                //多个半透明的叠加一个不透明的Scene，必然需要把之前的半透明Scene都切到ACTIVITY_CREATED
                 final List<Record> currentRecordList = mBackStackList.getCurrentRecordList();
                 if (currentRecordList.size() > 1 && !pushOptions.isIsTranslucent() && currentRecord.mIsTranslucent) {
                     for (int i = currentRecordList.size() - 2; i >= 0; i--) {
                         Record record = currentRecordList.get(i);
-                        moveState(mNavigationScene, record.mScene, findMinState(State.STOPPED, mNavigationScene.getState()), null, false, null);
+                        moveState(mNavigationScene, record.mScene, findMinState(State.ACTIVITY_CREATED, mNavigationScene.getState()), null, false, null);
                         if (!record.mIsTranslucent) {
                             break;
                         }
@@ -859,6 +869,8 @@ class NavigationSceneManager {
                         fixDstState = State.STARTED;
                     } else if (targetState == State.STARTED) {
                         fixDstState = State.STARTED;
+                    } else if (targetState == State.ACTIVITY_CREATED) {
+                        fixDstState = State.ACTIVITY_CREATED;
                     } else if (targetState == State.STOPPED) {
                         fixDstState = State.STOPPED;
                     }

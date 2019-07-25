@@ -43,6 +43,18 @@ import static android.support.annotation.RestrictTo.Scope.LIBRARY_GROUP;
  * onDestroy
  * onDetach
  *
+ * 整个流程，初始状态NONE
+ * 进入的时候
+ * 1.走onAttach onCreate onCreateView onViewCreated 然后设置State成STOPPED
+ * 2.走onActivityCreated，设置State成ACTIVITY_CREATED，并且Lifecycle切到Lifecycle.Event.ON_CREATE
+ * 3.走onStart，设置State成STARTED，并且Lifecycle切到Lifecycle.Event.ON_START
+ * 4.走onResume，设置State成RESUMED，并且Lifecycle切到Lifecycle.Event.ON_RESUME
+ *
+ * 退出的时候
+ * 1.走onPause，设置State成STARTED，并且Lifecycle切到Lifecycle.Event.ON_PAUSE
+ * 2.走onStop，设置State成ACTIVITY_CREATED，并且Lifecycle切到Lifecycle.Event.ON_STOP
+ * 3.走onDestroyView，设置State成NONE，并且Lifecycle切到Lifecycle.Event.ON_DESTROY
+ * 4.走onDestroy onDetach
  */
 public abstract class Scene implements LifecycleOwner, ViewModelStoreOwner {
     public static final String SCENE_SERVICE = "scene";
@@ -239,12 +251,12 @@ public abstract class Scene implements LifecycleOwner, ViewModelStoreOwner {
             throw new SuperNotCalledException("Scene " + this
                     + " did not call through to super.onViewCreated()");
         }
+        setState(State.STOPPED);
     }
 
     /** @hide */
     @RestrictTo(LIBRARY_GROUP)
     public void dispatchActivityCreated(@Nullable Bundle savedInstanceState) {
-        setState(State.STOPPED);
         mCalled = false;
         onActivityCreated(savedInstanceState);
         if (savedInstanceState != null) {
@@ -254,19 +266,20 @@ public abstract class Scene implements LifecycleOwner, ViewModelStoreOwner {
             throw new SuperNotCalledException("Scene " + this
                     + " did not call through to super.onActivityCreated()");
         }
+        setState(State.ACTIVITY_CREATED);
         mLifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_CREATE);
     }
 
     /** @hide */
     @RestrictTo(LIBRARY_GROUP)
     public void dispatchStart() {
-        setState(State.STARTED);
         mCalled = false;
         onStart();
         if (!mCalled) {
             throw new SuperNotCalledException("Scene " + this
                     + " did not call through to super.onStart()");
         }
+        setState(State.STARTED);
         mLifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_START);
         dispatchOnSceneStarted(this, false);
     }
@@ -285,13 +298,13 @@ public abstract class Scene implements LifecycleOwner, ViewModelStoreOwner {
     /** @hide */
     @RestrictTo(LIBRARY_GROUP)
     public void dispatchResume() {
-        setState(State.RESUMED);
         mCalled = false;
         onResume();
         if (!mCalled) {
             throw new SuperNotCalledException("Scene " + this
                     + " did not call through to super.onResume()");
         }
+        setState(State.RESUMED);
         mLifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_RESUME);
         dispatchOnSceneResumed(this, false);
     }
@@ -325,7 +338,7 @@ public abstract class Scene implements LifecycleOwner, ViewModelStoreOwner {
     @RestrictTo(LIBRARY_GROUP)
     public void dispatchStop() {
         mLifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_STOP);
-        setState(State.STOPPED);
+        setState(State.ACTIVITY_CREATED);
         mCalled = false;
         onStop();
         if (!mCalled) {

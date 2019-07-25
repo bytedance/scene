@@ -28,7 +28,7 @@ public class SceneLifecycleManager {
                                   @Nullable SceneComponentFactory rootSceneComponentFactory,
                                   @Nullable Bundle savedInstanceState) {
         if (navigationScene.getState() != State.NONE) {
-            throw new IllegalStateException("NavigationScene state must be NONE");
+            throw new IllegalStateException("NavigationScene state must be " + State.NONE.name);
         }
         if (activity == null) {
             throw new NullPointerException("activity can't be null");
@@ -66,8 +66,8 @@ public class SceneLifecycleManager {
     }
 
     public void onStart() {
-        if (this.mNavigationScene.getState() != State.STOPPED) {
-            throw new IllegalStateException("NavigationScene state must be STOPPED");
+        if (this.mNavigationScene.getState() != State.ACTIVITY_CREATED) {
+            throw new IllegalStateException("NavigationScene state must be " + State.ACTIVITY_CREATED.name);
         }
         log("onStart");
         this.mNavigationScene.dispatchStart();
@@ -75,7 +75,7 @@ public class SceneLifecycleManager {
 
     public void onResume() {
         if (this.mNavigationScene.getState() != State.STARTED) {
-            throw new IllegalStateException("NavigationScene state must be STARTED");
+            throw new IllegalStateException("NavigationScene state must be " + State.STARTED.name);
         }
         log("onResume");
         this.mNavigationScene.dispatchResume();
@@ -83,7 +83,7 @@ public class SceneLifecycleManager {
 
     public void onPause() {
         if (this.mNavigationScene.getState() != State.RESUMED) {
-            throw new IllegalStateException("NavigationScene state must be RESUMED");
+            throw new IllegalStateException("NavigationScene state must be " + State.RESUMED.name);
         }
         log("onPause");
         this.mNavigationScene.dispatchPause();
@@ -91,15 +91,15 @@ public class SceneLifecycleManager {
 
     public void onStop() {
         if (this.mNavigationScene.getState() != State.STARTED) {
-            throw new IllegalStateException("NavigationScene state must be STARTED");
+            throw new IllegalStateException("NavigationScene state must be " + State.STARTED.name);
         }
         log("onStop");
         this.mNavigationScene.dispatchStop();
     }
 
     public void onDestroyView() {
-        if (this.mNavigationScene.getState() != State.STOPPED) {
-            throw new IllegalStateException("NavigationScene state must be STOPPED");
+        if (this.mNavigationScene.getState() != State.ACTIVITY_CREATED) {
+            throw new IllegalStateException("NavigationScene state must be " + State.ACTIVITY_CREATED.name);
         }
         log("onDestroyView");
         this.mNavigationScene.dispatchDestroyView();

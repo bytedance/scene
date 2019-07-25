@@ -33,10 +33,14 @@ public abstract class AsyncLayoutGroupScene extends UserVisibleHintGroupScene {
                     if (state == State.NONE) {
                         return;
                     }
+
                     if (state.value >= State.STOPPED.value) {
                         frameLayout.addView(view);
                         mViewAsyncCreated = true;
                         onAsyncViewCreated(getView(), savedInstanceState);
+                    }
+
+                    if (state.value >= State.ACTIVITY_CREATED.value) {
                         onAsyncActivityCreated(savedInstanceState);
                     }
 

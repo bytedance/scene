@@ -49,6 +49,33 @@ import static android.support.annotation.RestrictTo.Scope.LIBRARY_GROUP;
 
 /**
  * Created by JiangQi on 7/30/18.
+ *
+ * 流程
+ *
+ * NavigationScene无法被继承
+ *
+ * 进入的时候
+ * 1.自己的onAttach onCreate onCreateView onViewCreated onActivityCreated
+ * (所有子Scene都是在NavigationScene的onActivityCreated之后开始走生命周期流程，对于之前push的Scene，都会缓存起来)
+ * 2.子Scene的onAttach onCreate onCreateView onViewCreated onActivityCreated
+ *
+ * 3.自己的onStart
+ * 4.子Scene的onStart
+ *
+ * 5.自己的onResume
+ * 6.子Scene的onResume
+ *
+ * 退出的时候
+ * 1.子Scene的onPause
+ * 2.自己的onPause
+ *
+ * 3.子Scene的onStop
+ * 4.自己的onStop
+ *
+ * 5.子Scene的onDestroyView onDestroy onDetach
+ * 6.自己的onDestroyView onDestroy onDetach
+ *
+ *
  */
 public final class NavigationScene extends Scene implements NavigationListener {
     public static interface NavigationSceneHost {
@@ -490,7 +517,6 @@ public final class NavigationScene extends Scene implements NavigationListener {
         } else {
             createRootSceneIfNeeded();
         }
-        this.mNavigationSceneManager.executePendingOperation();
 
         NavigationScene parentSceneNavigation = getNavigationScene();
         if (parentSceneNavigation != null) {
@@ -510,6 +536,12 @@ public final class NavigationScene extends Scene implements NavigationListener {
                 }
             });
         }
+    }
+
+    @Override
+    public void dispatchActivityCreated(Bundle savedInstanceState) {
+        super.dispatchActivityCreated(savedInstanceState);
+        this.mNavigationSceneManager.executePendingOperation();
     }
 
     /**
@@ -560,7 +592,7 @@ public final class NavigationScene extends Scene implements NavigationListener {
     @RestrictTo(LIBRARY)
     @Override
     public void dispatchStop() {
-        dispatchCurrentChildState(State.STOPPED);
+        dispatchCurrentChildState(State.ACTIVITY_CREATED);
         super.dispatchStop();
     }
 
@@ -574,7 +606,7 @@ public final class NavigationScene extends Scene implements NavigationListener {
 
     private void dispatchCurrentChildState(State state) {
         if (getState().value < State.STOPPED.value) {
-            throw new IllegalArgumentException("dispatchCurrentChildState can only call when state is STOPPED, STARTED, RESUMED");
+            throw new IllegalArgumentException("dispatchCurrentChildState can only call when state is STOPPED, ACTIVITY_CREATED, STARTED, RESUMED");
         }
         mNavigationSceneManager.dispatchCurrentChildState(state);
     }

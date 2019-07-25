@@ -605,7 +605,7 @@ class GroupSceneManager {
         private final AnimationOrAnimatorFactory animationOrAnimatorFactory;
 
         private HideOperation(Scene scene, AnimationOrAnimatorFactory animationOrAnimatorFactory) {
-            super(scene, View.NO_ID, null, getMinState(State.STOPPED, mGroupScene.getState()), false, true, false);
+            super(scene, View.NO_ID, null, getMinState(State.ACTIVITY_CREATED, mGroupScene.getState()), false, true, false);
             this.animationOrAnimatorFactory = animationOrAnimatorFactory;
         }
 
@@ -700,14 +700,15 @@ class GroupSceneManager {
             return;
         }
 
+        GroupRecord record = null;
+        Bundle sceneBundle = null;
         if (currentState.value < to.value) {
             switch (currentState) {
                 case NONE:
                     scene.dispatchAttachActivity(groupScene.getActivity());
                     scene.dispatchAttachScene(groupScene);
-
-                    GroupRecord record = groupScene.getGroupSceneManager().findByScene(scene);
-                    Bundle sceneBundle = record.bundle;
+                    record = groupScene.getGroupSceneManager().findByScene(scene);
+                    sceneBundle = record.bundle;
                     scene.dispatchCreate(sceneBundle);
                     ViewGroup containerView = groupScene.findContainerById(groupScene.getGroupSceneManager().findSceneViewId(scene));
                     scene.dispatchCreateView(sceneBundle, containerView);
@@ -716,11 +717,15 @@ class GroupSceneManager {
                         containerView.addView(scene.getView());
                         scene.getView().setVisibility(View.GONE);//有可能直接切到这个状态，销毁恢复的时候，所以要设置成GONE
                     }
-                    scene.dispatchActivityCreated(sceneBundle);
-                    record.bundle = null;
                     moveState(groupScene, scene, to, modifyViewHierarchy, endAction);
                     break;
                 case STOPPED:
+                    record = groupScene.getGroupSceneManager().findByScene(scene);
+                    sceneBundle = record.bundle;
+                    scene.dispatchActivityCreated(sceneBundle);
+                    record.bundle = null;
+                    moveState(groupScene, scene, to, modifyViewHierarchy, endAction);
+                case ACTIVITY_CREATED:
                     scene.getView().setVisibility(View.VISIBLE);//无论modifyViewHierarchy是否true，都得设置成可见
                     scene.dispatchStart();
                     moveState(groupScene, scene, to, modifyViewHierarchy, endAction);
@@ -743,6 +748,11 @@ class GroupSceneManager {
                     }
                     moveState(groupScene, scene, to, modifyViewHierarchy, endAction);
                     break;
+                case ACTIVITY_CREATED:
+                    if (to == State.STOPPED) {
+                        throw new IllegalArgumentException("cant switch state ACTIVITY_CREATED to STOPPED");
+                    }
+                    //continue
                 case STOPPED:
                     View view = scene.getView();
                     scene.dispatchDestroyView();
