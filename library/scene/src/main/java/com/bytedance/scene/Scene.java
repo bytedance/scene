@@ -84,7 +84,7 @@ public abstract class Scene implements LifecycleOwner, ViewModelStoreOwner {
      * @hide
      */
     @RestrictTo(LIBRARY_GROUP)
-    public State getState() {
+    public final State getState() {
         return this.mState;
     }
 
@@ -95,15 +95,15 @@ public abstract class Scene implements LifecycleOwner, ViewModelStoreOwner {
 
     /** @hide */
     @RestrictTo(LIBRARY_GROUP)
-    public void setRootScopeFactory(Scope.RootScopeFactory rootScopeFactory) {
+    public final void setRootScopeFactory(Scope.RootScopeFactory rootScopeFactory) {
         this.mRootScopeFactory = rootScopeFactory;
     }
 
-    public void setArguments(Bundle arguments) {
+    public final void setArguments(Bundle arguments) {
         this.mArguments = arguments;
     }
 
-    public Bundle getArguments() {
+    public final Bundle getArguments() {
         return this.mArguments;
     }
 
@@ -454,17 +454,17 @@ public abstract class Scene implements LifecycleOwner, ViewModelStoreOwner {
         mCalled = true;
     }
 
-    public View getView() {
+    public final View getView() {
         return this.mView;
     }
 
     @Nullable
-    public Activity getActivity() {
+    public final Activity getActivity() {
         return this.mActivity;
     }
 
     @Nullable
-    public Context getApplicationContext() {
+    public final Context getApplicationContext() {
         if (this.mActivity == null) {
             return null;
         }
@@ -550,7 +550,7 @@ public abstract class Scene implements LifecycleOwner, ViewModelStoreOwner {
         return context;
     }
 
-    public Resources getResources() {
+    public final Resources getResources() {
         return requireActivity().getResources();
     }
 
@@ -568,11 +568,11 @@ public abstract class Scene implements LifecycleOwner, ViewModelStoreOwner {
         return getResources().getString(resId, formatArgs);
     }
 
-    public Scene getParentScene() {
+    public final Scene getParentScene() {
         return this.mParentScene;
     }
 
-    public NavigationScene getNavigationScene() {
+    public final NavigationScene getNavigationScene() {
         return this.mNavigationScene;
     }
 
@@ -660,17 +660,17 @@ public abstract class Scene implements LifecycleOwner, ViewModelStoreOwner {
         dispatchVisibleChanged();
     }
 
-    public <T extends View> T findViewById(@IdRes int id) {
+    public final <T extends View> T findViewById(@IdRes int id) {
         return getView().findViewById(id);
     }
 
-    public String getStateHistory() {
+    public final String getStateHistory() {
         return this.mStateHistoryBuilder.toString();
     }
 
     /** @hide */
     @RestrictTo(LIBRARY_GROUP)
-    public void executeNowOrScheduleAtNextResume(Runnable runnable) {
+    public final void executeNowOrScheduleAtNextResume(Runnable runnable) {
         if (getState() == State.RESUMED) {
             runnable.run();
         } else {
@@ -736,7 +736,7 @@ public abstract class Scene implements LifecycleOwner, ViewModelStoreOwner {
 
     /** @hide */
     @RestrictTo(LIBRARY_GROUP)
-    protected void dispatchVisibleChanged() {
+    protected final void dispatchVisibleChanged() {
         boolean visible = isVisible();
         if (visible == mVisibleDispatched) {
             return;
@@ -766,7 +766,7 @@ public abstract class Scene implements LifecycleOwner, ViewModelStoreOwner {
 
     }
 
-    public Scope getScope() {
+    public final Scope getScope() {
         if (this.mScope == null) {
             throw new IllegalStateException("Scope is not created, you can't call before onCreate");
         }

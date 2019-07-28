@@ -388,7 +388,7 @@ public abstract class GroupScene extends Scene {
         this.mGroupSceneManager.dispatchVisibleChildrenState(state);
     }
 
-    public <T extends Scene> T createOrReuse(String tag, Creator<T> creator) {
+    public final <T extends Scene> T createOrReuse(String tag, Creator<T> creator) {
         Scene scene = findSceneByTag(tag);
         if (scene == null) {
             scene = creator.call();
@@ -396,12 +396,12 @@ public abstract class GroupScene extends Scene {
         return (T) scene;
     }
 
-    public void registerChildSceneLifecycleCallbacks(@NonNull ChildSceneLifecycleCallbacks cb, boolean recursive) {
+    public final void registerChildSceneLifecycleCallbacks(@NonNull ChildSceneLifecycleCallbacks cb, boolean recursive) {
         ThreadUtility.checkUIThread();
         this.mLifecycleCallbacks.add(NonNullPair.create(cb, recursive));
     }
 
-    public void unregisterChildSceneLifecycleCallbacks(@NonNull ChildSceneLifecycleCallbacks cb) {
+    public final void unregisterChildSceneLifecycleCallbacks(@NonNull ChildSceneLifecycleCallbacks cb) {
         ThreadUtility.checkUIThread();
         NonNullPair<ChildSceneLifecycleCallbacks, Boolean> target = null;
         for (int i = 0, N = this.mLifecycleCallbacks.size(); i < N; i++) {
