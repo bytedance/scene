@@ -1,5 +1,6 @@
 package com.bytedance.scene.group;
 
+import android.app.Activity;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.annotation.*;
@@ -258,6 +259,21 @@ public abstract class GroupScene extends Scene {
         }
     }
 
+    @Override
+    public final void dispatchAttachActivity(Activity activity) {
+        super.dispatchAttachActivity(activity);
+    }
+
+    @Override
+    public final void dispatchAttachScene(@Nullable Scene parentScene) {
+        super.dispatchAttachScene(parentScene);
+    }
+
+    @Override
+    public final void dispatchCreate(@Nullable Bundle savedInstanceState) {
+        super.dispatchCreate(savedInstanceState);
+    }
+
     /**
      * @hide
      */
@@ -282,10 +298,15 @@ public abstract class GroupScene extends Scene {
      */
     @RestrictTo(LIBRARY_GROUP)
     @Override
-    public void dispatchActivityCreated(@Nullable Bundle savedInstanceState) {
+    public final void dispatchActivityCreated(@Nullable Bundle savedInstanceState) {
         super.dispatchActivityCreated(savedInstanceState);
         //child Scene的savedInstanceState是单独保存的，存在GroupRecord
         dispatchChildrenState(State.ACTIVITY_CREATED);
+    }
+
+    @Override
+    public final void dispatchSaveInstanceState(Bundle outState) {
+        super.dispatchSaveInstanceState(outState);
     }
 
     @CallSuper
@@ -299,7 +320,7 @@ public abstract class GroupScene extends Scene {
      */
     @RestrictTo(LIBRARY)
     @Override
-    public void dispatchStart() {
+    public final void dispatchStart() {
         super.dispatchStart();
         dispatchVisibleChildrenState(State.STARTED);
     }
@@ -309,7 +330,7 @@ public abstract class GroupScene extends Scene {
      */
     @RestrictTo(LIBRARY)
     @Override
-    public void dispatchResume() {
+    public final void dispatchResume() {
         super.dispatchResume();
         dispatchVisibleChildrenState(State.RESUMED);
     }
@@ -319,7 +340,7 @@ public abstract class GroupScene extends Scene {
      */
     @RestrictTo(LIBRARY)
     @Override
-    public void dispatchPause() {
+    public final void dispatchPause() {
         dispatchVisibleChildrenState(State.STARTED);
         super.dispatchPause();
     }
@@ -329,7 +350,7 @@ public abstract class GroupScene extends Scene {
      */
     @RestrictTo(LIBRARY)
     @Override
-    public void dispatchStop() {
+    public final void dispatchStop() {
         dispatchVisibleChildrenState(State.ACTIVITY_CREATED);
         super.dispatchStop();
     }
@@ -339,9 +360,24 @@ public abstract class GroupScene extends Scene {
      */
     @RestrictTo(LIBRARY)
     @Override
-    public void dispatchDestroyView() {
+    public final void dispatchDestroyView() {
         dispatchChildrenState(State.NONE);
         super.dispatchDestroyView();
+    }
+
+    @Override
+    public final void dispatchDestroy() {
+        super.dispatchDestroy();
+    }
+
+    @Override
+    public final void dispatchDetachScene() {
+        super.dispatchDetachScene();
+    }
+
+    @Override
+    public final void dispatchDetachActivity() {
+        super.dispatchDetachActivity();
     }
 
     private void dispatchChildrenState(@NonNull State state) {
@@ -383,7 +419,7 @@ public abstract class GroupScene extends Scene {
      * @hide
      */
     @RestrictTo(LIBRARY_GROUP)
-    public void dispatchOnSceneCreated(@NonNull Scene scene, Bundle savedInstanceState, boolean directChild) {
+    public final void dispatchOnSceneCreated(@NonNull Scene scene, Bundle savedInstanceState, boolean directChild) {
         if (scene != this) {
             for (NonNullPair<ChildSceneLifecycleCallbacks, Boolean> pair : mLifecycleCallbacks) {
                 if (directChild || pair.second) {
@@ -399,7 +435,7 @@ public abstract class GroupScene extends Scene {
      * @hide
      */
     @RestrictTo(LIBRARY_GROUP)
-    public void dispatchOnSceneStarted(@NonNull Scene scene, boolean directChild) {
+    public final void dispatchOnSceneStarted(@NonNull Scene scene, boolean directChild) {
         if (scene != this) {
             for (NonNullPair<ChildSceneLifecycleCallbacks, Boolean> pair : mLifecycleCallbacks) {
                 if (directChild || pair.second) {
@@ -415,7 +451,7 @@ public abstract class GroupScene extends Scene {
      * @hide
      */
     @RestrictTo(LIBRARY_GROUP)
-    public void dispatchOnSceneResumed(@NonNull Scene scene, boolean directChild) {
+    public final void dispatchOnSceneResumed(@NonNull Scene scene, boolean directChild) {
         if (scene != this) {
             for (NonNullPair<ChildSceneLifecycleCallbacks, Boolean> pair : mLifecycleCallbacks) {
                 if (directChild || pair.second) {
@@ -431,7 +467,7 @@ public abstract class GroupScene extends Scene {
      * @hide
      */
     @RestrictTo(LIBRARY_GROUP)
-    public void dispatchOnSceneStopped(@NonNull Scene scene, boolean directChild) {
+    public final void dispatchOnSceneStopped(@NonNull Scene scene, boolean directChild) {
         if (scene != this) {
             for (NonNullPair<ChildSceneLifecycleCallbacks, Boolean> pair : mLifecycleCallbacks) {
                 if (directChild || pair.second) {
@@ -447,7 +483,7 @@ public abstract class GroupScene extends Scene {
      * @hide
      */
     @RestrictTo(LIBRARY_GROUP)
-    public void dispatchOnScenePaused(@NonNull Scene scene, boolean directChild) {
+    public final void dispatchOnScenePaused(@NonNull Scene scene, boolean directChild) {
         if (scene != this) {
             for (NonNullPair<ChildSceneLifecycleCallbacks, Boolean> pair : mLifecycleCallbacks) {
                 if (directChild || pair.second) {
@@ -463,7 +499,7 @@ public abstract class GroupScene extends Scene {
      * @hide
      */
     @RestrictTo(LIBRARY_GROUP)
-    public void dispatchOnSceneSaveInstanceState(@NonNull Scene scene, Bundle outState, boolean directChild) {
+    public final void dispatchOnSceneSaveInstanceState(@NonNull Scene scene, Bundle outState, boolean directChild) {
         if (scene != this) {
             for (NonNullPair<ChildSceneLifecycleCallbacks, Boolean> pair : mLifecycleCallbacks) {
                 if (directChild || pair.second) {
@@ -479,7 +515,7 @@ public abstract class GroupScene extends Scene {
      * @hide
      */
     @RestrictTo(LIBRARY_GROUP)
-    public void dispatchOnSceneDestroyed(@NonNull Scene scene, boolean directChild) {
+    public final void dispatchOnSceneDestroyed(@NonNull Scene scene, boolean directChild) {
         if (scene != this) {
             for (NonNullPair<ChildSceneLifecycleCallbacks, Boolean> pair : mLifecycleCallbacks) {
                 if (directChild || pair.second) {
