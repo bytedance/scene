@@ -92,7 +92,7 @@ public final class NavigationScene extends Scene implements NavigationListener {
     NavigationSceneOptions mNavigationSceneOptions;
 
     private NavigationSceneManager mNavigationSceneManager;
-    private FrameLayout mPageContainer;
+    private FrameLayout mSceneContainer;
     private FrameLayout mAnimationContainer;
     @NonNull
     private NavigationAnimationExecutor mDefaultNavigationAnimationExecutor = new Android8DefaultSceneAnimatorExecutor();
@@ -447,8 +447,8 @@ public final class NavigationScene extends Scene implements NavigationListener {
      * @hide
      */
     @RestrictTo(LIBRARY_GROUP)
-    public ViewGroup getPageContainer() {
-        return this.mPageContainer;
+    public ViewGroup getSceneContainer() {
+        return this.mSceneContainer;
     }
 
     /**
@@ -493,11 +493,11 @@ public final class NavigationScene extends Scene implements NavigationListener {
         }
         frameLayout.setId(R.id.navigation_scene_content);
 
-        mPageContainer = new FrameLayout(requireSceneContext());
+        mSceneContainer = new FrameLayout(requireSceneContext());
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            mPageContainer.setOnApplyWindowInsetsListener(new DispatchWindowInsetsListener());
+            mSceneContainer.setOnApplyWindowInsetsListener(new DispatchWindowInsetsListener());
         }
-        frameLayout.addView(mPageContainer);
+        frameLayout.addView(mSceneContainer);
 
         NoneTouchFrameLayout noneTouchFrameLayout = new NoneTouchFrameLayout(requireSceneContext());
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {

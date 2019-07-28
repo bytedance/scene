@@ -319,7 +319,7 @@ class NavigationSceneManager {
                     scene.dispatchAttachActivity(navigationScene.getActivity());
                     scene.dispatchAttachScene(navigationScene);
                     scene.dispatchCreate(bundle);
-                    ViewGroup containerView = navigationScene.getPageContainer();
+                    ViewGroup containerView = navigationScene.getSceneContainer();
                     scene.dispatchCreateView(bundle, containerView);
                     if (!causedByActivityLifeCycle) {
                         if (scene.getView().getBackground() == null) {
@@ -812,7 +812,7 @@ class NavigationSceneManager {
                 if (navigationAnimationExecutor != null && navigationAnimationExecutor.isSupport(currentRecord.mScene.getClass(), scene.getClass())) {
                     final Scene finalCurrentScene = currentRecord.mScene;
 
-                    AnimatorUtility.bringToFrontIfNeeded(mNavigationScene.getPageContainer());//保证Z轴正确
+                    AnimatorUtility.bringToFrontIfNeeded(mNavigationScene.getSceneContainer());//保证Z轴正确
                     navigationAnimationExecutor.setAnimationViewGroup(mNavigationScene.getAnimationContainer());
 
                     AnimationInfo fromInfo = new AnimationInfo(finalCurrentScene, currentView, finalCurrentScene.getState(), currentRecord.mIsTranslucent);
