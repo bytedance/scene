@@ -60,11 +60,11 @@ public class SharedElementSceneTransitionExecutor extends NavigationAnimationExe
         this.mSharedElementNotFoundPolicy = sharedElementNotFoundPolicy;
     }
 
-    public void delayEnterTransitionExecute() {
+    public void postponeEnterTransition() {
         this.mDelayEnterTransitionExecute = true;
     }
 
-    public void postponeEnterTransition() {
+    public void startPostponedEnterTransition() {
         if (this.mEnterTransitionRunnable != null) {
             this.mEnterTransitionRunnable.run();
             this.mEnterTransitionRunnable = null;

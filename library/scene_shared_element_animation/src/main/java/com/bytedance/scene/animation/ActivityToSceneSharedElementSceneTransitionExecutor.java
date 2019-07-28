@@ -57,11 +57,11 @@ public class ActivityToSceneSharedElementSceneTransitionExecutor extends Navigat
         this.mSharedElementNotFoundPolicy = sharedElementNotFoundPolicy;
     }
 
-    public void delayEnterTransitionExecute() {
+    public void postponeEnterTransition() {
         this.mDelayEnterTransitionExecute = true;
     }
 
-    public void postponeEnterTransition() {
+    public void startPostponedEnterTransition() {
         if (this.mEnterTransitionRunnable != null) {
             this.mEnterTransitionRunnable.run();
         }
