@@ -725,6 +725,7 @@ class GroupSceneManager {
                     scene.dispatchActivityCreated(sceneBundle);
                     record.bundle = null;
                     moveState(groupScene, scene, to, modifyViewHierarchy, endAction);
+                    break;
                 case ACTIVITY_CREATED:
                     scene.getView().setVisibility(View.VISIBLE);//无论modifyViewHierarchy是否true，都得设置成可见
                     scene.dispatchStart();

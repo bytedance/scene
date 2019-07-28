@@ -343,6 +343,7 @@ class NavigationSceneManager {
                 case STOPPED:
                     scene.dispatchActivityCreated(bundle);
                     moveState(navigationScene, scene, to, bundle, causedByActivityLifeCycle, endAction);
+                    break;
                 case ACTIVITY_CREATED:
                     scene.getView().setVisibility(View.VISIBLE);
                     scene.dispatchStart();
