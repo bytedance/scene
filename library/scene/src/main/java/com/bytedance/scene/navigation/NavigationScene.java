@@ -3,6 +3,7 @@ package com.bytedance.scene.navigation;
 import android.app.Activity;
 import android.arch.lifecycle.Lifecycle;
 import android.arch.lifecycle.LifecycleObserver;
+import android.arch.lifecycle.LifecycleOwner;
 import android.arch.lifecycle.OnLifecycleEvent;
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -105,16 +106,17 @@ public final class NavigationScene extends Scene implements NavigationListener {
     private final SparseArrayCompat<PermissionResultCallback> mPermissionResultCallbackMap = new SparseArrayCompat<>();
 
     @UiThread
-    public void addNavigationListener(@NonNull Lifecycle lifecycle, @NonNull final NavigationListener listener) {
+    public void addNavigationListener(@NonNull final LifecycleOwner lifecycleOwner, @NonNull final NavigationListener listener) {
         ThreadUtility.checkUIThread();
-        if (lifecycle.getCurrentState() == DESTROYED) {
+        if (lifecycleOwner.getLifecycle().getCurrentState() == DESTROYED) {
             // ignore
             return;
         }
         this.mNavigationListenerList.add(listener);
-        lifecycle.addObserver(new LifecycleObserver() {
+        lifecycleOwner.getLifecycle().addObserver(new LifecycleObserver() {
             @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
             void onDestroy() {
+                lifecycleOwner.getLifecycle().removeObserver(this);
                 mNavigationListenerList.remove(listener);
             }
         });
@@ -127,16 +129,17 @@ public final class NavigationScene extends Scene implements NavigationListener {
     }
 
     @UiThread
-    public void addOnBackPressedListener(@NonNull Scene scene, @NonNull final OnBackPressedListener onBackPressedListener) {
+    public void addOnBackPressedListener(@NonNull final LifecycleOwner lifecycleOwner, @NonNull final OnBackPressedListener onBackPressedListener) {
         ThreadUtility.checkUIThread();
-        if (scene.getLifecycle().getCurrentState() == DESTROYED) {
+        if (lifecycleOwner.getLifecycle().getCurrentState() == DESTROYED) {
             // ignore
             return;
         }
-        this.mNavigationSceneManager.addOnBackPressedListener(scene, onBackPressedListener);
-        scene.getLifecycle().addObserver(new LifecycleObserver() {
+        this.mNavigationSceneManager.addOnBackPressedListener(lifecycleOwner, onBackPressedListener);
+        lifecycleOwner.getLifecycle().addObserver(new LifecycleObserver() {
             @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
             void onDestroy() {
+                lifecycleOwner.getLifecycle().removeObserver(this);
                 mNavigationSceneManager.removeOnBackPressedListener(onBackPressedListener);
             }
         });
@@ -149,16 +152,17 @@ public final class NavigationScene extends Scene implements NavigationListener {
     }
 
     @UiThread
-    public void addConfigurationChangedListener(@NonNull Scene scene, @NonNull final ConfigurationChangedListener configurationChangedListener) {
+    public void addConfigurationChangedListener(@NonNull final LifecycleOwner lifecycleOwner, @NonNull final ConfigurationChangedListener configurationChangedListener) {
         ThreadUtility.checkUIThread();
-        if (scene.getLifecycle().getCurrentState() == DESTROYED) {
+        if (lifecycleOwner.getLifecycle().getCurrentState() == DESTROYED) {
             // ignore
             return;
         }
-        this.mNavigationSceneManager.addConfigurationChangedListener(scene, configurationChangedListener);
-        scene.getLifecycle().addObserver(new LifecycleObserver() {
+        this.mNavigationSceneManager.addConfigurationChangedListener(lifecycleOwner, configurationChangedListener);
+        lifecycleOwner.getLifecycle().addObserver(new LifecycleObserver() {
             @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
             void onDestroy() {
+                lifecycleOwner.getLifecycle().removeObserver(this);
                 mNavigationSceneManager.removeConfigurationChangedListener(configurationChangedListener);
             }
         });

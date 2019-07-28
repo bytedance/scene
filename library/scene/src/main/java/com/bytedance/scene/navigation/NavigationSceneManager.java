@@ -2,6 +2,7 @@ package com.bytedance.scene.navigation;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.arch.lifecycle.LifecycleOwner;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.os.Build;
@@ -80,7 +81,7 @@ class NavigationSceneManager {
     private long mLastPendingActionListItemTimestamp = -1L;
 
     private final CancellationSignalManager mCancellationSignalManager = new CancellationSignalManager();
-    private final List<NonNullPair<Scene, OnBackPressedListener>> mOnBackPressedListenerList = new ArrayList<>();
+    private final List<NonNullPair<LifecycleOwner, OnBackPressedListener>> mOnBackPressedListenerList = new ArrayList<>();
 
     NavigationSceneManager(NavigationScene scene) {
         this.mNavigationScene = scene;
@@ -253,14 +254,14 @@ class NavigationSceneManager {
         return mBackStackList.getCurrentRecord();
     }
 
-    public void addOnBackPressedListener(Scene scene, OnBackPressedListener onBackPressedListener) {
-        mOnBackPressedListenerList.add(NonNullPair.create(scene, onBackPressedListener));
+    public void addOnBackPressedListener(@NonNull LifecycleOwner lifecycleOwner, @NonNull OnBackPressedListener onBackPressedListener) {
+        mOnBackPressedListenerList.add(NonNullPair.create(lifecycleOwner, onBackPressedListener));
     }
 
-    public void removeOnBackPressedListener(OnBackPressedListener onBackPressedListener) {
-        NonNullPair<Scene, OnBackPressedListener> target = null;
+    public void removeOnBackPressedListener(@NonNull OnBackPressedListener onBackPressedListener) {
+        NonNullPair<LifecycleOwner, OnBackPressedListener> target = null;
         for (int i = mOnBackPressedListenerList.size() - 1; i >= 0; i--) {
-            NonNullPair<Scene, OnBackPressedListener> pair = mOnBackPressedListenerList.get(i);
+            NonNullPair<LifecycleOwner, OnBackPressedListener> pair = mOnBackPressedListenerList.get(i);
             if (pair.second == onBackPressedListener) {
                 target = pair;
                 break;
@@ -270,9 +271,9 @@ class NavigationSceneManager {
     }
 
     public boolean interceptOnBackPressed() {
-        List<NonNullPair<Scene, OnBackPressedListener>> copy = new ArrayList<>(mOnBackPressedListenerList);
+        List<NonNullPair<LifecycleOwner, OnBackPressedListener>> copy = new ArrayList<>(mOnBackPressedListenerList);
         for (int i = copy.size() - 1; i >= 0; i--) {
-            NonNullPair<Scene, OnBackPressedListener> pair = copy.get(i);
+            NonNullPair<LifecycleOwner, OnBackPressedListener> pair = copy.get(i);
             if (pair.second.onBackPressed()) {
                 return true;
             }
@@ -282,7 +283,7 @@ class NavigationSceneManager {
 
     private List<ConfigurationChangedListener> mConfigurationChangedListenerList = new ArrayList<>();
 
-    public void addConfigurationChangedListener(@NonNull Scene scene, @NonNull ConfigurationChangedListener configurationChangedListener) {
+    public void addConfigurationChangedListener(@NonNull LifecycleOwner lifecycleOwner, @NonNull ConfigurationChangedListener configurationChangedListener) {
         mConfigurationChangedListenerList.add(configurationChangedListener);
     }
 
