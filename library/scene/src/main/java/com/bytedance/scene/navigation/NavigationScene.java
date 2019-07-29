@@ -231,7 +231,7 @@ public final class NavigationScene extends Scene implements NavigationListener {
         mLruCache.put(scene.getClass(), scene);
     }
 
-    public void push(@NonNull Class<? extends Scene> clazz, Bundle argument, PushOptions pushOptions) {
+    public void push(@NonNull Class<? extends Scene> clazz, @Nullable Bundle argument, @Nullable PushOptions pushOptions) {
         if (!Utility.isActivityStatusValid(getActivity())) {
             return;
         }
@@ -244,7 +244,9 @@ public final class NavigationScene extends Scene implements NavigationListener {
         if (scene == null) {
             scene = SceneInstanceUtility.getInstanceFromClass(clazz, argument);
         } else {
-            scene.setArguments(argument);
+            if (argument != null) {
+                scene.setArguments(argument);
+            }
         }
 
         push(scene, pushOptions);

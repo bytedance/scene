@@ -84,32 +84,34 @@ public abstract class Scene implements LifecycleOwner, ViewModelStoreOwner {
      * @hide
      */
     @RestrictTo(LIBRARY_GROUP)
+    @NonNull
     public final State getState() {
         return this.mState;
     }
 
-    private void setState(State state) {
+    private void setState(@NonNull State state) {
         this.mState = state;
         this.mStateHistoryBuilder.append(" - " + state.name);
     }
 
     /** @hide */
     @RestrictTo(LIBRARY_GROUP)
-    public final void setRootScopeFactory(Scope.RootScopeFactory rootScopeFactory) {
+    public final void setRootScopeFactory(@NonNull Scope.RootScopeFactory rootScopeFactory) {
         this.mRootScopeFactory = rootScopeFactory;
     }
 
-    public final void setArguments(Bundle arguments) {
+    public final void setArguments(@NonNull Bundle arguments) {
         this.mArguments = arguments;
     }
 
+    @Nullable
     public final Bundle getArguments() {
         return this.mArguments;
     }
 
     /** @hide */
     @RestrictTo(LIBRARY_GROUP)
-    public void dispatchAttachActivity(Activity activity) {
+    public void dispatchAttachActivity(@NonNull Activity activity) {
         this.mActivity = activity;
         //Scene销毁后复用，需要重置状态
         if (this.mLifecycleRegistry.getCurrentState() != Lifecycle.State.INITIALIZED) {
