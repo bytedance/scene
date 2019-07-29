@@ -1,4 +1,5 @@
 apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
 
 android {
     compileSdkVersion 27
@@ -32,4 +33,6 @@ dependencies {
     compile project(path: ':library:scene')
     compile project(path: ':library:scene_ui')
     compile project(path: ':library:scene_shared_element_animation')
+    compile project(path: ':library:scene_ktx')
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 }

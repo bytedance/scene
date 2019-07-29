@@ -1,0 +1,8 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.ixigua.scene.ktx">
+
+    <uses-sdk android:minSdkVersion="14" />
+    <application>
+
+    </application>
+</manifest>
