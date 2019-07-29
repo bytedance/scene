@@ -61,7 +61,7 @@ public class SceneLifecycleManager {
         this.mNavigationScene.dispatchAttachScene(null);
         this.mNavigationScene.dispatchCreate(savedInstanceState);
         this.mNavigationScene.dispatchCreateView(savedInstanceState, viewGroup);
-        viewGroup.addView(this.mNavigationScene.getView());
+        viewGroup.addView(this.mNavigationScene.getView(), new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         this.mNavigationScene.dispatchActivityCreated(savedInstanceState);
     }
 
