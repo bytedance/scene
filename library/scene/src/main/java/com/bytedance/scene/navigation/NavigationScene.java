@@ -497,7 +497,7 @@ public final class NavigationScene extends Scene implements NavigationListener {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             mSceneContainer.setOnApplyWindowInsetsListener(new DispatchWindowInsetsListener());
         }
-        frameLayout.addView(mSceneContainer);
+        frameLayout.addView(mSceneContainer, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
 
         NoneTouchFrameLayout noneTouchFrameLayout = new NoneTouchFrameLayout(requireSceneContext());
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -505,7 +505,7 @@ public final class NavigationScene extends Scene implements NavigationListener {
         }
         noneTouchFrameLayout.setTouchEnabled(false);
         mAnimationContainer = noneTouchFrameLayout;
-        frameLayout.addView(mAnimationContainer);
+        frameLayout.addView(mAnimationContainer, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
 
         if (mNavigationSceneOptions.drawWindowBackground()) {
             ViewCompat.setBackground(frameLayout, Utility.getWindowBackground(requireSceneContext()));
