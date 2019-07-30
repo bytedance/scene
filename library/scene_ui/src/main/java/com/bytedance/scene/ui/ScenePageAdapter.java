@@ -32,7 +32,7 @@ public abstract class ScenePageAdapter extends PagerAdapter {
         ViewPager viewPager = (ViewPager) container;
         UserVisibleHintGroupScene scene = mGroupScene.findSceneByTag(name);
         if (scene != null) {
-            //因为show是直接执行，所以对setUserVisibleHint的操作必须之前执行
+            // setUserVisibleHint() must be invoked first, as the GroupScene.show() is directly executed.
             configSceneUserVisibleHint(viewPager, scene, position);
             mGroupScene.show(scene);
         } else {

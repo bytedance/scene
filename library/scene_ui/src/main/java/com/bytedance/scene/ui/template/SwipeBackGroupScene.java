@@ -28,7 +28,8 @@ import java.util.List;
 
 /**
  * Created by JiangQi on 8/29/18.
- * 手势是不支持Pop拦截的
+ *
+ * Gestures like SwipeBack do not support pop interception
  */
 public abstract class SwipeBackGroupScene extends GroupScene {
     private static final int DEFAULT_SCRIM_COLOR = 0x99000000;

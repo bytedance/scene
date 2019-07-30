@@ -34,8 +34,11 @@ import java.util.Set;
 
 /**
  * Created by JiangQi on 9/3/18.
- * todo 同时启动多个怎么处理
- * 不能用singleTop因为还需要判断主题是否一致，而且sInstance可以做到singleTop的效果
+ *
+ * Can not use singleTop here, because we need to determine whether the theme is the same,
+ * and sInstance can achieve the same effect of the singleTop mode as well.
+ *
+ * Todo: Handle multiple startup
  */
 public class SceneContainerActivity extends AppCompatActivity implements SceneNavigationContainer {
     private static final String EXTRA_CLASS_NAME = "class_name";

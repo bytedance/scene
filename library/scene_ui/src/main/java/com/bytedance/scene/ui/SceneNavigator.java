@@ -70,7 +70,7 @@ public class SceneNavigator {
     }
 
     public void startScene(@NonNull Class<? extends Scene> clazz, @Nullable Bundle bundle, @Nullable NormalHook normalHook) {
-        //当前Activity销毁或者正在销毁直接返回
+        // Do nothing when the activity is destroying
         if (mHostActivity != null) {
             if (!Utility.isActivityStatusValid(mHostActivity)) {
                 return;
@@ -95,7 +95,7 @@ public class SceneNavigator {
 
     public void startSceneForResult(@NonNull Class<? extends Scene> clazz, @Nullable Bundle bundle, @NonNull PushResultCallback pushResultCallback,
                                     @Nullable ResultHook resultHook) {
-        //当前Activity销毁或者正在销毁直接返回
+        // Do nothing when the activity is destroying
         if (mHostActivity != null) {
             if (!Utility.isActivityStatusValid(mHostActivity)) {
                 pushResultCallback.onResult(null);
