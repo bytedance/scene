@@ -1,5 +1,7 @@
 package com.bytedance.scene.ktx
 
+import android.support.annotation.AnimRes
+import android.support.annotation.AnimatorRes
 import android.support.annotation.IdRes
 import com.bytedance.scene.Scene
 import com.bytedance.scene.group.GroupScene
@@ -34,3 +36,52 @@ fun GroupScene.addAndHide(@IdRes viewId: Int, scene: Scene, tag: String) {
     hide(scene)
     commitTransaction()
 }
+
+fun GroupScene.replace(@IdRes viewId: Int, scene: Scene, tag: String) {
+    val previousScene = findSceneByTag<Scene>(tag)
+    if (previousScene == scene) {
+        return
+    }
+
+    if (isAdded(scene)) {
+        remove(scene)
+    }
+
+    if (previousScene == null) {
+        add(viewId, scene, tag)
+        return
+    }
+
+    if (isShow(previousScene)) {
+        remove(previousScene)
+        add(viewId, scene, tag)
+    } else {
+        remove(previousScene)
+        addAndHide(viewId, scene, tag)
+    }
+}
+
+fun GroupScene.replace(@IdRes viewId: Int, scene: Scene, tag: String, @AnimRes @AnimatorRes animationResId: Int) {
+    val previousScene = findSceneByTag<Scene>(tag)
+    if (previousScene == scene) {
+        return
+    }
+
+    if (isAdded(scene)) {
+        remove(scene)
+    }
+
+    if (previousScene == null) {
+        add(viewId, scene, tag, animationResId)
+        return
+    }
+
+    if (isShow(previousScene)) {
+        remove(previousScene)
+        add(viewId, scene, tag, animationResId)
+    } else {
+        remove(previousScene)
+        addAndHide(viewId, scene, tag)
+    }
+}
+
