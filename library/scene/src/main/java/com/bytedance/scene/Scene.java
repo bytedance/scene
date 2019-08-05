@@ -283,6 +283,7 @@ public abstract class Scene implements LifecycleOwner, ViewModelStoreOwner {
                     + " did not call through to super.onStart()");
         }
         setState(State.STARTED);
+        dispatchVisibleChanged();
         mLifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_START);
         dispatchOnSceneStarted(this, false);
     }
@@ -602,7 +603,6 @@ public abstract class Scene implements LifecycleOwner, ViewModelStoreOwner {
     @CallSuper
     public void onStart() {
         mCalled = true;
-        dispatchVisibleChanged();
     }
 
     @CallSuper
