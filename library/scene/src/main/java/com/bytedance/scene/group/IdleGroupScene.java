@@ -68,7 +68,7 @@ public abstract class IdleGroupScene extends UserVisibleHintGroupScene {
                     View view = inflater.inflate(getLayoutId(), container, false);
                     mViewAsyncCreated = true;
                     State state = getState();
-                    if (state.value >= State.STOPPED.value) {
+                    if (state.value >= State.VIEW_CREATED.value) {
                         frameLayout.addView(view);
                         mViewAsyncCreated = true;
                         onAsyncViewCreated(getView(), savedInstanceState);

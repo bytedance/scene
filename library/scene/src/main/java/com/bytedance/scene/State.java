@@ -7,7 +7,7 @@ import static android.support.annotation.RestrictTo.Scope.LIBRARY_GROUP;
 /**
  * @hide
  * NONE             : Nothing, not started or has been destroyed
- * STOPPED          : View created, but not showing now
+ * VIEW_CREATED     : View created, but not showing now
  * ACTIVITY_CREATED : onActivityCreated has completed
  * STARTED          : Partial showing
  * RESUMED          : Completely showing
@@ -15,7 +15,7 @@ import static android.support.annotation.RestrictTo.Scope.LIBRARY_GROUP;
 @RestrictTo(LIBRARY_GROUP)
 public enum State {
     NONE(0, "NONE"),
-    STOPPED(1, "STOPPED"),
+    VIEW_CREATED(1, "VIEW_CREATED"),
     ACTIVITY_CREATED(2, "ACTIVITY_CREATED"),
     STARTED(3, "STARTED"),
     RESUMED(4, "RESUMED");

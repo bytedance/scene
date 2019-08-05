@@ -609,8 +609,8 @@ public final class NavigationScene extends Scene implements NavigationListener {
     }
 
     private void dispatchCurrentChildState(State state) {
-        if (getState().value < State.STOPPED.value) {
-            throw new IllegalArgumentException("dispatchCurrentChildState can only call when state is STOPPED, ACTIVITY_CREATED, STARTED, RESUMED");
+        if (getState().value < State.VIEW_CREATED.value) {
+            throw new IllegalArgumentException("dispatchCurrentChildState can only call when state is VIEW_CREATED, ACTIVITY_CREATED, STARTED, RESUMED");
         }
         mNavigationSceneManager.dispatchCurrentChildState(state);
     }

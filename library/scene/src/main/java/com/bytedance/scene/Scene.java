@@ -7,7 +7,6 @@ import android.content.res.Resources;
 import android.os.*;
 import android.support.annotation.*;
 import android.support.v4.view.ViewCompat;
-import android.support.v7.view.ContextThemeWrapper;
 import android.util.Log;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
@@ -48,7 +47,7 @@ import static android.support.annotation.RestrictTo.Scope.LIBRARY_GROUP;
  * Initial state: NONE
  *
  * When entering:
- * 1.onAttach -> onCreate -> onCreateView -> onViewCreated: then set state to STOPPED
+ * 1.onAttach -> onCreate -> onCreateView -> onViewCreated: then set state to VIEW_CREATED
  * 2.onActivityCreated: set state to ACTIVITY_CREATED, and set Lifecycle to Lifecycle.Event.ON_CREATE
  * 3.onStart: set state to STARTED, and set Lifecycle to Lifecycle.Event.ON_START
  * 4.onResume: set state to RESUMED, and set Lifecycle to Lifecycle.Event.ON_RESUME
@@ -271,7 +270,7 @@ public abstract class Scene implements LifecycleOwner, ViewModelStoreOwner {
             throw new SuperNotCalledException("Scene " + this
                     + " did not call through to super.onViewCreated()");
         }
-        setState(State.STOPPED);
+        setState(State.VIEW_CREATED);
     }
 
     /** @hide */

@@ -285,7 +285,7 @@ public abstract class GroupScene extends Scene {
             throw new IllegalArgumentException("GroupScene onCreateView view must be ViewGroup");
         }
         this.mGroupSceneManager.setView((ViewGroup) getView());
-        dispatchChildrenState(State.STOPPED);
+        dispatchChildrenState(State.VIEW_CREATED);
     }
 
     @NonNull

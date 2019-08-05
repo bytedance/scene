@@ -49,7 +49,7 @@ public final class AnimationOrAnimatorResourceExecutor extends NavigationAnimati
         }
 
         // In the case of pushAndClear, it is possible that the Scene come from has been destroyed.
-        if (fromInfo.mSceneState.value < State.STOPPED.value) {
+        if (fromInfo.mSceneState.value < State.VIEW_CREATED.value) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
                 mAnimationViewGroup.getOverlay().add(fromView);
             } else {
@@ -71,7 +71,7 @@ public final class AnimationOrAnimatorResourceExecutor extends NavigationAnimati
                 AnimatorUtility.resetViewStatus(fromView);
                 AnimatorUtility.resetViewStatus(toView);
 
-                if (fromInfo.mSceneState.value < State.STOPPED.value) {
+                if (fromInfo.mSceneState.value < State.VIEW_CREATED.value) {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
                         mAnimationViewGroup.getOverlay().remove(fromView);
                     } else {

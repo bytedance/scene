@@ -357,7 +357,7 @@ class NavigationSceneManager {
                     scene.getView().setVisibility(View.GONE);
                     moveState(navigationScene, scene, to, bundle, causedByActivityLifeCycle, endAction);
                     break;
-                case STOPPED:
+                case VIEW_CREATED:
                     scene.dispatchActivityCreated(bundle);
                     moveState(navigationScene, scene, to, bundle, causedByActivityLifeCycle, endAction);
                     break;
@@ -385,11 +385,11 @@ class NavigationSceneManager {
                     moveState(navigationScene, scene, to, bundle, causedByActivityLifeCycle, endAction);
                     break;
                 case ACTIVITY_CREATED:
-                    if (to == State.STOPPED) {
-                        throw new IllegalArgumentException("cant switch state ACTIVITY_CREATED to STOPPED");
+                    if (to == State.VIEW_CREATED) {
+                        throw new IllegalArgumentException("cant switch state ACTIVITY_CREATED to VIEW_CREATED");
                     }
                     //continue
-                case STOPPED:
+                case VIEW_CREATED:
                     View view = scene.getView();
                     scene.dispatchDestroyView();
                     if (!causedByActivityLifeCycle) {
@@ -915,8 +915,8 @@ class NavigationSceneManager {
                         fixDstState = State.STARTED;
                     } else if (targetState == State.ACTIVITY_CREATED) {
                         fixDstState = State.ACTIVITY_CREATED;
-                    } else if (targetState == State.STOPPED) {
-                        fixDstState = State.STOPPED;
+                    } else if (targetState == State.VIEW_CREATED) {
+                        fixDstState = State.VIEW_CREATED;
                     }
 
                     NavigationSceneManager.moveState(mNavigationScene, record.mScene, fixDstState, null, true, operationEndAction);

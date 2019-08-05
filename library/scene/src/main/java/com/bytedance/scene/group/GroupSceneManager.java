@@ -828,7 +828,7 @@ class GroupSceneManager {
                     }
                     moveState(groupScene, scene, to, modifyViewHierarchy, endAction);
                     break;
-                case STOPPED:
+                case VIEW_CREATED:
                     record = groupScene.getGroupSceneManager().findByScene(scene);
                     sceneBundle = record.bundle;
                     scene.dispatchActivityCreated(sceneBundle);
@@ -860,11 +860,11 @@ class GroupSceneManager {
                     moveState(groupScene, scene, to, modifyViewHierarchy, endAction);
                     break;
                 case ACTIVITY_CREATED:
-                    if (to == State.STOPPED) {
-                        throw new IllegalArgumentException("cant switch state ACTIVITY_CREATED to STOPPED");
+                    if (to == State.VIEW_CREATED) {
+                        throw new IllegalArgumentException("cant switch state ACTIVITY_CREATED to VIEW_CREATED");
                     }
                     //continue
-                case STOPPED:
+                case VIEW_CREATED:
                     View view = scene.getView();
                     scene.dispatchDestroyView();
                     if (modifyViewHierarchy) {

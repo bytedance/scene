@@ -37,7 +37,7 @@ public abstract class NavigationAnimationExecutor {
         final View fromView = fromInfo.mSceneView;
         final View toView = toInfo.mSceneView;
         // In the case of pushAndClear, it is possible that the Scene come from has been destroyed.
-        if (fromInfo.mSceneState.value < State.STOPPED.value) {
+        if (fromInfo.mSceneState.value < State.VIEW_CREATED.value) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
                 mAnimationViewGroup.getOverlay().add(fromView);
             } else {
@@ -50,7 +50,7 @@ public abstract class NavigationAnimationExecutor {
             public void run() {
                 navigationScene.requestDisableTouchEvent(false);
 
-                if (fromInfo.mSceneState.value < State.STOPPED.value) {
+                if (fromInfo.mSceneState.value < State.VIEW_CREATED.value) {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
                         mAnimationViewGroup.getOverlay().remove(fromView);
                     } else {
