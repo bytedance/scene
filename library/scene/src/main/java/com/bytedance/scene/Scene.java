@@ -742,6 +742,9 @@ public abstract class Scene implements LifecycleOwner, ViewModelStoreOwner {
     }
 
     public final void setTheme(@StyleRes int resid) {
+        if (getView() != null) {
+            throw new IllegalStateException("setTheme should be invoked before view is created, the best place is in onCreateView method");
+        }
         if (this.mThemeResource != resid) {
             this.mThemeResource = resid;
             if (this.mSceneContext != null) {
