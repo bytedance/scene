@@ -25,8 +25,8 @@ public final class SceneAsyncLayoutInflater {
     Handler mHandler;
     InflateThread mInflateThread;
 
-    public SceneAsyncLayoutInflater(@NonNull ContextThemeWrapper sceneContext) {
-        ContextThemeWrapper contextThemeWrapper = new ContextThemeWrapper(sceneContext, sceneContext.getTheme()) {
+    public SceneAsyncLayoutInflater(@NonNull Context sceneContext) {
+        Context contextThemeWrapper = new ContextThemeWrapper(sceneContext, sceneContext.getTheme()) {
             @Override
             public Object getSystemService(@NonNull String name) {
                 if (Context.LAYOUT_INFLATER_SERVICE.equals(name)) {

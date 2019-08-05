@@ -2,5 +2,5 @@
 <resources>
     <attr name="custom_color" format="color"></attr>
     <attr name="button_custom_color" format="color"></attr>
-
+    <attr name="testAttrNotFound" format="string" />
 </resources>

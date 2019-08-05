@@ -18,6 +18,7 @@ import android.view.Window;
 import com.bytedance.scene.navigation.NavigationScene;
 import com.bytedance.scene.parcel.ParcelConstants;
 import com.bytedance.scene.utlity.SceneInternalException;
+import com.bytedance.scene.view.SceneContextThemeWrapper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -63,7 +64,7 @@ public abstract class Scene implements LifecycleOwner, ViewModelStoreOwner {
     private static final String TAG = "Scene";
 
     private Activity mActivity;
-    private android.support.v7.view.ContextThemeWrapper mSceneContext;
+    private Context mSceneContext;
     private LayoutInflater mLayoutInflater;
     private View mView;
 
@@ -493,7 +494,7 @@ public abstract class Scene implements LifecycleOwner, ViewModelStoreOwner {
     }
 
     @Nullable
-    public final ContextThemeWrapper getSceneContext() {
+    public final Context getSceneContext() {
         if (this.mActivity == null) {
             return null;
         }
@@ -504,22 +505,22 @@ public abstract class Scene implements LifecycleOwner, ViewModelStoreOwner {
     }
 
     @NonNull
-    public final ContextThemeWrapper requireSceneContext() {
-        ContextThemeWrapper sceneContext = getSceneContext();
+    public final Context requireSceneContext() {
+        Context sceneContext = getSceneContext();
         if (sceneContext == null) {
             throw new IllegalStateException("Scene " + this + " not attached to an activity.");
         }
         return sceneContext;
     }
 
-    protected ContextThemeWrapper onGetSceneContext() {
+    protected Context onGetSceneContext() {
         if (this.mActivity == null) {
             throw new IllegalStateException("onGetContextThemeWrapper() cannot be executed until the "
                     + "Scene is attached to the Activity.");
         }
 
         if (this.mThemeResource > 0) {
-            return new android.support.v7.view.ContextThemeWrapper(this.mActivity, this.mThemeResource) {
+            return new SceneContextThemeWrapper(this.mActivity, this.mThemeResource) {
                 @Override
                 public Object getSystemService(@NonNull String name) {
                     if (SCENE_SERVICE.equals(name)) {
@@ -537,7 +538,7 @@ public abstract class Scene implements LifecycleOwner, ViewModelStoreOwner {
                 }
             };
         } else {
-            return new android.support.v7.view.ContextThemeWrapper(this.mActivity, this.mActivity.getTheme()) {
+            return new SceneContextThemeWrapper(this.mActivity, this.mActivity.getTheme()) {
                 @Override
                 public Object getSystemService(@NonNull String name) {
                     if (SCENE_SERVICE.equals(name)) {

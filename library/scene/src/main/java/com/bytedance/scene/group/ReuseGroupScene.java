@@ -1,5 +1,6 @@
 package com.bytedance.scene.group;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -13,7 +14,7 @@ import android.view.ViewGroup;
 public abstract class ReuseGroupScene extends GroupScene {
     private ViewGroup mReuseView;
     private LayoutInflater mReuseLayoutInflater;
-    private android.support.v7.view.ContextThemeWrapper mReuseContextThemeWrapper;
+    private Context mReuseContextThemeWrapper;
     private int mReuseViewHostActivityIdentifyHashCode = -1;
     private int mReuseViewHostActivityThemeIdentifyHashCode = -1;
 
@@ -66,7 +67,7 @@ public abstract class ReuseGroupScene extends GroupScene {
 
     @Nullable
     @Override
-    public ContextThemeWrapper onGetSceneContext() {
+    public Context onGetSceneContext() {
         if (this.mReuseContextThemeWrapper != null) {
             return this.mReuseContextThemeWrapper;
         }

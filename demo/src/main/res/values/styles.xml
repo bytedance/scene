@@ -33,5 +33,6 @@
 
     <style name="AppTheme.Test2">
         <item name="android:windowBackground">@android:color/holo_blue_light</item>
+        <item name="testAttrNotFound">"testAttrNotFound"</item>
     </style>
 </resources>

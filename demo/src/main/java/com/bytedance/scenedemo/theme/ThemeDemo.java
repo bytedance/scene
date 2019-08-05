@@ -93,7 +93,7 @@ public class ThemeDemo extends SwipeBackGroupScene {
         @Override
         public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
             setTheme(this.mThemeId);
-            return inflater.inflate(R.layout.layout_theme_demo, container, false);
+            return inflater.inflate(R.layout.layout_theme_demo1, container, false);
         }
     }
 }
