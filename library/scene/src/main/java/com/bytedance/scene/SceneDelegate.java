@@ -19,4 +19,7 @@ public interface SceneDelegate {
      *         it's just a primitive Java object.
      */
     void setNavigationSceneAvailableCallback(@NonNull NavigationSceneAvailableCallback callback);
+
+    //clear all lifecycle fragment, scope fragment, NavigationScene, GroupScene relation to this SceneDelegate
+    void abandon();
 }

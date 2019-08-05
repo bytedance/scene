@@ -32,6 +32,10 @@ public class LifeCycleFragment extends Fragment implements NavigationScene.Navig
         return fragment;
     }
 
+    public static interface LifecycleFragmentDetachCallback {
+        void onDetach();
+    }
+
     private static final String TAG = "SCENE";
     private static final String TAG_SUPPORT_RESTORE = "supportRestore";
 
@@ -42,6 +46,8 @@ public class LifeCycleFragment extends Fragment implements NavigationScene.Navig
     private NavigationSceneAvailableCallback mNavigationSceneAvailableCallback;
     private SceneComponentFactory mRootSceneComponentFactory;
     private final SceneLifecycleManager mLifecycleManager = new SceneLifecycleManager();
+    @Nullable
+    private LifecycleFragmentDetachCallback mLifecycleFragmentDetachCallback = null;
 
     public void setNavigationScene(NavigationScene rootScene, Scope.RootScopeFactory rootScopeFactory) {
         this.mNavigationScene = rootScene;
@@ -54,6 +60,10 @@ public class LifeCycleFragment extends Fragment implements NavigationScene.Navig
 
     public void setRootSceneComponentFactory(SceneComponentFactory sceneComponentFactory) {
         this.mRootSceneComponentFactory = sceneComponentFactory;
+    }
+
+    void setLifecycleFragmentDetachCallback(@NonNull LifecycleFragmentDetachCallback lifecycleFragmentDetachCallback) {
+        this.mLifecycleFragmentDetachCallback = lifecycleFragmentDetachCallback;
     }
 
     public NavigationScene getNavigationScene() {
@@ -155,6 +165,14 @@ public class LifeCycleFragment extends Fragment implements NavigationScene.Navig
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         this.mLifecycleManager.onConfigurationChanged(newConfig);
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        if (this.mLifecycleFragmentDetachCallback != null) {
+            this.mLifecycleFragmentDetachCallback.onDetach();
+        }
     }
 
     @Override

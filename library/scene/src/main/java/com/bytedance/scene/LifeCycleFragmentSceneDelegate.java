@@ -1,19 +1,24 @@
 package com.bytedance.scene;
 
 import android.app.Activity;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
+import android.os.Build;
 import android.support.annotation.NonNull;
 
+import android.support.annotation.Nullable;
 import com.bytedance.scene.navigation.NavigationScene;
 
 /**
  * Created by JiangQi on 9/11/18.
  */
-class LifeCycleFragmentSceneDelegate implements SceneDelegate, NavigationSceneAvailableCallback {
-    private Activity mActivity;
-    private LifeCycleFragment mLifeCycleFragment;
+final class LifeCycleFragmentSceneDelegate implements SceneDelegate, NavigationSceneAvailableCallback {
+    private final Activity mActivity;
+    private final LifeCycleFragment mLifeCycleFragment;
 
     private NavigationScene mNavigationScene;
     private NavigationSceneAvailableCallback mNavigationSceneAvailableCallback;
+    private boolean mAbandoned = false;
 
     LifeCycleFragmentSceneDelegate(@NonNull Activity activity, @NonNull LifeCycleFragment lifeCycleFragment) {
         this.mActivity = activity;
@@ -23,11 +28,15 @@ class LifeCycleFragmentSceneDelegate implements SceneDelegate, NavigationSceneAv
     @Override
     public boolean onBackPressed() {
         NavigationScene navigationScene = mLifeCycleFragment.getNavigationScene();
-        return navigationScene != null && navigationScene.onBackPressed();
+        return !this.mAbandoned && navigationScene != null && navigationScene.onBackPressed();
     }
 
     @Override
+    @Nullable
     public NavigationScene getNavigationScene() {
+        if (this.mAbandoned) {
+            return null;
+        }
         return mLifeCycleFragment.getNavigationScene();
     }
 
@@ -44,6 +53,28 @@ class LifeCycleFragmentSceneDelegate implements SceneDelegate, NavigationSceneAv
         this.mNavigationSceneAvailableCallback = callback;
         if (this.mNavigationScene != null) {
             this.mNavigationSceneAvailableCallback.onNavigationSceneAvailable(this.mNavigationScene);
+        }
+    }
+
+    @Override
+    public void abandon() {
+        if (this.mAbandoned) {
+            return;
+        }
+        this.mAbandoned = true;
+        this.mLifeCycleFragment.setLifecycleFragmentDetachCallback(new LifeCycleFragment.LifecycleFragmentDetachCallback() {
+            @Override
+            public void onDetach() {
+                NavigationSceneUtility.removeTag(mActivity, mLifeCycleFragment.getTag());
+            }
+        });
+        FragmentManager fragmentManager = mActivity.getFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction().remove(this.mLifeCycleFragment);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            fragmentTransaction.commitNowAllowingStateLoss();
+        } else {
+            fragmentTransaction.commitAllowingStateLoss();
+            fragmentManager.executePendingTransactions();
         }
     }
 }

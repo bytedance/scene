@@ -85,14 +85,14 @@ public class NavigationSceneCompatUtility {
                                                   @NonNull NavigationSceneOptions navigationSceneOptions,
                                                   @Nullable SceneComponentFactory rootSceneComponentFactory,
                                                   final boolean supportRestore,
-                                                  @NonNull String tag) {
+                                                  @NonNull final String tag) {
         ThreadUtility.checkUIThread();
         if (tag == null) {
             throw new IllegalArgumentException("tag cant be null");
         }
         checkDuplicateTag(fragment, tag);
 
-        FragmentManager fragmentManager = fragment.getChildFragmentManager();
+        final FragmentManager fragmentManager = fragment.getChildFragmentManager();
         LifeCycleCompatFragment lifeCycleFragment = (LifeCycleCompatFragment) fragmentManager.findFragmentByTag(tag);
         if (lifeCycleFragment != null && !supportRestore) {
             FragmentTransaction transaction = fragmentManager.beginTransaction();
@@ -129,15 +129,41 @@ public class NavigationSceneCompatUtility {
 
         final LifeCycleCompatFragment finalLifeCycleFragment = lifeCycleFragment;
         final FragmentDelegateProxy proxy = new FragmentDelegateProxy() {
+            private boolean mAbandoned = false;
+
             @Override
             public boolean onBackPressed() {
                 NavigationScene navigationScene = finalLifeCycleFragment.getNavigationScene();
-                return navigationScene != null && navigationScene.onBackPressed();
+                return !mAbandoned && navigationScene != null && navigationScene.onBackPressed();
             }
 
             @Override
+            @Nullable
             public NavigationScene getNavigationScene() {
+                if (this.mAbandoned) {
+                    return null;
+                }
                 return finalLifeCycleFragment.getNavigationScene();
+            }
+
+            @Override
+            public void abandon() {
+                if (this.mAbandoned) {
+                    return;
+                }
+                this.mAbandoned = true;
+                fragmentManager.registerFragmentLifecycleCallbacks(new FragmentManager.FragmentLifecycleCallbacks() {
+                    @Override
+                    public void onFragmentDetached(FragmentManager fm, Fragment f) {
+                        super.onFragmentDetached(fm, f);
+                        if (f != finalLifeCycleFragment) {
+                            return;
+                        }
+                        fragmentManager.unregisterFragmentLifecycleCallbacks(this);
+                        CHECK_DUPLICATE_TAG_MAP.get(fragment).remove(tag);
+                    }
+                }, false);
+                fragmentManager.beginTransaction().remove(finalLifeCycleFragment).commitNowAllowingStateLoss();
             }
         };
         finalLifeCycleFragment.setNavigationSceneAvailableCallback(new NavigationSceneAvailableCallback() {

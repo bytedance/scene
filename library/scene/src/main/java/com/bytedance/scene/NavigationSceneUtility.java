@@ -140,6 +140,10 @@ public class NavigationSceneUtility {
         }
     }
 
+    static void removeTag(@NonNull Activity activity, @NonNull String tag) {
+        CHECK_DUPLICATE_TAG_MAP.get(activity).remove(tag);
+    }
+
     private static void commitFragment(FragmentTransaction transaction) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             transaction.commitNowAllowingStateLoss();
