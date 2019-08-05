@@ -30,9 +30,10 @@ public class ScopeHolderFragment extends Fragment {
         setRetainInstance(true);
     }
 
-    public static ScopeHolderFragment install(Activity activity, boolean forceCreate) {
+    public static ScopeHolderFragment install(Activity activity, String tag, boolean forceCreate) {
+        String fragmentTag = tag + "_" + TAG;
         FragmentManager fragmentManager = activity.getFragmentManager();
-        ScopeHolderFragment holderFragment = (ScopeHolderFragment) fragmentManager.findFragmentByTag(TAG);
+        ScopeHolderFragment holderFragment = (ScopeHolderFragment) fragmentManager.findFragmentByTag(fragmentTag);
         if (holderFragment != null && forceCreate) {
             FragmentTransaction transaction = fragmentManager.beginTransaction();
             transaction.remove(holderFragment);
@@ -44,7 +45,7 @@ public class ScopeHolderFragment extends Fragment {
         if (holderFragment == null) {
             holderFragment = ScopeHolderFragment.newInstance();
             FragmentTransaction transaction = fragmentManager.beginTransaction();
-            transaction.add(holderFragment, TAG);
+            transaction.add(holderFragment, fragmentTag);
             commitFragment(transaction);
             fragmentManager.executePendingTransactions();
         }

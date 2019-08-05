@@ -103,7 +103,7 @@ public class NavigationSceneCompatUtility {
         }
 
         if (lifeCycleFragment != null) {
-            final ScopeHolderCompatFragment scopeHolderFragment = ScopeHolderCompatFragment.install(fragment, false);
+            final ScopeHolderCompatFragment scopeHolderFragment = ScopeHolderCompatFragment.install(fragment, tag, false);
             lifeCycleFragment.setRootScopeFactory(new Scope.RootScopeFactory() {
                 @Override
                 public Scope getRootScope() {
@@ -116,7 +116,7 @@ public class NavigationSceneCompatUtility {
             transaction.add(containerId, lifeCycleFragment, tag);
             final NavigationScene navigationScene = (NavigationScene) SceneInstanceUtility.getInstanceFromClass(NavigationScene.class,
                     navigationSceneOptions.toBundle());
-            final ScopeHolderCompatFragment scopeHolderFragment = ScopeHolderCompatFragment.install(fragment, !supportRestore);
+            final ScopeHolderCompatFragment scopeHolderFragment = ScopeHolderCompatFragment.install(fragment, tag, !supportRestore);
             lifeCycleFragment.setNavigationScene(navigationScene, new Scope.RootScopeFactory() {
                 @Override
                 public Scope getRootScope() {

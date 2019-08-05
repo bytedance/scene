@@ -92,7 +92,7 @@ public class NavigationSceneUtility {
         }
 
         if (lifeCycleFragment != null) {
-            final ScopeHolderFragment scopeHolderFragment = ScopeHolderFragment.install(activity, false);
+            final ScopeHolderFragment scopeHolderFragment = ScopeHolderFragment.install(activity, tag, false);
             lifeCycleFragment.setRootScopeFactory(new Scope.RootScopeFactory() {
                 @Override
                 public Scope getRootScope() {
@@ -106,7 +106,7 @@ public class NavigationSceneUtility {
             transaction.add(idRes, lifeCycleFragment, tag);
             final NavigationScene navigationScene = (NavigationScene) SceneInstanceUtility.getInstanceFromClass(NavigationScene.class,
                     navigationSceneOptions.toBundle());
-            final ScopeHolderFragment scopeHolderFragment = ScopeHolderFragment.install(activity, !supportRestore);
+            final ScopeHolderFragment scopeHolderFragment = ScopeHolderFragment.install(activity, tag, !supportRestore);
             lifeCycleFragment.setNavigationScene(navigationScene, new Scope.RootScopeFactory() {
                 @Override
                 public Scope getRootScope() {
