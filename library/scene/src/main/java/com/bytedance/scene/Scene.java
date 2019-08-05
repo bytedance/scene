@@ -17,6 +17,7 @@ import android.view.Window;
 
 import com.bytedance.scene.navigation.NavigationScene;
 import com.bytedance.scene.parcel.ParcelConstants;
+import com.bytedance.scene.utlity.SceneInternalException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -91,13 +92,28 @@ public abstract class Scene implements LifecycleOwner, ViewModelStoreOwner {
     }
 
     private void setState(@NonNull State state) {
+        State currentState = this.mState;
+        if (state.value > currentState.value) {
+            //when Scene enter, state +1
+            if ((state.value - currentState.value) != 1) {
+                throw new SceneInternalException("Cant setState from " + currentState.name + " to " + state.name);
+            }
+        } else if (state.value < currentState.value) {
+            //when Scene exit, state -1, except for from State.ACTIVITY_CREATED to State.NONE
+            if (currentState == State.ACTIVITY_CREATED && state == State.NONE) {
+                //empty
+            } else if (state.value - currentState.value != -1) {
+                throw new SceneInternalException("Cant setState from " + currentState.name + " to " + state.name);
+            }
+        }
+
         this.mState = state;
         this.mStateHistoryBuilder.append(" - " + state.name);
     }
 
     /** @hide */
     @RestrictTo(LIBRARY_GROUP)
-    public final void setRootScopeFactory(@NonNull Scope.RootScopeFactory rootScopeFactory) {
+    public final void setRootScopeFactory(@Nullable Scope.RootScopeFactory rootScopeFactory) {
         this.mRootScopeFactory = rootScopeFactory;
     }
 
