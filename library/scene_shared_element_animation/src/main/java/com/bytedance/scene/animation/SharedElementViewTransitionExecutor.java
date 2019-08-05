@@ -33,7 +33,9 @@ public class SharedElementViewTransitionExecutor {
     @Nullable
     private final SceneVisibilityTransition mOtherTransition;
 
-    //todo 支持排除某些View来做otherElementTransition
+    /**
+     * TODO: Support for excluding certain Views to do otherElementTransition
+     */
     public SharedElementViewTransitionExecutor(@NonNull Map<String, SceneTransition> sharedElementTransition,
                                                @Nullable SceneVisibilityTransition otherElementTransition) {
         this.mSharedElementTransition = sharedElementTransition;
@@ -61,7 +63,7 @@ public class SharedElementViewTransitionExecutor {
                                   @NonNull SharedElementNotFoundPolicy sharedElementNotFoundPolicy,
                                   @NonNull Runnable fallbackAction) {
         Set<String> keySet = this.mSharedElementTransition.keySet();
-        //要排序，不要让Parent盖住Child
+        // Sort, don't let parent cover child
         ArrayMap<String, View> map = new ArrayMap<>();
         for (String transitionName : keySet) {
             View dstView = SharedElementUtils.getViewByTransitionName(toView, transitionName, true);
@@ -116,7 +118,7 @@ public class SharedElementViewTransitionExecutor {
         if (mOtherTransition != null) {
             List<Animator> mOtherAnimatorList = new ArrayList<>();
             for (View view : transitioningViews) {
-                //todo 万一是set怎么办？
+                // TODO: What if it is a set operation?
                 SceneVisibilityTransition transition = mOtherTransition.clone();
                 transition.setDuration(ANIMATION_DURATION);
                 transition.captureValue(view, (ViewGroup) toView);
@@ -128,7 +130,7 @@ public class SharedElementViewTransitionExecutor {
                 minDelay = Math.min(minDelay, animator.getStartDelay());
             }
 
-            //保证肯定有一个是0 delay
+            // Guarantee that there must be at least one animator that is 0 delay
             for (Animator animator : mOtherAnimatorList) {
                 animator.setStartDelay(animator.getStartDelay() - minDelay);
             }
@@ -241,7 +243,7 @@ public class SharedElementViewTransitionExecutor {
                 minDelay = Math.min(minDelay, animator.getStartDelay());
             }
 
-            //保证肯定有一个是0 delay
+            // Guarantee that there must be at least one animator that is 0 delay
             for (Animator animator : mOtherAnimatorList) {
                 animator.setStartDelay(animator.getStartDelay() - minDelay);
             }

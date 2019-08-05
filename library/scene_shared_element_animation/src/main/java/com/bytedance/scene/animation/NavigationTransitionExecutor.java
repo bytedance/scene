@@ -17,8 +17,9 @@ import com.bytedance.scene.utlity.Utility;
 
 /**
  * Created by JiangQi on 8/15/18.
+ *
+ * TODO: Translucent is not supported now.
  */
-//todo 不支持半透明，半透明的处理怎么办
 public abstract class NavigationTransitionExecutor extends NavigationAnimationExecutor {
     @Override
     public boolean isSupport(@NonNull Class<? extends Scene> from, @NonNull Class<? extends Scene> to) {

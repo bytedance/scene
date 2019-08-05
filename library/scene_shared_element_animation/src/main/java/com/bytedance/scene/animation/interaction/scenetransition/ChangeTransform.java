@@ -17,8 +17,9 @@ import com.bytedance.scene.animation.interaction.scenetransition.utils.SceneView
 
 /**
  * Created by JiangQi on 9/2/18.
- * //todo 因为旋转被Parent clip的部分无解
- * todo 移动用path
+ *
+ * TODO: 1. It is not resolved temporarily: Parent clip by the rotation
+ *       2. Use Path in transform
  */
 @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
 public class ChangeTransform extends SceneTransition {

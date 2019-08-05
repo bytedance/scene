@@ -13,7 +13,7 @@ import com.bytedance.scene.animation.interaction.scenetransition.utils.SceneView
 
 /**
  * Created by JiangQi on 9/2/18.
- * 只改大小
+ * The purpose of this class is to change the size only.
  */
 @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
 public class ChangeBounds extends SceneTransition {

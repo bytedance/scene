@@ -17,9 +17,10 @@ import java.util.*;
 
 @TargetApi(21)
 public class SharedElementUtils {
-    //todo 万一是shared element的parent怎么办
-    //必须排除rootView，rootView做alpha动画
-    //等于系统的captureTransitioningViews
+    /**
+     * TODO: What if it is the parent of the shared element?
+     * RootView must be excluded, The rootView does an alpha animation equal to the system's captureTransitioningViews.
+     */
     public static List<View> captureTransitioningViews(View view, View rootView) {
         List<View> list = new ArrayList<>();
         captureTransitioningViews(view, rootView, list);
@@ -128,7 +129,10 @@ public class SharedElementUtils {
         return NonNullPair.create(transitioningViews, strippedTransitioningViews);
     }
 
-    //保证顺序，Parent -> Child，保证添加到Overlay的时候Parent不会把Child覆盖了
+    /**
+     * Guarantee order: Parent -> Child
+     * Make sure that Parent will not overwrite Child when adding Overlay
+     */
     public static List<NonNullPair<String, View>> sortSharedElementList(ArrayMap<String, View> sharedElements) {
         List<NonNullPair<String, View>> list = new ArrayList<>();
         boolean isFirstRun = true;

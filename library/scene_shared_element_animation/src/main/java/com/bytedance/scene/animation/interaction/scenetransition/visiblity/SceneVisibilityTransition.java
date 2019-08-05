@@ -101,7 +101,9 @@ public abstract class SceneVisibilityTransition implements Cloneable {
         this.mDuration = duration;
     }
 
-    //用于计算动画startDelay
+    /**
+     * Used to calculate the animation's startDelay
+     */
     public abstract static class EpicenterCallback {
         public abstract Rect onGetEpicenter(@NonNull SceneVisibilityTransition transition);
     }
