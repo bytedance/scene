@@ -14,6 +14,7 @@ import android.widget.FrameLayout;
 
 import com.bytedance.scene.navigation.NavigationScene;
 import com.bytedance.scene.utlity.SceneInstanceUtility;
+import com.bytedance.scene.utlity.SceneInternalException;
 
 import static android.support.annotation.RestrictTo.Scope.LIBRARY_GROUP;
 
@@ -26,6 +27,7 @@ import static android.support.annotation.RestrictTo.Scope.LIBRARY_GROUP;
 public class LifeCycleFragment extends Fragment implements NavigationScene.NavigationSceneHost {
     public static LifeCycleFragment newInstance(boolean supportRestore) {
         LifeCycleFragment fragment = new LifeCycleFragment();
+        fragment.mCreatedByAppRestoreReflect = false;
         Bundle bundle = new Bundle();
         bundle.putBoolean(TAG_SUPPORT_RESTORE, supportRestore);
         fragment.setArguments(bundle);
@@ -48,6 +50,8 @@ public class LifeCycleFragment extends Fragment implements NavigationScene.Navig
     private final SceneLifecycleManager mLifecycleManager = new SceneLifecycleManager();
     @Nullable
     private LifecycleFragmentDetachCallback mLifecycleFragmentDetachCallback = null;
+    private boolean mCreatedByAppRestoreReflect = true;
+    private boolean mRemoveSelf = false;
 
     public void setNavigationScene(@NonNull NavigationScene rootScene, @NonNull Scope.RootScopeFactory rootScopeFactory) {
         if (rootScene == null) {
@@ -114,10 +118,23 @@ public class LifeCycleFragment extends Fragment implements NavigationScene.Navig
         this.mSupportRestore = getArguments().getBoolean(TAG_SUPPORT_RESTORE);
         if (savedInstanceState == null) {
             if (this.mNavigationScene == null) {
-                throw new IllegalStateException("mNavigationScene can't be null");
+                if (mCreatedByAppRestoreReflect) {
+                    removeSelfWhenNavigationSceneUtilityIsNotInvoked();
+                } else {
+                    throw new SceneInternalException("mNavigationScene can't be null");
+                }
+                return;
             }
         } else {
-            String clazz = savedInstanceState.getString(TAG);
+            String clazz = savedInstanceState.getString(TAG, null);
+            if (clazz == null) {
+                if (this.mSupportRestore) {
+                    throw new SceneInternalException("LifeCycleFragment NavigationScene class name is null");
+                } else {
+                    removeSelfWhenNavigationSceneUtilityIsNotInvoked();
+                }
+                return;
+            }
             this.mNavigationScene = (NavigationScene) SceneInstanceUtility.getInstanceFromClassName(getActivity(), clazz, null);
             if (this.mNavigationSceneAvailableCallback != null) {
                 this.mNavigationSceneAvailableCallback.onNavigationSceneAvailable(this.mNavigationScene);
@@ -128,27 +145,46 @@ public class LifeCycleFragment extends Fragment implements NavigationScene.Navig
                 this.mRootSceneComponentFactory, this.mSupportRestore ? savedInstanceState : null);
     }
 
+    //developer may not invoke NavigationSceneUtility.setupWithActivity which will clean unused LifeCycleFragment in Activity onCreate() when app is restored,
+    //for example Activity.finish()+return, at this moment, we should clean LifeCycleFragment
+    private void removeSelfWhenNavigationSceneUtilityIsNotInvoked() {
+        getActivity().getFragmentManager().beginTransaction().remove(LifeCycleFragment.this).commitAllowingStateLoss();
+        mRemoveSelf = true;
+    }
+
     @Override
     public void onStart() {
         super.onStart();
+        if (this.mRemoveSelf) {
+            return;
+        }
         this.mLifecycleManager.onStart();
     }
 
     @Override
     public void onResume() {
         super.onResume();
+        if (this.mRemoveSelf) {
+            return;
+        }
         this.mLifecycleManager.onResume();
     }
 
     @Override
     public void onPause() {
         super.onPause();
+        if (this.mRemoveSelf) {
+            return;
+        }
         this.mLifecycleManager.onPause();
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
+        if (this.mRemoveSelf) {
+            return;
+        }
         if (this.mSupportRestore) {
             outState.putString(TAG, this.mNavigationScene.getClass().getName());
             this.mLifecycleManager.onSaveInstanceState(outState);
@@ -158,24 +194,36 @@ public class LifeCycleFragment extends Fragment implements NavigationScene.Navig
     @Override
     public void onStop() {
         super.onStop();
+        if (this.mRemoveSelf) {
+            return;
+        }
         this.mLifecycleManager.onStop();
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        if (this.mRemoveSelf) {
+            return;
+        }
         this.mLifecycleManager.onDestroyView();
     }
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
+        if (this.mRemoveSelf) {
+            return;
+        }
         this.mLifecycleManager.onConfigurationChanged(newConfig);
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
+        if (this.mRemoveSelf) {
+            return;
+        }
         if (this.mLifecycleFragmentDetachCallback != null) {
             this.mLifecycleFragmentDetachCallback.onDetach();
         }
