@@ -49,7 +49,13 @@ public class LifeCycleFragment extends Fragment implements NavigationScene.Navig
     @Nullable
     private LifecycleFragmentDetachCallback mLifecycleFragmentDetachCallback = null;
 
-    public void setNavigationScene(NavigationScene rootScene, Scope.RootScopeFactory rootScopeFactory) {
+    public void setNavigationScene(@NonNull NavigationScene rootScene, @NonNull Scope.RootScopeFactory rootScopeFactory) {
+        if (rootScene == null) {
+            throw new NullPointerException("rootScene can't be null");
+        }
+        if (rootScopeFactory == null) {
+            throw new NullPointerException("rootScopeFactory can't be null");
+        }
         this.mNavigationScene = rootScene;
         this.mRootScopeFactory = rootScopeFactory;
     }
