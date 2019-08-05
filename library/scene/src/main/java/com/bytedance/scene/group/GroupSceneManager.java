@@ -6,6 +6,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -19,6 +20,7 @@ import com.bytedance.scene.animation.AnimationOrAnimatorFactory;
 import com.bytedance.scene.parcel.ParcelConstants;
 import com.bytedance.scene.utlity.CancellationSignal;
 import com.bytedance.scene.utlity.SceneInstanceUtility;
+import com.bytedance.scene.utlity.SceneInternalException;
 import com.bytedance.scene.utlity.Utility;
 
 import java.util.*;
@@ -33,6 +35,7 @@ import java.util.*;
  * and lifecycle callbacks are performed on the spot.
  */
 class GroupRecord implements Parcelable {
+    @IdRes
     int viewId = View.NO_ID;
     Scene scene;
     String tag;
@@ -44,13 +47,12 @@ class GroupRecord implements Parcelable {
     @Nullable
     Bundle bundle;
 
-    protected GroupRecord(Parcel in) {
+    protected GroupRecord(@NonNull Parcel in) {
         viewId = in.readInt();
-        tag = in.readString();
+        tag = Utility.requireNonNull(in.readString(), "tag not found in Parcel");
         isHidden = in.readByte() != 0;
         isCurrentFocus = in.readByte() != 0;
-
-        className = in.readString();
+        className = Utility.requireNonNull(in.readString(), "class name not found in Parcel");
     }
 
     public static final Creator<GroupRecord> CREATOR = new Creator<GroupRecord>() {
@@ -69,11 +71,11 @@ class GroupRecord implements Parcelable {
 
     }
 
-    static GroupRecord newInstance(int viewId, Scene scene, String tag) {
+    static GroupRecord newInstance(@IdRes int viewId, @NonNull Scene scene, @NonNull String tag) {
         GroupRecord record = new GroupRecord();
         record.viewId = viewId;
-        record.scene = scene;
-        record.tag = tag;
+        record.scene = Utility.requireNonNull(scene, "scene can't be null");
+        record.tag = Utility.requireNonNull(tag, "tag can't be null");
         return record;
     }
 
@@ -183,6 +185,7 @@ class GroupSceneManager {
     private GroupRecordList mSceneList = new GroupRecordList();
     private Handler mHandler = new Handler(Looper.getMainLooper());
     private static final HashMap<Scene, CancellationSignal> SCENE_RUNNING_ANIMATION_CANCELLATION_SIGNAL_MAP = new HashMap<>();
+    private final Set<Scene> mCurrentTrackMoveStateSceneSet = new HashSet<>();
 
     GroupSceneManager() {
 
@@ -202,8 +205,6 @@ class GroupSceneManager {
 
         }
     };
-
-    private boolean mIsExecutingOperation = false;
 
     private void executeOperation(final Operation operation) {
         operation.execute(EMPTY_RUNNABLE);
@@ -285,7 +286,34 @@ class GroupSceneManager {
         return null;
     }
 
+    /**
+     * GroupScene don't allow child Scene modify its state in its lifecycle method，for example
+     * 1 child Scene invoke parent's remove method to remove itself in its onActivityCreated lifecycle method
+     * 2 child Scene invoke parent's remove method to hide itself in its onResume lifecycle method
+     * but child Scene can invoke parent's add/remove/show/hide to operate other child Scene
+     */
+    private void checkStateChange(@NonNull Scene scene) {
+        if (this.mCurrentTrackMoveStateSceneSet.contains(scene)) {
+            throw new IllegalStateException("Cant add/remove/show/hide " + scene.getClass().getSimpleName() + " before it finish previous add/remove/show/hide operation or in its lifecycle method");
+        }
+    }
+
+    private void beginTrackSceneStateChange(@NonNull Scene scene) {
+        if (this.mCurrentTrackMoveStateSceneSet.contains(scene)) {
+            throw new SceneInternalException("Target scene is already tracked");
+        }
+        this.mCurrentTrackMoveStateSceneSet.add(scene);
+    }
+
+    private void endTrackSceneStateChange(@NonNull Scene scene) {
+        if (!this.mCurrentTrackMoveStateSceneSet.contains(scene)) {
+            throw new SceneInternalException("Target scene is not tracked");
+        }
+        this.mCurrentTrackMoveStateSceneSet.remove(scene);
+    }
+
     public void add(int viewId, Scene scene, String tag, AnimationOrAnimatorFactory animationOrAnimatorFactory) {
+        checkStateChange(scene);
         final Operation operation = new AddOperation(viewId, scene, tag, animationOrAnimatorFactory);
         if (mIsInTransaction) {
             mOperationTransactionList.add(operation);
@@ -295,6 +323,7 @@ class GroupSceneManager {
     }
 
     public void remove(Scene scene, AnimationOrAnimatorFactory animationOrAnimatorFactory) {
+        checkStateChange(scene);
         final Operation operation = new RemoveOperation(scene, animationOrAnimatorFactory);
         if (mIsInTransaction) {
             mOperationTransactionList.add(operation);
@@ -308,6 +337,7 @@ class GroupSceneManager {
     }
 
     public void hide(Scene scene, AnimationOrAnimatorFactory animationOrAnimatorFactory) {
+        checkStateChange(scene);
         if (!mIsInTransaction && mSceneList.findByScene(scene) == null) {
             throw new IllegalStateException("Target scene is not find");
         }
@@ -320,6 +350,7 @@ class GroupSceneManager {
     }
 
     public void show(Scene scene, AnimationOrAnimatorFactory animationOrAnimatorFactory) {
+        checkStateChange(scene);
         if (!mIsInTransaction && mSceneList.findByScene(scene) == null) {
             throw new IllegalStateException("Target scene is not find");
         }
@@ -334,8 +365,17 @@ class GroupSceneManager {
     void dispatchChildrenState(State state) {
         List<Scene> childSceneList = this.getChildSceneList();
         for (int i = 0; i <= childSceneList.size() - 1; i++) {
-            Scene scene = childSceneList.get(i);
-            GroupSceneManager.moveState(mGroupScene, scene, state, false, null);
+            final Scene scene = childSceneList.get(i);
+            //may be removed by other child Scene
+            if (containsScene(scene)) {
+                beginTrackSceneStateChange(scene);
+                GroupSceneManager.moveState(mGroupScene, scene, state, false, new Runnable() {
+                    @Override
+                    public void run() {
+                        endTrackSceneStateChange(scene);
+                    }
+                });
+            }
         }
     }
 
@@ -344,7 +384,17 @@ class GroupSceneManager {
         for (int i = 0; i <= list.size() - 1; i++) {
             GroupRecord record = list.get(i);
             if (!record.isHidden) {
-                GroupSceneManager.moveState(mGroupScene, record.scene, state, false, null);
+                final Scene scene = record.scene;
+                //may be removed by other child Scene
+                if (containsScene(scene)) {
+                    beginTrackSceneStateChange(scene);
+                    GroupSceneManager.moveState(mGroupScene, record.scene, state, false, new Runnable() {
+                        @Override
+                        public void run() {
+                            endTrackSceneStateChange(scene);
+                        }
+                    });
+                }
             }
         }
     }
@@ -405,14 +455,28 @@ class GroupSceneManager {
         ArrayList<Bundle> bundleList = bundle.getParcelableArrayList(KEY_TAG);
         for (int i = 0; i <= childSceneList.size() - 1; i++) {
             GroupRecord record = childSceneList.get(i);
-            Scene scene = record.scene;
+            final Scene scene = record.scene;
             record.bundle = bundleList.get(i);
-            moveState(this.mGroupScene, scene, mGroupScene.getState(), true, null);
+
+            //may be removed by other child Scene, but because restoreFromBundle is invoked at GroupScene onCreate,
+            //so this should not happen
+            if (!containsScene(scene)) {
+                throw new SceneInternalException("Scene is not found");
+            }
+            beginTrackSceneStateChange(scene);
+            moveState(this.mGroupScene, scene, mGroupScene.getState(), true, new Runnable() {
+                @Override
+                public void run() {
+                    endTrackSceneStateChange(scene);
+                }
+            });
         }
     }
 
     private abstract class Operation {
+        @NonNull
         final Scene scene;
+        @NonNull
         final State state;
         final boolean forceShow;
         /**
@@ -422,7 +486,7 @@ class GroupSceneManager {
         final boolean forceHide;
         final boolean forceRemove;
 
-        Operation(Scene scene, State state, boolean forceShow, boolean forceHide, boolean forceRemove) {
+        Operation(@NonNull Scene scene, @NonNull State state, boolean forceShow, boolean forceHide, boolean forceRemove) {
             this.scene = scene;
             this.state = state;
             this.forceShow = forceShow;
@@ -433,12 +497,25 @@ class GroupSceneManager {
         abstract void execute(@NonNull Runnable operationEndAction);
     }
 
+    private boolean containsScene(@NonNull Scene scene) {
+        List<GroupRecord> recordList = getChildSceneRecordList();
+        for (int i = 0; i < recordList.size(); i++) {
+            if (recordList.get(i).scene == scene) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     private class MoveStateOperation extends Operation {
+        @IdRes
         final int viewId;
+        @Nullable
         final String tag;
+        @NonNull
         final State dstState;
 
-        MoveStateOperation(Scene scene, int viewId, String tag, State dstState, boolean forceShow, boolean forceHide, boolean forceRemove) {
+        MoveStateOperation(@NonNull Scene scene, @IdRes int viewId, @Nullable String tag, @NonNull State dstState, boolean forceShow, boolean forceHide, boolean forceRemove) {
             super(scene, dstState, forceShow, forceHide, forceRemove);
             if (forceShow && forceHide) {
                 throw new IllegalArgumentException("cant forceShow with forceHide");
@@ -454,9 +531,18 @@ class GroupSceneManager {
             CancellationSignal cancellationSignal = SCENE_RUNNING_ANIMATION_CANCELLATION_SIGNAL_MAP.get(scene);
             if (cancellationSignal != null) {
                 cancellationSignal.cancel();
+                if (SCENE_RUNNING_ANIMATION_CANCELLATION_SIGNAL_MAP.get(scene) != null) {
+                    throw new SceneInternalException("CancellationSignal cancel callback should remove target Scene from CancellationSignal map");
+                }
             }
-            if (scene.getState() == State.NONE) {
-                mSceneList.add(GroupRecord.newInstance(viewId, scene, tag));
+
+            if (!containsScene(scene)) {
+                if (scene.getState() == State.NONE) {
+                    Utility.requireNonNull(tag, "tag can't be null");
+                    mSceneList.add(GroupRecord.newInstance(viewId, scene, tag));
+                } else {
+                    throw new SceneInternalException("Scene state is " + scene.getState().name + " but it is not added to record list");
+                }
             }
 
             boolean executeStateChange = scene.getState() != dstState;
@@ -464,7 +550,13 @@ class GroupSceneManager {
                 executeOnStart();
             }
 
-            moveState(mGroupScene, scene, dstState, true, null);
+            beginTrackSceneStateChange(scene);
+            moveState(mGroupScene, scene, dstState, true, new Runnable() {
+                @Override
+                public void run() {
+                    endTrackSceneStateChange(scene);
+                }
+            });
 
             if (forceShow) {
                 mSceneList.findByScene(scene).isHidden = false;

@@ -137,4 +137,10 @@ public class Utility {
         }
         return true;
     }
+
+    public static <T> T requireNonNull(T obj, String message) {
+        if (obj == null)
+            throw new NullPointerException(message);
+        return obj;
+    }
 }
