@@ -91,6 +91,7 @@ public class NavigationSceneUtility {
             lifeCycleFragment = null;
         }
 
+        ScopeHolderFragment targetScopeHolderFragment = null;
         if (lifeCycleFragment != null) {
             final ScopeHolderFragment scopeHolderFragment = ScopeHolderFragment.install(activity, tag, false);
             lifeCycleFragment.setRootScopeFactory(new Scope.RootScopeFactory() {
@@ -100,6 +101,7 @@ public class NavigationSceneUtility {
                 }
             });
             lifeCycleFragment.setRootSceneComponentFactory(rootSceneComponentFactory);
+            targetScopeHolderFragment = scopeHolderFragment;
         } else {
             lifeCycleFragment = LifeCycleFragment.newInstance(supportRestore);
             FragmentTransaction transaction = fragmentManager.beginTransaction();
@@ -116,8 +118,9 @@ public class NavigationSceneUtility {
             lifeCycleFragment.setRootSceneComponentFactory(rootSceneComponentFactory);
             commitFragment(transaction);
             fragmentManager.executePendingTransactions();
+            targetScopeHolderFragment = scopeHolderFragment;
         }
-        final LifeCycleFragmentSceneDelegate delegate = new LifeCycleFragmentSceneDelegate(activity, lifeCycleFragment);
+        final LifeCycleFragmentSceneDelegate delegate = new LifeCycleFragmentSceneDelegate(activity, lifeCycleFragment, targetScopeHolderFragment);
         lifeCycleFragment.setNavigationSceneAvailableCallback(new NavigationSceneAvailableCallback() {
             @Override
             public void onNavigationSceneAvailable(@NonNull NavigationScene navigationScene) {

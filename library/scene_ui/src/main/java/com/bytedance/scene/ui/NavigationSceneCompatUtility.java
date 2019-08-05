@@ -102,6 +102,7 @@ public class NavigationSceneCompatUtility {
             lifeCycleFragment = null;
         }
 
+        ScopeHolderCompatFragment targetScopeHolderFragment = null;
         if (lifeCycleFragment != null) {
             final ScopeHolderCompatFragment scopeHolderFragment = ScopeHolderCompatFragment.install(fragment, tag, false);
             lifeCycleFragment.setRootScopeFactory(new Scope.RootScopeFactory() {
@@ -110,6 +111,7 @@ public class NavigationSceneCompatUtility {
                     return scopeHolderFragment.getRootScope();
                 }
             });
+            targetScopeHolderFragment = scopeHolderFragment;
         } else {
             lifeCycleFragment = LifeCycleCompatFragment.newInstance(supportRestore);
             FragmentTransaction transaction = fragmentManager.beginTransaction();
@@ -125,9 +127,11 @@ public class NavigationSceneCompatUtility {
             });
             transaction.commitNowAllowingStateLoss();
             fragmentManager.executePendingTransactions();
+            targetScopeHolderFragment = scopeHolderFragment;
         }
 
         final LifeCycleCompatFragment finalLifeCycleFragment = lifeCycleFragment;
+        final ScopeHolderCompatFragment finalTargetScopeHolderFragment = targetScopeHolderFragment;
         final FragmentDelegateProxy proxy = new FragmentDelegateProxy() {
             private boolean mAbandoned = false;
 
@@ -163,7 +167,7 @@ public class NavigationSceneCompatUtility {
                         CHECK_DUPLICATE_TAG_MAP.get(fragment).remove(tag);
                     }
                 }, false);
-                fragmentManager.beginTransaction().remove(finalLifeCycleFragment).commitNowAllowingStateLoss();
+                fragmentManager.beginTransaction().remove(finalLifeCycleFragment).remove(finalTargetScopeHolderFragment).commitNowAllowingStateLoss();
             }
         };
         finalLifeCycleFragment.setNavigationSceneAvailableCallback(new NavigationSceneAvailableCallback() {

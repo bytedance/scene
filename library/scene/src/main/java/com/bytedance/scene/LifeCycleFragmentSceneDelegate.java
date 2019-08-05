@@ -15,14 +15,16 @@ import com.bytedance.scene.navigation.NavigationScene;
 final class LifeCycleFragmentSceneDelegate implements SceneDelegate, NavigationSceneAvailableCallback {
     private final Activity mActivity;
     private final LifeCycleFragment mLifeCycleFragment;
+    private final ScopeHolderFragment mScopeHolderFragment;
 
     private NavigationScene mNavigationScene;
     private NavigationSceneAvailableCallback mNavigationSceneAvailableCallback;
     private boolean mAbandoned = false;
 
-    LifeCycleFragmentSceneDelegate(@NonNull Activity activity, @NonNull LifeCycleFragment lifeCycleFragment) {
+    LifeCycleFragmentSceneDelegate(@NonNull Activity activity, @NonNull LifeCycleFragment lifeCycleFragment, @NonNull ScopeHolderFragment scopeHolderFragment) {
         this.mActivity = activity;
         this.mLifeCycleFragment = lifeCycleFragment;
+        this.mScopeHolderFragment = scopeHolderFragment;
     }
 
     @Override
@@ -69,7 +71,7 @@ final class LifeCycleFragmentSceneDelegate implements SceneDelegate, NavigationS
             }
         });
         FragmentManager fragmentManager = mActivity.getFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction().remove(this.mLifeCycleFragment);
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction().remove(this.mLifeCycleFragment).remove(this.mScopeHolderFragment);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             fragmentTransaction.commitNowAllowingStateLoss();
         } else {
