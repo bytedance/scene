@@ -14,7 +14,7 @@ import com.bytedance.scene.State;
 
 /**
  * Created by JiangQi on 9/19/18.
- * LifeCycle估计还要自己提供一套
+ * Need to provide a set of LifeCycle
  */
 public abstract class AsyncLayoutGroupScene extends UserVisibleHintGroupScene {
     private boolean mAsyncLayoutEnabled = false;

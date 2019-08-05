@@ -34,7 +34,10 @@ public abstract class ReuseGroupScene extends GroupScene {
     @NonNull
     @Override
     public final ViewGroup onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        //动画过程中是不可能复用的，一旦发现还有Parent，直接报错
+        /*
+         * Can not be reused during the animation process.
+         * Once the Parent is found, throw an Exception.
+         */
         if (this.mReuseView != null) {
             if (this.mReuseView.getParent() != null) {
                 throw new IllegalArgumentException("ReuseGroupScene reuseView already have parent");

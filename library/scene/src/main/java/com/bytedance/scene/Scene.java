@@ -25,7 +25,7 @@ import static android.support.annotation.RestrictTo.Scope.LIBRARY_GROUP;
 
 /**
  * Created by JiangQi on 7/30/18.
- * 没有BackStack管理
+ * No back stack management
  *
  * onAttach
  * onCreate
@@ -43,18 +43,19 @@ import static android.support.annotation.RestrictTo.Scope.LIBRARY_GROUP;
  * onDestroy
  * onDetach
  *
- * 整个流程，初始状态NONE
- * 进入的时候
- * 1.走onAttach onCreate onCreateView onViewCreated 然后设置State成STOPPED
- * 2.走onActivityCreated，设置State成ACTIVITY_CREATED，并且Lifecycle切到Lifecycle.Event.ON_CREATE
- * 3.走onStart，设置State成STARTED，并且Lifecycle切到Lifecycle.Event.ON_START
- * 4.走onResume，设置State成RESUMED，并且Lifecycle切到Lifecycle.Event.ON_RESUME
+ * Initial state: NONE
  *
- * 退出的时候
- * 1.走onPause，设置State成STARTED，并且Lifecycle切到Lifecycle.Event.ON_PAUSE
- * 2.走onStop，设置State成ACTIVITY_CREATED，并且Lifecycle切到Lifecycle.Event.ON_STOP
- * 3.走onDestroyView，设置State成NONE，并且Lifecycle切到Lifecycle.Event.ON_DESTROY
- * 4.走onDestroy onDetach
+ * When entering:
+ * 1.onAttach -> onCreate -> onCreateView -> onViewCreated: then set state to STOPPED
+ * 2.onActivityCreated: set state to ACTIVITY_CREATED, and set Lifecycle to Lifecycle.Event.ON_CREATE
+ * 3.onStart: set state to STARTED, and set Lifecycle to Lifecycle.Event.ON_START
+ * 4.onResume: set state to RESUMED, and set Lifecycle to Lifecycle.Event.ON_RESUME
+ *
+ * When exiting:
+ * 1.onPause: set state to State成STARTED, and set Lifecycle to Lifecycle.Event.ON_PAUSE
+ * 2.onStop: set state to ACTIVITY_CREATED, and set Lifecycle to Lifecycle.Event.ON_STOP
+ * 3.onDestroyView: set state to NONE, and set Lifecycle to Lifecycle.Event.ON_DESTROY
+ * 4.onDestroy -> onDetach
  */
 public abstract class Scene implements LifecycleOwner, ViewModelStoreOwner {
     public static final String SCENE_SERVICE = "scene";
@@ -113,7 +114,7 @@ public abstract class Scene implements LifecycleOwner, ViewModelStoreOwner {
     @RestrictTo(LIBRARY_GROUP)
     public void dispatchAttachActivity(@NonNull Activity activity) {
         this.mActivity = activity;
-        //Scene销毁后复用，需要重置状态
+        // Scene need to reset status when reuse after been destroyed
         if (this.mLifecycleRegistry.getCurrentState() != Lifecycle.State.INITIALIZED) {
             this.mLifecycleRegistry.rest();
         }
@@ -150,7 +151,7 @@ public abstract class Scene implements LifecycleOwner, ViewModelStoreOwner {
         }
 
         void rest() {
-            //不然会死循环
+            // Otherwise it will loop endless
             for (LifecycleObserver lifecycleObserver : lifecycleObservers) {
                 this.lifecycleRegistry.removeObserver(lifecycleObserver);
             }
@@ -403,7 +404,8 @@ public abstract class Scene implements LifecycleOwner, ViewModelStoreOwner {
             this.mScope.destroy();
         }
         this.mScope = null;
-        mPendingActionList.clear();//必须最后才做，万一有人在onDestroy/onDetach里面操作add会难办，虽然上面executeNowOrScheduleAtNextResume可以改逻辑到CREATED之后就不管了
+        // Must be called last, in case someone do add in onDestroy/onDetach
+        mPendingActionList.clear();
     }
 
     /**
@@ -506,8 +508,10 @@ public abstract class Scene implements LifecycleOwner, ViewModelStoreOwner {
                     if (SCENE_SERVICE.equals(name)) {
                         return Scene.this;
                     } else if (Context.LAYOUT_INFLATER_SERVICE.equals(name)) {
-                        //oppo某些版本会在View.onDetachedFromWindow的时候去生成新View，所以这里做下判断
-                        //发现Activity是null转给super处理
+                        /*
+                         * Some versions of oppo phones will generate a new view when View.onDetachedFromWindow(),
+                         * so make a judgment here, find that when the Activity is null, transfer to its super.
+                         */
                         if (getActivity() != null) {
                             return getLayoutInflater();
                         }
@@ -522,8 +526,10 @@ public abstract class Scene implements LifecycleOwner, ViewModelStoreOwner {
                     if (SCENE_SERVICE.equals(name)) {
                         return Scene.this;
                     } else if (Context.LAYOUT_INFLATER_SERVICE.equals(name)) {
-                        //oppo某些版本会在View.onDetachedFromWindow的时候去生成新View，所以这里做下判断
-                        //发现Activity是null转给super处理
+                        /*
+                         * Some versions of oppo phones will generate a new view when View.onDetachedFromWindow(),
+                         * so make a judgment here, find that when the Activity is null, transfer to its super.
+                         */
                         if (getActivity() != null) {
                             return getLayoutInflater();
                         }
@@ -751,8 +757,10 @@ public abstract class Scene implements LifecycleOwner, ViewModelStoreOwner {
         if (this.mPendingActionList.size() > 0) {
             List<Runnable> copy = new ArrayList<>(this.mPendingActionList);
             for (final Runnable runnable : copy) {
-                //万一PendingActionList里面的操作是操作生命周期怎么办，所以必须重新走executeNowOrScheduleAtNextResume，而且得
-                //包裹一层Runnable
+                /*
+                 * What if the operation inside the PendingActionList is operating the life cycle?
+                 * So we must re-execute executeNowOrScheduleAtNextResume(), and have to wrap to a Runnable
+                 */
                 executeNowOrScheduleAtNextResume(new Runnable() {
                     @Override
                     public void run() {
@@ -775,9 +783,12 @@ public abstract class Scene implements LifecycleOwner, ViewModelStoreOwner {
         return this.mScope;
     }
 
-    /** @hide */
+    /**
+     * @hide
+     * Notify parent of its own life cycle trigger,
+     * those response callbacks should only judge children changes rather than their own changes
+     */
     @RestrictTo(LIBRARY_GROUP)
-    //通知Parent自己的生命周期触发，响应的那些回调应该只判断Child变化而非自身变化
     public void dispatchOnSceneCreated(@NonNull Scene scene, Bundle savedInstanceState, boolean directChild) {
         Scene parentScene = getParentScene();
         if (parentScene != null) {

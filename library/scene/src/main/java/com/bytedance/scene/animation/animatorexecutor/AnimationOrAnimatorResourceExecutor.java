@@ -35,7 +35,7 @@ public final class AnimationOrAnimatorResourceExecutor extends NavigationAnimati
 
     @Override
     public void executePushChangeCancelable(@NonNull final AnimationInfo fromInfo, @NonNull final AnimationInfo toInfo, @NonNull final Runnable endAction, @NonNull CancellationSignal cancellationSignal) {
-        //不能放onAnimationStart，因为会有post间隔，会闪屏
+        // Cannot be placed in onAnimationStart, as there it a post interval, it will splash
         final View fromView = fromInfo.mSceneView;
         final View toView = toInfo.mSceneView;
 
@@ -48,7 +48,7 @@ public final class AnimationOrAnimatorResourceExecutor extends NavigationAnimati
             ViewCompat.setElevation(fromView, 0);
         }
 
-        //pushAndClear的情况，有可能from的Scene已经被销毁了
+        // In the case of pushAndClear, it is possible that the Scene come from has been destroyed.
         if (fromInfo.mSceneState.value < State.STOPPED.value) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
                 mAnimationViewGroup.getOverlay().add(fromView);
@@ -115,7 +115,7 @@ public final class AnimationOrAnimatorResourceExecutor extends NavigationAnimati
         Runnable animationEndAction = new CountRunnable(2, new Runnable() {
             @Override
             public void run() {
-                //todo child是不是也得reset
+                // Todo: children also has to reset
                 AnimatorUtility.resetViewStatus(fromView);
                 AnimatorUtility.resetViewStatus(toView);
 

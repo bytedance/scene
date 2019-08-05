@@ -63,9 +63,14 @@ public class Utility {
         }
     }
 
-    //因为如果View没有attachWindow，getViewTreeObserver是自己内部创建的，在attachToWindow合并到系统的
-    //但是你要是又在其他代码的什么地方，比如Scene自己的生命周期方法内，把这个View移除，那么后续就没法getViewTreeObserver.removeOnPreDrawListener(this)了
-    //特别容易出错，所以强制需要ViewTreeObserver参数
+    /**
+     * This is especially error-prone, so the ViewTreeObserver parameter is mandatory.
+     *
+     * If a View does not have attachedWindow(), the getViewTreeObserver is created internally by itself,
+     * and ready to be merged into the system when attachedToWindow.
+     * But if you need to remove this View in somewhere (such as Scene's own lifecycle)
+     * Then there is no way to getViewTreeObserver.removeOnPreDrawListener(this)
+     */
     public static void executeImmediatelyOrOnPreDraw(@NonNull final View view, @NonNull final ViewTreeObserver viewTreeObserver, boolean force, @NonNull final CancellationSignal cancellationSignal, @NonNull final Runnable action) {
         if (view == null) {
             throw new NullPointerException("view can't be null");

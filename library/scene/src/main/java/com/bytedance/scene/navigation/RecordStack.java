@@ -80,7 +80,7 @@ class RecordStack {
         for (int i = 0; i < this.mBackStackList.size(); i++) {
             Record record = this.mBackStackList.get(i);
             Scene scene = null;
-            //第一个Scene优先用SceneComponentFactory生成
+            // The first Scene will generated with the SceneComponentFactory first
             if (i == 0 && rootSceneComponentFactory != null) {
                 Scene rootScene = rootSceneComponentFactory.instantiateScene(context.getClassLoader(), record.className, null);
                 if (rootScene != null && rootScene.getParentScene() != null) {

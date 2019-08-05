@@ -51,32 +51,25 @@ import static android.support.annotation.RestrictTo.Scope.LIBRARY_GROUP;
 /**
  * Created by JiangQi on 7/30/18.
  *
- * 流程
+ * (NavigationScene cannot be inherited)
  *
- * NavigationScene无法被继承
+ * When entering:
+ * 1.Parent: onAttach -> onCreate -> onCreateView -> onViewCreated -> onActivityCreated
+ *   (All child Scenes start the life cycle process after NavigationAccCreate's onActivityCreated)
+ *   (The previously pushed Scene will be cached)
+ * 2.Child: onAttach -> onCreate -> onCreateView -> onViewCreated -> onActivityCreated
+ * 3.Parent: onStart
+ * 4.Child: onStart
+ * 5.Parent: onResume
+ * 6.Child: onResume
  *
- * 进入的时候
- * 1.自己的onAttach onCreate onCreateView onViewCreated onActivityCreated
- * (所有子Scene都是在NavigationScene的onActivityCreated之后开始走生命周期流程，对于之前push的Scene，都会缓存起来)
- * 2.子Scene的onAttach onCreate onCreateView onViewCreated onActivityCreated
- *
- * 3.自己的onStart
- * 4.子Scene的onStart
- *
- * 5.自己的onResume
- * 6.子Scene的onResume
- *
- * 退出的时候
- * 1.子Scene的onPause
- * 2.自己的onPause
- *
- * 3.子Scene的onStop
- * 4.自己的onStop
- *
- * 5.子Scene的onDestroyView onDestroy onDetach
- * 6.自己的onDestroyView onDestroy onDetach
- *
- *
+ * When exiting:
+ * 1.Child: onPause
+ * 2.Parent: onPause
+ * 3.Child: onStop
+ * 4.Parent: onStop
+ * 5.Child: onDestroyView -> onDestroy -> onDetach
+ * 6.Parent: onDestroyView -> onDestroy -> onDetach
  */
 public final class NavigationScene extends Scene implements NavigationListener {
     public static interface NavigationSceneHost {
@@ -88,7 +81,7 @@ public final class NavigationScene extends Scene implements NavigationListener {
     }
 
     private NavigationSceneHost mNavigationSceneHost;
-    private SceneComponentFactory mRootSceneComponentFactory;//销毁恢复的时候也用这个
+    private SceneComponentFactory mRootSceneComponentFactory;   // Use this when destroying recovery
     NavigationSceneOptions mNavigationSceneOptions;
 
     private NavigationSceneManager mNavigationSceneManager;
@@ -341,8 +334,9 @@ public final class NavigationScene extends Scene implements NavigationListener {
     }
 
     /**
-     * Pop是异步的，有可能Pop真正执行的时候发现没有可以Pop的Scene了
-     * 转出来给外部，万一Activity有拦截onBackPressed也不一定
+     * Pop() is asynchronous, it is possible that when Pop actually executes,
+     * there is no Scene that can pop. Turn it out to the outside,
+     * in case the Activity has intercepted onBackPressed.
      */
     void finishCurrentActivity() {
         requireActivity().onBackPressed();
@@ -589,7 +583,11 @@ public final class NavigationScene extends Scene implements NavigationListener {
     @Override
     public void onStop() {
         super.onStop();
-        this.mNavigationSceneManager.cancelCurrentRunningAnimation();//终止动画，避免有可能之后走到onDestroyView后，有动画还在执行引发的崩溃或者内存泄漏
+        /*
+         * Terminate the animation to avoid the possibility of going after the onDestroyView
+         * Otherwise, if the animation is still executing, it will cause a crash or memory leak.
+         */
+        this.mNavigationSceneManager.cancelCurrentRunningAnimation();
     }
 
     /**
@@ -617,7 +615,9 @@ public final class NavigationScene extends Scene implements NavigationListener {
         mNavigationSceneManager.dispatchCurrentChildState(state);
     }
 
-    //销毁需要同步所有child
+    /**
+     * Destroy operation needs to synchronize all children
+     */
     private void dispatchChildrenState(State state) {
         mNavigationSceneManager.dispatchChildrenState(state);
     }
@@ -644,8 +644,10 @@ public final class NavigationScene extends Scene implements NavigationListener {
         }
     }
 
-    //todo 万一Activity是空的怎么处理
-    //todo 直接存对象内存泄漏怎么办
+    /**
+     * Todo: What if the Activity is empty?
+     * Todo: What if the memory leaks as storing object directly?
+     */
     public void startActivityForResult(@NonNull Intent intent, int requestCode, ActivityResultCallback resultCallback) {
         if (requestCode < 0) {
             startActivity(intent);

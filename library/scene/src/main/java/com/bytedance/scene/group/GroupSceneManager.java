@@ -25,10 +25,13 @@ import java.util.*;
 
 /**
  * Created by JiangQi on 7/30/18.
- * 要求GroupScene必须是onResume状态，如果不是，缓存等后续执行
- * 所有操作，都是立刻执行，批量操作在commit后执行，生命周期的回调都是当场执行的
+ *
+ * Require GroupScene to be inResume state, if not, cache it.
+ *
+ * All operations are performed immediately,
+ * batch operations are performed after commit,
+ * and lifecycle callbacks are performed on the spot.
  */
-
 class GroupRecord implements Parcelable {
     int viewId = View.NO_ID;
     Scene scene;
@@ -216,7 +219,9 @@ class GroupSceneManager {
         mIsInTransaction = true;
     }
 
-    //todo 我靠，万一多个Scene Tag重复了怎么办
+    /**
+     * TODO: What if there are more than one Scene Tag repeated?
+     */
     public void commitTransaction() {
         if (!mIsInTransaction) {
             throw new IllegalStateException("you must call beginTransaction before commitTransaction");
@@ -410,7 +415,11 @@ class GroupSceneManager {
         final Scene scene;
         final State state;
         final boolean forceShow;
-        final boolean forceHide;//必须把强制显示和隐藏跟普通的跟生命周期有关的显示和隐藏区分开，不能只根据DstState来，不然很容易出错，混在一起各种乱
+        /**
+         * Forced display and hiding must be distinguished from normal related to the life cycle.
+         * Can't just rely on DstState, otherwise it's very easy to make mistakes, mix together mess
+         */
+        final boolean forceHide;
         final boolean forceRemove;
 
         Operation(Scene scene, State state, boolean forceShow, boolean forceHide, boolean forceRemove) {
@@ -563,7 +572,10 @@ class GroupSceneManager {
                 return;
             }
 
-            //View还没measure+layout又执行了remove，就会导致高宽是0，无法做动画
+            /*
+             * View try execute remove() without call the measure() or layout() first,
+             * will result in a 0 of height and width, which can not be animated.
+             */
             if (this.parentViewGroup != null && (this.sceneView.getWidth() == 0 || this.sceneView.getHeight() == 0)) {
                 Log.w("GroupScene", "Scene view width or height is zero, skip animation");
                 return;
@@ -712,10 +724,15 @@ class GroupSceneManager {
                     scene.dispatchCreate(sceneBundle);
                     ViewGroup containerView = groupScene.findContainerById(groupScene.getGroupSceneManager().findSceneViewId(scene));
                     scene.dispatchCreateView(sceneBundle, containerView);
-                    //通常来说因为生命周期触发的状态不会修改View状态，但是如果这个Scene很早之前就添加了，那么一开始就没在View树中，需要添加进来
+                    /*
+                     * Usually the lifecycle triggered state does not modify the View state,
+                     * But if this Scene was added long ago, it is not in the View tree at the beginning,
+                     * we need to add it in this case.
+                     */
                     if (modifyViewHierarchy || scene.getView().getParent() == null) {
                         containerView.addView(scene.getView());
-                        scene.getView().setVisibility(View.GONE);//有可能直接切到这个状态，销毁恢复的时候，所以要设置成GONE
+                        // It is possible to be in this state when recovery after destroying, so set it to GONE.
+                        scene.getView().setVisibility(View.GONE);
                     }
                     moveState(groupScene, scene, to, modifyViewHierarchy, endAction);
                     break;
@@ -727,7 +744,8 @@ class GroupSceneManager {
                     moveState(groupScene, scene, to, modifyViewHierarchy, endAction);
                     break;
                 case ACTIVITY_CREATED:
-                    scene.getView().setVisibility(View.VISIBLE);//无论modifyViewHierarchy是否true，都得设置成可见
+                    // Whether modifyViewHierarchy is true or not, it must be set to visible
+                    scene.getView().setVisibility(View.VISIBLE);
                     scene.dispatchStart();
                     moveState(groupScene, scene, to, modifyViewHierarchy, endAction);
                     break;
@@ -758,7 +776,11 @@ class GroupSceneManager {
                     View view = scene.getView();
                     scene.dispatchDestroyView();
                     if (modifyViewHierarchy) {
-                        Utility.removeFromParentView(view);//原因在于，并不希望因为生命周期触发的stop把View全部移除了，不然Pop动画没法看了
+                        /*
+                         * We don't want to remove all the View all when in the stop() triggered by the life cycle.
+                         * Otherwise, Pop animation will be hard to see.
+                         */
+                        Utility.removeFromParentView(view);
                     }
                     scene.dispatchDestroy();
                     scene.dispatchDetachScene();

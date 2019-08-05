@@ -23,7 +23,8 @@ class Record implements Parcelable {
     @Nullable
     Object mPushResult;
     /**
-     * A启动B，附加的回调会被放入B的Record的mPushResultCallback
+     * In case of A starts B,
+     * the attached callback will be placed in B's Record's mPushResultCallback
      */
     @Nullable
     PushResultCallback mPushResultCallback;
@@ -61,7 +62,10 @@ class Record implements Parcelable {
         return record;
     }
 
-    //必须每次生成，因为有可能作为透明页面用来占位
+    /**
+     * Must be generated each time,
+     * because it is possible to use as a transparent page for placeholders
+     */
     public void saveActivityStatus() {
         mActivityStatusRecord = ActivityStatusRecord.newInstance(mScene.requireActivity());
     }

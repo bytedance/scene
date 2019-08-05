@@ -27,7 +27,7 @@ public abstract class NavigationAnimatorExecutor extends NavigationAnimationExec
 
     @Override
     public final void executePushChangeCancelable(@NonNull final AnimationInfo fromInfo, @NonNull final AnimationInfo toInfo, @NonNull final Runnable endAction, @NonNull CancellationSignal cancellationSignal) {
-        //不能放onAnimationStart，因为会有post间隔，会闪屏
+        // Cannot be placed in onAnimationStart, as there it a post interval, it will splash
         final View fromView = fromInfo.mSceneView;
         final View toView = toInfo.mSceneView;
 
@@ -139,7 +139,7 @@ public abstract class NavigationAnimatorExecutor extends NavigationAnimationExec
             @Override
             public void onAnimationEnd(Animator animation) {
                 super.onAnimationEnd(animation);
-                //todo child是不是也得reset
+                // Todo: children also has to reset
                 if (fromInfo.mIsTranslucent) {
                     AnimatorUtility.resetViewStatus(fromView, finalFromViewAnimatorInfo);
                 } else {

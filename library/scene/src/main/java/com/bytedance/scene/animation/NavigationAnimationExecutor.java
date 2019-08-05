@@ -36,7 +36,7 @@ public abstract class NavigationAnimationExecutor {
         navigationScene.requestDisableTouchEvent(true);
         final View fromView = fromInfo.mSceneView;
         final View toView = toInfo.mSceneView;
-        //pushAndClear的情况，有可能from的Scene已经被销毁了
+        // In the case of pushAndClear, it is possible that the Scene come from has been destroyed.
         if (fromInfo.mSceneState.value < State.STOPPED.value) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
                 mAnimationViewGroup.getOverlay().add(fromView);
@@ -68,7 +68,10 @@ public abstract class NavigationAnimationExecutor {
             }
         });
 
-        //万一连续Push，其实上个页面的View甚至都没layout，没有高宽，会影响后续的动画，需要保证
+        /*
+         * In case of continuous Push, the view of the previous page haven't been layout and has no height and width.
+         * Need to guarantee it here, otherwise it will affect the subsequent animation.
+         */
         final boolean isFromViewReady = !(fromView.getWidth() == 0 || fromView.getHeight() == 0);
         boolean isToViewReady = !(toView.getWidth() == 0 || toView.getHeight() == 0);
         if (!isFromViewReady || !isToViewReady) {
@@ -162,10 +165,11 @@ public abstract class NavigationAnimationExecutor {
 
     public abstract void executePopChangeCancelable(@NonNull final AnimationInfo fromInfo, @NonNull final AnimationInfo toInfo, @NonNull final Runnable endAction, @NonNull CancellationSignal cancellationSignal);
 
-
-    //viewTreeObserver.isAlive()，有可能做动画之前ViewRoot还没attachToWindow，做完后attachToWindow了
-    //原本的ViewTreeObserver被merge到ViewRoot的ViewTreeObserver，所以这个时候需要重新获取
-    //复现步骤：Activity NavigationSceneUtility.setup后，new Handler().post 执行新的Push
+    /**
+     * When viewTreeObserver.isAlive(), it is possible that ViewRoot has not attachedToWindow before doing animation
+     * The original ViewTreeObserver is merged into the ViewTreeObserver of ViewRoot, so this time we need to re-acquire
+     * Recurring steps: After Activity NavigationSceneUtility.setup(), do a new Push with new Handler().post().
+     */
     private static void skipDrawUntilViewMeasureReady(@NonNull final View rootView,
                                                       @NonNull CancellationSignal cancellationSignal,
                                                       @NonNull final Runnable endAction) {

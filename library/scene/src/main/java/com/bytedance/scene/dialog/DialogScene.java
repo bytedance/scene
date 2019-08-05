@@ -11,7 +11,6 @@ import com.bytedance.scene.Scene;
 
 /**
  * Created by JiangQi on 8/2/18.
- * 不然的话UI在Dialog下面刷新很奇怪
  */
 public class DialogScene extends Scene {
     @NonNull

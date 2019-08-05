@@ -35,7 +35,10 @@ public class NavigationFrameLayout extends NoneTouchFrameLayout {
         super(context, attrs, defStyleAttr, defStyleRes);
     }
 
-    //Scene 框架自己负责View的状态保存，避免多个同类型的Scene因为根布局id相同导致的状态保存异常
+    /**
+     * The Scene framework is responsible for the state preservation of the View,
+     * avoiding the state save exceptions of multiple Scenes in the same type, as the root layout id is the same
+     */
     @Override
     protected void dispatchSaveInstanceState(SparseArray<Parcelable> container) {
         dispatchFreezeSelfOnly(container);

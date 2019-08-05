@@ -16,7 +16,7 @@ import com.bytedance.scene.utlity.Predicate;
 public class PushOptions {
     private final NavigationAnimationExecutor mNavigationAnimationExecutor;
     private final PushResultCallback mPushResultCallback;
-    private final boolean mIsTranslucent;//todo 半透明和clearTask不能一起
+    private final boolean mIsTranslucent;       // TODO: Translucent and clearTask cannot be together
 
     private final Predicate<Scene> mRemovePredicate;
 
@@ -44,7 +44,7 @@ public class PushOptions {
     }
 
     public static class Builder {
-        private boolean mIsTranslucent = false;//todo 半透明和clearTask不能一起
+        private boolean mIsTranslucent = false; // TODO: Translucent and clearTask cannot be together
         private PushResultCallback mPushResultCallback;
         private NavigationAnimationExecutor mNavigationAnimationExecutor;
         private Predicate<Scene> mRemovePredicate;
@@ -99,7 +99,10 @@ public class PushOptions {
         }
     }
 
-    //场景：比如微信朋友圈选图后进入写动态页面，那么原本的选图几个页面应该一并干掉
+    /**
+     * For example, after choose pictures and return to the WeChat Timeline page,
+     * the original pages should be killed.
+     */
     public static class CountPredicate implements Predicate<Scene> {
         private int mCount;
 
@@ -117,7 +120,10 @@ public class PushOptions {
         }
     }
 
-    //场景：Splash跳首页或者走完注册登录流程后跳首页
+    /**
+     * For example: Splash jumps to the homepage,
+     * or jumps to the homepage after completing the registration/login process
+     */
     public static class ClearTaskPredicate implements Predicate<Scene> {
         @Override
         public boolean apply(Scene scene) {

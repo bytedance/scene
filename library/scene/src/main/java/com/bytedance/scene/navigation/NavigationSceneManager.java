@@ -34,12 +34,12 @@ import com.bytedance.scene.utlity.Utility;
 import java.util.*;
 
 /**
- * 优先保证生命周期正确，后保证动画连贯
- * <p>
- * Push/Pop 要求NavigationScene必须是onResume状态，如果不是，缓存等后续执行
- * 后续的Scene生命周期是下个UI循环的事情
+ * Priority to ensure that the life cycle is correct,
+ * and then ensure that the animation is coherent
+ * Push/Pop requires NavigationScene to be onResume state.
+ * If not, subsequent the execution.
+ * The subsequent Scene life cycle will wait for the next UI loop.
  */
-
 class AsyncHandler extends Handler {
     private boolean async = true;
 
@@ -76,7 +76,9 @@ class NavigationSceneManager {
     private NavigationListener mNavigationListener;
     private final AsyncHandler mHandler = new AsyncHandler(Looper.getMainLooper());
 
-    //如果暂停了，后续的操作都放这个队列，或者当前有正在执行的，也先放入这个队列
+    /**
+     * If it is paused, currently operations and subsequent operations will put into this queue.
+     */
     private final ArrayDeque<Operation> mPendingActionList = new ArrayDeque<>();
     private long mLastPendingActionListItemTimestamp = -1L;
 
@@ -117,10 +119,19 @@ class NavigationSceneManager {
         return mBackStackList.getStackHistory();
     }
 
-    private boolean mIsNavigationStateChangeInProgress = false;//正常情况下Push/Pop都是直接执行的，除非是Scene生命周期回调里面又触发的，那么必须走Post流程
+    /**
+     * Under normal circumstances, Push/Pop is executed directly,
+     * unless it is triggered in the Scene lifecycle callback,
+     * then we must take the Post process.
+     */
+    private boolean mIsNavigationStateChangeInProgress = false;
 
-    //todo Fragment post缺陷在于onSave后commit会崩溃，如果没有这些限制，post应该还好
-    //我唯一想到的是Dialog的问题
+    /**
+     * TODO:
+     *   The defect of Fragment's post() is that commit will crash after onSave(),
+     *   If there are no such restrictions, the post should be fine.
+     *   The only thing is that there may be some problems with Dialog.
+     */
     private void scheduleToNextUIThreadLoop(final Operation operation) {
         if (canExecuteNavigationStackOperation()) {
             if (mIsNavigationStateChangeInProgress) {
@@ -199,9 +210,13 @@ class NavigationSceneManager {
             return;
         }
 
-        //只有最后一个做过渡动画，之前的不需要做，如果最后一个也不做动画，很容易出现SchemaActivity跳转
-        //动画无法执行，因为SchemaActivity通常是个半透明的盖住主Activity上面
-        //如果时间超过800ms也不做动画
+        /*
+         * Only the last one need to do the transition animation, the previous doesn't.
+         * If not, it is easy to see that the jump animation of SchemaActivity not be executed,
+         * as SchemaActivity is usually a translucent Activity cover over the other Activity.
+         *
+         * If it is over 800ms, it will not be animated also.
+         */
         boolean animationTimeout = System.currentTimeMillis() - mLastPendingActionListItemTimestamp > 800;
         List<Operation> copy = new ArrayList<>(this.mPendingActionList);
         for (int i = 0; i < copy.size(); i++) {
@@ -333,8 +348,10 @@ class NavigationSceneManager {
                                 }
                             }
                         }
-                        //todo 万一这个时候NavigationScene已经销毁了怎么办？
-                        //todo 序列化怎么办
+                        /*
+                         * TODO: What if the NavigationScene has been destroyed at this time?
+                         * TODO: What to do with serialization
+                         */
                         containerView.addView(scene.getView());
                     }
                     scene.getView().setVisibility(View.GONE);
@@ -445,8 +462,11 @@ class NavigationSceneManager {
                 throw new IllegalArgumentException("popCount can not be " + this.popCount + " stackSize is " + recordList.size());
             }
             if (this.popCount >= recordList.size()) {
-                //得把可以Pop的都给Pop了
-                //极端Case，有2个Scene，Pop 2 个后 Push 1 个新的，那么新的是不可能出来的因为Activity已经结束了
+                /*
+                 * Need to pop all that can pop.
+                 * Extreme case: there are 2 Scenes, pop two times and push one new,
+                 * the new one will push failed because the Activity has been destroyed.
+                 */
                 if (recordList.size() > 1) {
                     new PopCountOperation(animationFactory, recordList.size() - 1).execute(EMPTY_RUNNABLE);
                 }
@@ -466,12 +486,15 @@ class NavigationSceneManager {
             final Scene currentScene = currentRecord.mScene;
             final View currentSceneView = currentScene.getView();
 
-            //这里的做法应该是先移除中间的那些Scene，然后拿前后这2个Scene做动画
+            /*
+             * The practice here should be to remove those Scenes in the middle,
+             * then animate the two Scenes.
+             */
             for (final Record record : destroyRecordList) {
                 Scene scene = record.mScene;
                 moveState(mNavigationScene, scene, State.NONE, null, false, null);
                 mBackStackList.remove(record);
-                //如果是个可复用的Scene，那么存起来
+                // If it is a reusable Scene, save it
                 if (record != currentRecord && scene instanceof ReuseGroupScene) {
                     mNavigationScene.addToReusePool((ReuseGroupScene) scene);
                 }
@@ -482,12 +505,15 @@ class NavigationSceneManager {
             final State dstState = mNavigationScene.getState();
 
             moveState(mNavigationScene, dstScene, dstState, null, false, null);
-            //保证请求的Scene是正确的
+            // Ensure that the requesting Scene is correct
             if (currentRecord.mPushResultCallback != null) {
                 currentRecord.mPushResultCallback.onResult(currentRecord.mPushResult);
             }
 
-            //多个半透明的叠加一个不透明的Scene，返回后，必然需要把之前的半透明Scene都切到STARTED
+            /*
+             * In case of multiple translucent overlays of an opaque Scene,
+             * after returning, it is necessary to set the previous translucent Scene to STARTED
+             */
             if (returnRecord.mIsTranslucent) {
                 final List<Record> currentRecordList = mBackStackList.getCurrentRecordList();
                 if (currentRecordList.size() > 1) {
@@ -505,7 +531,7 @@ class NavigationSceneManager {
             mNavigationListener.navigationChange(currentRecord.mScene, returnRecord.mScene, false);
 
             NavigationAnimationExecutor navigationAnimationExecutor = null;
-            //如果Pop有指定动画，优先Pop指定的动画
+            // If Pop has a specified animation, the animation specified by Pop is preferred.
             if (animationFactory != null && animationFactory.isSupport(currentRecord.mScene.getClass(), returnRecord.mScene.getClass())) {
                 navigationAnimationExecutor = animationFactory;
             }
@@ -520,7 +546,8 @@ class NavigationSceneManager {
 
             if (!mDisableNavigationAnimation && isNavigationSceneInAnimationState && navigationAnimationExecutor != null && navigationAnimationExecutor.isSupport(currentRecord.mScene.getClass(), returnRecord.mScene.getClass())) {
                 ViewGroup animationContainer = mNavigationScene.getAnimationContainer();
-                AnimatorUtility.bringToFrontIfNeeded(animationContainer);//保证Z轴正确
+                // Ensure that the Z-axis is correct
+                AnimatorUtility.bringToFrontIfNeeded(animationContainer);
                 navigationAnimationExecutor.setAnimationViewGroup(animationContainer);
 
                 final CancellationSignalList cancellationSignalList = new CancellationSignalList();
@@ -539,7 +566,12 @@ class NavigationSceneManager {
                 final AnimationInfo toInfo = new AnimationInfo(returnRecord.mScene, returnRecord.mScene.getView(), returnRecord.mScene.getState(), returnRecord.mIsTranslucent);
 
                 mCancellationSignalManager.add(cancellationSignalList);
-                //Push后立刻Pop的极端Case，我们有可能抢在Push的View在layout之前执行到Pop，这个时候高宽都是0，也没Parent，动画没法执行，需要修正
+                /*
+                 * In the extreme case of Pop immediately after Push,
+                 * We are likely to executed pop() before the layout() of the View being pushing.
+                 * At this time, both height and width are 0, and it has no parent.
+                 * As the animation cannot be executed, so we need to correct this case.
+                 */
                 navigationAnimationExecutor.executePopChange(mNavigationScene,
                         mNavigationScene.getView().getRootView(),
                         fromInfo, toInfo, cancellationSignalList, endAction);
@@ -582,9 +614,9 @@ class NavigationSceneManager {
     }
 
     /**
-     * 1，如果是顶层，那么就是Pop
-     * 2，移除后，下面的Scene如果需要要更新状态
-     * 3，移除的是根怎么办
+     *  1. If it is the top layer, then it is Pop.
+     *  2. After removal, the following Scene will need to update the status if needed
+     *  3. What if the removal is root?
      */
     private class RemoveOperation implements Operation {
         private final Scene mScene;
@@ -604,7 +636,7 @@ class NavigationSceneManager {
             for (int i = list.size() - 1; i >= 0; i--) {
                 Record record = list.get(i);
                 if (record.mScene == mScene) {
-                    //有可能正在做动画，所以要重置掉动画
+                    // It is possible to be animating, so reset the animation
                     if (i == list.size() - 2) {
                         cancelCurrentRunningAnimation();
                     }
@@ -613,7 +645,7 @@ class NavigationSceneManager {
                     moveState(mNavigationScene, mScene, State.NONE, null, false, null);
                     mBackStackList.remove(record);
 
-                    //透明的处理
+                    // Deal with the transparent
                     if (i > 0) {
                         Record belowRecord = list.get(i - 1);
                         moveState(mNavigationScene, belowRecord.mScene, sceneState, null, false, null);
@@ -681,7 +713,7 @@ class NavigationSceneManager {
                 popCount++;
             }
 
-            //说明根本没有
+            // There is nothing at all
             if (returnRecord == null) {
                 throw new IllegalArgumentException("Cant find " + clazz.getSimpleName() + " in backStack");
             }
@@ -729,8 +761,12 @@ class NavigationSceneManager {
             final Record currentRecord = mBackStackList.getCurrentRecord();
             final View currentView = currentRecord != null ? currentRecord.mScene.getView() : null;
 
-            //有可能性重复把同个Scene对象在多个NavigationScene里面进行多次Push，但因为Push操作不一定是立刻执行，Push那边的异常判断不一定起作用
-            //所以会延迟到这里抛异常
+            /*
+             * It is possible to repeatedly push the same Scene object multiple times in multiple NavigationScene
+             * But as the Push operation is not necessarily executed immediately,
+             * the abnormal judgment in the Push method does not necessarily work.
+             * So we need to check this case here to throw an exception.
+             */
             if (this.scene.getParentScene() != null) {
                 if (this.scene.getParentScene() == mNavigationScene) {
                     operationEndAction.run();
@@ -767,7 +803,10 @@ class NavigationSceneManager {
                 dstState = findMinState(dstState, mNavigationScene.getState());
                 moveState(mNavigationScene, currentScene, dstState, null, false, null);
 
-                //多个半透明的叠加一个不透明的Scene，必然需要把之前的半透明Scene都切到ACTIVITY_CREATED
+                /*
+                 * In case of multiple translucent overlays of an opaque Scene,
+                 * it is necessary to set the previous translucent Scene to ACTIVITY_CREATED
+                 */
                 final List<Record> currentRecordList = mBackStackList.getCurrentRecordList();
                 if (currentRecordList.size() > 1 && !pushOptions.isIsTranslucent() && currentRecord.mIsTranslucent) {
                     for (int i = currentRecordList.size() - 2; i >= 0; i--) {
@@ -789,7 +828,10 @@ class NavigationSceneManager {
 
             }
 
-            //todo，其实moveState到指定状态，就是需要支持的，因为销毁恢复，必然不可能直接到RESUMED
+            /*
+             * TODO: In fact, it is need to support that moveState to the specified state.
+             *       Because of the destruction restore, it is impossible to go directly to RESUMED
+             */
             moveState(mNavigationScene, scene, mNavigationScene.getState(), null, false, null);
 
             mNavigationListener.navigationChange(currentRecord != null ? currentRecord.mScene : null, scene, true);
@@ -854,14 +896,14 @@ class NavigationSceneManager {
                 return;
             }
 
-            //处理半透明，保证能正确执行到相应的方法
+            // Translucent processing ensures that the correct method can be executed
             List<Record> recordList = mBackStackList.getCurrentRecordList();
             State targetState = this.state;
             for (int i = recordList.size() - 1; i >= 0; i--) {
                 Record record = recordList.get(i);
                 if (i == recordList.size() - 1) {
                     NavigationSceneManager.moveState(mNavigationScene, record.mScene, targetState, null, true, operationEndAction);
-                    //如果当前的是不透明，那么没必须再遍历了
+                    // If the current one is opaque, there is no need to traverse it again.
                     if (!record.mIsTranslucent) {
                         break;
                     }

@@ -162,7 +162,9 @@ public abstract class InteractionNavigationPopAnimationFactory {
         }
     }
 
-    //可以关闭，正常动画结束退出
+    /**
+     * Can be closed, normal animation ends with exit
+     */
     private void popWithoutAnimation() {
         resetCancellationSignal();
         mNavigationScene.convertBackgroundToDefault();
@@ -172,7 +174,9 @@ public abstract class InteractionNavigationPopAnimationFactory {
         }
     }
 
-    //强制中途取消
+    /**
+     * Forced to cancel midway
+     */
     public void forceCancel() {
         if (!this.mStart) {
             return;
@@ -182,7 +186,9 @@ public abstract class InteractionNavigationPopAnimationFactory {
         restoreStatusNow();
     }
 
-    //不能关闭，正常动画结束重置状态
+    /**
+     * Cannot close, normal animation ends reset state
+     */
     private void restoreStatusNow() {
         resetCancellationSignal();
         mNavigationScene.convertBackgroundToDefault();

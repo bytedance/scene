@@ -181,7 +181,11 @@ public class AnimationOrAnimator {
             this.animation.cancel();
             this.animation.reset();
             if (this.mEndAction != null) {
-                this.mEndAction.run();//animation很坑，cancel不是立刻调用到onAnimationEnd，经过了一次post，所以这里做了兼容
+                /*
+                 * The animation of cancel is not immediately called to onAnimationEnd,
+                 * which is be called after a post, so we do some compatible work here.
+                 */
+                this.mEndAction.run();
             }
         } else if (this.animator != null) {
             this.animator.end();

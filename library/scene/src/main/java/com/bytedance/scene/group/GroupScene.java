@@ -27,41 +27,39 @@ import static android.support.annotation.RestrictTo.Scope.LIBRARY_GROUP;
 
 /**
  * Created by JiangQi on 8/1/18.
- * <p>
- * 同步子Scene的整个流程
- * 进入的时候
  *
- * 1.先走自己的onAttach onCreate onCreateView onViewCreated
- * (同步子Scene的状态)
- * 2.再走子Scene的onAttach onCreate onCreateView onViewCreated
- * <p>
- * 3.先走自己的onActivityCreated
- * (同步子Scene的状态)
- * 4.再走子Scene的onActivityCreated
- * <p>
- * 5.先走自己的onStart
- * (同步子Scene的状态)
- * 6.再走子Scene的onStart
- * <p>
- * 7.先走自己的onResume
- * (同步子Scene的状态)
- * 8.再走子Scene的onResume
- * <p>
- * 退出的时候
+ * The entire process of the synchronize child Scene:
  *
- * 强制调整子Scene的状态到State.STARTED
- * 1.先走子Scene的onPause
- * 2.再走自己的onPause
- * <p>
- * 强制调整子Scene的状态到State.ACTIVITY_CREATED
- * 3.先走子Scene的onStop
- * 4.再走自己的onStop
- * <p>
- * 强制调整子Scene的状态到State.NONE
- * 3.先走子Scene的onDestroyView onDestroy onDetach
- * 4.再走自己的onDestroyView onDestroy onDetach
+ * When entering:
+ *
+ * 1. Parent: onAttach -> onCreate -> onCreateView -> onViewCreated
+ *    (synchronize the state of child Scene)
+ * 2. Child: onAttach -> onCreate -> onCreateView -> onViewCreated
+ * 3. Parent: onActivityCreated
+ *    (synchronize the state of child Scene)
+ * 4. Child: onActivityCreated
+ * 5. Parent: onStart
+ *    (synchronize the state of child Scene)
+ * 6. Child: onStart
+ * 7. Parent: onResume
+ *    (synchronize the state of child Scene)
+ * 8. Child: onResume
+ *
+ * When exiting:
+ *
+ *    (Force set state of Scene to State.STARTED)
+ * 1. Child: onPause
+ * 2. Parent: onPause
+ *    (Force set state of Scene to State.ACTIVITY_CREATED)
+ * 3. Child: onStop
+ * 4. Parent: onStop
+ *    (Force set state of Scene to State.NONE)
+ * 3. Child: onDestroyView -> onDestroy -> onDetach
+ * 4. Parent: onDestroyView -> onDestroy -> onDetach
+ *
+ * TODO: Must support tranaction, so we can add and hide without trigger onResume().
+ *       Otherwise, ViewPager will be difficult to handle.
  */
-//todo 一定要支持tranaction，这样可以做到add又hide，那么不触发onResume，不然ViewPager很难办
 public abstract class GroupScene extends Scene {
     private static final AnimationOrAnimatorFactory EMPTY_ANIMATION_FACTORY = new AnimationOrAnimatorFactory() {
         @Override
@@ -104,9 +102,10 @@ public abstract class GroupScene extends Scene {
             throw new IllegalArgumentException("tag can't be empty");
         }
 
-        //todo 问题，在GroupScene的时候执行了2次find+add，那么其实操作都是缓存的，所以每次find都找不到，以为没有，add进来
-        //等真正执行add的时候发现冲突了？怎么办？Fragment也经常有这个问题
-
+        /*
+         * TODO: It is possible for GroupScene to perform find + add 2 times,
+         *       as the operations are all cached. (Fragment has this problem too)
+         */
         if (findSceneByTag(tag) != null) {
             throw new IllegalArgumentException("already have a Scene with tag " + tag);
         }
@@ -300,7 +299,7 @@ public abstract class GroupScene extends Scene {
     @Override
     public final void dispatchActivityCreated(@Nullable Bundle savedInstanceState) {
         super.dispatchActivityCreated(savedInstanceState);
-        //child Scene的savedInstanceState是单独保存的，存在GroupRecord
+        // Child scene's savedInstanceState is saved separately (in GroupRecord).
         dispatchChildrenState(State.ACTIVITY_CREATED);
     }
 
