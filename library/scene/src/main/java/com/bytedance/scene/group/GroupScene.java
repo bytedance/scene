@@ -102,6 +102,10 @@ public abstract class GroupScene extends Scene {
             throw new IllegalArgumentException("tag can't be empty");
         }
 
+        if (scene == this) {
+            throw new IllegalArgumentException("GroupScene can't be added to itself");
+        }
+
         /*
          * TODO: It is possible for GroupScene to perform find + add 2 times,
          *       as the operations are all cached. (Fragment has this problem too)
