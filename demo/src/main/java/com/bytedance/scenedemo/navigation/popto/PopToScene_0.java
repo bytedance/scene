@@ -7,41 +7,38 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.bytedance.scene.Scene;
+import com.bytedance.scenedemo.R;
 import com.bytedance.scenedemo.utility.ColorUtil;
 
 /**
  * Created by JiangQi on 8/2/18.
  */
 public class PopToScene_0 extends Scene {
+
     @NonNull
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        LinearLayout layout = new LinearLayout(getActivity());
-        layout.setOrientation(LinearLayout.VERTICAL);
+    public ViewGroup onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        return (ViewGroup) inflater.inflate(R.layout.basic_layout, container, false);
+    }
 
-        final Bundle bundle = getArguments();
-        int index = 0;
-        if (bundle != null) {
-            index = bundle.getInt("index");
-        }
-        layout.setBackgroundColor(ColorUtil.getMaterialColor(getResources(), index));
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        getView().setBackgroundColor(ColorUtil.getMaterialColor(getResources(), 1));
 
-        Button button = new Button(getActivity());
-        button.setText("现在是PopToScene0，点击跳到 PopToScene_1");
-        layout.addView(button);
-        final int finalIndex = index;
-        button.setOnClickListener(new View.OnClickListener() {
+        TextView name = getView().findViewById(R.id.name);
+        name.setText(getNavigationScene().getStackHistory());
+
+        Button btn = getView().findViewById(R.id.btn);
+        btn.setText(getString(R.string.nav_pop_to_btn_1));
+        btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Bundle bundle = new Bundle();
-                bundle.putInt("index", finalIndex + 1);
-                getNavigationScene().push(PopToScene_1.class, bundle);
+                getNavigationScene().push(PopToScene_1.class);
             }
         });
-
-        return layout;
     }
 }

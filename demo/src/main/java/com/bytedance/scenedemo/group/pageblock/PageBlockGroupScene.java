@@ -7,7 +7,6 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AlphaAnimation;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
@@ -21,9 +20,10 @@ import com.bytedance.scenedemo.utility.ColorUtil;
  * Created by JiangQi on 8/7/18.
  */
 public class PageBlockGroupScene extends GroupScene {
+
     @NonNull
     @Override
-    public ViewGroup onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public ViewGroup onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         return (ViewGroup) inflater.inflate(R.layout.group_scene_page_block, container, false);
     }
 
@@ -55,20 +55,6 @@ public class PageBlockGroupScene extends GroupScene {
                 return PageBlockScene.newInstance(3);
             }
         });
-
-//        if (savedInstanceState != null) {
-//            scene = findSceneByTag("0");
-//            scene1 = findSceneByTag("1");
-//            scene2 = findSceneByTag("2");
-//            scene3 = findSceneByTag("3");
-//        } else {
-//            scene = PageBlockScene.newInstance(0);
-//            scene1 = PageBlockScene.newInstance(1);
-//            scene2 = PageBlockScene.newInstance(2);
-//            scene3 = PageBlockScene.newInstance(3);
-//
-//
-//        }
 
         if (!isAdded(scene))
             add(R.id.block_0, scene, "0");
@@ -128,7 +114,7 @@ public class PageBlockGroupScene extends GroupScene {
 
         @NonNull
         @Override
-        public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
             FrameLayout layout = new FrameLayout(getActivity());
             name = new TextView(getActivity());
             FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);

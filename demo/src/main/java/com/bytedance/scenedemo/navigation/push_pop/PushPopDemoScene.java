@@ -18,10 +18,11 @@ import com.bytedance.scenedemo.utility.ColorUtil;
  * Created by JiangQi on 7/30/18.
  */
 public class PushPopDemoScene extends Scene {
+
     @NonNull
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.home_scene_layout, container, false);
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.basic_layout, container, false);
     }
 
     @Override
@@ -29,21 +30,18 @@ public class PushPopDemoScene extends Scene {
         super.onActivityCreated(savedInstanceState);
 
         Bundle argument = getArguments();
-        int value = 0;
-        if (argument != null) {
-            value = argument.getInt("1", 0);
+        int value = argument != null ? argument.getInt("1", 0) : 0;
+        if (getActivity() != null) {
+            getView().setBackgroundColor(ColorUtil.getMaterialColor(getActivity().getResources(), value));
         }
 
-        getView().setBackgroundColor(ColorUtil.getMaterialColor(getActivity().getResources(), value));
-
-        TextView name = (TextView) getView().findViewById(R.id.name);
+        TextView name = getView().findViewById(R.id.name);
         name.setText(getNavigationScene().getStackHistory());
 
-
-        Button a = getView().findViewById(R.id.f);
-        a.setText("" + value);
+        Button btn = getView().findViewById(R.id.btn);
+        btn.setText(String.valueOf(value));
         final int finalValue = value;
-        a.setOnClickListener(new View.OnClickListener() {
+        btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Bundle bundle = new Bundle();

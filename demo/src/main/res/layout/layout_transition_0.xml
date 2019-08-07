@@ -12,14 +12,14 @@
         android:layout_gravity="bottom"
         android:layout_marginBottom="170dp"
         android:layout_marginLeft="100dp"
-        android:text="打开新页面"
+        android:text="@string/anim_share_element_btn_1"
         android:transitionName="wo" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="top|right"
-        android:text="无关按钮0" />
+        android:text="@string/anim_share_element_btn_0" />
 
     <FrameLayout
         android:layout_width="170dp"
@@ -30,7 +30,7 @@
         android:background="@android:color/holo_green_light"
         android:paddingLeft="10dp">
 
-        <com.bytedance.scenedemo.TestImageView
+        <com.bytedance.scenedemo.view.TestImageView
             android:id="@+id/test"
             android:layout_width="70dp"
             android:layout_height="70dp"

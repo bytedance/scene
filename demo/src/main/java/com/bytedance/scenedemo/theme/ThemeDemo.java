@@ -8,7 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.bytedance.scene.Scene;
 import com.bytedance.scene.ui.template.SwipeBackGroupScene;
@@ -19,34 +19,25 @@ import com.bytedance.scenedemo.utility.ColorUtil;
  * Created by JiangQi on 11/9/18.
  */
 public class ThemeDemo extends SwipeBackGroupScene {
+
     @NonNull
     @Override
-    protected ViewGroup onCreateSwipeContentView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        LinearLayout layout = new LinearLayout(getActivity());
-        layout.setFitsSystemWindows(true);
-        layout.setOrientation(LinearLayout.VERTICAL);
+    protected ViewGroup onCreateSwipeContentView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        ViewGroup root = (ViewGroup) inflater.inflate(R.layout.basic_layout, container, false);
+        root.setBackgroundColor(ColorUtil.getMaterialColor(getResources(), 0));
+        return root;
+    }
 
-        layout.setBackgroundColor(ColorUtil.getMaterialColor(getResources(), 0));
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
 
-        Button button = new Button(getActivity());
+        TextView name = getView().findViewById(R.id.name);
+        name.setVisibility(View.GONE);
 
-        button = new Button(getActivity());
-        layout.addView(button);
-        button.setAllCaps(false);
-        button.setText("AppTheme_Test0");
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                TestTheme0Scene scene = new TestTheme0Scene(R.style.AppTheme_Test0);
-                getNavigationScene().push(scene);
-            }
-        });
-
-        button = new Button(getActivity());
-        layout.addView(button);
-        button.setAllCaps(false);
-        button.setText("AppTheme_Test1");
-        button.setOnClickListener(new View.OnClickListener() {
+        Button btn = getView().findViewById(R.id.btn);
+        btn.setText(R.string.nav_theme_btn_1);
+        btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 TestTheme0Scene scene = new TestTheme0Scene(R.style.AppTheme_Test1);
@@ -54,19 +45,27 @@ public class ThemeDemo extends SwipeBackGroupScene {
             }
         });
 
-        button = new Button(getActivity());
-        layout.addView(button);
-        button.setAllCaps(false);
-        button.setText("AppTheme_Test2");
-        button.setOnClickListener(new View.OnClickListener() {
+        Button btn2 = getView().findViewById(R.id.btn2);
+        btn2.setVisibility(View.VISIBLE);
+        btn2.setText(R.string.nav_theme_btn_2);
+        btn2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                TestTheme1Scene scene = new TestTheme1Scene(R.style.AppTheme_Test2);
+                TestTheme0Scene scene = new TestTheme0Scene(R.style.AppTheme_Test2);
                 getNavigationScene().push(scene);
             }
         });
 
-        return layout;
+        Button btn3 = getView().findViewById(R.id.btn3);
+        btn3.setVisibility(View.VISIBLE);
+        btn3.setText(R.string.nav_theme_btn_3);
+        btn3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                TestTheme1Scene scene = new TestTheme1Scene(R.style.AppTheme_Test3);
+                getNavigationScene().push(scene);
+            }
+        });
     }
 
     private static class TestTheme0Scene extends Scene {

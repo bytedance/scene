@@ -10,6 +10,8 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
+import android.widget.Space;
+import android.widget.TextView;
 
 import com.bytedance.scene.group.UserVisibleHintGroupScene;
 import com.bytedance.scenedemo.case0.Case0Scene;
@@ -26,7 +28,7 @@ import com.bytedance.scenedemo.restore.SupportRestoreActivity;
 public class CaseListDemo extends UserVisibleHintGroupScene {
     @NonNull
     @Override
-    public ViewGroup onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public ViewGroup onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         ScrollView scrollView = new ScrollView(getActivity());
 
         LinearLayout layout = new LinearLayout(getActivity());
@@ -34,90 +36,59 @@ public class CaseListDemo extends UserVisibleHintGroupScene {
 
         scrollView.addView(layout);
 
-        Button button = new Button(getActivity());
+        addSpace(layout, 12);
+        addTitle(layout, getString(R.string.main_title_case));
 
-        button = new Button(getActivity());
-        button.setAllCaps(false);
-        button.setText("销毁恢复");
-        layout.addView(button);
-        button.setOnClickListener(new View.OnClickListener() {
+        addButton(layout, getString(R.string.main_case_destroy_restore), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 getNavigationScene().startActivity(new Intent(requireActivity(), SupportRestoreActivity.class));
             }
         });
 
-        button = new Button(getActivity());
-        button.setAllCaps(false);
-        button.setText("Push后立刻Pop，循环100次，动画要正确");
-        layout.addView(button);
-        button.setOnClickListener(new View.OnClickListener() {
+        addButton(layout, getString(R.string.main_case_push_and_pop), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 getNavigationScene().push(Case0Scene.class);
             }
         });
 
-        button = new Button(getActivity());
-        button.setAllCaps(false);
-        button.setText("同时Push 100个");
-        layout.addView(button);
-        button.setOnClickListener(new View.OnClickListener() {
+        addButton(layout, getString(R.string.main_case_push_many), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 getNavigationScene().push(Case1Scene.class);
             }
         });
 
-        button = new Button(getActivity());
-        button.setAllCaps(false);
-        button.setText("同时多个Pop超过当前的Scene数量");
-        layout.addView(button);
-        button.setOnClickListener(new View.OnClickListener() {
+        addButton(layout, getString(R.string.main_case_pop_many), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 getNavigationScene().push(Case2Scene.class);
             }
         });
 
-        button = new Button(getActivity());
-        button.setAllCaps(false);
-        button.setText("Push和Pop动画过程中，Remove");
-        layout.addView(button);
-        button.setOnClickListener(new View.OnClickListener() {
+        addButton(layout, getString(R.string.main_case_push_pop_remove), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 getNavigationScene().push(Case3Scene.class);
             }
         });
 
-        button = new Button(getActivity());
-        button.setAllCaps(false);
-        button.setText("Scene 生命周期内又执行Push/Pop");
-        layout.addView(button);
-        button.setOnClickListener(new View.OnClickListener() {
+        addButton(layout, getString(R.string.main_case_push_pop_in_lifecycle), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 getNavigationScene().push(Case4Scene.class);
             }
         });
 
-        button = new Button(getActivity());
-        button.setAllCaps(false);
-        button.setText("GroupScene 没添加到Scene之前就add/remove");
-        layout.addView(button);
-        button.setOnClickListener(new View.OnClickListener() {
+        addButton(layout, getString(R.string.main_case_add_remove_group_scene), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 getNavigationScene().push(Case5Scene.class);
             }
         });
 
-        button = new Button(getActivity());
-        button.setAllCaps(false);
-        button.setText("Activity finish后立刻 Push/Pop");
-        layout.addView(button);
-        button.setOnClickListener(new View.OnClickListener() {
+        addButton(layout, getString(R.string.main_case_push_pop_after_finish), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 getActivity().finish();
@@ -125,14 +96,37 @@ public class CaseListDemo extends UserVisibleHintGroupScene {
             }
         });
 
+        addSpace(layout, 100);
+
         return scrollView;
     }
 
-    @Override
-    public void setUserVisibleHint(boolean isVisibleToUser) {
-        super.setUserVisibleHint(isVisibleToUser);
-        if (isVisible() && isVisibleToUser) {
+    private void addTitle(LinearLayout parent, String text) {
+        TextView textView = new TextView(getActivity());
+        textView.setTextSize(14);
+        textView.setText(text);
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        lp.leftMargin = 30;
+        lp.rightMargin = 30;
+        lp.topMargin = 24;
+        lp.bottomMargin = 24;
+        parent.addView(textView, lp);
+    }
 
-        }
+    private Button addButton(LinearLayout parent, String text, View.OnClickListener onClickListener) {
+        Button button = new Button(getActivity());
+        button.setAllCaps(false);
+        button.setText(text);
+        button.setOnClickListener(onClickListener);
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 150);
+        lp.leftMargin = 20;
+        lp.rightMargin = 20;
+        parent.addView(button, lp);
+        return button;
+    }
+
+    private void addSpace(LinearLayout parent, int height) {
+        Space space = new Space(getActivity());
+        parent.addView(space, ViewGroup.LayoutParams.MATCH_PARENT, height);
     }
 }

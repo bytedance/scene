@@ -9,33 +9,37 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
+import android.widget.Space;
+import android.widget.TextView;
 
 import com.bytedance.scene.group.UserVisibleHintGroupScene;
 import com.bytedance.scenedemo.multi_stack.MultiStackDemoScene;
 import com.bytedance.scenedemo.navigation.configuration.ConfigurationDemoScene;
 import com.bytedance.scenedemo.navigation.forresult.SceneResultRootScene;
 import com.bytedance.scenedemo.navigation.performance.PerformanceDemo;
-import com.bytedance.scenedemo.navigation.popinterupt.PopInteruptScene_0;
+import com.bytedance.scenedemo.navigation.popinterupt.PopInterruptScene;
 import com.bytedance.scenedemo.navigation.popto.PopToScene;
 import com.bytedance.scenedemo.navigation.push_clear_current.PushClearCurrentDemoScene;
 import com.bytedance.scenedemo.navigation.push_pop.PushPopDemoScene;
 import com.bytedance.scenedemo.navigation.push_singletop.PushSingleTopRootScene;
-import com.bytedance.scenedemo.navigation.pushandclear.PushClearRootScene;
+import com.bytedance.scenedemo.navigation.pushandclear.PushClearTaskScene;
 import com.bytedance.scenedemo.navigation.remove.RemoveDemoScene;
 import com.bytedance.scenedemo.navigation.reuse.ReuseDemoScene;
 import com.bytedance.scenedemo.navigation.singletask.SingleTaskDemoScene;
-import com.bytedance.scenedemo.navigation.softkeyboard.SoftkeyboardDemoScene;
-import com.bytedance.scenedemo.navigation.window.WindowDemo;
+import com.bytedance.scenedemo.navigation.softkeyboard.SoftKeyboardDemoScene;
 import com.bytedance.scenedemo.template.DefaultScene;
 import com.bytedance.scenedemo.theme.ThemeDemo;
+
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Created by JiangQi on 8/21/18.
  */
 public class NavigationListDemo extends UserVisibleHintGroupScene {
+
     @NonNull
     @Override
-    public ViewGroup onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public ViewGroup onCreateView(@NotNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         ScrollView scrollView = new ScrollView(getActivity());
 
         LinearLayout layout = new LinearLayout(getActivity());
@@ -43,233 +47,180 @@ public class NavigationListDemo extends UserVisibleHintGroupScene {
 
         scrollView.addView(layout);
 
-        Button button = new Button(getActivity());
-        button.setAllCaps(false);
-        button.setText("Push Pop 用法");
-        layout.addView(button);
-        button.setOnClickListener(new View.OnClickListener() {
+        addSpace(layout, 12);
+        addTitle(layout, getString(R.string.main_title_basic));
+
+        addButton(layout, getString(R.string.main_nav_btn_push_pop), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 getNavigationScene().push(PushPopDemoScene.class);
             }
         });
 
-        button = new Button(getActivity());
-        button.setAllCaps(false);
-        button.setText("Push singleTop 用法");
-        layout.addView(button);
-        button.setOnClickListener(new View.OnClickListener() {
+        addButton(layout, getString(R.string.main_nav_btn_single_top), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 getNavigationScene().push(PushSingleTopRootScene.class);
             }
         });
 
-        button = new Button(getActivity());
-        button.setAllCaps(false);
-        button.setText("Push singleTask 用法");
-        layout.addView(button);
-        button.setOnClickListener(new View.OnClickListener() {
+        addButton(layout, getString(R.string.main_nav_btn_single_task), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 getNavigationScene().push(SingleTaskDemoScene.class);
             }
         });
 
-        button = new Button(getActivity());
-        button.setAllCaps(false);
-        button.setText("移除中间任意的Scene");
-        layout.addView(button);
-        button.setOnClickListener(new View.OnClickListener() {
+        addButton(layout, getString(R.string.main_nav_btn_remove), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 getNavigationScene().push(RemoveDemoScene.class);
             }
         });
 
-        button = new Button(getActivity());
-        button.setAllCaps(false);
-        button.setText("Push 清空Task");
-        layout.addView(button);
-        button.setOnClickListener(new View.OnClickListener() {
+        addButton(layout, getString(R.string.main_nav_btn_clear_task), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getNavigationScene().push(PushClearRootScene.class);
+                getNavigationScene().push(PushClearTaskScene.class);
             }
         });
 
-        button = new Button(getActivity());
-        button.setAllCaps(false);
-        button.setText("Push 替换最前面的Scene");
-        layout.addView(button);
-        button.setOnClickListener(new View.OnClickListener() {
+        addButton(layout, getString(R.string.main_nav_btn_clear_current), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 getNavigationScene().push(PushClearCurrentDemoScene.class);
             }
         });
 
-        View emptyView = new View(getActivity());
-        layout.addView(emptyView, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 100));
+        addTitle(layout, getString(R.string.main_title_pro));
 
-        button = new Button(getActivity());
-        button.setAllCaps(false);
-        button.setText("导航 PopTo 用法");
-        layout.addView(button);
-        button.setOnClickListener(new View.OnClickListener() {
+        addButton(layout, getString(R.string.main_nav_btn_pop_to), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 getNavigationScene().push(PopToScene.class);
             }
         });
 
-        button = new Button(getActivity());
-        button.setAllCaps(false);
-        button.setText("导航 Pop拦截 用法");
-        layout.addView(button);
-        button.setOnClickListener(new View.OnClickListener() {
+        addButton(layout, getString(R.string.main_nav_btn_interrupt_pop), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getNavigationScene().push(PopInteruptScene_0.class);
+                getNavigationScene().push(PopInterruptScene.class);
             }
         });
 
-        button = new Button(getActivity());
-        button.setAllCaps(false);
-        button.setText("Configuration变化 用法");
-        layout.addView(button);
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                getNavigationScene().push(ConfigurationDemoScene.class);
-            }
-        });
-
-        emptyView = new View(getActivity());
-        layout.addView(emptyView, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 100));
-
-        button = new Button(getActivity());
-        button.setAllCaps(false);
-        button.setText("导航 拿返回值，权限");
-        layout.addView(button);
-        button.setOnClickListener(new View.OnClickListener() {
+        addButton(layout, getString(R.string.main_nav_btn_for_result), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 getNavigationScene().push(SceneResultRootScene.class);
             }
         });
 
-        button = new Button(getActivity());
-        button.setAllCaps(false);
-        button.setText("导航 复用，加快打开页面速度");
-        layout.addView(button);
-        button.setOnClickListener(new View.OnClickListener() {
+        addTitle(layout, getString(R.string.main_title_other));
+
+        addButton(layout, getString(R.string.main_nav_btn_configuration_change), new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getNavigationScene().push(ConfigurationDemoScene.class);
+            }
+        });
+
+        addButton(layout, getString(R.string.main_nav_btn_reuse), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 getNavigationScene().push(ReuseDemoScene.class);
             }
         });
 
-        button = new Button(getActivity());
-        button.setAllCaps(false);
-        button.setText("导航 修改Activity属性后返回重置属性（未完成）");
-        layout.addView(button);
-        button.setOnClickListener(new View.OnClickListener() {
+        addButton(layout, getString(R.string.main_nav_btn_ime), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getNavigationScene().push(WindowDemo.class);
+                getNavigationScene().push(SoftKeyboardDemoScene.class);
             }
         });
 
-        button = new Button(getActivity());
-        button.setAllCaps(false);
-        button.setText("导航 输入法问题");
-        layout.addView(button);
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                getNavigationScene().push(SoftkeyboardDemoScene.class);
-            }
-        });
-
-        button = new Button(getActivity());
-        button.setAllCaps(false);
-        button.setText("跟Activity比较性能");
-        layout.addView(button);
-        button.setOnClickListener(new View.OnClickListener() {
+        addButton(layout, getString(R.string.main_nav_btn_compare_activity), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 getNavigationScene().push(PerformanceDemo.class);
             }
         });
 
-        button = new Button(getActivity());
-        button.setAllCaps(false);
-        button.setText("Router（未完成）");
-        layout.addView(button);
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-            }
-        });
-
-        button = new Button(getActivity());
-        button.setAllCaps(false);
-        button.setText("Deep Link（未完成）");
-        layout.addView(button);
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-            }
-        });
-
-        button = new Button(getActivity());
-        button.setAllCaps(false);
-        button.setText("模板 AppCompatScene");
-        layout.addView(button);
-        button.setOnClickListener(new View.OnClickListener() {
+        addButton(layout, getString(R.string.main_nav_btn_app_compat), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 getNavigationScene().push(DefaultScene.class);
             }
         });
 
-
-        button = new Button(getActivity());
-        button.setAllCaps(false);
-        button.setText("MutliStack");
-        layout.addView(button);
-        button.setOnClickListener(new View.OnClickListener() {
+        addButton(layout, getString(R.string.main_nav_btn_mutil_stack), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 getNavigationScene().push(MultiStackDemoScene.class);
             }
         });
 
-        button = new Button(getActivity());
-        button.setAllCaps(false);
-        button.setText("主题");
-        layout.addView(button);
-        button.setOnClickListener(new View.OnClickListener() {
+        addButton(layout, getString(R.string.main_nav_btn_theme), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 getNavigationScene().push(ThemeDemo.class);
             }
         });
 
-        emptyView = new View(getActivity());
-        layout.addView(emptyView, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 800));
+        addTitle(layout, getString(R.string.main_title_todo));
+
+        addButton(layout, getString(R.string.main_nav_btn_router), new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
+        addButton(layout, getString(R.string.main_nav_btn_deep_link), new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
+        addButton(layout, getString(R.string.main_nav_btn_modify_activity_states), new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+//                getNavigationScene().push(WindowDemo.class);
+            }
+        });
+
+        addSpace(layout, 100);
 
         return scrollView;
     }
 
-    @Override
-    public void setUserVisibleHint(boolean isVisibleToUser) {
-        super.setUserVisibleHint(isVisibleToUser);
-        if (isVisible() && isVisibleToUser) {
-
-        }
+    private void addTitle(LinearLayout parent, String text) {
+        TextView textView = new TextView(getActivity());
+        textView.setTextSize(14);
+        textView.setText(text);
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        lp.leftMargin = 30;
+        lp.rightMargin = 30;
+        lp.topMargin = 24;
+        lp.bottomMargin = 24;
+        parent.addView(textView, lp);
     }
+
+    private Button addButton(LinearLayout parent, String text, View.OnClickListener onClickListener) {
+        Button button = new Button(getActivity());
+        button.setAllCaps(false);
+        button.setText(text);
+        button.setOnClickListener(onClickListener);
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 150);
+        lp.leftMargin = 20;
+        lp.rightMargin = 20;
+        parent.addView(button, lp);
+        return button;
+    }
+
+    private void addSpace(LinearLayout parent, int height) {
+        Space space = new Space(getActivity());
+        parent.addView(space, ViewGroup.LayoutParams.MATCH_PARENT, height);
+    }
+
 }

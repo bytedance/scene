@@ -8,6 +8,8 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.bytedance.scene.ui.template.SwipeBackAppCompatScene;
+import com.bytedance.scenedemo.R;
+import com.bytedance.scenedemo.utility.ColorUtil;
 
 /**
  * Created by JiangQi on 8/29/18.
@@ -16,8 +18,10 @@ public class SwipeBackDemo extends SwipeBackAppCompatScene {
 
     @Nullable
     @Override
-    protected View onCreateContentView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return new View(getActivity());
+    protected View onCreateContentView(@Nullable LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View view = new View(getActivity());
+        view.setBackgroundColor(ColorUtil.getMaterialColor(getResources(), 0));
+        return view;
     }
 
     private boolean mSwipeBack = false;
@@ -32,9 +36,9 @@ public class SwipeBackDemo extends SwipeBackAppCompatScene {
     public void onDestroyView() {
         super.onDestroyView();
         if (mSwipeBack) {
-            Toast.makeText(getActivity(), "侧滑返回", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), R.string.anim_swipe_back_tip_1, Toast.LENGTH_SHORT).show();
         } else {
-            Toast.makeText(getActivity(), "非侧滑返回", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), R.string.anim_swipe_back_tip_2, Toast.LENGTH_SHORT).show();
         }
     }
 }

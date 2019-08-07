@@ -7,7 +7,7 @@
 
   <!-- This draws the circle for the clock-->
   <path
-      android:name="@string/circle"
+      android:name="@string/vd_circle"
       android:pathData="M 2,6 C 2,3.8 3.8,2 6,2 C 8.2,2 10,3.8 10,6 C 10,8.2 8.2,10 6,10 C 3.8,10 2,8.2 2,6"
       android:strokeColor="@android:color/darker_gray"
       android:strokeWidth=".1" />
@@ -16,7 +16,7 @@
   <!-- This path is placed inside a group to take advantage of group level animations such as rotation in this case-->
   <!-- pivotX and pivotY assigns the pivotal point around which it has to rotate-->
   <group
-      android:name="@string/minute_hand"
+      android:name="@string/vd_minute_hand"
       android:pivotX="6"
       android:pivotY="6">
     <!-- minute-hand path-->
@@ -28,7 +28,7 @@
 
   <!-- similarly we draw second-hand path-->
   <group
-      android:name="@string/second_hand"
+      android:name="@string/vd_second_hand"
       android:pivotX="6"
       android:pivotY="6">
     <path

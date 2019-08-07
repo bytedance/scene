@@ -23,7 +23,7 @@ public class InheritedDemo extends InheritedScene {
 
     @NonNull
     @Override
-    public ViewGroup onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public ViewGroup onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         return (ViewGroup) inflater.inflate(R.layout.layout_inherited, container, false);
     }
 
@@ -31,8 +31,7 @@ public class InheritedDemo extends InheritedScene {
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         summary = getView().findViewById(R.id.summary);
-        summary.setText("当内嵌层级很深的时候，跨层级的Scene想共享数据会非常困难，所以提供了InheritedScene和InheritedScene.of方法" +
-                "直接取到最近的InheritedScene");
+        summary.setText(R.string.part_inherited_tip);
     }
 
     @Override
@@ -87,7 +86,7 @@ class Child0Scene extends Scene {
 
     @NonNull
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         return new View(getActivity());
     }
 

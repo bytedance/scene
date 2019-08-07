@@ -13,6 +13,7 @@ import com.bytedance.scene.group.GroupScene;
 import com.bytedance.scene.group.UserVisibleHintGroupScene;
 import com.bytedance.scene.ui.GroupSceneUtility;
 import com.bytedance.scenedemo.R;
+import com.bytedance.scenedemo.group.EmptyScene;
 
 import java.util.LinkedHashMap;
 
@@ -20,11 +21,12 @@ import java.util.LinkedHashMap;
  * Created by JiangQi on 7/30/18.
  */
 public class ViewPagerGroupScene extends GroupScene {
+
     private ViewPager mViewPager;
 
     @NonNull
     @Override
-    public ViewGroup onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
+    public ViewGroup onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                                   @Nullable Bundle savedInstanceState) {
         return (ViewGroup) inflater.inflate(R.layout.parent_scene_viewpager, container, false);
     }
@@ -32,24 +34,20 @@ public class ViewPagerGroupScene extends GroupScene {
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        this.mViewPager = (ViewPager) view.findViewById(R.id.vp);
+        this.mViewPager = view.findViewById(R.id.vp);
     }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        TabLayout tabLayout = (TabLayout) findViewById(R.id.tablayout);
+        TabLayout tabLayout = findViewById(R.id.tablayout);
         tabLayout.setupWithViewPager(mViewPager);
 
         LinkedHashMap<String, UserVisibleHintGroupScene> list = new LinkedHashMap<>();
 
         for (int i = 0; i < 4; i++) {
-            ViewPagerChildScene childScene = new ViewPagerChildScene();
-            Bundle bundle = new Bundle();
-            bundle.putInt("index", i);
-            childScene.setArguments(bundle);
-            list.put("" + i, childScene);
+            list.put(String.valueOf(i), EmptyScene.newInstance(i));
         }
 
         GroupSceneUtility.setupWithViewPager(this.mViewPager, this, list);

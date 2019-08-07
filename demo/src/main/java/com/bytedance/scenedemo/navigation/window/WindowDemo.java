@@ -7,53 +7,48 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.LinearLayout;
-import android.widget.ScrollView;
+import android.widget.TextView;
 
 import com.bytedance.scene.Scene;
+import com.bytedance.scenedemo.R;
+import com.bytedance.scenedemo.utility.ColorUtil;
 
 /**
  * Created by JiangQi on 8/21/18.
  */
 public class WindowDemo extends Scene {
+
     @NonNull
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        ScrollView scrollView = new ScrollView(getActivity());
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.basic_layout, container, false);
+    }
 
-        LinearLayout layout = new LinearLayout(getActivity());
-        layout.setOrientation(LinearLayout.VERTICAL);
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        getView().setBackgroundColor(ColorUtil.getMaterialColor(getResources(), 0));
 
-        scrollView.addView(layout);
+        TextView name = getView().findViewById(R.id.name);
+        name.setText(getNavigationScene().getStackHistory());
 
-        Button button = new Button(getActivity());
-
-        button = new Button(getActivity());
-        button.setAllCaps(false);
-        button.setText("状态栏导航栏背景色+图标颜色");
-        layout.addView(button);
-        button.setOnClickListener(new View.OnClickListener() {
+        Button btn = getView().findViewById(R.id.btn);
+        btn.setText(R.string.nav_activity_states_btn_1);
+        btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 getNavigationScene().push(WindowColorDemo.class);
             }
         });
 
-        button = new Button(getActivity());
-        button.setAllCaps(false);
-        button.setText("状态栏导航栏布局");
-        layout.addView(button);
-        button.setOnClickListener(new View.OnClickListener() {
+        Button btn2 = getView().findViewById(R.id.btn2);
+        btn2.setVisibility(View.VISIBLE);
+        btn2.setText(R.string.nav_activity_states_btn_2);
+        btn2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 getNavigationScene().push(WindowLayoutDemo.class);
             }
         });
-
-
-        View emptyView = new View(getActivity());
-        layout.addView(emptyView, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 800));
-
-        return scrollView;
     }
 }

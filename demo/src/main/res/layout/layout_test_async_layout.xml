@@ -11,6 +11,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="50dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
         android:background="@color/brown_300"
         android:indeterminate="true"
         android:max="100"
@@ -20,16 +22,23 @@
         android:id="@+id/imageview"
         android:layout_width="100dp"
         android:layout_height="100dp"
+        android:layout_marginTop="16dp"
+        android:layout_gravity="center"
         android:src="@drawable/avd_clock_rotate" />
 
     <Button
-        style="@style/TestButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="测试背景色" />
+        android:layout_width="match_parent"
+        android:layout_height="54dp"
+        android:textAllCaps="false"
+        android:layout_marginTop="16dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:text="Button" />
 
     <com.bytedance.scenedemo.async_inflate.TestAsyncView
         android:layout_width="100dp"
-        android:layout_height="100dp" />
+        android:layout_height="100dp"
+        android:layout_marginTop="16dp"
+        android:layout_gravity="center"/>
 
 </LinearLayout>

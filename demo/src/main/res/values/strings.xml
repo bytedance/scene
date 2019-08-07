@@ -1,10 +1,169 @@
 <resources>
     <string name="app_name">SceneDemo</string>
 
+    <string name="vd_minute_hand" translatable="false">minute_hand</string>
+    <string name="vd_second_hand" translatable="false">second_hand</string>
+    <string name="vd_circle" translatable="false">circle</string>
 
-    <string name="minute_hand">minute_hand</string>
-    <string name="second_hand">second_hand</string>
-    <string name="start">START</string>
-    <string name="stop">STOP</string>
-    <string name="circle">circle</string>
+    <string name="main_scene_title_navigation">Nav</string>
+    <string name="main_scene_title_part">Part</string>
+    <string name="main_scene_title_anim">Anim</string>
+    <string name="main_scene_title_lifecycle">LifeCycle</string>
+    <string name="main_scene_title_extreme_case">Case</string>
+
+    <string name="main_title_basic">Basic Usage</string>
+    <string name="main_title_pro">Pro Usage</string>
+    <string name="main_title_other">Other Usage</string>
+    <string name="main_title_todo">Todo</string>
+    <string name="main_title_case">Extreme Cases</string>
+
+    <string name="main_nav_btn_push_pop">Push and Pop</string>
+    <string name="main_nav_btn_single_top">Push wish SingleTop</string>
+    <string name="main_nav_btn_single_task">Push wish SingleTask</string>
+    <string name="main_nav_btn_remove">Remove any Scene in Stack</string>
+    <string name="main_nav_btn_clear_task">Push with ClearTask</string>
+    <string name="main_nav_btn_clear_current">Push and Clear Current</string>
+    <string name="main_nav_btn_pop_to">PopTo</string>
+    <string name="main_nav_btn_interrupt_pop">Interrupt Pop</string>
+    <string name="main_nav_btn_for_result">Get result and Gain Permission</string>
+    <string name="main_nav_btn_configuration_change">Configuration Change</string>
+    <string name="main_nav_btn_reuse">Reuse Scene to Speed up the Opening</string>
+    <string name="main_nav_btn_ime">IME Problems</string>
+    <string name="main_nav_btn_compare_activity">Compare performance with Activity</string>
+    <string name="main_nav_btn_app_compat">AppCompatScene</string>
+    <string name="main_nav_btn_mutil_stack">MutilStack</string>
+    <string name="main_nav_btn_theme">Theme</string>
+    <string name="main_nav_btn_router">Router (Todo)</string>
+    <string name="main_nav_btn_deep_link">Deep Link (Todo)</string>
+    <string name="main_nav_btn_modify_activity_states">Modify and Recovery the states of Activity (Todo)</string>
+    <string name="main_part_btn_tab_view_pager">TabLayout + ViewPager</string>
+    <string name="main_part_btn_drawer">Drawer</string>
+    <string name="main_part_btn_bottom_tab_layout">Bottom TabLayout</string>
+    <string name="main_part_btn_dialog">Dialog</string>
+    <string name="main_part_btn_child_scene">Child Scene</string>
+    <string name="main_part_btn_bind_to_fragment">Bind to Fragment</string>
+    <string name="main_part_btn_bind_to_view">Bind to View</string>
+    <string name="main_part_btn_async_inflate">Async Inflate</string>
+    <string name="main_part_btn_inherited_scene">Inherited Scene</string>
+    <string name="main_part_btn_floating_window">Floating Window (Todo)</string>
+    <string name="main_anim_btn_res_anim">Custom Animation by XML Resource</string>
+    <string name="main_anim_btn_swipe_back">Swipe Back Animation</string>
+    <string name="main_anim_btn_ios_anim">iOS Interaction Animation</string>
+    <string name="main_anim_btn_share_element">Android 5 Share Element Animation</string>
+    <string name="main_lifecycle_child_callbacks">Child Scene Lifecycle Callbacks</string>
+    <string name="main_lifecycle_status">Lifecycle Status</string>
+    <string name="main_lifecycle_rx_java">RxJava Binding</string>
+    <string name="main_lifecycle_live_data">Live Data</string>
+    <string name="main_lifecycle_scope">Scope (Todo)</string>
+    <string name="main_case_destroy_restore">Destroy and Restore of Scene</string>
+    <string name="main_case_push_and_pop">Push and Pop</string>
+    <string name="main_case_push_many">Push 100 times at same time</string>
+    <string name="main_case_pop_many">Pop more than Stack Size at same time</string>
+    <string name="main_case_push_pop_remove">Remove during Push and Pop</string>
+    <string name="main_case_push_pop_in_lifecycle">Push or Pop in Lifecycle of Scene</string>
+    <string name="main_case_add_remove_group_scene">Add/Remove GroupScene before adding to a Scene</string>
+    <string name="main_case_push_pop_after_finish">Push/Pop after Activity Finished</string>
+
+    <string name="nav_single_top_btn_root">Click to push PushSingleTopScene_0</string>
+    <string name="nav_single_top_btn_0">Click to push PushSingleTopScene_1</string>
+    <string name="nav_single_top_btn_1">Click to push PushSingleTopScene_1</string>
+    <string name="nav_single_task_btn_0">Click to push SingleTaskDemoScene1</string>
+    <string name="nav_single_task_btn_1">Click to push SingleTaskDemoScene</string>
+    <string name="nav_remove_scene_in_task_0">Click to push RemoveDemoScene1, and Remove self after 3 seconds</string>
+    <string name="nav_remove_scene_in_task_1">Back after 3 seconds, RemoveDemoScene will gone</string>
+    <string name="nav_clear_task_btn_root">Click to push PushClearScene_0</string>
+    <string name="nav_clear_task_btn_0">Click to push PushClearScene_1</string>
+    <string name="nav_clear_task_btn_1">Click to push PushClearScene_2</string>
+    <string name="nav_clear_task_btn_2">Click to push PushClearScene_3, and Clear the Stack</string>
+    <string name="nav_clear_task_btn_3">Click to push PushClearScene_4</string>
+    <string name="nav_clear_task_btn_4">Click to Pop to Stack Root</string>
+    <string name="nav_clear_current_btn">Click to Push a New Scene and Clear self</string>
+    <string name="nav_pop_to_btn_0">Click to push PopToScene_0</string>
+    <string name="nav_pop_to_btn_1">Click to push PopToScene_1</string>
+    <string name="nav_pop_to_btn_2">Click to push PopToScene_2</string>
+    <string name="nav_pop_to_btn_back0">Click to pop back to PopToScene_0</string>
+    <string name="nav_pop_to_btn_to_bottom">Click to pop back to root</string>
+    <string name="nav_interrupt_tip">Press back again</string>
+    <string name="nav_configuration_tip">Please rotate your device</string>
+    <string name="nav_result_scene_to_scene">Scene push Scene for result</string>
+    <string name="nav_result_scene_to_activity">Scene start Activity for result</string>
+    <string name="nav_result_scene_to_activity_without_result">Case: Scene start Activity but without set a result</string>
+    <string name="nav_result_activity_to_scene">Activity push Scene(with SceneContainerActivity) for result</string>
+    <string name="nav_result_permission">Apply Permission in Scene</string>
+    <string name="nav_result_callback_tip">Callback</string>
+    <string name="nav_result_permission_tip_success">Success</string>
+    <string name="nav_result_permission_tip_failed">Failed</string>
+    <string name="nav_result_scene_to_scene_btn_0">Click to Push SceneResultScene_1</string>
+    <string name="nav_result_scene_to_scene_btn_1">Click to Push SceneResultScene_0 (PushSingleTop)</string>
+    <string name="nav_result_set_result_btn">Click to set result</string>
+    <string name="nav_reuse_tip">Push a very heavy Scene which will cost 1 second in onCreateView(). As we will reuse the scene, only the first time is slow</string>
+    <string name="nav_reuse_btn">Push</string>
+    <string name="nav_compare_description">The time spent starting a empty Scene is usually only 1/3 of a empty activity, which will save at least 60ms in normal case.</string>
+    <string name="nav_compare_btn_1">Start a empty Activity</string>
+    <string name="nav_compare_btn_2">Start a empty Scene</string>
+    <string name="nav_compare_tip">Time cost by startup: %1$dms</string>
+    <string name="nav_theme_btn_1">AppTheme 1</string>
+    <string name="nav_theme_btn_2">AppTheme 2</string>
+    <string name="nav_theme_btn_3">AppTheme 3</string>
+    <string name="nav_multi_stack_btn_1">Push new NavigationScene with default Animation</string>
+    <string name="nav_multi_stack_btn_2">Push new NavigationScene with custom Animation</string>
+    <string name="nav_multi_stack_btn_3">Every Tab has its own BackStack (Material Design 2.0)</string>
+    <string name="nav_multi_stack_menu_1">Home</string>
+    <string name="nav_multi_stack_menu_2">Search</string>
+    <string name="nav_multi_stack_menu_3">Notification</string>
+    <string name="nav_multi_stack_sub_btn_1">Clear</string>
+    <string name="nav_multi_stack_sub_btn_2">Push Scene in Current Tab Stack</string>
+    <string name="nav_multi_stack_sub_btn_3">Push Scene in Parent Stack</string>
+    <string name="nav_activity_states_btn_1">Change the Background and Icon Color of the StatusBar</string>
+    <string name="nav_activity_states_btn_2">Custom Status Layout</string>
+    <string name="nav_activity_states_layout_btn_1">Extend the layout to the StatusBar and NavigationBar</string>
+    <string name="nav_activity_states_layout_btn_2">Toggle show/hid StatusBar and NavigationBar</string>
+    <string name="nav_ime_btn_1">Push Scene with mode: AdjustPan</string>
+    <string name="nav_ime_btn_2">Push Scene with mode: AdjustResize</string>
+    <string name="nav_ime_btn_3">Push Scene with mode: AdjustNothing</string>
+    <string name="nav_ime_btn_top">Just a Button</string>
+
+    <string name="part_dialog_btn_1">Dialog without Background Dim</string>
+    <string name="part_dialog_btn_2">Dialog with Background Dim</string>
+    <string name="part_dialog_btn_3">Bottom sheet Dialog (Todo)</string>
+    <string name="part_child_btn_1">Show/Hide Child Scene0</string>
+    <string name="part_child_btn_2">Show/Hide Child Scene0 with Animation</string>
+    <string name="part_child_btn_3">Add/Remove Child Scene0 with Animation</string>
+    <string name="part_inherited_tip">When the inherit level is deep, it is very difficult to share data between cross-level Scenes, so the InheritedScene and InheritedScene.of methods are provided directly to the nearest InheritedScene.</string>
+
+    <string name="anim_xml_tip_1">Enter Animation</string>
+    <string name="anim_xml_tip_2">Exit Animation</string>
+    <string name="anim_xml_btn">Push Scene</string>
+
+    <string name="anim_swipe_back_tip_1">Pop using Swipe Gesture</string>
+    <string name="anim_swipe_back_tip_2">Pop without using Swipe Gesture</string>
+    <string name="anim_ios_interaction_tip">Try Swipe Back</string>
+    <string name="anim_share_element_btn_0">Useless Button</string>
+    <string name="anim_share_element_btn_1">Push Scene</string>
+    <string name="anim_share_element_btn_2">Push Scene Clicked</string>
+
+    <string name="lifecycle_callback_tip">Lifecycle callback will output log in your logcat</string>
+
+    <string name="case_restore_tip">Toggle on the Don\'t keep activities switch in Develop Options,checking the states of checkbox is correct or not after destroy and restore.</string>
+    <string name="case_restore_checkbox">Please Click this Checkbox</string>
+    <string name="case_restore_toast_1">Startup in normal mode</string>
+    <string name="case_restore_toast_2">Startup in restore mode</string>
+    <string name="case_restore_toast_3">Restore success!</string>
+    <string name="case_restore_click">Total click: %1$d</string>
+
+    <string name="case_push_pop_btn_1">Push and Pop 100 times</string>
+    <string name="case_push_pop_btn_2">Push 100 times and Pop 100 times</string>
+    <string name="case_push_pop_btn_3">Push 100 times and Pop 99 times</string>
+    <string name="case_push_many_btn">Push 100 times</string>
+    <string name="case_pop_many_btn_1">Push 1 Scene, and Pop 100 times</string>
+    <string name="case_pop_many_btn_2">Push 1 Scene, and Pop 100 times using PopOptions</string>
+    <string name="case_pop_many_btn_3">Pop 100 times and Push 1 Scene after onStop()</string>
+    <string name="case_pop_many_toast_1">Press Home Key and back after 5 seconds</string>
+    <string name="case_pop_many_toast_2">Now you can get back</string>
+    <string name="case_remove_btn">If Remove Scene during animation, the animation will reset to the end State</string>
+    <string name="case_push_pop_lifecycle_btn_1">Push during method onCreateView() of Scene</string>
+    <string name="case_push_pop_lifecycle_btn_2">Pop during method onCreateView() of Scene</string>
+    <string name="case_group_scene_btn_1">Create GroupScene and its Children first, then add it</string>
+    <string name="case_group_scene_btn_2">Create GroupScene first, then Add/Remove by reusing</string>
+
 </resources>

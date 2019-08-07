@@ -1,4 +1,4 @@
-package com.bytedance.scenedemo;
+package com.bytedance.scenedemo.view;
 
 import android.content.Context;
 import android.support.annotation.Nullable;
@@ -17,10 +17,6 @@ public class TestLinearLayout extends LinearLayout {
 
     public TestLinearLayout(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-    }
-
-    public TestLinearLayout(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
-        super(context, attrs, defStyleAttr, defStyleRes);
     }
 
     @Override

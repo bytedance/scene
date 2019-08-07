@@ -7,34 +7,37 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bytedance.scene.Scene;
 import com.bytedance.scene.interfaces.PushOptions;
 import com.bytedance.scene.interfaces.PushResultCallback;
+import com.bytedance.scenedemo.R;
+import com.bytedance.scenedemo.utility.ColorUtil;
 
 /**
  * Created by JiangQi on 8/3/18.
  */
 public class SceneResultScene_0 extends Scene {
+
     @NonNull
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        LinearLayout layout = new LinearLayout(getActivity());
-        layout.setOrientation(LinearLayout.VERTICAL);
+    public ViewGroup onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        return (ViewGroup) inflater.inflate(R.layout.basic_layout, container, false);
+    }
 
-        TextView textView = new TextView(getActivity());
-        textView.setText(getNavigationScene().getStackHistory());
-        layout.addView(textView);
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        getView().setBackgroundColor(ColorUtil.getMaterialColor(getResources(), 1));
 
-        Button button = new Button(getActivity());
-        button.setText("现在是SceneResultScene_0，点击跳到 SceneResultScene_1 拿结果");
-        button.setAllCaps(false);
+        TextView name = getView().findViewById(R.id.name);
+        name.setText(getNavigationScene().getStackHistory());
 
-        layout.addView(button);
-        button.setOnClickListener(new View.OnClickListener() {
+        Button btn = getView().findViewById(R.id.btn);
+        btn.setText(getString(R.string.nav_result_scene_to_scene_btn_0));
+        btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 getNavigationScene().push(SceneResultScene_1.class, null, new PushOptions.Builder().setPushResultCallback(new PushResultCallback() {
@@ -48,15 +51,13 @@ public class SceneResultScene_0 extends Scene {
             }
         });
 
-        button = new Button(getActivity());
-        button.setText("现在是SceneResultScene_0，点击跳到 SceneResultScene_0 拿结果（PushSingleTop）");
-        button.setAllCaps(false);
-
-        layout.addView(button);
-        button.setOnClickListener(new View.OnClickListener() {
+        Button btn2 = getView().findViewById(R.id.btn2);
+        btn2.setVisibility(View.VISIBLE);
+        btn2.setText(getString(R.string.nav_result_scene_to_scene_btn_1));
+        btn2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getNavigationScene().push(SceneResultScene_1.class, null, new PushOptions.Builder().clearTask().setPushResultCallback(new PushResultCallback() {
+                getNavigationScene().push(SceneResultScene_0.class, null, new PushOptions.Builder().clearTask().setPushResultCallback(new PushResultCallback() {
                     @Override
                     public void onResult(@Nullable Object result) {
                         if (result != null) {
@@ -66,7 +67,5 @@ public class SceneResultScene_0 extends Scene {
                 }).build());
             }
         });
-
-        return layout;
     }
 }

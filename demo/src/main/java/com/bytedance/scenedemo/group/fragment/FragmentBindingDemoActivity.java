@@ -5,16 +5,15 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
-import com.bytedance.scene.SceneDelegate;
 import com.bytedance.scene.NavigationSceneAvailableCallback;
 import com.bytedance.scene.Scene;
 import com.bytedance.scene.SceneComponentFactory;
+import com.bytedance.scene.SceneDelegate;
 import com.bytedance.scene.interfaces.ChildSceneLifecycleAdapterCallbacks;
 import com.bytedance.scene.navigation.NavigationScene;
 import com.bytedance.scene.ui.NavigationSceneCompatUtility;
@@ -63,11 +62,8 @@ public class FragmentBindingDemoActivity extends AppCompatActivity {
 
                         }
                     }, false);
-                    Log.e("ddd", "sss");
                 }
             });
-            NavigationScene navigation = delegate.getNavigationScene();
-            Log.e("ddd", "sss");
         }
     }
 }

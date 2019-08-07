@@ -7,39 +7,34 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.bytedance.scene.Scene;
+import com.bytedance.scenedemo.R;
 import com.bytedance.scenedemo.utility.ColorUtil;
 
 /**
  * Created by JiangQi on 8/21/18.
  */
 public class WindowLayoutDemo extends Scene {
+
     @NonNull
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        LinearLayout layout = new LinearLayout(getActivity());
-        layout.setOrientation(LinearLayout.VERTICAL);
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.basic_layout, container, false);
+    }
 
-        Button button = new Button(getActivity());
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        getView().setBackgroundColor(ColorUtil.getMaterialColor(getResources(), 1));
 
-        button = new Button(getActivity());
-        button.setAllCaps(false);
-        button.setText("返回");
-        layout.addView(button);
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                getNavigationScene().pop();
-            }
-        });
+        TextView name = getView().findViewById(R.id.name);
+        name.setText(getNavigationScene().getStackHistory());
 
-        button = new Button(getActivity());
-        button.setAllCaps(false);
-        button.setText("布局扩展到状态栏和导航栏下面");
-        layout.addView(button);
-        button.setOnClickListener(new View.OnClickListener() {
+        Button btn = getView().findViewById(R.id.btn);
+        btn.setText(R.string.nav_activity_states_layout_btn_1);
+        btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 getActivity().getWindow().getDecorView().setSystemUiVisibility(getActivity().getWindow().getDecorView().getSystemUiVisibility()
@@ -48,11 +43,10 @@ public class WindowLayoutDemo extends Scene {
             }
         });
 
-        button = new Button(getActivity());
-        button.setAllCaps(false);
-        button.setText("隐藏状态栏和导航栏");
-        layout.addView(button);
-        button.setOnClickListener(new View.OnClickListener() {
+        Button btn2 = getView().findViewById(R.id.btn2);
+        btn2.setVisibility(View.VISIBLE);
+        btn2.setText(R.string.nav_activity_states_layout_btn_2);
+        btn2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 getActivity().getWindow().getDecorView().setSystemUiVisibility(getActivity().getWindow().getDecorView().getSystemUiVisibility()
@@ -60,13 +54,5 @@ public class WindowLayoutDemo extends Scene {
                         | View.SYSTEM_UI_FLAG_FULLSCREEN);
             }
         });
-
-        return layout;
-    }
-
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        getView().setBackgroundColor(ColorUtil.getMaterialColor(getResources(), 1));
     }
 }

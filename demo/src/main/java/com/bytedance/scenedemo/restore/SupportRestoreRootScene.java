@@ -11,11 +11,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 import com.bytedance.scene.Scene;
 import com.bytedance.scenedemo.R;
+import com.bytedance.scenedemo.utility.ColorUtil;
 
-/**
- * 打开开发者选项的不保留活动，然后进入页面，不停点击累加点击数，切到其他App，切回来
- * 看CheckBox和TextView显示是否正确，再点击，看是否累加数正确
- */
 public class SupportRestoreRootScene extends Scene {
     private CheckBox mCheckBox;
     private TextView mTextView;
@@ -32,6 +29,7 @@ public class SupportRestoreRootScene extends Scene {
         super.onViewCreated(view, savedInstanceState);
         mCheckBox = view.findViewById(R.id.checkbox);
         mTextView = view.findViewById(R.id.textview);
+        getView().setBackgroundColor(ColorUtil.getMaterialColor(getResources(), 0));
     }
 
     @Override
@@ -45,9 +43,9 @@ public class SupportRestoreRootScene extends Scene {
         super.onActivityCreated(savedInstanceState);
         String text = null;
         if (savedInstanceState != null) {
-            text = "销毁恢复启动";
+            text = getString(R.string.case_restore_toast_2);
         } else {
-            text = "正常启动";
+            text = getString(R.string.case_restore_toast_1);
         }
         Toast.makeText(requireActivity(), text, Toast.LENGTH_SHORT).show();
 
@@ -68,10 +66,10 @@ public class SupportRestoreRootScene extends Scene {
     @Override
     public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
         super.onViewStateRestored(savedInstanceState);
-        Toast.makeText(requireActivity(), "销毁恢复，View状态恢复完成", Toast.LENGTH_SHORT).show();
+        Toast.makeText(requireActivity(), R.string.case_restore_toast_3, Toast.LENGTH_SHORT).show();
     }
 
     private void showClickCount() {
-        mTextView.setText("总共点击次数: " + mClickCount);
+        mTextView.setText(getString(R.string.case_restore_click, mClickCount));
     }
 }

@@ -9,7 +9,9 @@ import com.bytedance.scene.navigation.NavigationScene;
 
 /**
  * Created by JiangQi on 11/6/18.
- * 演示怎么手动管理Scene的生命周期，用普通的View托管整个Scene
+ *
+ * Demonstrate how to manually manage the life cycle of Scene
+ * and host the entire Scene with normal View
  */
 public class TestSceneToViewActivity extends Activity {
     private TestSceneDelegateToViewView viewView;

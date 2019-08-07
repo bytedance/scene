@@ -13,8 +13,8 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
 import android.widget.Toast;
+
 import com.bytedance.scene.LifeCycleFrameLayout;
 import com.bytedance.scene.Scene;
 import com.bytedance.scene.SceneComponentFactory;
@@ -22,7 +22,7 @@ import com.bytedance.scene.Scope;
 import com.bytedance.scene.navigation.NavigationScene;
 import com.bytedance.scene.navigation.NavigationSceneOptions;
 import com.bytedance.scene.utlity.SceneInstanceUtility;
-import com.bytedance.scenedemo.MainListScene;
+import com.bytedance.scenedemo.group.EmptyScene;
 
 /**
  * Created by JiangQi on 11/6/18.
@@ -51,7 +51,7 @@ public class TestSceneDelegateToViewView extends LifeCycleFrameLayout {
     }
 
     private void init() {
-        NavigationSceneOptions options = new NavigationSceneOptions(MainListScene.class);
+        NavigationSceneOptions options = new NavigationSceneOptions(EmptyScene.class);
         options.setDrawWindowBackground(false);
         NavigationScene navigationScene = (NavigationScene) SceneInstanceUtility.getInstanceFromClass(NavigationScene.class,
                 options.toBundle());
@@ -59,7 +59,7 @@ public class TestSceneDelegateToViewView extends LifeCycleFrameLayout {
         setRootSceneComponentFactory(new SceneComponentFactory() {
             @Override
             public Scene instantiateScene(ClassLoader cl, String className, Bundle bundle) {
-                Toast.makeText(getContext(), "创建 " + className, Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "Create " + className, Toast.LENGTH_SHORT).show();
                 return null;
             }
         });

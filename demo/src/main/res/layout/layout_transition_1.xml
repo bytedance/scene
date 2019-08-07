@@ -11,14 +11,14 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:rotation="20"
-        android:text="按钮fjsdljflsdfsdfksjflsfksfj"
+        android:text="@string/anim_share_element_btn_2"
         android:transitionName="wo" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="top"
-        android:text="无关按钮" />
+        android:text="@string/anim_share_element_btn_0" />
 
     <FrameLayout
         android:layout_width="170dp"

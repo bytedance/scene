@@ -23,15 +23,15 @@
 
 
 
-    <style name="AppTheme.Test0">
+    <style name="AppTheme.Test1">
         <item name="android:windowBackground">@android:color/holo_orange_light</item>
     </style>
 
-    <style name="AppTheme.Test1">
+    <style name="AppTheme.Test2">
         <item name="android:windowBackground">@android:color/holo_green_light</item>
     </style>
 
-    <style name="AppTheme.Test2">
+    <style name="AppTheme.Test3">
         <item name="android:windowBackground">@android:color/holo_blue_light</item>
         <item name="testAttrNotFound">"testAttrNotFound"</item>
     </style>

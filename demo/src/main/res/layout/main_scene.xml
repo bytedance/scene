@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.bytedance.scenedemo.TestLinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.bytedance.scenedemo.view.TestLinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical">
 
     <com.bytedance.scene.ui.view.StatusBarView
@@ -14,12 +16,14 @@
         android:layout_height="wrap_content"
         android:background="@color/colorPrimary"
         android:minHeight="?attr/actionBarSize"
-        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
-
-    </android.support.design.widget.TabLayout>
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        app:tabTextColor="@color/white_87"
+        app:tabSelectedTextColor="@color/white"
+        app:tabTextAppearance="@android:style/TextAppearance.Widget.TabWidget"/>
 
     <android.support.v4.view.ViewPager
         android:id="@+id/vp"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"></android.support.v4.view.ViewPager>
-</com.bytedance.scenedemo.TestLinearLayout>
+        android:layout_height="match_parent"/>
+
+</com.bytedance.scenedemo.view.TestLinearLayout>

@@ -4,11 +4,11 @@
 
     <!-- animates strokeWidth of the outer ring-->
     <target
-        android:name="@string/circle"
+        android:name="@string/vd_circle"
         android:animation="@animator/change_width" />
 
     <!-- animates alpha of the outer ring-->
     <target
-        android:name="@string/circle"
+        android:name="@string/vd_circle"
         android:animation="@animator/change_alpha" />
 </animated-vector>

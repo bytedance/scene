@@ -7,84 +7,77 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bytedance.scene.Scene;
-import com.bytedance.scene.ui.template.AppCompatScene;
-import com.bytedance.scenedemo.MainListScene;
+import com.bytedance.scene.group.GroupScene;
+import com.bytedance.scenedemo.R;
 import com.bytedance.scenedemo.utility.ColorUtil;
 
 /**
  * Created by JiangQi on 8/7/18.
  */
-public class MultiStackTabChildScene extends AppCompatScene {
+public class MultiStackTabChildScene extends GroupScene {
 
-    private TextView lifecycleview;
+    private ViewGroup mRootView;
+    private TextView mLifecycleView;
 
-    @Nullable
+    @NonNull
     @Override
-    protected View onCreateContentView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        LinearLayout layout = new LinearLayout(getActivity());
-        layout.setOrientation(LinearLayout.VERTICAL);
-        layout.setBackgroundColor(ColorUtil.getMaterialColor(getResources(), getArguments().getInt("index")));
-
-        lifecycleview = new TextView(getActivity());
-        layout.addView(lifecycleview);
-
-        Button button = new Button(getActivity());
-        button.setAllCaps(false);
-        button.setText("Clear ");
-        layout.addView(button, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                lifecycleview.setText("");
-            }
-        });
-
-        button = new Button(getActivity());
-        button.setAllCaps(false);
-        button.setText("在当前Tab的Stack启动空白页面 ");
-        layout.addView(button, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                getNavigationScene().push(MainListScene.class);
-            }
-        });
-
-        button = new Button(getActivity());
-        button.setAllCaps(false);
-        button.setText("在整个Stack启动空白页面 ");
-        layout.addView(button, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                getParentScene().getNavigationScene().push(MainListScene.class);
-            }
-        });
-
-        return layout;
+    public ViewGroup onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        mRootView = (ViewGroup) inflater.inflate(R.layout.basic_layout, container, false);
+        return mRootView;
     }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        getToolbar().setNavigationIcon(null);
-        getToolbar().setTitle("" + getArguments().getInt("index"));
+        int index = (getArguments() == null ? 0 : getArguments().getInt("index"));
+        mRootView.setBackgroundColor(ColorUtil.getMaterialColor(getResources(), index));
+
+        mLifecycleView = getView().findViewById(R.id.name);
+        mLifecycleView.setText(getStateHistory());
+
+        Button btn = getView().findViewById(R.id.btn);
+        btn.setText(R.string.nav_multi_stack_sub_btn_1);
+        btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mLifecycleView.setText("");
+            }
+        });
+
+        Button btn2 = getView().findViewById(R.id.btn2);
+        btn2.setVisibility(View.VISIBLE);
+        btn2.setText(R.string.nav_multi_stack_sub_btn_2);
+        btn2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getNavigationScene().push(EmptyScene.class);
+            }
+        });
+
+        Button btn3 = getView().findViewById(R.id.btn3);
+        btn3.setVisibility(View.VISIBLE);
+        btn3.setText(R.string.nav_multi_stack_sub_btn_3);
+        btn3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getParentScene().getNavigationScene().push(EmptyScene.class);
+            }
+        });
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        lifecycleview.setText(getStateHistory());
+        mLifecycleView.setText(getStateHistory());
     }
 
     public static class EmptyScene extends Scene {
         @NonNull
         @Override
-        public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
             final View view = new View(getActivity());
             view.setBackgroundColor(ColorUtil.getMaterialColor(getResources(), 3));
             return view;

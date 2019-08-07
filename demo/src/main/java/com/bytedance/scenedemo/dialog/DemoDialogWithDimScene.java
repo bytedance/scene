@@ -20,13 +20,13 @@ import com.bytedance.scenedemo.utility.ColorUtil;
 public class DemoDialogWithDimScene extends Scene {
     @NonNull
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         FrameLayout layout = new FrameLayout(getActivity());
         layout.setBackgroundColor(Color.parseColor("#99000000"));
 
         TextView textView = new TextView(getActivity());
         textView.setText(getNavigationScene().getStackHistory());
-        textView.setBackgroundColor(ColorUtil.getMaterialColor(getResources(), 0));
+        textView.setBackgroundColor(ColorUtil.getMaterialColor(getResources(), 1));
         FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(600, 600);
         layoutParams.gravity = Gravity.CENTER;
 

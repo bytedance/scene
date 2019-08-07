@@ -7,46 +7,55 @@
 
     <Button
         android:id="@+id/btn_0"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="显示/隐藏第一个Child Scene" />
+        android:layout_width="match_parent"
+        android:layout_height="54dp"
+        android:textAllCaps="false"
+        android:layout_marginTop="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:text="@string/part_child_btn_1" />
 
     <Button
         android:id="@+id/btn_1"
+        android:layout_width="match_parent"
+        android:layout_height="54dp"
         android:textAllCaps="false"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="动画show/hide第一个Child Scene" />
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:text="@string/part_child_btn_2" />
 
     <Button
         android:id="@+id/btn_2"
+        android:layout_width="match_parent"
+        android:layout_height="54dp"
         android:textAllCaps="false"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="动画add/remove第一个Child Scene" />
+        android:layout_marginBottom="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:text="@string/part_child_btn_3" />
 
     <FrameLayout
         android:id="@+id/block_0"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"></FrameLayout>
+        android:layout_weight="1"/>
 
     <FrameLayout
         android:id="@+id/block_1"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"></FrameLayout>
+        android:layout_weight="1"/>
 
     <FrameLayout
         android:id="@+id/block_2"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"></FrameLayout>
+        android:layout_weight="1"/>
 
     <FrameLayout
         android:id="@+id/block_3"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"></FrameLayout>
+        android:layout_weight="1"/>
 
 </LinearLayout>

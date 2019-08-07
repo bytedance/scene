@@ -12,8 +12,9 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.bytedance.scene.Scene;
-import com.bytedance.scene.interfaces.ChildSceneLifecycleAdapterCallbacks;
 import com.bytedance.scene.group.GroupScene;
+import com.bytedance.scene.interfaces.ChildSceneLifecycleAdapterCallbacks;
+import com.bytedance.scenedemo.R;
 import com.bytedance.scenedemo.utility.ColorUtil;
 
 /**
@@ -24,14 +25,17 @@ public class Case4Scene extends GroupScene {
 
     @NonNull
     @Override
-    public ViewGroup onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public ViewGroup onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         LinearLayout layout = new LinearLayout(getActivity());
         layout.setOrientation(LinearLayout.VERTICAL);
 
         Button button = new Button(getActivity());
-        button.setText("Scene onCreateView的时候执行Push");
+        button.setText(R.string.case_push_pop_lifecycle_btn_1);
         button.setAllCaps(false);
-        layout.addView(button);
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 150);
+        lp.leftMargin = 20;
+        lp.rightMargin = 20;
+        layout.addView(button, lp);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -40,9 +44,12 @@ public class Case4Scene extends GroupScene {
         });
 
         button = new Button(getActivity());
-        button.setText("Scene onCreateView的时候执行Pop");
+        button.setText(R.string.case_push_pop_lifecycle_btn_2);
         button.setAllCaps(false);
-        layout.addView(button);
+        lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 150);
+        lp.leftMargin = 20;
+        lp.rightMargin = 20;
+        layout.addView(button, lp);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -55,7 +62,10 @@ public class Case4Scene extends GroupScene {
 
         mTextView = new TextView(requireActivity());
         ScrollView scrollView = new ScrollView(requireActivity());
-        scrollView.addView(mTextView);
+        lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        lp.leftMargin = 30;
+        lp.rightMargin = 30;
+        scrollView.addView(mTextView, lp);
 
         layout.addView(scrollView, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         getNavigationScene().registerChildSceneLifecycleCallbacks(mChildSceneLifecycleAdapterCallbacks, false);

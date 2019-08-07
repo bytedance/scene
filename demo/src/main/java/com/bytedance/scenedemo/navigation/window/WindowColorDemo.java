@@ -1,6 +1,5 @@
 package com.bytedance.scenedemo.navigation.window;
 
-import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -16,9 +15,10 @@ import com.bytedance.scenedemo.utility.ColorUtil;
  * Created by JiangQi on 8/21/18.
  */
 public class WindowColorDemo extends Scene {
+
     @NonNull
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         return new View(getActivity());
     }
 
@@ -27,8 +27,8 @@ public class WindowColorDemo extends Scene {
         super.onActivityCreated(savedInstanceState);
         getView().setBackgroundColor(ColorUtil.getMaterialColor(getResources(), 1));
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            getActivity().getWindow().setStatusBarColor(Color.RED);
-            getActivity().getWindow().setNavigationBarColor(Color.YELLOW);
+            getActivity().getWindow().setStatusBarColor(ColorUtil.getMaterialColor(getResources(), 2));
+            getActivity().getWindow().setNavigationBarColor(ColorUtil.getMaterialColor(getResources(), 3));
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {

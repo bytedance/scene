@@ -1,4 +1,4 @@
-package com.bytedance.scenedemo.navigation.pushandclear;
+package com.bytedance.scenedemo.navigation.softkeyboard;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -6,40 +6,38 @@ import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.Button;
-import android.widget.TextView;
 
-import com.bytedance.scene.Scene;
+import com.bytedance.scene.group.GroupScene;
 import com.bytedance.scenedemo.R;
 import com.bytedance.scenedemo.utility.ColorUtil;
 
-import org.jetbrains.annotations.NotNull;
-
 /**
- * Created by JiangQi on 8/2/18.
+ * Created by dss886 on 2019-08-06.
  */
-public class PushClearScene_1 extends Scene {
+public class EmptyNothingScene extends GroupScene {
 
     @NonNull
     @Override
-    public View onCreateView(@NotNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.basic_layout, container, false);
+    public ViewGroup onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        return (ViewGroup) inflater.inflate(R.layout.nav_ime_problems_layout, container, false);
     }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        if (getActivity() != null) {
+            getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING);
+        }
         getView().setBackgroundColor(ColorUtil.getMaterialColor(getResources(), 2));
 
-        TextView name = getView().findViewById(R.id.name);
-        name.setText(getNavigationScene().getStackHistory());
-
         Button btn = getView().findViewById(R.id.btn);
-        btn.setText(getString(R.string.nav_clear_task_btn_1));
+        btn.setText(R.string.nav_ime_btn_top);
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getNavigationScene().push(PushClearScene_2.class);
+                getNavigationScene().pop();
             }
         });
     }

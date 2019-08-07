@@ -5,38 +5,39 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bytedance.scene.group.GroupScene;
 import com.bytedance.scene.navigation.ConfigurationChangedListener;
+import com.bytedance.scenedemo.R;
 import com.bytedance.scenedemo.utility.ColorUtil;
 
 /**
  * Created by JiangQi on 9/4/18.
  */
 public class ConfigurationDemoScene extends GroupScene {
+
     @NonNull
     @Override
-    public ViewGroup onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        LinearLayout layout = new LinearLayout(getActivity());
-        layout.setOrientation(LinearLayout.VERTICAL);
-
-        layout.setBackgroundColor(ColorUtil.getMaterialColor(getResources(), 0));
-
-        Button button = new Button(getActivity());
-        button.setText("旋转屏幕");
-        layout.addView(button);
-
-        return layout;
+    public ViewGroup onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        return (ViewGroup) inflater.inflate(R.layout.basic_layout, container, false);
     }
-
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        getView().setBackgroundColor(ColorUtil.getMaterialColor(getResources(), 0));
+
+        TextView name = getView().findViewById(R.id.name);
+        name.setText(getString(R.string.nav_configuration_tip));
+
+        Button btn = getView().findViewById(R.id.btn);
+        btn.setVisibility(View.GONE);
+
         getNavigationScene().addConfigurationChangedListener(this, new ConfigurationChangedListener() {
             @Override
             public void onConfigurationChanged(Configuration newConfig) {

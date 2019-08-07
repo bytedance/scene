@@ -8,40 +8,42 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bytedance.scene.Scene;
+import com.bytedance.scenedemo.R;
+import com.bytedance.scenedemo.utility.ColorUtil;
 
 /**
  * Created by JiangQi on 8/3/18.
  */
 public class SceneResultScene_1 extends Scene {
+
     @NonNull
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        LinearLayout layout = new LinearLayout(getActivity());
-        layout.setOrientation(LinearLayout.VERTICAL);
+    public ViewGroup onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        return (ViewGroup) inflater.inflate(R.layout.basic_layout, container, false);
+    }
 
-        TextView textView = new TextView(getActivity());
-        textView.setText(getNavigationScene().getStackHistory());
-        layout.addView(textView);
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        getView().setBackgroundColor(ColorUtil.getMaterialColor(getResources(), 2));
 
-        final EditText editText = new EditText(getActivity());
-        editText.setText("1234");
-        layout.addView(editText);
+        TextView name = getView().findViewById(R.id.name);
+        name.setText(getNavigationScene().getStackHistory());
 
-        Button button = new Button(getActivity());
-        button.setText("SceneResultScene_1，点击设置输入框的数据");
-        button.setAllCaps(false);
-        layout.addView(button);
-        button.setOnClickListener(new View.OnClickListener() {
+        final EditText editText = getView().findViewById(R.id.edit_text);
+        editText.setVisibility(View.VISIBLE);
+        editText.setText(String.valueOf(1234));
+
+        Button btn = getView().findViewById(R.id.btn);
+        btn.setText(getString(R.string.nav_result_set_result_btn));
+        btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 getNavigationScene().setResult(SceneResultScene_1.this, editText.getText().toString());
             }
         });
-
-        return layout;
     }
 }

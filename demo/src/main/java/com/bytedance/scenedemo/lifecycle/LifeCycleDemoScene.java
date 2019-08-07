@@ -1,30 +1,25 @@
 package com.bytedance.scenedemo.lifecycle;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
-import com.bytedance.scene.ui.template.AppCompatScene;
-import com.bytedance.scenedemo.group.all.EmptyScene;
+import com.bytedance.scene.group.GroupScene;
+import com.bytedance.scenedemo.group.EmptyScene;
 
 /**
  * Created by JiangQi on 8/28/18.
- * <p>
- * //todo 我靠，万一ondestroy的时候操作add怎么办
- * <p>
- * <p>
- * 1，在各种生命周期里面反复find+add多次
- * 2，批量操作，里面添加重复tag，应该报错
  */
-public class LifeCycleDemoScene extends AppCompatScene {
+public class LifeCycleDemoScene extends GroupScene {
     FrameLayout frameLayout;
 
-    @Nullable
+    @NonNull
     @Override
-    protected View onCreateContentView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public ViewGroup onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
         frameLayout = new FrameLayout(getActivity());
         frameLayout.setId(View.generateViewId());

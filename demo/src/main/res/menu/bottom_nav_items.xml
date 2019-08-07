@@ -2,18 +2,18 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/menu_home"
-        android:title="主页"
+        android:title="@string/nav_multi_stack_menu_1"
         android:icon="@drawable/ic_home_black"
         />
 
     <item
         android:id="@+id/menu_search"
-        android:title="搜索"
+        android:title="@string/nav_multi_stack_menu_2"
         android:icon="@drawable/ic_search_black"
         />
 
     <item
         android:id="@+id/menu_notifications"
-        android:title="通知"
+        android:title="@string/nav_multi_stack_menu_3"
         android:icon="@drawable/ic_notifications_black" />
 </menu>

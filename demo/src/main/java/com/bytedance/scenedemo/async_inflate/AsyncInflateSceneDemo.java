@@ -23,7 +23,7 @@ public class AsyncInflateSceneDemo extends GroupScene {
 
     @NonNull
     @Override
-    public ViewGroup onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public ViewGroup onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         id = View.generateViewId();
 
         FrameLayout frameLayout = new FrameLayout(requireActivity());

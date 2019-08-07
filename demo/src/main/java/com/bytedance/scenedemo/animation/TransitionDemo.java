@@ -25,9 +25,10 @@ import com.bytedance.scenedemo.utility.ColorUtil;
  */
 @RequiresApi(api = Build.VERSION_CODES.O)
 public class TransitionDemo extends GroupScene {
+
     @NonNull
     @Override
-    public ViewGroup onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public ViewGroup onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         return (ViewGroup) inflater.inflate(R.layout.layout_transition_0, container, false);
     }
 
@@ -53,7 +54,7 @@ public class TransitionDemo extends GroupScene {
 
         @NonNull
         @Override
-        public ViewGroup onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        public ViewGroup onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
             return (ViewGroup) inflater.inflate(R.layout.layout_transition_1, container, false);
         }
 

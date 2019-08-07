@@ -2,36 +2,42 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+              android:fitsSystemWindows="true"
     android:orientation="vertical">
 
     <TextView
         android:id="@+id/summary"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="12dp"
+        android:layout_marginLeft="12dp"
+        android:layout_marginRight="12dp"
+        android:minHeight="60dp"
+        android:gravity="center_vertical"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:minHeight="50dp" />
+        android:layout_height="wrap_content"/>
 
     <FrameLayout
         android:id="@+id/block_0"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"></FrameLayout>
+        android:layout_weight="1"/>
 
     <FrameLayout
         android:id="@+id/block_1"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"></FrameLayout>
+        android:layout_weight="1"/>
 
     <FrameLayout
         android:id="@+id/block_2"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"></FrameLayout>
+        android:layout_weight="1"/>
 
     <FrameLayout
         android:id="@+id/block_3"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"></FrameLayout>
+        android:layout_weight="1"/>
 
 </LinearLayout>

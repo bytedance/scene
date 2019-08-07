@@ -6,32 +6,38 @@ import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bytedance.scene.Scene;
 import com.bytedance.scene.navigation.OnBackPressedListener;
+import com.bytedance.scenedemo.R;
+import com.bytedance.scenedemo.utility.ColorUtil;
 
 import java.util.concurrent.TimeUnit;
 
 /**
  * Created by JiangQi on 8/3/18.
  */
-public class PopInteruptScene_0 extends Scene {
+public class PopInterruptScene extends Scene {
+
     @NonNull
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        LinearLayout layout = new LinearLayout(getActivity());
-        layout.setOrientation(LinearLayout.VERTICAL);
+    public ViewGroup onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        return (ViewGroup) inflater.inflate(R.layout.basic_layout, container, false);
+    }
 
-        TextView textView = new TextView(getActivity());
-        textView.setText(getNavigationScene().getStackHistory());
-        layout.addView(textView);
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        getView().setBackgroundColor(ColorUtil.getMaterialColor(getResources(), 0));
 
-        textView = new TextView(getActivity());
-        textView.setText("拦截返回弹Toast");
-        layout.addView(textView);
+        TextView name = getView().findViewById(R.id.name);
+        name.setText(getNavigationScene().getStackHistory());
+
+        Button btn = getView().findViewById(R.id.btn);
+        btn.setVisibility(View.GONE);
 
         getNavigationScene().addOnBackPressedListener(this, new OnBackPressedListener() {
 
@@ -40,14 +46,12 @@ public class PopInteruptScene_0 extends Scene {
             @Override
             public boolean onBackPressed() {
                 if (time == 0 || TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis() - time) > 2) {
-                    Toast.makeText(getActivity(), "再按一次返回", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), getString(R.string.nav_interrupt_tip), Toast.LENGTH_SHORT).show();
                     time = System.currentTimeMillis();
                     return true;
                 }
                 return false;
             }
         });
-
-        return layout;
     }
 }

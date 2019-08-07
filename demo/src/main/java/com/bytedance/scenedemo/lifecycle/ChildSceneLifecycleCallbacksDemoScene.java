@@ -13,6 +13,7 @@ import android.widget.TextView;
 import com.bytedance.scene.Scene;
 import com.bytedance.scene.interfaces.ChildSceneLifecycleCallbacks;
 import com.bytedance.scene.group.GroupScene;
+import com.bytedance.scenedemo.R;
 import com.bytedance.scenedemo.utility.ColorUtil;
 
 /**
@@ -21,12 +22,12 @@ import com.bytedance.scenedemo.utility.ColorUtil;
 public class ChildSceneLifecycleCallbacksDemoScene extends GroupScene {
     @NonNull
     @Override
-    public ViewGroup onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public ViewGroup onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         LinearLayout layout = new LinearLayout(getActivity());
         layout.setOrientation(LinearLayout.VERTICAL);
 
         TextView textView = new TextView(getActivity());
-        textView.setText(getNavigationScene().getStackHistory());
+        textView.setText(R.string.lifecycle_callback_tip);
         layout.addView(textView);
 
         textView.setOnClickListener(new View.OnClickListener() {
@@ -58,7 +59,7 @@ public class ChildSceneLifecycleCallbacksDemoScene extends GroupScene {
     public static class EmptyScene0 extends Scene {
         @NonNull
         @Override
-        public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
             LinearLayout layout = new LinearLayout(getActivity());
             layout.setOrientation(LinearLayout.VERTICAL);
 
@@ -84,7 +85,7 @@ public class ChildSceneLifecycleCallbacksDemoScene extends GroupScene {
     public static class EmptyScene1 extends Scene {
         @NonNull
         @Override
-        public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
             LinearLayout layout = new LinearLayout(getActivity());
             layout.setOrientation(LinearLayout.VERTICAL);
 

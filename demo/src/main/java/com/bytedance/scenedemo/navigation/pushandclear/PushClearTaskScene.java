@@ -1,4 +1,4 @@
-package com.bytedance.scenedemo.navigation.popto;
+package com.bytedance.scenedemo.navigation.pushandclear;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -16,39 +16,31 @@ import com.bytedance.scenedemo.utility.ColorUtil;
 /**
  * Created by JiangQi on 8/2/18.
  */
-public class PopToScene_2 extends Scene {
+public class PushClearTaskScene extends Scene {
 
     @NonNull
     @Override
-    public ViewGroup onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return (ViewGroup) inflater.inflate(R.layout.basic_layout, container, false);
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.basic_layout, container, false);
     }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        getView().setBackgroundColor(ColorUtil.getMaterialColor(getResources(), 3));
+        getView().setBackgroundColor(ColorUtil.getMaterialColor(getResources(), 0));
 
         TextView name = getView().findViewById(R.id.name);
         name.setText(getNavigationScene().getStackHistory());
 
         Button btn = getView().findViewById(R.id.btn);
-        btn.setText(getString(R.string.nav_pop_to_btn_back0));
+        btn.setText(R.string.nav_clear_task_btn_root);
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getNavigationScene().popTo(PopToScene_0.class);
-            }
-        });
-
-        Button btn2 = getView().findViewById(R.id.btn2);
-        btn2.setVisibility(View.VISIBLE);
-        btn2.setText(getString(R.string.nav_pop_to_btn_to_bottom));
-        btn2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                getNavigationScene().popToRoot();
+                getNavigationScene().push(PushClearScene_0.class);
             }
         });
     }
+
 }
+
