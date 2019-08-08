@@ -402,6 +402,7 @@ public abstract class Scene implements LifecycleOwner, ViewModelStoreOwner {
     @RestrictTo(LIBRARY_GROUP)
     public void dispatchDetachScene() {
         this.mParentScene = null;
+        this.mNavigationScene = null;
     }
 
     /** @hide */
