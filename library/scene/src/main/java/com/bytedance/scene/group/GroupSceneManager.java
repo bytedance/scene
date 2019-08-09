@@ -785,13 +785,10 @@ class GroupSceneManager {
         }
     }
 
-    //modifyViewHierarchy，因为GroupScene自己生命周期引发的同步Child状态时候是false
-    //其他情况下是true，需要修改View属性，比如添加删除，显示隐藏View
-    //原因在于，Pop动画，如果因为生命周期引发的同步移除了View，那么Pop动画就没法看了，因为View都被移除了
-    //同样是到CREATED，手动的remove必须移除View，但是Pop parent引发的，必须View还在
-
-    //原则上，从低到高，那么必须走完流程设置状态
-    //从高到底，第一个方法就应该设置好状态
+    /**
+     * child Scene state will be changed by parent GroupScene add/remove/show/hide operation or sync from parent GroupScene
+     * lifecycle, the former modifyViewHierarchy value is true, the latter modifyViewHierarchy value is false
+     */
     private static void moveState(@NonNull GroupScene groupScene,
                                   @NonNull Scene scene, @NonNull State to,
                                   boolean modifyViewHierarchy,
@@ -869,8 +866,9 @@ class GroupSceneManager {
                     scene.dispatchDestroyView();
                     if (modifyViewHierarchy) {
                         /*
-                         * We don't want to remove all the View all when in the stop() triggered by the life cycle.
-                         * Otherwise, Pop animation will be hard to see.
+                         * case 1: Scene is removed from parent GroupScene, we should remove its view from parent's view hierarchy
+                         * case 2: Parent GroupScene is pop from grandparent NavigationScene, this child Scene's state will sync to
+                         * destroy state, but its view should not be removed, otherwise, pop animation will be hard to see.
                          */
                         Utility.removeFromParentView(view);
                     }
