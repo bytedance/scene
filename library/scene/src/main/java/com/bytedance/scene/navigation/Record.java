@@ -29,13 +29,12 @@ class Record implements Parcelable {
     @Nullable
     PushResultCallback mPushResultCallback;
 
-    String className;
+    String mSceneClassName;
 
     protected Record(Parcel in) {
         mActivityStatusRecord = in.readParcelable(ActivityStatusRecord.class.getClassLoader());
         mIsTranslucent = in.readByte() != 0;
-
-        className = in.readString();
+        mSceneClassName = in.readString();
     }
 
     public static final Creator<Record> CREATOR = new Creator<Record>() {
@@ -57,6 +56,7 @@ class Record implements Parcelable {
     public static Record newInstance(Scene scene, boolean isTranslucent, NavigationAnimationExecutor navigationAnimationExecutor) {
         Record record = new Record();
         record.mScene = scene;
+        record.mSceneClassName = scene.getClass().getName();
         record.mIsTranslucent = isTranslucent;
         record.mNavigationAnimationExecutor = navigationAnimationExecutor;
         return record;
@@ -79,6 +79,6 @@ class Record implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeParcelable(mActivityStatusRecord, flags);
         dest.writeByte((byte) (mIsTranslucent ? 1 : 0));
-        dest.writeString(mScene.getClass().getName());
+        dest.writeString(mSceneClassName);
     }
 }
