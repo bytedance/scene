@@ -39,7 +39,7 @@ import com.bytedance.scene.utlity.ThreadUtility;
 import com.bytedance.scene.utlity.Utility;
 import com.bytedance.scene.view.NavigationFrameLayout;
 import com.bytedance.scene.view.NoneTouchFrameLayout;
-import com.ixigua.scene.R;
+import com.bytedance.scene.R;
 
 import java.util.ArrayList;
 import java.util.List;

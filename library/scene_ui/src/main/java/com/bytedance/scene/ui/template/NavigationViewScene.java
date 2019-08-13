@@ -17,7 +17,7 @@ import android.view.ViewGroup;
 import com.bytedance.scene.Scene;
 import com.bytedance.scene.group.GroupScene;
 import com.bytedance.scene.ui.GroupSceneUtility;
-import com.ixigua.scene.ui.R;
+import com.bytedance.scene.ui.R;
 
 /**
  * Created by JiangQi on 8/24/18.

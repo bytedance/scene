@@ -16,7 +16,7 @@ import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.View;
 
-import com.ixigua.scene.ui.R;
+import com.bytedance.scene.ui.R;
 
 /**
  * Created by JiangQi on 8/28/18.

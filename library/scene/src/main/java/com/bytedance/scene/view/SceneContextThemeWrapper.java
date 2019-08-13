@@ -9,7 +9,7 @@ import android.os.Build;
 import android.support.annotation.RestrictTo;
 import android.support.annotation.StyleRes;
 import android.view.LayoutInflater;
-import com.ixigua.scene.R;
+import com.bytedance.scene.R;
 
 import static android.support.annotation.RestrictTo.Scope.LIBRARY_GROUP;
 

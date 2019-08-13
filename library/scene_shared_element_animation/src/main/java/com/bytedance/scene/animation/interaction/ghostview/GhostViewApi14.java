@@ -11,7 +11,7 @@ import android.view.ViewGroup;
 import android.view.ViewParent;
 import android.view.ViewTreeObserver;
 import android.widget.FrameLayout;
-import com.ixigua.scene.shared_element_animation.R;
+import com.bytedance.scene.shared_element_animation.R;
 
 /**
  * Backport of android.view.GhostView introduced in API level 21.
