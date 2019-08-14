@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -124,7 +125,8 @@ public class LifeCycleCompatFragment extends Fragment implements NavigationScene
     //developer may not invoke NavigationSceneCompatUtility.setupWithFragment which will clean unused LifeCycleCompatFragment when app is restored,
     //for example Activity.finish()+return, at this moment, we should clean LifeCycleCompatFragment
     private void removeSelfWhenNavigationSceneUtilityIsNotInvoked() {
-        getFragmentManager().beginTransaction().remove(LifeCycleCompatFragment.this).commitAllowingStateLoss();
+        FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction().remove(LifeCycleCompatFragment.this);
+        FragmentUtility.commitFragment(fragmentTransaction, false);
         mRemoveSelf = true;
     }
 

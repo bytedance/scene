@@ -1,6 +1,8 @@
 package com.bytedance.scene.utlity;
 
 import android.app.Activity;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.Context;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
@@ -20,7 +22,10 @@ import static android.support.annotation.RestrictTo.Scope.LIBRARY_GROUP;
 /**
  * Created by JiangQi on 7/30/18.
  */
-/** @hide */
+
+/**
+ * @hide
+ */
 @RestrictTo(LIBRARY_GROUP)
 public class Utility {
     public static Drawable getWindowBackground(Context context) {
@@ -142,5 +147,20 @@ public class Utility {
         if (obj == null)
             throw new NullPointerException(message);
         return obj;
+    }
+
+    public static void commitFragment(@NonNull FragmentManager fragmentManager, @NonNull FragmentTransaction transaction, boolean commitNow) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            if (commitNow) {
+                transaction.commitNowAllowingStateLoss();
+            } else {
+                transaction.commitAllowingStateLoss();
+            }
+        } else {
+            transaction.commitAllowingStateLoss();
+            if (commitNow) {
+                fragmentManager.executePendingTransactions();
+            }
+        }
     }
 }

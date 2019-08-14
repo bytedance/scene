@@ -13,6 +13,7 @@ import com.bytedance.scene.navigation.NavigationScene;
 import com.bytedance.scene.navigation.NavigationSceneOptions;
 import com.bytedance.scene.utlity.SceneInstanceUtility;
 import com.bytedance.scene.utlity.ThreadUtility;
+import com.bytedance.scene.utlity.Utility;
 
 import java.util.HashSet;
 import java.util.WeakHashMap;
@@ -64,7 +65,7 @@ public class NavigationSceneUtility {
                                                   @Nullable SceneComponentFactory rootSceneComponentFactory,
                                                   final boolean supportRestore) {
         return setupWithActivity(activity, idRes, savedInstanceState, navigationSceneOptions,
-                rootSceneComponentFactory, supportRestore, LIFE_CYCLE_FRAGMENT_TAG);
+                rootSceneComponentFactory, supportRestore, LIFE_CYCLE_FRAGMENT_TAG, true);
     }
 
     @NonNull
@@ -74,7 +75,8 @@ public class NavigationSceneUtility {
                                                   @NonNull NavigationSceneOptions navigationSceneOptions,
                                                   @Nullable SceneComponentFactory rootSceneComponentFactory,
                                                   final boolean supportRestore,
-                                                  @NonNull String tag) {
+                                                  @NonNull String tag,
+                                                  boolean immediate) {
         ThreadUtility.checkUIThread();
         if (tag == null) {
             throw new IllegalArgumentException("tag cant be null");
@@ -86,14 +88,13 @@ public class NavigationSceneUtility {
         if (lifeCycleFragment != null && !supportRestore) {
             FragmentTransaction transaction = fragmentManager.beginTransaction();
             transaction.remove(lifeCycleFragment);
-            commitFragment(transaction);
-            fragmentManager.executePendingTransactions();
+            Utility.commitFragment(fragmentManager, transaction, immediate);
             lifeCycleFragment = null;
         }
 
         ScopeHolderFragment targetScopeHolderFragment = null;
         if (lifeCycleFragment != null) {
-            final ScopeHolderFragment scopeHolderFragment = ScopeHolderFragment.install(activity, tag, false);
+            final ScopeHolderFragment scopeHolderFragment = ScopeHolderFragment.install(activity, tag, false, immediate);
             lifeCycleFragment.setRootScopeFactory(new Scope.RootScopeFactory() {
                 @Override
                 public Scope getRootScope() {
@@ -108,7 +109,7 @@ public class NavigationSceneUtility {
             transaction.add(idRes, lifeCycleFragment, tag);
             final NavigationScene navigationScene = (NavigationScene) SceneInstanceUtility.getInstanceFromClass(NavigationScene.class,
                     navigationSceneOptions.toBundle());
-            final ScopeHolderFragment scopeHolderFragment = ScopeHolderFragment.install(activity, tag, !supportRestore);
+            final ScopeHolderFragment scopeHolderFragment = ScopeHolderFragment.install(activity, tag, !supportRestore, immediate);
             lifeCycleFragment.setNavigationScene(navigationScene, new Scope.RootScopeFactory() {
                 @Override
                 public Scope getRootScope() {
@@ -116,11 +117,10 @@ public class NavigationSceneUtility {
                 }
             });
             lifeCycleFragment.setRootSceneComponentFactory(rootSceneComponentFactory);
-            commitFragment(transaction);
-            fragmentManager.executePendingTransactions();
+            Utility.commitFragment(fragmentManager, transaction, immediate);
             targetScopeHolderFragment = scopeHolderFragment;
         }
-        final LifeCycleFragmentSceneDelegate delegate = new LifeCycleFragmentSceneDelegate(activity, lifeCycleFragment, targetScopeHolderFragment);
+        final LifeCycleFragmentSceneDelegate delegate = new LifeCycleFragmentSceneDelegate(activity, lifeCycleFragment, targetScopeHolderFragment, immediate);
         lifeCycleFragment.setNavigationSceneAvailableCallback(new NavigationSceneAvailableCallback() {
             @Override
             public void onNavigationSceneAvailable(@NonNull NavigationScene navigationScene) {
@@ -145,13 +145,5 @@ public class NavigationSceneUtility {
 
     static void removeTag(@NonNull Activity activity, @NonNull String tag) {
         CHECK_DUPLICATE_TAG_MAP.get(activity).remove(tag);
-    }
-
-    private static void commitFragment(FragmentTransaction transaction) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            transaction.commitNowAllowingStateLoss();
-        } else {
-            transaction.commitAllowingStateLoss();
-        }
     }
 }

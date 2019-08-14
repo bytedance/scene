@@ -3,11 +3,11 @@ package com.bytedance.scene;
 import android.app.Activity;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
-import android.os.Build;
 import android.support.annotation.NonNull;
 
 import android.support.annotation.Nullable;
 import com.bytedance.scene.navigation.NavigationScene;
+import com.bytedance.scene.utlity.Utility;
 
 /**
  * Created by JiangQi on 9/11/18.
@@ -16,15 +16,18 @@ final class LifeCycleFragmentSceneDelegate implements SceneDelegate, NavigationS
     private final Activity mActivity;
     private final LifeCycleFragment mLifeCycleFragment;
     private final ScopeHolderFragment mScopeHolderFragment;
+    private final Boolean mImmediate;
 
     private NavigationScene mNavigationScene;
     private NavigationSceneAvailableCallback mNavigationSceneAvailableCallback;
     private boolean mAbandoned = false;
 
-    LifeCycleFragmentSceneDelegate(@NonNull Activity activity, @NonNull LifeCycleFragment lifeCycleFragment, @NonNull ScopeHolderFragment scopeHolderFragment) {
+    LifeCycleFragmentSceneDelegate(@NonNull Activity activity, @NonNull LifeCycleFragment lifeCycleFragment, @NonNull ScopeHolderFragment scopeHolderFragment,
+                                   boolean immediate) {
         this.mActivity = activity;
         this.mLifeCycleFragment = lifeCycleFragment;
         this.mScopeHolderFragment = scopeHolderFragment;
+        this.mImmediate = immediate;
     }
 
     @Override
@@ -64,19 +67,19 @@ final class LifeCycleFragmentSceneDelegate implements SceneDelegate, NavigationS
             return;
         }
         this.mAbandoned = true;
-        this.mLifeCycleFragment.setLifecycleFragmentDetachCallback(new LifeCycleFragment.LifecycleFragmentDetachCallback() {
-            @Override
-            public void onDetach() {
-                NavigationSceneUtility.removeTag(mActivity, mLifeCycleFragment.getTag());
-            }
-        });
         FragmentManager fragmentManager = mActivity.getFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction().remove(this.mLifeCycleFragment).remove(this.mScopeHolderFragment);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            fragmentTransaction.commitNowAllowingStateLoss();
+        if (this.mImmediate) {
+            this.mLifeCycleFragment.setLifecycleFragmentDetachCallback(new LifeCycleFragment.LifecycleFragmentDetachCallback() {
+                @Override
+                public void onDetach() {
+                    NavigationSceneUtility.removeTag(mActivity, mLifeCycleFragment.getTag());
+                }
+            });
+            Utility.commitFragment(fragmentManager, fragmentTransaction, true);
         } else {
-            fragmentTransaction.commitAllowingStateLoss();
-            fragmentManager.executePendingTransactions();
+            Utility.commitFragment(fragmentManager, fragmentTransaction, false);
+            NavigationSceneUtility.removeTag(mActivity, mLifeCycleFragment.getTag());
         }
     }
 }

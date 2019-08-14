@@ -6,15 +6,20 @@ import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.RestrictTo;
+import com.bytedance.scene.utlity.Utility;
 
 import static android.support.annotation.RestrictTo.Scope.LIBRARY_GROUP;
 
 /**
  * Created by JiangQi on 9/12/18.
  */
-/** @hide */
+
+/**
+ * @hide
+ */
 @RestrictTo(LIBRARY_GROUP)
 public class ScopeHolderFragment extends Fragment {
     private static final String TAG = "ScopeHolderFragment";
@@ -30,15 +35,15 @@ public class ScopeHolderFragment extends Fragment {
         setRetainInstance(true);
     }
 
-    public static ScopeHolderFragment install(Activity activity, String tag, boolean forceCreate) {
+    @NonNull
+    public static ScopeHolderFragment install(@NonNull Activity activity, @NonNull String tag, boolean forceCreate, boolean immediate) {
         String fragmentTag = tag + "_" + TAG;
         FragmentManager fragmentManager = activity.getFragmentManager();
         ScopeHolderFragment holderFragment = (ScopeHolderFragment) fragmentManager.findFragmentByTag(fragmentTag);
         if (holderFragment != null && forceCreate) {
             FragmentTransaction transaction = fragmentManager.beginTransaction();
             transaction.remove(holderFragment);
-            commitFragment(transaction);
-            fragmentManager.executePendingTransactions();
+            Utility.commitFragment(fragmentManager, transaction, immediate);
             holderFragment = null;
         }
 
@@ -46,19 +51,10 @@ public class ScopeHolderFragment extends Fragment {
             holderFragment = ScopeHolderFragment.newInstance();
             FragmentTransaction transaction = fragmentManager.beginTransaction();
             transaction.add(holderFragment, fragmentTag);
-            commitFragment(transaction);
-            fragmentManager.executePendingTransactions();
+            Utility.commitFragment(fragmentManager, transaction, immediate);
         }
 
         return holderFragment;
-    }
-
-    private static void commitFragment(FragmentTransaction transaction) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            transaction.commitNowAllowingStateLoss();
-        } else {
-            transaction.commitAllowingStateLoss();
-        }
     }
 
     public Scope getRootScope() {

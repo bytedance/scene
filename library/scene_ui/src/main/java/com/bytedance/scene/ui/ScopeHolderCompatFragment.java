@@ -1,6 +1,7 @@
 package com.bytedance.scene.ui;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -22,15 +23,15 @@ public class ScopeHolderCompatFragment extends Fragment {
         setRetainInstance(true);
     }
 
-    public static ScopeHolderCompatFragment install(Fragment fragment, String tag, boolean forceCreate) {
+    @NonNull
+    public static ScopeHolderCompatFragment install(@NonNull Fragment fragment, @NonNull String tag, boolean forceCreate, boolean immediate) {
         String fragmentTag = tag + "_" + TAG;
         FragmentManager fragmentManager = fragment.getChildFragmentManager();
         ScopeHolderCompatFragment holderFragment = (ScopeHolderCompatFragment) fragmentManager.findFragmentByTag(fragmentTag);
         if (holderFragment != null && forceCreate) {
             FragmentTransaction transaction = fragmentManager.beginTransaction();
             transaction.remove(holderFragment);
-            commitFragment(transaction);
-            fragmentManager.executePendingTransactions();
+            FragmentUtility.commitFragment(transaction, immediate);
             holderFragment = null;
         }
 
@@ -38,15 +39,10 @@ public class ScopeHolderCompatFragment extends Fragment {
             holderFragment = ScopeHolderCompatFragment.newInstance();
             FragmentTransaction transaction = fragmentManager.beginTransaction();
             transaction.add(holderFragment, fragmentTag);
-            commitFragment(transaction);
-            fragmentManager.executePendingTransactions();
+            FragmentUtility.commitFragment(transaction, immediate);
         }
 
         return holderFragment;
-    }
-
-    private static void commitFragment(FragmentTransaction transaction) {
-        transaction.commitNowAllowingStateLoss();
     }
 
     public Scope getRootScope() {

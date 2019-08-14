@@ -1,6 +1,8 @@
 package com.bytedance.scene;
 
 import android.app.Fragment;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -15,6 +17,7 @@ import android.widget.FrameLayout;
 import com.bytedance.scene.navigation.NavigationScene;
 import com.bytedance.scene.utlity.SceneInstanceUtility;
 import com.bytedance.scene.utlity.SceneInternalException;
+import com.bytedance.scene.utlity.Utility;
 
 import static android.support.annotation.RestrictTo.Scope.LIBRARY_GROUP;
 
@@ -148,7 +151,9 @@ public class LifeCycleFragment extends Fragment implements NavigationScene.Navig
     //developer may not invoke NavigationSceneUtility.setupWithActivity which will clean unused LifeCycleFragment in Activity onCreate() when app is restored,
     //for example Activity.finish()+return, at this moment, we should clean LifeCycleFragment
     private void removeSelfWhenNavigationSceneUtilityIsNotInvoked() {
-        getActivity().getFragmentManager().beginTransaction().remove(LifeCycleFragment.this).commitAllowingStateLoss();
+        FragmentManager fragmentManager = getActivity().getFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction().remove(LifeCycleFragment.this);
+        Utility.commitFragment(fragmentManager, fragmentTransaction, false);
         mRemoveSelf = true;
     }
 

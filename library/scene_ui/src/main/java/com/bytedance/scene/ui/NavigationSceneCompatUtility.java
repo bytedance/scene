@@ -75,7 +75,7 @@ public class NavigationSceneCompatUtility {
                                                   @Nullable SceneComponentFactory rootSceneComponentFactory,
                                                   final boolean supportRestore) {
         return setupWithFragment(fragment, containerId, savedInstanceState, navigationSceneOptions,
-                rootSceneComponentFactory, supportRestore, LIFE_CYCLE_FRAGMENT_TAG);
+                rootSceneComponentFactory, supportRestore, LIFE_CYCLE_FRAGMENT_TAG, true);
     }
 
     @NonNull
@@ -85,7 +85,8 @@ public class NavigationSceneCompatUtility {
                                                   @NonNull NavigationSceneOptions navigationSceneOptions,
                                                   @Nullable SceneComponentFactory rootSceneComponentFactory,
                                                   final boolean supportRestore,
-                                                  @NonNull final String tag) {
+                                                  @NonNull final String tag,
+                                                  final boolean immediate) {
         ThreadUtility.checkUIThread();
         if (tag == null) {
             throw new IllegalArgumentException("tag cant be null");
@@ -97,14 +98,13 @@ public class NavigationSceneCompatUtility {
         if (lifeCycleFragment != null && !supportRestore) {
             FragmentTransaction transaction = fragmentManager.beginTransaction();
             transaction.remove(lifeCycleFragment);
-            transaction.commitNowAllowingStateLoss();
-            fragmentManager.executePendingTransactions();
+            FragmentUtility.commitFragment(transaction, immediate);
             lifeCycleFragment = null;
         }
 
         ScopeHolderCompatFragment targetScopeHolderFragment = null;
         if (lifeCycleFragment != null) {
-            final ScopeHolderCompatFragment scopeHolderFragment = ScopeHolderCompatFragment.install(fragment, tag, false);
+            final ScopeHolderCompatFragment scopeHolderFragment = ScopeHolderCompatFragment.install(fragment, tag, false, immediate);
             lifeCycleFragment.setRootScopeFactory(new Scope.RootScopeFactory() {
                 @Override
                 public Scope getRootScope() {
@@ -118,15 +118,14 @@ public class NavigationSceneCompatUtility {
             transaction.add(containerId, lifeCycleFragment, tag);
             final NavigationScene navigationScene = (NavigationScene) SceneInstanceUtility.getInstanceFromClass(NavigationScene.class,
                     navigationSceneOptions.toBundle());
-            final ScopeHolderCompatFragment scopeHolderFragment = ScopeHolderCompatFragment.install(fragment, tag, !supportRestore);
+            final ScopeHolderCompatFragment scopeHolderFragment = ScopeHolderCompatFragment.install(fragment, tag, !supportRestore, immediate);
             lifeCycleFragment.setNavigationScene(navigationScene, new Scope.RootScopeFactory() {
                 @Override
                 public Scope getRootScope() {
                     return scopeHolderFragment.getRootScope();
                 }
             });
-            transaction.commitNowAllowingStateLoss();
-            fragmentManager.executePendingTransactions();
+            FragmentUtility.commitFragment(transaction, immediate);
             targetScopeHolderFragment = scopeHolderFragment;
         }
 
@@ -156,18 +155,24 @@ public class NavigationSceneCompatUtility {
                     return;
                 }
                 this.mAbandoned = true;
-                fragmentManager.registerFragmentLifecycleCallbacks(new FragmentManager.FragmentLifecycleCallbacks() {
-                    @Override
-                    public void onFragmentDetached(FragmentManager fm, Fragment f) {
-                        super.onFragmentDetached(fm, f);
-                        if (f != finalLifeCycleFragment) {
-                            return;
+                FragmentTransaction transaction = fragmentManager.beginTransaction().remove(finalLifeCycleFragment).remove(finalTargetScopeHolderFragment);
+                if (immediate) {
+                    fragmentManager.registerFragmentLifecycleCallbacks(new FragmentManager.FragmentLifecycleCallbacks() {
+                        @Override
+                        public void onFragmentDetached(FragmentManager fm, Fragment f) {
+                            super.onFragmentDetached(fm, f);
+                            if (f != finalLifeCycleFragment) {
+                                return;
+                            }
+                            fragmentManager.unregisterFragmentLifecycleCallbacks(this);
+                            CHECK_DUPLICATE_TAG_MAP.get(fragment).remove(tag);
                         }
-                        fragmentManager.unregisterFragmentLifecycleCallbacks(this);
-                        CHECK_DUPLICATE_TAG_MAP.get(fragment).remove(tag);
-                    }
-                }, false);
-                fragmentManager.beginTransaction().remove(finalLifeCycleFragment).remove(finalTargetScopeHolderFragment).commitNowAllowingStateLoss();
+                    }, false);
+                    FragmentUtility.commitFragment(transaction, true);
+                } else {
+                    FragmentUtility.commitFragment(transaction, false);
+                    CHECK_DUPLICATE_TAG_MAP.get(fragment).remove(tag);
+                }
             }
         };
         finalLifeCycleFragment.setNavigationSceneAvailableCallback(new NavigationSceneAvailableCallback() {
