@@ -324,6 +324,9 @@ class GroupSceneManager {
 
     public void remove(Scene scene, AnimationOrAnimatorFactory animationOrAnimatorFactory) {
         checkStateChange(scene);
+        if (!mIsInTransaction && mSceneList.findByScene(scene) == null) {
+            throw new IllegalStateException("Target scene is not find");
+        }
         final Operation operation = new RemoveOperation(scene, animationOrAnimatorFactory);
         if (mIsInTransaction) {
             mOperationTransactionList.add(operation);
