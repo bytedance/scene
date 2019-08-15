@@ -27,4 +27,9 @@ public enum State {
         this.value = value;
         this.name = name;
     }
+
+    //avoid kotlin overload resolution ambiguity
+    public String getName() {
+        return this.name;
+    }
 }
