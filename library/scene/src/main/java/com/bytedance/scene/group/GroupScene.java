@@ -110,9 +110,6 @@ public abstract class GroupScene extends Scene {
          * TODO: It is possible for GroupScene to perform find + add 2 times,
          *       as the operations are all cached. (Fragment has this problem too)
          */
-        if (findSceneByTag(tag) != null) {
-            throw new IllegalArgumentException("already have a Scene with tag " + tag);
-        }
 
         if (isAdded(scene)) {
             int currentSceneContainerViewId = mGroupSceneManager.findSceneViewId(scene);
@@ -129,6 +126,11 @@ public abstract class GroupScene extends Scene {
             String currentSceneTag = mGroupSceneManager.findSceneTag(scene);
             if (!currentSceneTag.equals(tag)) {
                 throw new IllegalArgumentException("Scene is already added, tag " + currentSceneTag);
+            }
+        } else {
+            Scene previousScene = findSceneByTag(tag);
+            if (previousScene != null) {
+                throw new IllegalArgumentException("already have a Scene " + previousScene.toString() + " with tag " + tag);
             }
         }
 
