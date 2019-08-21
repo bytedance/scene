@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item type="id" name="scene_status_bar" />
+    <item type="id" name="scene_navigation_bar" />
+    <item type="id" name="scene_toolbar" />
+    <item type="id" name="scene_content" />
+</resources>

@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.bytedance.scene.ui.view.CompatSceneLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
 
     <com.bytedance.scene.ui.view.StatusBarView
-        android:id="@+id/status_bar"
+        android:id="@id/scene_status_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
     <android.support.v7.widget.Toolbar
-        android:id="@+id/scene_toolbar"
+        android:id="@id/scene_toolbar"
         android:layout_width="match_parent"
         android:layout_height="?actionBarSize"
         android:background="?attr/colorPrimary"
@@ -19,14 +19,17 @@
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
         app:navigationIcon="?homeAsUpIndicator"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-        app:titleTextAppearance="@style/TextAppearance.Widget.AppCompat.Toolbar.Title">
-
-    </android.support.v7.widget.Toolbar>
+        app:titleTextAppearance="@style/TextAppearance.Widget.AppCompat.Toolbar.Title" />
 
     <FrameLayout
-        android:id="@+id/scene_content"
+        android:id="@id/scene_content"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="?android:windowBackground"></FrameLayout>
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:background="?android:windowBackground" />
 
-</LinearLayout>
+    <com.bytedance.scene.ui.view.NavigationBarView
+        android:id="@id/scene_navigation_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+</com.bytedance.scene.ui.view.CompatSceneLayout>

@@ -1,7 +1,6 @@
 package com.bytedance.scene.ui.view;
 
 import android.content.Context;
-import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.drawable.ColorDrawable;
@@ -15,9 +14,9 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.view.WindowInsetsCompat;
 import android.util.AttributeSet;
-import android.util.TypedValue;
 import android.view.View;
-
+import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import com.bytedance.scene.ui.R;
 
 import static android.support.annotation.RestrictTo.Scope.LIBRARY_GROUP;
@@ -25,26 +24,22 @@ import static android.support.annotation.RestrictTo.Scope.LIBRARY_GROUP;
 /**
  * Created by JiangQi on 8/28/18.
  */
-public final class StatusBarView extends View {
-    private static final int[] THEME_ATTRS = {
-            R.attr.colorPrimaryDark
-    };
-
+public final class NavigationBarView extends View {
     private WindowInsetsCompat mLastInsets;
-    private boolean mDrawStatusBarBackground = true;
-    private Drawable mStatusBarBackground;
+    private boolean mDrawNavigationBarBackground = true;
+    private Drawable mNavigationBarBackground;
 
-    public StatusBarView(Context context) {
+    public NavigationBarView(Context context) {
         super(context);
         init();
     }
 
-    public StatusBarView(Context context, @Nullable AttributeSet attrs) {
+    public NavigationBarView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         init();
     }
 
-    public StatusBarView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+    public NavigationBarView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init();
     }
@@ -63,41 +58,42 @@ public final class StatusBarView extends View {
                         requestLayout();
                         return new WindowInsetsCompat(insets).replaceSystemWindowInsets(
                                 insets.getSystemWindowInsetLeft(),
-                                0,
+                                insets.getSystemWindowInsetTop(),
                                 insets.getSystemWindowInsetRight(),
-                                insets.getSystemWindowInsetBottom());
+                                0);
                     }
                 });
 
-        final TypedArray a = getContext().obtainStyledAttributes(THEME_ATTRS);
-        try {
-            mStatusBarBackground = a.getDrawable(0);
-        } finally {
-            a.recycle();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            final int[] THEME_ATTRS = {
+                    android.R.attr.navigationBarColor
+            };
+            final TypedArray a = getContext().obtainStyledAttributes(THEME_ATTRS);
+            try {
+                mNavigationBarBackground = a.getDrawable(0);
+            } finally {
+                a.recycle();
+            }
         }
-
-        Resources r = getResources();
-        float px = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 4, r.getDisplayMetrics());
-        ViewCompat.setElevation(this, px);
     }
 
-    public void setStatusBarBackground(@Nullable Drawable bg) {
-        mStatusBarBackground = bg;
+    public void setNavigationBarBackground(@Nullable Drawable bg) {
+        mNavigationBarBackground = bg;
         invalidate();
     }
 
     @Nullable
-    public Drawable getStatusBarBackgroundDrawable() {
-        return mStatusBarBackground;
+    public Drawable getNavigationBarBackgroundDrawable() {
+        return mNavigationBarBackground;
     }
 
-    public void setStatusBarBackground(@DrawableRes int resId) {
-        mStatusBarBackground = resId != 0 ? ContextCompat.getDrawable(getContext(), resId) : null;
+    public void setNavigationBarBackground(@DrawableRes int resId) {
+        mNavigationBarBackground = resId != 0 ? ContextCompat.getDrawable(getContext(), resId) : null;
         invalidate();
     }
 
-    public void setStatusBarBackgroundColor(@ColorInt int color) {
-        mStatusBarBackground = new ColorDrawable(color);
+    public void setNavigationBarBackgroundColor(@ColorInt int color) {
+        mNavigationBarBackground = new ColorDrawable(color);
         invalidate();
     }
 
@@ -129,7 +125,7 @@ public final class StatusBarView extends View {
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         if (mLastInsets != null) {
-            onMeasure2(widthMeasureSpec, MeasureSpec.makeMeasureSpec(mLastInsets.getSystemWindowInsetTop(), MeasureSpec.EXACTLY));
+            onMeasure2(widthMeasureSpec, MeasureSpec.makeMeasureSpec(mLastInsets.getSystemWindowInsetBottom(), MeasureSpec.EXACTLY));
         } else {
             onMeasure2(widthMeasureSpec, heightMeasureSpec);
         }
@@ -138,17 +134,17 @@ public final class StatusBarView extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        if (mDrawStatusBarBackground && mStatusBarBackground != null) {
+        if (mDrawNavigationBarBackground && mNavigationBarBackground != null) {
             final int inset;
             if (Build.VERSION.SDK_INT >= 21) {
                 inset = mLastInsets != null
-                        ? mLastInsets.getSystemWindowInsetTop() : 0;
+                        ? mLastInsets.getSystemWindowInsetBottom() : 0;
             } else {
                 inset = 0;
             }
             if (inset > 0) {
-                mStatusBarBackground.setBounds(0, 0, getWidth(), inset);
-                mStatusBarBackground.draw(canvas);
+                mNavigationBarBackground.setBounds(0, getHeight() - inset, getWidth(), getHeight());
+                mNavigationBarBackground.draw(canvas);
             }
         }
     }

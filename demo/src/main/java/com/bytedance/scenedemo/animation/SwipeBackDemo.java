@@ -7,14 +7,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.bytedance.scene.ui.template.SwipeBackAppCompatScene;
+import com.bytedance.scene.ui.template.AppCompatScene;
 import com.bytedance.scenedemo.R;
 import com.bytedance.scenedemo.utility.ColorUtil;
 
 /**
  * Created by JiangQi on 8/29/18.
  */
-public class SwipeBackDemo extends SwipeBackAppCompatScene {
+public class SwipeBackDemo extends AppCompatScene {
 
     @Nullable
     @Override
@@ -22,6 +22,12 @@ public class SwipeBackDemo extends SwipeBackAppCompatScene {
         View view = new View(getActivity());
         view.setBackgroundColor(ColorUtil.getMaterialColor(getResources(), 0));
         return view;
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        setSwipeEnabled(true);
     }
 
     private boolean mSwipeBack = false;

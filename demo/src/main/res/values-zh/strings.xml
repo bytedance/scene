@@ -83,9 +83,7 @@
     <string name="nav_activity_states_btn_2">自定义状态栏导航栏布局</string>
     <string name="nav_activity_states_layout_btn_1">扩展布局到状态栏和导航栏下</string>
     <string name="nav_activity_states_layout_btn_2">切换显示隐藏状态栏和导航栏</string>
-    <string name="nav_ime_btn_1">使用 AdjustPan 模式打开新页面</string>
-    <string name="nav_ime_btn_2">使用 AdjustResize 模式打开新页面</string>
-    <string name="nav_ime_btn_3">使用 AdjustNothing 模式打开新页面</string>
+    <string name="nav_ime_btn_1">使用 AdjustResize 模式打开新页面</string>
     <string name="nav_ime_btn_top">只是一个按钮</string>
     <string name="main_part_btn_bottom_tab_layout">底部 TabLayout 用法</string>
     <string name="main_part_btn_drawer">侧边抽屉用法</string>

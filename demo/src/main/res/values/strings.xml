@@ -118,9 +118,7 @@
     <string name="nav_activity_states_btn_2">Custom Status Layout</string>
     <string name="nav_activity_states_layout_btn_1">Extend the layout to the StatusBar and NavigationBar</string>
     <string name="nav_activity_states_layout_btn_2">Toggle show/hid StatusBar and NavigationBar</string>
-    <string name="nav_ime_btn_1">Push Scene with mode: AdjustPan</string>
-    <string name="nav_ime_btn_2">Push Scene with mode: AdjustResize</string>
-    <string name="nav_ime_btn_3">Push Scene with mode: AdjustNothing</string>
+    <string name="nav_ime_btn_1">Push Scene with mode: AdjustResize</string>
     <string name="nav_ime_btn_top">Just a Button</string>
 
     <string name="part_dialog_btn_1">Dialog without Background Dim</string>

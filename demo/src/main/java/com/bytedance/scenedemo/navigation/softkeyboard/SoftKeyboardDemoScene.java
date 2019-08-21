@@ -19,6 +19,13 @@ import com.bytedance.scenedemo.utility.ColorUtil;
 
 /**
  * Created by JiangQi on 8/19/18.
+ *
+ * Android framework has three soft input policies: SOFT_INPUT_ADJUST_RESIZE, SOFT_INPUT_ADJUST_PAN, SOFT_INPUT_ADJUST_NOTHING
+ * Scene container Activity's AndroidManifest.xml android:windowSoftInputMode must be set to <b>adjustPan</b> or <b>adjustResize</b> or <b>adjustNothing</b>,
+ * adjustUnspecified flag has bug will cause <code>requireActivity().getWindow().setSoftInputMode</code> not working, then system will
+ * pick the best one depending on the contents of the window
+ * If you push a AppCompatScene, everything will work fine, if you push a GroupScene, you should set root view's android:fitsSystemWindows to true,
+ * otherwise SOFT_INPUT_ADJUST_RESIZE will have problem
  */
 public class SoftKeyboardDemoScene extends GroupScene {
 
@@ -34,34 +41,19 @@ public class SoftKeyboardDemoScene extends GroupScene {
         getView().setBackgroundColor(ColorUtil.getMaterialColor(getResources(), 0));
 
         TextView name = getView().findViewById(R.id.name);
-        name.setText(getNavigationScene().getStackHistory());
+        name.setText("* Android framework has three soft input policies: SOFT_INPUT_ADJUST_RESIZE, SOFT_INPUT_ADJUST_PAN, SOFT_INPUT_ADJUST_NOTHING\n" +
+                " * Scene container Activity's AndroidManifest.xml android:windowSoftInputMode must be set to <b>adjustPan</b> or <b>adjustResize</b> or <b>adjustNothing</b>,\n" +
+                " * adjustUnspecified flag has bug will cause <code>requireActivity().getWindow().setSoftInputMode</code> not working, then system will\n" +
+                " * pick the best one depending on the contents of the window\n" +
+                " * If you push a AppCompatScene, everything will work fine, if you push a GroupScene, you should set root view's android:fitsSystemWindows to true,\n" +
+                " * otherwise SOFT_INPUT_ADJUST_RESIZE will have problem");
 
         Button btn = getView().findViewById(R.id.btn);
         btn.setText(R.string.nav_ime_btn_1);
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getNavigationScene().push(EmptyPanScene.class);
-            }
-        });
-
-        Button btn2 = getView().findViewById(R.id.btn2);
-        btn2.setVisibility(View.VISIBLE);
-        btn2.setText(R.string.nav_ime_btn_2);
-        btn2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                getNavigationScene().push(EmptyResizeScene.class);
-            }
-        });
-
-        Button btn3 = getView().findViewById(R.id.btn3);
-        btn3.setVisibility(View.VISIBLE);
-        btn3.setText(R.string.nav_ime_btn_3);
-        btn3.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                getNavigationScene().push(EmptyNothingScene.class);
+                getNavigationScene().push(SoftKeyboardResizeScene.class);
             }
         });
     }

@@ -32,24 +32,4 @@
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"/>
 
-    <Button
-        android:id="@+id/btn2"
-        android:layout_width="match_parent"
-        android:layout_height="54dp"
-        android:textAllCaps="false"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
-        android:visibility="gone"
-        tools:visibility="visible"/>
-
-    <Button
-        android:id="@+id/btn3"
-        android:layout_width="match_parent"
-        android:layout_height="54dp"
-        android:textAllCaps="false"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
-        android:visibility="gone"
-        tools:visibility="visible"/>
-
 </LinearLayout>
