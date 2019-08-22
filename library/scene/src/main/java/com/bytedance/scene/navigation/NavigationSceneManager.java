@@ -306,9 +306,10 @@ class NavigationSceneManager {
         mConfigurationChangedListenerList.remove(configurationChangedListener);
     }
 
-    public void onConfigurationChanged(Configuration newConfig) {
-        for (int i = mConfigurationChangedListenerList.size() - 1; i >= 0; i--) {
-            ConfigurationChangedListener listener = mConfigurationChangedListenerList.get(i);
+    public void onConfigurationChanged(@NonNull Configuration newConfig) {
+        List<ConfigurationChangedListener> copy = new ArrayList<>(mConfigurationChangedListenerList);
+        for (int i = copy.size() - 1; i >= 0; i--) {
+            ConfigurationChangedListener listener = copy.get(i);
             if (listener != null) {
                 listener.onConfigurationChanged(newConfig);
             }

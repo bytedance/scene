@@ -710,7 +710,7 @@ public final class NavigationScene extends Scene implements NavigationListener {
         }
     }
 
-    public void onConfigurationChanged(Configuration newConfig) {
+    public void onConfigurationChanged(@NonNull Configuration newConfig) {
         mNavigationSceneManager.onConfigurationChanged(newConfig);
     }
 
