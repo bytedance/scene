@@ -809,7 +809,7 @@ public abstract class Scene implements LifecycleOwner, ViewModelStoreOwner {
      * those response callbacks should only judge children changes rather than their own changes
      */
     @RestrictTo(LIBRARY_GROUP)
-    public void dispatchOnSceneCreated(@NonNull Scene scene, Bundle savedInstanceState, boolean directChild) {
+    public void dispatchOnSceneCreated(@NonNull Scene scene, @Nullable Bundle savedInstanceState, boolean directChild) {
         Scene parentScene = getParentScene();
         if (parentScene != null) {
             parentScene.dispatchOnSceneCreated(scene, savedInstanceState, scene == this);
@@ -854,7 +854,7 @@ public abstract class Scene implements LifecycleOwner, ViewModelStoreOwner {
 
     /** @hide */
     @RestrictTo(LIBRARY_GROUP)
-    public void dispatchOnSceneSaveInstanceState(@NonNull Scene scene, Bundle outState, boolean directChild) {
+    public void dispatchOnSceneSaveInstanceState(@NonNull Scene scene, @NonNull Bundle outState, boolean directChild) {
         Scene parentScene = getParentScene();
         if (parentScene != null) {
             parentScene.dispatchOnSceneSaveInstanceState(scene, outState, scene == this);

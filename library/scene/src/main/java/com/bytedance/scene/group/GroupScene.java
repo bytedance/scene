@@ -424,9 +424,10 @@ public abstract class GroupScene extends Scene {
      * @hide
      */
     @RestrictTo(LIBRARY_GROUP)
-    public final void dispatchOnSceneCreated(@NonNull Scene scene, Bundle savedInstanceState, boolean directChild) {
+    public final void dispatchOnSceneCreated(@NonNull Scene scene, @Nullable Bundle savedInstanceState, boolean directChild) {
         if (scene != this) {
-            for (NonNullPair<ChildSceneLifecycleCallbacks, Boolean> pair : mLifecycleCallbacks) {
+            List<NonNullPair<ChildSceneLifecycleCallbacks, Boolean>> list = new ArrayList<>(mLifecycleCallbacks);
+            for (NonNullPair<ChildSceneLifecycleCallbacks, Boolean> pair : list) {
                 if (directChild || pair.second) {
                     pair.first.onSceneCreated(scene, savedInstanceState);
                 }
@@ -442,7 +443,8 @@ public abstract class GroupScene extends Scene {
     @RestrictTo(LIBRARY_GROUP)
     public final void dispatchOnSceneStarted(@NonNull Scene scene, boolean directChild) {
         if (scene != this) {
-            for (NonNullPair<ChildSceneLifecycleCallbacks, Boolean> pair : mLifecycleCallbacks) {
+            List<NonNullPair<ChildSceneLifecycleCallbacks, Boolean>> list = new ArrayList<>(mLifecycleCallbacks);
+            for (NonNullPair<ChildSceneLifecycleCallbacks, Boolean> pair : list) {
                 if (directChild || pair.second) {
                     pair.first.onSceneStarted(scene);
                 }
@@ -458,7 +460,8 @@ public abstract class GroupScene extends Scene {
     @RestrictTo(LIBRARY_GROUP)
     public final void dispatchOnSceneResumed(@NonNull Scene scene, boolean directChild) {
         if (scene != this) {
-            for (NonNullPair<ChildSceneLifecycleCallbacks, Boolean> pair : mLifecycleCallbacks) {
+            List<NonNullPair<ChildSceneLifecycleCallbacks, Boolean>> list = new ArrayList<>(mLifecycleCallbacks);
+            for (NonNullPair<ChildSceneLifecycleCallbacks, Boolean> pair : list) {
                 if (directChild || pair.second) {
                     pair.first.onSceneResumed(scene);
                 }
@@ -474,7 +477,8 @@ public abstract class GroupScene extends Scene {
     @RestrictTo(LIBRARY_GROUP)
     public final void dispatchOnSceneStopped(@NonNull Scene scene, boolean directChild) {
         if (scene != this) {
-            for (NonNullPair<ChildSceneLifecycleCallbacks, Boolean> pair : mLifecycleCallbacks) {
+            List<NonNullPair<ChildSceneLifecycleCallbacks, Boolean>> list = new ArrayList<>(mLifecycleCallbacks);
+            for (NonNullPair<ChildSceneLifecycleCallbacks, Boolean> pair : list) {
                 if (directChild || pair.second) {
                     pair.first.onSceneStopped(scene);
                 }
@@ -490,7 +494,8 @@ public abstract class GroupScene extends Scene {
     @RestrictTo(LIBRARY_GROUP)
     public final void dispatchOnScenePaused(@NonNull Scene scene, boolean directChild) {
         if (scene != this) {
-            for (NonNullPair<ChildSceneLifecycleCallbacks, Boolean> pair : mLifecycleCallbacks) {
+            List<NonNullPair<ChildSceneLifecycleCallbacks, Boolean>> list = new ArrayList<>(mLifecycleCallbacks);
+            for (NonNullPair<ChildSceneLifecycleCallbacks, Boolean> pair : list) {
                 if (directChild || pair.second) {
                     pair.first.onScenePaused(scene);
                 }
@@ -504,9 +509,10 @@ public abstract class GroupScene extends Scene {
      * @hide
      */
     @RestrictTo(LIBRARY_GROUP)
-    public final void dispatchOnSceneSaveInstanceState(@NonNull Scene scene, Bundle outState, boolean directChild) {
+    public final void dispatchOnSceneSaveInstanceState(@NonNull Scene scene, @NonNull Bundle outState, boolean directChild) {
         if (scene != this) {
-            for (NonNullPair<ChildSceneLifecycleCallbacks, Boolean> pair : mLifecycleCallbacks) {
+            List<NonNullPair<ChildSceneLifecycleCallbacks, Boolean>> list = new ArrayList<>(mLifecycleCallbacks);
+            for (NonNullPair<ChildSceneLifecycleCallbacks, Boolean> pair : list) {
                 if (directChild || pair.second) {
                     pair.first.onSceneSaveInstanceState(scene, outState);
                 }
@@ -522,7 +528,8 @@ public abstract class GroupScene extends Scene {
     @RestrictTo(LIBRARY_GROUP)
     public final void dispatchOnSceneDestroyed(@NonNull Scene scene, boolean directChild) {
         if (scene != this) {
-            for (NonNullPair<ChildSceneLifecycleCallbacks, Boolean> pair : mLifecycleCallbacks) {
+            List<NonNullPair<ChildSceneLifecycleCallbacks, Boolean>> list = new ArrayList<>(mLifecycleCallbacks);
+            for (NonNullPair<ChildSceneLifecycleCallbacks, Boolean> pair : list) {
                 if (directChild || pair.second) {
                     pair.first.onSceneDestroyed(scene);
                 }
