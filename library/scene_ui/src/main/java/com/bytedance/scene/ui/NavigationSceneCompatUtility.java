@@ -1,6 +1,7 @@
 package com.bytedance.scene.ui;
 
 import android.os.Bundle;
+import android.support.annotation.DrawableRes;
 import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -8,15 +9,12 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 
-import com.bytedance.scene.SceneDelegate;
-import com.bytedance.scene.NavigationSceneAvailableCallback;
-import com.bytedance.scene.Scene;
-import com.bytedance.scene.SceneComponentFactory;
-import com.bytedance.scene.Scope;
+import com.bytedance.scene.*;
 import com.bytedance.scene.navigation.NavigationScene;
 import com.bytedance.scene.navigation.NavigationSceneOptions;
 import com.bytedance.scene.utlity.SceneInstanceUtility;
 import com.bytedance.scene.utlity.ThreadUtility;
+import com.bytedance.scene.utlity.Utility;
 
 import java.util.HashSet;
 import java.util.WeakHashMap;
@@ -24,10 +22,108 @@ import java.util.WeakHashMap;
 /**
  * Created by JiangQi on 9/4/18.
  */
-public class NavigationSceneCompatUtility {
+public final class NavigationSceneCompatUtility {
     private static final String LIFE_CYCLE_FRAGMENT_TAG = "LifeCycleCompatFragment";
     private static final WeakHashMap<Fragment, HashSet<String>> CHECK_DUPLICATE_TAG_MAP = new WeakHashMap<>();
 
+    private NavigationSceneCompatUtility() {
+    }
+
+    public static final class Builder {
+        @NonNull
+        private final Fragment mFragment;
+        @NonNull
+        private final Class<? extends Scene> mRootSceneClazz;
+        @Nullable
+        private Bundle mRootSceneArguments;
+        private boolean mDrawWindowBackground = true;
+        private boolean mFixSceneBackgroundEnabled = true;
+        @DrawableRes
+        private int mSceneBackgroundResId = 0;
+        @IdRes
+        private final int mIdRes;
+        private boolean mSupportRestore = false;
+        @Nullable
+        private SceneComponentFactory mRootSceneComponentFactory;
+        @NonNull
+        private String mTag = LIFE_CYCLE_FRAGMENT_TAG;
+        private boolean mImmediate = true;
+
+        private Builder(@NonNull Fragment fragment, @NonNull Class<? extends Scene> rootSceneClazz, @IdRes int containerId) {
+            this.mFragment = Utility.requireNonNull(fragment, "Fragment can't be null");
+            this.mRootSceneClazz = Utility.requireNonNull(rootSceneClazz, "Root Scene class can't be null");
+            this.mIdRes = containerId;
+        }
+
+        @NonNull
+        public Builder rootSceneArguments(@Nullable Bundle rootSceneArguments) {
+            this.mRootSceneArguments = rootSceneArguments;
+            return this;
+        }
+
+        @NonNull
+        public Builder supportRestore(boolean supportRestore) {
+            this.mSupportRestore = supportRestore;
+            return this;
+        }
+
+        @NonNull
+        public Builder rootSceneComponentFactory(@Nullable SceneComponentFactory rootSceneComponentFactory) {
+            this.mRootSceneComponentFactory = rootSceneComponentFactory;
+            return this;
+        }
+
+        @NonNull
+        public Builder drawWindowBackground(boolean drawWindowBackground) {
+            this.mDrawWindowBackground = drawWindowBackground;
+            return this;
+        }
+
+        @NonNull
+        public Builder fixSceneWindowBackgroundEnabled(boolean fixSceneBackground) {
+            this.mFixSceneBackgroundEnabled = fixSceneBackground;
+            return this;
+        }
+
+        @NonNull
+        public Builder sceneBackground(@DrawableRes int resId) {
+            this.mSceneBackgroundResId = resId;
+            return this;
+        }
+
+        @NonNull
+        public Builder tag(@NonNull String tag) {
+            this.mTag = Utility.requireNonNull(tag, "Tag can't be null");
+            return this;
+        }
+
+        @NonNull
+        public Builder immediate(boolean immediate) {
+            this.mImmediate = immediate;
+            return this;
+        }
+
+        @NonNull
+        public SceneDelegate build() {
+            NavigationSceneOptions navigationSceneOptions = new NavigationSceneOptions(this.mRootSceneClazz, this.mRootSceneArguments);
+            navigationSceneOptions.setDrawWindowBackground(this.mDrawWindowBackground);
+            navigationSceneOptions.setFixSceneWindowBackgroundEnabled(this.mFixSceneBackgroundEnabled);
+            navigationSceneOptions.setSceneBackground(this.mSceneBackgroundResId);
+            return setupWithFragment(this.mFragment, this.mIdRes, navigationSceneOptions, this.mRootSceneComponentFactory, this.mSupportRestore, this.mTag, this.mImmediate);
+        }
+    }
+
+    @NonNull
+    public static Builder setupWithFragment(@NonNull final Fragment fragment,
+                                            @NonNull Class<? extends Scene> rootScene,
+                                            @IdRes int containerId) {
+        return new Builder(fragment, rootScene, containerId);
+    }
+
+    /**
+     * use {@link #setupWithFragment(Fragment, Class, int)} instead
+     */
+    @Deprecated
     @NonNull
     public static SceneDelegate setupWithFragment(@NonNull final Fragment fragment,
                                                   @IdRes int containerId,
@@ -40,6 +136,10 @@ public class NavigationSceneCompatUtility {
                 false);
     }
 
+    /**
+     * use {@link #setupWithFragment(Fragment, Class, int)} instead
+     */
+    @Deprecated
     @NonNull
     public static SceneDelegate setupWithFragment(@NonNull final Fragment fragment,
                                                   @IdRes int containerId,
@@ -53,6 +153,10 @@ public class NavigationSceneCompatUtility {
                 supportRestore);
     }
 
+    /**
+     * use {@link #setupWithFragment(Fragment, Class, int)} instead
+     */
+    @Deprecated
     @NonNull
     public static SceneDelegate setupWithFragment(@NonNull final Fragment fragment,
                                                   @IdRes int containerId,
@@ -67,6 +171,10 @@ public class NavigationSceneCompatUtility {
                 supportRestore);
     }
 
+    /**
+     * use {@link #setupWithFragment(Fragment, Class, int)} instead
+     */
+    @Deprecated
     @NonNull
     public static SceneDelegate setupWithFragment(@NonNull final Fragment fragment,
                                                   @IdRes int containerId,
@@ -78,6 +186,10 @@ public class NavigationSceneCompatUtility {
                 rootSceneComponentFactory, supportRestore, LIFE_CYCLE_FRAGMENT_TAG, true);
     }
 
+    /**
+     * use {@link #setupWithFragment(Fragment, Class, int)} instead
+     */
+    @Deprecated
     @NonNull
     public static SceneDelegate setupWithFragment(@NonNull final Fragment fragment,
                                                   @IdRes int containerId,
@@ -87,6 +199,17 @@ public class NavigationSceneCompatUtility {
                                                   final boolean supportRestore,
                                                   @NonNull final String tag,
                                                   final boolean immediate) {
+        return setupWithFragment(fragment, containerId, navigationSceneOptions, rootSceneComponentFactory, supportRestore, tag, immediate);
+    }
+
+    @NonNull
+    private static SceneDelegate setupWithFragment(@NonNull final Fragment fragment,
+                                                   @IdRes int containerId,
+                                                   @NonNull NavigationSceneOptions navigationSceneOptions,
+                                                   @Nullable SceneComponentFactory rootSceneComponentFactory,
+                                                   final boolean supportRestore,
+                                                   @NonNull final String tag,
+                                                   final boolean immediate) {
         ThreadUtility.checkUIThread();
         if (tag == null) {
             throw new IllegalArgumentException("tag cant be null");

@@ -23,7 +23,8 @@ public class NavigationSceneOptions {
     private final Bundle mRootSceneArguments;
     private boolean mDrawWindowBackground = true;
     private boolean mFixSceneBackgroundEnabled = true;
-    private int mSceneBackgroundResId;
+    @DrawableRes
+    private int mSceneBackgroundResId = 0;
 
     public NavigationSceneOptions(@NonNull Class<? extends Scene> rootSceneClazz, @Nullable Bundle rootSceneArguments) {
         if (rootSceneClazz.isAssignableFrom(NavigationScene.class)) {
