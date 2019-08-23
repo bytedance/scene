@@ -87,7 +87,7 @@ public final class NavigationScene extends Scene implements NavigationListener {
     private NavigationSceneManager mNavigationSceneManager;
     private FrameLayout mSceneContainer;
     private FrameLayout mAnimationContainer;
-    @NonNull
+    @Nullable
     private NavigationAnimationExecutor mDefaultNavigationAnimationExecutor = new Android8DefaultSceneAnimatorExecutor();
     private final List<InteractionNavigationPopAnimationFactory.InteractionCallback> mInteractionListenerList = new ArrayList<>();
 
@@ -176,11 +176,11 @@ public final class NavigationScene extends Scene implements NavigationListener {
         return mNavigationSceneManager.getCurrentSceneList();
     }
 
-    public void setDefaultNavigationAnimationExecutor(@NonNull NavigationAnimationExecutor defaultNavigationAnimationExecutor) {
+    public void setDefaultNavigationAnimationExecutor(@Nullable NavigationAnimationExecutor defaultNavigationAnimationExecutor) {
         this.mDefaultNavigationAnimationExecutor = defaultNavigationAnimationExecutor;
     }
 
-    @NonNull
+    @Nullable
     public NavigationAnimationExecutor getDefaultNavigationAnimationExecutor() {
         return this.mDefaultNavigationAnimationExecutor;
     }
