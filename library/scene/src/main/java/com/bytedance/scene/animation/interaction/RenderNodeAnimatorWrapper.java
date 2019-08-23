@@ -323,25 +323,4 @@ public class RenderNodeAnimatorWrapper {
         }
         return 0;
     }
-
-//    public RenderNodeAnimatorWrapper withLayer() {
-//        mPendingSetupAction = new Runnable() {
-//            @Override
-//            public void run() {
-//                //这个不能放在Animator的start回调里面，算了，不加了
-//                mView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
-//                if (mView.isAttachedToWindow()) {
-//                    mView.buildLayer();
-//                }
-//            }
-//        };
-//        final int currentLayerType = mView.getLayerType();
-//        mPendingCleanupAction = new Runnable() {
-//            @Override
-//            public void run() {
-//                mView.setLayerType(currentLayerType, null);
-//            }
-//        };
-//        return this;
-//    }
 }
