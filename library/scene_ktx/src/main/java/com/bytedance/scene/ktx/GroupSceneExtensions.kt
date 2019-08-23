@@ -38,27 +38,7 @@ fun GroupScene.addAndHide(@IdRes viewId: Int, scene: Scene, tag: String) {
 }
 
 fun GroupScene.replace(@IdRes viewId: Int, scene: Scene, tag: String) {
-    val previousScene = findSceneByTag<Scene>(tag)
-    if (previousScene == scene) {
-        return
-    }
-
-    if (isAdded(scene)) {
-        remove(scene)
-    }
-
-    if (previousScene == null) {
-        add(viewId, scene, tag)
-        return
-    }
-
-    if (isShow(previousScene)) {
-        remove(previousScene)
-        add(viewId, scene, tag)
-    } else {
-        remove(previousScene)
-        addAndHide(viewId, scene, tag)
-    }
+    replace(viewId, scene, tag, 0)
 }
 
 fun GroupScene.replace(@IdRes viewId: Int, scene: Scene, tag: String, @AnimRes @AnimatorRes animationResId: Int) {
