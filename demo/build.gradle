@@ -2,11 +2,11 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 
 android {
-    compileSdkVersion 27
+    compileSdkVersion rootProject.ext.compileSdkVersion
     defaultConfig {
         applicationId "com.bytedance.scenedemo"
-        minSdkVersion 14
-        targetSdkVersion 27
+        minSdkVersion rootProject.ext.miniSdkVersion
+        targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -21,18 +21,15 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation 'com.android.support:appcompat-v7:26.1.0'
-    implementation 'com.android.support:design:26.1.0'
+    implementation APPCOMPAT_LIB
+    implementation DESIGN_LIB
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
 
-
-    implementation "android.arch.navigation:navigation-fragment:1.0.0-alpha01"
-    implementation "android.arch.navigation:navigation-ui:1.0.0-alpha01"
     compile project(path: ':library:scene')
     compile project(path: ':library:scene_ui')
     compile project(path: ':library:scene_shared_element_animation')
     compile project(path: ':library:scene_ktx')
-    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    compile KOTLIN_LIB
 }

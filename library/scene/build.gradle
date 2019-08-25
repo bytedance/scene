@@ -1,18 +1,18 @@
 apply plugin: 'com.android.library'
 
 android {
-    compileSdkVersion 27
-    buildToolsVersion "27.0.3"
+    compileSdkVersion rootProject.ext.compileSdkVersion
+    buildToolsVersion rootProject.ext.buildToolsVersion
 
     defaultConfig {
-        minSdkVersion 14
+        minSdkVersion rootProject.ext.miniSdkVersion
     }
 }
 
 dependencies {
-    api 'com.android.support:appcompat-v7:26.1.0'
-    api 'android.arch.lifecycle:extensions:1.1.0'
-    api 'android.arch.lifecycle:runtime:1.1.0'
+    api APPCOMPAT_LIB
+    api LIFECYCLE_EXTENSIONS_LIB
+    api LIFECYCLE_RUNTIME_LIB
 }
 
 task javadoc(type: Javadoc) {

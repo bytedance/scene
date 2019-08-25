@@ -1,15 +1,18 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
+ext.compileSdkVersion = COMPILE_SDK_VERSION.toInteger()
+ext.miniSdkVersion = MIN_SDK_VERSION.toInteger()
+ext.targetSdkVersion = TARGET_SDK_VERSION.toInteger()
+ext.buildToolsVersion = BUILD_TOOLS_VERSION
 
 buildscript {
-    ext.kotlin_version = '1.2.71'
     repositories {
         google()
         jcenter()
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.1.4'
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath ANDROID_GRADLE_PLUGIN
+        classpath KOTLIN_PLUGIN
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
     }

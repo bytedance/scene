@@ -2,18 +2,18 @@ apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 
 android {
-    compileSdkVersion 27
-    buildToolsVersion "27.0.3"
+    compileSdkVersion rootProject.ext.compileSdkVersion
+    buildToolsVersion rootProject.ext.buildToolsVersion
 
     defaultConfig {
-        minSdkVersion 14
+        minSdkVersion rootProject.ext.miniSdkVersion
     }
     resourcePrefix 'scene_'
 }
 
 dependencies {
     compile project(path: ':library:scene')
-    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation KOTLIN_LIB
 }
 
 task javadoc(type: Javadoc) {

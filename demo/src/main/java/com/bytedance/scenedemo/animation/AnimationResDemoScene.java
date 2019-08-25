@@ -37,7 +37,6 @@ public class AnimationResDemoScene extends GroupScene {
         final int[] enterAnimationRes = new int[]{
                 R.anim.slide_in_from_right,
                 R.anim.abc_fade_in,
-                R.anim.nav_default_enter_anim,
                 android.R.anim.fade_in,
                 android.R.anim.slide_in_left
         };
@@ -50,7 +49,6 @@ public class AnimationResDemoScene extends GroupScene {
         final int[] exitAnimationRes = new int[]{
                 R.anim.slide_out_to_left,
                 R.anim.abc_fade_out,
-                R.anim.nav_default_exit_anim,
                 android.R.anim.fade_out,
                 android.R.anim.slide_out_right
         };
