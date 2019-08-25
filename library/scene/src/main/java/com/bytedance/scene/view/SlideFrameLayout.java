@@ -1,5 +1,4 @@
 ///*
-// * Copyright (c) 2016 ByteDance Inc. All rights reserved.
 // */
 //
 //package com.bytedance.scene.view;
