@@ -353,6 +353,16 @@ public abstract class GroupScene extends Scene {
     public final void dispatchResume() {
         super.dispatchResume();
         dispatchVisibleChildrenState(State.RESUMED);
+        onPostResume();
+    }
+
+    /**
+     * @hide TestApi
+     */
+    @RestrictTo(LIBRARY)
+    @VisibleForTesting()
+    protected void onPostResume() {
+
     }
 
     /**

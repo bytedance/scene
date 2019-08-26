@@ -9,11 +9,20 @@ android {
         minSdkVersion rootProject.ext.miniSdkVersion
     }
     resourcePrefix 'scene_'
+
+    testOptions {
+        unitTests {
+            includeAndroidResources = true
+        }
+    }
 }
 
 dependencies {
     compile project(path: ':library:scene')
     implementation KOTLIN_LIB
+
+    testImplementation ROBOLECTRIC
+    testImplementation JUNIT
 }
 
 task javadoc(type: Javadoc) {

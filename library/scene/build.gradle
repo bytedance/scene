@@ -7,12 +7,21 @@ android {
     defaultConfig {
         minSdkVersion rootProject.ext.miniSdkVersion
     }
+
+    testOptions {
+        unitTests {
+            includeAndroidResources = true
+        }
+    }
 }
 
 dependencies {
     api APPCOMPAT_LIB
     api LIFECYCLE_EXTENSIONS_LIB
     api LIFECYCLE_RUNTIME_LIB
+
+    testImplementation ROBOLECTRIC
+    testImplementation JUNIT
 }
 
 task javadoc(type: Javadoc) {
