@@ -456,7 +456,7 @@ class GroupSceneManager {
             Scene scene = childSceneList.get(i);
 
             Bundle sceneBundle = new Bundle();
-            scene.onSaveInstanceState(sceneBundle);
+            scene.dispatchSaveInstanceState(sceneBundle);
             bundleList.add(sceneBundle);
         }
 

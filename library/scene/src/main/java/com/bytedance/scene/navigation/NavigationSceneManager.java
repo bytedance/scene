@@ -112,7 +112,7 @@ class NavigationSceneManager {
         List<Record> recordList = this.mBackStackList.getCurrentRecordList();
         for (Record record : recordList) {
             Bundle sceneBundle = new Bundle();
-            record.mScene.onSaveInstanceState(sceneBundle);
+            record.mScene.dispatchSaveInstanceState(sceneBundle);
             bundleList.add(sceneBundle);
         }
         bundle.putParcelableArrayList(ParcelConstants.KEY_NAVIGATION_SCENE_MANAGER_TAG, bundleList);
