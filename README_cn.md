@@ -44,7 +44,10 @@ Scene框架尝试去解决上面提到的Activity和Fragment存在的问题
 在依赖中添加：
 
 ~~~
-implementation 'com.ixigua.common:scene:$latest_version'
+implementation 'com.bytedance.scene:scene:$latest_version'
+implementation 'com.bytedance.scene:scene-ui:$latest_version'
+implementation 'com.bytedance.scene:scene-shared-element-animation:$latest_version'
+implementation 'com.bytedance.scene:scene-ktx:$latest_version'
 ~~~
 
 Scene有2个子类：NavigationScene和GroupScene，其中：
@@ -55,15 +58,13 @@ Scene有2个子类：NavigationScene和GroupScene，其中：
 简单的接入，让主Activity继承于SceneActivity即可：
 
 ~~~
-public class MainActivity extends SceneActivity {
-    @Override
-    protected Class<? extends Scene> getHomeSceneClass() {
-        return MainScene.class;
+class MainActivity : SceneActivity() {
+    override fun getHomeSceneClass(): Class<out Scene> {
+        return MainScene::class.java
     }
- 
-    @Override
-    protected boolean supportRestore() {
-        return true;
+
+    override fun supportRestore(): Boolean {
+        return false
     }
 }
 ~~~
@@ -71,26 +72,47 @@ public class MainActivity extends SceneActivity {
 一个简单的Scene示例：
 
 ~~~
-public class EmptyScene extends UserVisibleHintGroupScene {
-
-    private TextView textView;
-
-    @NonNull
-    @Override
-    public ViewGroup onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return (ViewGroup) inflater.inflate(R.layout.empty_scene_layout, container, false);
+class MainScene : AppCompatScene() {
+    private lateinit var mButton: Button
+    override fun onCreateContentView(inflater: LayoutInflater, container: ViewGroup, savedInstanceState: Bundle?): View? {
+        val frameLayout = FrameLayout(requireSceneContext())
+        mButton = Button(requireSceneContext())
+        mButton.text = "Click"
+        frameLayout.addView(mButton, FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT))
+        return frameLayout
     }
 
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        textView = getView().findViewById(R.id.name);
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        setTitle("Main")
+        toolbar?.navigationIcon = null
+        mButton.setOnClickListener {
+            navigationScene.push(SecondScene())
+        }
+    }
+}
+
+class SecondScene : AppCompatScene() {
+    private val mId: Int by lazy { View.generateViewId() }
+
+    override fun onCreateContentView(inflater: LayoutInflater, container: ViewGroup, savedInstanceState: Bundle?): View? {
+        val frameLayout = FrameLayout(requireSceneContext())
+        frameLayout.id = mId
+        return frameLayout
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        textView.setText(getStateHistory());
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        setTitle("Second")
+        add(mId, ChildScene(), "TAG")
+    }
+}
+
+class ChildScene : Scene() {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup, savedInstanceState: Bundle?): View {
+        val view = View(requireSceneContext())
+        view.setBackgroundColor(Color.GREEN)
+        return view
     }
 }
 ~~~
