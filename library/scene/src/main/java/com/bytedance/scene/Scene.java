@@ -644,11 +644,26 @@ public abstract class Scene implements LifecycleOwner, ViewModelStoreOwner {
                 throw new IllegalStateException("Scene " + this + " is root Scene, not a child Scene");
             }
         }
-        return this.mParentScene;
+        return parentScene;
     }
 
+    @Nullable
     public final NavigationScene getNavigationScene() {
         return this.mNavigationScene;
+    }
+
+    @NonNull
+    public final NavigationScene requireNavigationScene() {
+        NavigationScene navigationScene = getNavigationScene();
+        if (navigationScene == null) {
+            Context context = getApplicationContext();
+            if (context == null) {
+                throw new IllegalStateException("Scene " + this + " is not attached to any Scene");
+            } else {
+                throw new IllegalStateException("Scene " + this + " is root Scene");
+            }
+        }
+        return navigationScene;
     }
 
     @CallSuper

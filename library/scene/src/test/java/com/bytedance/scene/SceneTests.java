@@ -108,8 +108,9 @@ public class SceneTests {
 
         scene.requireView().setId(ViewIdGenerator.generateViewId());
         scene.add(scene.requireView().getId(), childScene, "TAG");
-        assertNotNull(scene.getParentScene());
-        assertNotNull(scene.requireParentScene());
+        assertNotNull(childScene.getParentScene());
+        assertNotNull(childScene.requireParentScene());
+        assertSame(scene, childScene.requireParentScene());
     }
 
     @Test(expected = IllegalStateException.class)
@@ -125,5 +126,56 @@ public class SceneTests {
 
         assertNull(scene.getNavigationScene().getParentScene());
         scene.getNavigationScene().requireParentScene();
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void testRequireNavigationSceneExceptionBeforeAttach() {
+        Scene scene = new Scene() {
+            @NonNull
+            @Override
+            public View onCreateView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container, @Nullable Bundle savedInstanceState) {
+                return new View(requireSceneContext());
+            }
+        };
+        scene.requireNavigationScene();
+    }
+
+    @Test
+    public void testRequireNavigationSceneAfterAttach() {
+        Scene scene = new Scene() {
+            @NonNull
+            @Override
+            public View onCreateView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container, @Nullable Bundle savedInstanceState) {
+                return new View(requireSceneContext());
+            }
+        };
+        Pair<SceneLifecycleManager, NavigationScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(scene);
+
+        Scene childScene = new Scene() {
+            @NonNull
+            @Override
+            public View onCreateView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container, @Nullable Bundle savedInstanceState) {
+                return new View(requireSceneContext());
+            }
+        };
+
+        assertNotNull(scene.getNavigationScene());
+        assertNotNull(scene.requireNavigationScene());
+        assertSame(pair.second, scene.requireNavigationScene());
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void testRootSceneRequireNavigationSceneException() {
+        Scene scene = new Scene() {
+            @NonNull
+            @Override
+            public View onCreateView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container, @Nullable Bundle savedInstanceState) {
+                return new View(requireSceneContext());
+            }
+        };
+        Pair<SceneLifecycleManager, NavigationScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(scene);
+
+        assertNull(scene.requireNavigationScene().getNavigationScene());
+        scene.requireNavigationScene().requireNavigationScene();
     }
 }
