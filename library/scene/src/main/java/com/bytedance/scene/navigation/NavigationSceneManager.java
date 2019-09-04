@@ -27,6 +27,7 @@ import android.os.Looper;
 import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -40,11 +41,7 @@ import com.bytedance.scene.group.ReuseGroupScene;
 import com.bytedance.scene.interfaces.PopOptions;
 import com.bytedance.scene.interfaces.PushOptions;
 import com.bytedance.scene.parcel.ParcelConstants;
-import com.bytedance.scene.utlity.AnimatorUtility;
-import com.bytedance.scene.utlity.CancellationSignalList;
-import com.bytedance.scene.utlity.NonNullPair;
-import com.bytedance.scene.utlity.Predicate;
-import com.bytedance.scene.utlity.Utility;
+import com.bytedance.scene.utlity.*;
 
 import java.util.*;
 
@@ -139,32 +136,77 @@ class NavigationSceneManager {
      * unless it is triggered in the Scene lifecycle callback,
      * then we must take the Post process.
      */
-    private boolean mIsNavigationStateChangeInProgress = false;
+    private Set<String> mIsNavigationStateChangeInProgress = new HashSet<>();
+    private int mSuppressStackOperationId = 0;
+    private int mCurrentScheduledStackOperationCount = 0;
 
     /**
      * TODO:
-     *   The defect of Fragment's post() is that commit will crash after onSave(),
-     *   If there are no such restrictions, the post should be fine.
-     *   The only thing is that there may be some problems with Dialog.
+     * The defect of Fragment's post() is that commit will crash after onSave(),
+     * If there are no such restrictions, the post should be fine.
+     * The only thing is that there may be some problems with Dialog.
      */
-    private void scheduleToNextUIThreadLoop(final Operation operation) {
+    private void scheduleToNextUIThreadLoop(@NonNull final Operation operation) {
         if (canExecuteNavigationStackOperation()) {
-            if (mIsNavigationStateChangeInProgress) {
+            /**
+             * when current Handler Message is executing a NavigationScene navigation stack operation or GroupScene operation,
+             * all the following navigation stack operations need to post at next Handler Message by Handler.post
+             *
+             * when there is a navigation stack operation waiting to be executed by Handler.post, all the following stack operations
+             * must be scheduled with Handler.post too to make sure navigation order is correct
+             */
+            if (mIsNavigationStateChangeInProgress.size() > 0 || mCurrentScheduledStackOperationCount > 0) {
                 Runnable task = new Runnable() {
                     @Override
                     public void run() {
-                        scheduleToNextUIThreadLoop(operation);
+                        mCurrentScheduledStackOperationCount--;
+                        if (mIsNavigationStateChangeInProgress.size() > 0) {
+                            String exceptionInfo = TextUtils.join(",", mIsNavigationStateChangeInProgress);
+                            throw new SceneInternalException("miss endSuppressStackOperation(), mIsNavigationStateChangeInProgress content " + exceptionInfo);
+                        }
+                        if (canExecuteNavigationStackOperation()) {
+                            String suppressTag = beginSuppressStackOperation("NavigationManager execute operation by Handler.post()");
+                            operation.execute(EMPTY_RUNNABLE);
+                            endSuppressStackOperation(suppressTag);
+                        } else {
+                            mPendingActionList.addLast(operation);
+                            mLastPendingActionListItemTimestamp = System.currentTimeMillis();
+                        }
                     }
                 };
+                mCurrentScheduledStackOperationCount++;
                 mHandler.postAsyncIfNeeded(task);
             } else {
-                mIsNavigationStateChangeInProgress = true;
+                String suppressTag = beginSuppressStackOperation("NavigationManager execute operation directly");
                 operation.execute(EMPTY_RUNNABLE);
-                mIsNavigationStateChangeInProgress = false;
+                endSuppressStackOperation(suppressTag);
             }
         } else {
+            /**
+             * navigation stack operation can't be executed before NavigationScene's state is State.ACTIVITY_CREATED, otherwise
+             * animation can't be execute without view
+             */
             mPendingActionList.addLast(operation);
             mLastPendingActionListItemTimestamp = System.currentTimeMillis();
+        }
+    }
+
+    @NonNull
+    String beginSuppressStackOperation(@NonNull String tagPrefix) {
+        String value = tagPrefix + "_" + mSuppressStackOperationId++;
+        if (!mIsNavigationStateChangeInProgress.add(value)) {
+            throw new SceneInternalException("suppressTag already exists");
+        }
+        return value;
+    }
+
+    void endSuppressStackOperation(@NonNull String suppressTag) {
+        if (!mIsNavigationStateChangeInProgress.remove(suppressTag)) {
+            throw new SceneInternalException("suppressTag not found");
+        }
+        if (mIsNavigationStateChangeInProgress.size() == 0) {
+            //reset to zero
+            mSuppressStackOperationId = 0;
         }
     }
 
@@ -237,9 +279,9 @@ class NavigationSceneManager {
         for (int i = 0; i < copy.size(); i++) {
             Operation currentOperation = copy.get(i);
             this.mDisableNavigationAnimation = animationTimeout | (i < copy.size() - 1);
-            this.mIsNavigationStateChangeInProgress = true;
+            String suppressTag = beginSuppressStackOperation("NavigationManager executePendingOperation");
             currentOperation.execute(EMPTY_RUNNABLE);
-            this.mIsNavigationStateChangeInProgress = false;
+            endSuppressStackOperation(suppressTag);
             this.mDisableNavigationAnimation = false;
         }
         this.mPendingActionList.removeAll(copy);

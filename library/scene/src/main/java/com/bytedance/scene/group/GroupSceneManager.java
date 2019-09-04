@@ -24,6 +24,7 @@ import android.os.Parcelable;
 import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.util.Pair;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,6 +33,7 @@ import com.bytedance.scene.Scene;
 import com.bytedance.scene.State;
 import com.bytedance.scene.animation.AnimationOrAnimator;
 import com.bytedance.scene.animation.AnimationOrAnimatorFactory;
+import com.bytedance.scene.navigation.NavigationScene;
 import com.bytedance.scene.parcel.ParcelConstants;
 import com.bytedance.scene.utlity.CancellationSignal;
 import com.bytedance.scene.utlity.SceneInstanceUtility;
@@ -200,7 +202,7 @@ class GroupSceneManager {
     private GroupRecordList mSceneList = new GroupRecordList();
     private Handler mHandler = new Handler(Looper.getMainLooper());
     private static final HashMap<Scene, CancellationSignal> SCENE_RUNNING_ANIMATION_CANCELLATION_SIGNAL_MAP = new HashMap<>();
-    private final Set<Scene> mCurrentTrackMoveStateSceneSet = new HashSet<>();
+    private final Set<Pair<Scene, String>> mCurrentTrackMoveStateSceneSet = new HashSet<>();
 
     GroupSceneManager() {
 
@@ -308,23 +310,48 @@ class GroupSceneManager {
      * but child Scene can invoke parent's add/remove/show/hide to operate other child Scene
      */
     private void checkStateChange(@NonNull Scene scene) {
-        if (this.mCurrentTrackMoveStateSceneSet.contains(scene)) {
-            throw new IllegalStateException("Cant add/remove/show/hide " + scene.getClass().getSimpleName() + " before it finish previous add/remove/show/hide operation or in its lifecycle method");
+        for (Pair<Scene, String> pair : this.mCurrentTrackMoveStateSceneSet) {
+            if (pair.first == scene) {
+                throw new IllegalStateException("Cant add/remove/show/hide " + scene.getClass().getSimpleName() + " before it finish previous add/remove/show/hide operation or in its lifecycle method");
+            }
         }
     }
 
     private void beginTrackSceneStateChange(@NonNull Scene scene) {
-        if (this.mCurrentTrackMoveStateSceneSet.contains(scene)) {
-            throw new SceneInternalException("Target scene is already tracked");
+        for (Pair<Scene, String> pair : this.mCurrentTrackMoveStateSceneSet) {
+            if (pair.first == scene) {
+                throw new SceneInternalException("Target scene is already tracked");
+            }
         }
-        this.mCurrentTrackMoveStateSceneSet.add(scene);
+        //forbid NavigationScene execute navigation stack operation immediately, otherwise GroupScene may sync lifecycle to child,
+        //then throw SceneInternalException("Target scene is already tracked")
+        NavigationScene navigationScene = mGroupScene.getNavigationScene();
+        String suppressTag = null;
+        if (navigationScene != null) {
+            suppressTag = navigationScene.beginSuppressStackOperation(scene.toString());
+        } else {
+            //execute GroupScene operations before GroupScene attached or after detached
+            suppressTag = null;
+        }
+        this.mCurrentTrackMoveStateSceneSet.add(Pair.create(scene, suppressTag));
     }
 
     private void endTrackSceneStateChange(@NonNull Scene scene) {
-        if (!this.mCurrentTrackMoveStateSceneSet.contains(scene)) {
+        Pair<Scene, String> target = null;
+        for (Pair<Scene, String> pair : this.mCurrentTrackMoveStateSceneSet) {
+            if (pair.first == scene) {
+                target = pair;
+                break;
+            }
+        }
+        if (target == null) {
             throw new SceneInternalException("Target scene is not tracked");
         }
-        this.mCurrentTrackMoveStateSceneSet.remove(scene);
+        String suppressTag = target.second;
+        if (suppressTag != null) {
+            mGroupScene.getNavigationScene().endSuppressStackOperation(target.second);
+        }
+        this.mCurrentTrackMoveStateSceneSet.remove(target);
     }
 
     public void add(int viewId, Scene scene, String tag, AnimationOrAnimatorFactory animationOrAnimatorFactory) {

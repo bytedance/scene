@@ -32,6 +32,7 @@ import android.view.Window;
 import com.bytedance.scene.navigation.NavigationScene;
 import com.bytedance.scene.parcel.ParcelConstants;
 import com.bytedance.scene.utlity.SceneInternalException;
+import com.bytedance.scene.utlity.Utility;
 import com.bytedance.scene.view.SceneContextThemeWrapper;
 
 import java.util.ArrayList;
@@ -883,5 +884,28 @@ public abstract class Scene implements LifecycleOwner, ViewModelStoreOwner {
         if (parentScene != null) {
             parentScene.dispatchOnSceneDestroyed(scene, scene == this);
         }
+    }
+
+    /**
+     * Subclasses can not override equals().
+     */
+    @Override
+    final public boolean equals(Object o) {
+        return super.equals(o);
+    }
+
+    /**
+     * Subclasses can not override hashCode().
+     */
+    @Override
+    final public int hashCode() {
+        return super.hashCode();
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder(128);
+        Utility.buildShortClassTag(this, sb);
+        return sb.toString();
     }
 }

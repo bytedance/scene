@@ -349,6 +349,22 @@ public final class NavigationScene extends Scene implements NavigationListener {
     }
 
     /**
+     * @hide
+     */
+    @RestrictTo(LIBRARY)
+    public String beginSuppressStackOperation(@NonNull String tagPrefix) {
+        return mNavigationSceneManager.beginSuppressStackOperation(tagPrefix);
+    }
+
+    /**
+     * @hide
+     */
+    @RestrictTo(LIBRARY)
+    public void endSuppressStackOperation(@NonNull String suppressTag) {
+        mNavigationSceneManager.endSuppressStackOperation(suppressTag);
+    }
+
+    /**
      * Pop() is asynchronous, it is possible that when Pop actually executes,
      * there is no Scene that can pop. Turn it out to the outside,
      * in case the Activity has intercepted onBackPressed.
