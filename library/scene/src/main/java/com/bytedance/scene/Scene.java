@@ -142,6 +142,15 @@ public abstract class Scene implements LifecycleOwner, ViewModelStoreOwner {
         return this.mArguments;
     }
 
+    @NonNull
+    public final Bundle requireArguments() {
+        Bundle arguments = getArguments();
+        if (arguments == null) {
+            throw new IllegalStateException("Scene " + this + " does not have any arguments.");
+        }
+        return arguments;
+    }
+
     /** @hide */
     @RestrictTo(LIBRARY_GROUP)
     public void dispatchAttachActivity(@NonNull Activity activity) {
@@ -496,6 +505,15 @@ public abstract class Scene implements LifecycleOwner, ViewModelStoreOwner {
         return this.mView;
     }
 
+    @NonNull
+    public final View requireView() {
+        View view = getView();
+        if (view == null) {
+            throw new IllegalStateException("requireView() should not be called before onCreateView() or after onDestroyView()");
+        }
+        return view;
+    }
+
     @Nullable
     public final Activity getActivity() {
         return this.mActivity;
@@ -610,7 +628,22 @@ public abstract class Scene implements LifecycleOwner, ViewModelStoreOwner {
         return getResources().getString(resId, formatArgs);
     }
 
+    @Nullable
     public final Scene getParentScene() {
+        return this.mParentScene;
+    }
+
+    @NonNull
+    public final Scene requireParentScene() {
+        Scene parentScene = getParentScene();
+        if (parentScene == null) {
+            Context context = getApplicationContext();
+            if (context == null) {
+                throw new IllegalStateException("Scene " + this + " is not attached to any Scene or host");
+            } else {
+                throw new IllegalStateException("Scene " + this + " is root Scene, not a child Scene");
+            }
+        }
         return this.mParentScene;
     }
 
