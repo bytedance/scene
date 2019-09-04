@@ -35,10 +35,6 @@ public class AnimationBuilder {
         return new ImageViewAnimationBuilder(view);
     }
 
-    public static TextViewAnimationBuilder of(TextView view) {
-        return new TextViewAnimationBuilder(view);
-    }
-
     public static DrawableAnimationBuilder of(Drawable drawable) {
         return new DrawableAnimationBuilder(drawable);
     }
