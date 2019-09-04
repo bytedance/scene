@@ -16,14 +16,13 @@ import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.*;
 
 @RunWith(RobolectricTestRunner.class)
 @Config(manifest = Config.NONE)
 public class ScopeTests {
     @Test
-    public void testScope() {
+    public void testRegisterScope() {
         TestScene rootScene = new TestScene();
         Pair<SceneLifecycleManager, NavigationScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(rootScene);
         SceneLifecycleManager sceneLifecycleManager = pair.first;
@@ -46,6 +45,51 @@ public class ScopeTests {
         assertEquals(childScene.getScope().getService("child_key"), "child_value");
         assertNull(rootScene.getScope().getService("child_key"));
         assertNull(navigationScene.getScope().getService("child_key"));
+    }
+
+    @Test
+    public void testUnRegisterScope() {
+        TestScene rootScene = new TestScene();
+        Pair<SceneLifecycleManager, NavigationScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(rootScene);
+        SceneLifecycleManager sceneLifecycleManager = pair.first;
+        NavigationScene navigationScene = pair.second;
+        sceneLifecycleManager.onStart();
+        sceneLifecycleManager.onResume();
+
+        final boolean[] value = new boolean[1];
+        navigationScene.getScope().register("navigation_key", new Scope.Scoped() {
+            @Override
+            public void onUnRegister() {
+                value[0] = true;
+            }
+        });
+        assertNotNull(navigationScene.getScope().getService("navigation_key"));
+        navigationScene.getScope().unRegister("navigation_key");
+        assertNull(navigationScene.getScope().getService("child_key"));
+        assertTrue(value[0]);
+    }
+
+    @Test
+    public void testUnRegisterScopeByDestroy() {
+        TestScene rootScene = new TestScene();
+        Pair<SceneLifecycleManager, NavigationScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(rootScene);
+        SceneLifecycleManager sceneLifecycleManager = pair.first;
+        NavigationScene navigationScene = pair.second;
+        sceneLifecycleManager.onStart();
+        sceneLifecycleManager.onResume();
+
+        final boolean[] value = new boolean[1];
+        navigationScene.getScope().register("navigation_key", new Scope.Scoped() {
+            @Override
+            public void onUnRegister() {
+                value[0] = true;
+            }
+        });
+
+        sceneLifecycleManager.onPause();
+        sceneLifecycleManager.onStop();
+        sceneLifecycleManager.onDestroyView();
+        assertTrue(value[0]);
     }
 
     @Test(expected = IllegalStateException.class)

@@ -49,7 +49,7 @@ public abstract class ReuseGroupScene extends GroupScene {
 
     @NonNull
     @Override
-    public final ViewGroup onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public final ViewGroup onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         /*
          * Can not be reused during the animation process.
          * Once the Parent is found, throw an Exception.

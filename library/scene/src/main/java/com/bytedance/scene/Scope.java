@@ -34,6 +34,7 @@ public class Scope {
     }
 
     public interface RootScopeFactory {
+        @NonNull
         Scope getRootScope();
     }
 
@@ -111,11 +112,11 @@ public class Scope {
         return "Scene #" + SCENE_COUNT.getAndIncrement();
     }
 
-    private static String getScopeKeyFromBundle(Bundle bundle) {
+    private static String getScopeKeyFromBundle(@NonNull Bundle bundle) {
         return bundle.getString(TAG_SCENE_SCOPE_KEY);
     }
 
-    public void saveInstance(Bundle bundle) {
+    public void saveInstance(@NonNull Bundle bundle) {
         bundle.putString(TAG_SCENE_SCOPE_KEY, mScopeKey);
     }
 

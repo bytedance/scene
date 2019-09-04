@@ -1,6 +1,7 @@
 package com.bytedance.scene;
 
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -41,6 +42,22 @@ public class ReuseGroupSceneTests {
         assertNotNull(childScene.getView());
 
         assertSame(childScene.getView(), childSceneView);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testException() {
+        TestScene groupScene = new TestScene();
+        NavigationSourceUtility.createFromSceneLifecycleManager(groupScene);
+
+        TestChildScene childScene = new TestChildScene();
+        groupScene.add(groupScene.mId, childScene, "Child");
+        Activity activity = childScene.requireActivity();
+
+        View childSceneView = childScene.getView();
+        groupScene.remove(childScene);
+        FrameLayout frameLayout = new FrameLayout(activity);
+        frameLayout.addView(childSceneView);
+        groupScene.add(groupScene.mId, childScene, "Child");
     }
 
     public static class TestScene extends InheritedScene {
