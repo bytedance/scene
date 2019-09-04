@@ -24,6 +24,7 @@ import android.util.Log;
 import android.view.ViewGroup;
 
 import com.bytedance.scene.navigation.NavigationScene;
+import com.bytedance.scene.utlity.Utility;
 
 /**
  * Created by JiangQi on 11/6/18.
@@ -33,7 +34,13 @@ public class SceneLifecycleManager {
     private static final String TAG = "SceneLifecycleManager";
 
     private NavigationScene mNavigationScene;
+    @NonNull
+    private SceneLifecycleManagerState mState = SceneLifecycleManagerState.NONE;
     private boolean mSupportRestore = false;
+
+    private enum SceneLifecycleManagerState {
+        NONE, ACTIVITY_CREATED, START, RESUME, PAUSE, STOP
+    }
 
     public void onActivityCreated(@NonNull Activity activity,
                                   @NonNull ViewGroup viewGroup,
@@ -42,23 +49,18 @@ public class SceneLifecycleManager {
                                   @NonNull Scope.RootScopeFactory rootScopeFactory,
                                   @Nullable SceneComponentFactory rootSceneComponentFactory,
                                   @Nullable Bundle savedInstanceState) {
+        if (mState != SceneLifecycleManagerState.NONE) {
+            throw new IllegalStateException("invoke onDestroyView() first");
+        }
+
+        Utility.requireNonNull(activity, "activity can't be null");
+        Utility.requireNonNull(viewGroup, "viewGroup can't be null");
+        Utility.requireNonNull(navigationScene, "navigationScene can't be null");
+        Utility.requireNonNull(navigationSceneHost, "navigationSceneHost can't be null");
+        Utility.requireNonNull(rootScopeFactory, "rootScopeFactory can't be null");
+
         if (navigationScene.getState() != State.NONE) {
             throw new IllegalStateException("NavigationScene state must be " + State.NONE.name);
-        }
-        if (activity == null) {
-            throw new NullPointerException("activity can't be null");
-        }
-        if (navigationScene == null) {
-            throw new NullPointerException("viewGroup can't be null");
-        }
-        if (navigationScene == null) {
-            throw new NullPointerException("navigationScene can't be null");
-        }
-        if (navigationScene == null) {
-            throw new NullPointerException("navigationSceneHost can't be null");
-        }
-        if (navigationScene == null) {
-            throw new NullPointerException("rootScopeFactory can't be null");
         }
 
         this.mSupportRestore = navigationSceneHost.isSupportRestore();
@@ -66,6 +68,7 @@ public class SceneLifecycleManager {
             throw new IllegalArgumentException("savedInstanceState should be null when not support restore");
         }
 
+        mState = SceneLifecycleManagerState.ACTIVITY_CREATED;
         log("onActivityCreated");
 
         this.mNavigationScene = navigationScene;
@@ -81,41 +84,46 @@ public class SceneLifecycleManager {
     }
 
     public void onStart() {
-        if (this.mNavigationScene.getState() != State.ACTIVITY_CREATED) {
-            throw new IllegalStateException("NavigationScene state must be " + State.ACTIVITY_CREATED.name);
+        if (mState != SceneLifecycleManagerState.ACTIVITY_CREATED && mState != SceneLifecycleManagerState.STOP) {
+            throw new IllegalStateException("invoke onActivityCreated() or onStop() first");
         }
+        mState = SceneLifecycleManagerState.START;
         log("onStart");
         this.mNavigationScene.dispatchStart();
     }
 
     public void onResume() {
-        if (this.mNavigationScene.getState() != State.STARTED) {
-            throw new IllegalStateException("NavigationScene state must be " + State.STARTED.name);
+        if (mState != SceneLifecycleManagerState.START && mState != SceneLifecycleManagerState.PAUSE) {
+            throw new IllegalStateException("invoke onStart() or onPause() first");
         }
+        mState = SceneLifecycleManagerState.RESUME;
         log("onResume");
         this.mNavigationScene.dispatchResume();
     }
 
     public void onPause() {
-        if (this.mNavigationScene.getState() != State.RESUMED) {
-            throw new IllegalStateException("NavigationScene state must be " + State.RESUMED.name);
+        if (mState != SceneLifecycleManagerState.RESUME) {
+            throw new IllegalStateException("invoke onResume() first");
         }
+        mState = SceneLifecycleManagerState.PAUSE;
         log("onPause");
         this.mNavigationScene.dispatchPause();
     }
 
     public void onStop() {
-        if (this.mNavigationScene.getState() != State.STARTED) {
-            throw new IllegalStateException("NavigationScene state must be " + State.STARTED.name);
+        if (mState != SceneLifecycleManagerState.PAUSE) {
+            throw new IllegalStateException("invoke onPause() first");
         }
+        mState = SceneLifecycleManagerState.STOP;
         log("onStop");
         this.mNavigationScene.dispatchStop();
     }
 
     public void onDestroyView() {
-        if (this.mNavigationScene.getState() != State.ACTIVITY_CREATED) {
-            throw new IllegalStateException("NavigationScene state must be " + State.ACTIVITY_CREATED.name);
+        if (mState != SceneLifecycleManagerState.STOP) {
+            throw new IllegalStateException("invoke onStop() first");
         }
+        mState = SceneLifecycleManagerState.NONE;
         log("onDestroyView");
         this.mNavigationScene.dispatchDestroyView();
         this.mNavigationScene.dispatchDestroy();
@@ -128,22 +136,26 @@ public class SceneLifecycleManager {
     }
 
     public void onSaveInstanceState(@NonNull Bundle outState) {
+        Utility.requireNonNull(outState, "outState can't be null");
+        if (mState == SceneLifecycleManagerState.NONE) {
+            throw new IllegalStateException("invoke onActivityCreated() first");
+        }
         if (!this.mSupportRestore) {
             throw new IllegalArgumentException("cant invoke onSaveInstanceState when not support restore");
         }
-
         log("onSaveInstanceState");
         this.mNavigationScene.dispatchSaveInstanceState(outState);
     }
 
     public void onConfigurationChanged(@NonNull Configuration newConfig) {
+        Utility.requireNonNull(newConfig, "newConfig can't be null");
         log("onConfigurationChanged");
         if (this.mNavigationScene != null) {
             this.mNavigationScene.onConfigurationChanged(newConfig);
         }
     }
 
-    private void log(String log) {
+    private void log(@NonNull String log) {
         if (DEBUG) {
             Log.d(TAG + "#" + hashCode(), log);
         }
