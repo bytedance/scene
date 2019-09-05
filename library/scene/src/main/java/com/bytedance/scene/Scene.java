@@ -69,7 +69,7 @@ import static android.support.annotation.RestrictTo.Scope.LIBRARY_GROUP;
  * 4.onResume: set state to RESUMED, and set Lifecycle to Lifecycle.Event.ON_RESUME
  *
  * When exiting:
- * 1.onPause: set state to State成STARTED, and set Lifecycle to Lifecycle.Event.ON_PAUSE
+ * 1.onPause: set state to STARTED, and set Lifecycle to Lifecycle.Event.ON_PAUSE
  * 2.onStop: set state to ACTIVITY_CREATED, and set Lifecycle to Lifecycle.Event.ON_STOP
  * 3.onDestroyView: set state to NONE, and set Lifecycle to Lifecycle.Event.ON_DESTROY
  * 4.onDestroy -> onDetach
