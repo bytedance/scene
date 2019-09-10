@@ -389,7 +389,7 @@ class NavigationSceneManager {
         if (currentState.value < to.value) {
             switch (currentState) {
                 case NONE:
-                    scene.dispatchAttachActivity(navigationScene.getActivity());
+                    scene.dispatchAttachActivity(navigationScene.requireActivity());
                     scene.dispatchAttachScene(navigationScene);
                     scene.dispatchCreate(bundle);
                     ViewGroup containerView = navigationScene.getSceneContainer();

@@ -177,11 +177,11 @@ class GroupRecordList {
         return Collections.unmodifiableList(mSceneList);
     }
 
-    public void saveToBundle(Bundle bundle) {
+    public void saveToBundle(@NonNull Bundle bundle) {
         bundle.putParcelableArrayList(KEY_TAG, new ArrayList<Parcelable>(mSceneList));
     }
 
-    public void restoreFromBundle(Context context, Bundle bundle) {
+    public void restoreFromBundle(@NonNull Context context, @NonNull Bundle bundle) {
         if (this.mSceneList != null && this.mSceneList.size() > 0) {
             throw new IllegalStateException("mSceneList size is not zero, Scene is added before restore");
         }
@@ -197,18 +197,20 @@ class GroupRecordList {
 }
 
 class GroupSceneManager {
-    private GroupScene mGroupScene;
+    @NonNull
+    private final GroupScene mGroupScene;
+    @Nullable
     private ViewGroup mView;
-    private GroupRecordList mSceneList = new GroupRecordList();
-    private Handler mHandler = new Handler(Looper.getMainLooper());
+    @NonNull
+    private final GroupRecordList mSceneList = new GroupRecordList();
+    @NonNull
+    private final Handler mHandler = new Handler(Looper.getMainLooper());
+    @NonNull
     private static final HashMap<Scene, CancellationSignal> SCENE_RUNNING_ANIMATION_CANCELLATION_SIGNAL_MAP = new HashMap<>();
+    @NonNull
     private final Set<Pair<Scene, String>> mCurrentTrackMoveStateSceneSet = new HashSet<>();
 
-    GroupSceneManager() {
-
-    }
-
-    public void setGroupScene(GroupScene groupScene) {
+    GroupSceneManager(@NonNull GroupScene groupScene) {
         this.mGroupScene = groupScene;
     }
 
@@ -240,7 +242,7 @@ class GroupSceneManager {
     /**
      * TODO: What if there are more than one Scene Tag repeated?
      */
-    public void commitTransaction() {
+    void commitTransaction() {
         if (!mIsInTransaction) {
             throw new IllegalStateException("you must call beginTransaction before commitTransaction");
         }
@@ -444,37 +446,42 @@ class GroupSceneManager {
         }
     }
 
-    public GroupRecord findByScene(Scene scene) {
+    @Nullable
+    GroupRecord findByScene(@NonNull Scene scene) {
         return mSceneList.findByScene(scene);
     }
 
-    public GroupRecord findByTag(String tag) {
+    @Nullable
+    GroupRecord findByTag(@NonNull String tag) {
         return mSceneList.findByTag(tag);
     }
 
-    public GroupRecord findByView(View view) {
+    @Nullable
+    GroupRecord findByView(@NonNull View view) {
         return mSceneList.findByView(view);
     }
 
-    public int findSceneViewId(Scene scene) {
+    int findSceneViewId(@NonNull Scene scene) {
         return mSceneList.findByScene(scene).viewId;
     }
 
-    public String findSceneTag(Scene scene) {
+    @NonNull
+    String findSceneTag(@NonNull Scene scene) {
         return mSceneList.findByScene(scene).tag;
     }
 
-    public List<Scene> getChildSceneList() {
+    @NonNull
+    List<Scene> getChildSceneList() {
         return mSceneList.getChildSceneList();
     }
 
-    public List<GroupRecord> getChildSceneRecordList() {
+    private List<GroupRecord> getChildSceneRecordList() {
         return mSceneList.getChildSceneRecordList();
     }
 
     private static final String KEY_TAG = ParcelConstants.KEY_GROUP_SCENE_MANAGER_TAG;
 
-    public void saveToBundle(Bundle bundle) {
+    void saveToBundle(@NonNull Bundle bundle) {
         this.mSceneList.saveToBundle(bundle);
 
         ArrayList<Bundle> bundleList = new ArrayList<>();
@@ -490,7 +497,7 @@ class GroupSceneManager {
         bundle.putParcelableArrayList(KEY_TAG, bundleList);
     }
 
-    public void restoreFromBundle(Context context, Bundle bundle) {
+    void restoreFromBundle(@NonNull Context context, @NonNull Bundle bundle) {
         this.mSceneList.restoreFromBundle(context, bundle);
         List<GroupRecord> childSceneList = this.mSceneList.getChildSceneRecordList();
         if (childSceneList.size() == 0) {
@@ -851,7 +858,7 @@ class GroupSceneManager {
         if (currentState.value < to.value) {
             switch (currentState) {
                 case NONE:
-                    scene.dispatchAttachActivity(groupScene.getActivity());
+                    scene.dispatchAttachActivity(groupScene.requireActivity());
                     scene.dispatchAttachScene(groupScene);
                     record = groupScene.getGroupSceneManager().findByScene(scene);
                     sceneBundle = record.bundle;

@@ -113,7 +113,7 @@ public final class NavigationScene extends Scene implements NavigationListener {
     private final SparseArrayCompat<ActivityResultCallback> mResultCallbackMap = new SparseArrayCompat<>();
     private final SparseArrayCompat<PermissionResultCallback> mPermissionResultCallbackMap = new SparseArrayCompat<>();
 
-    @UiThread
+    @MainThread
     public void addNavigationListener(@NonNull final LifecycleOwner lifecycleOwner, @NonNull final NavigationListener listener) {
         ThreadUtility.checkUIThread();
         if (lifecycleOwner.getLifecycle().getCurrentState() == DESTROYED) {
@@ -130,13 +130,13 @@ public final class NavigationScene extends Scene implements NavigationListener {
         });
     }
 
-    @UiThread
+    @MainThread
     public void removeNavigationListener(@NonNull NavigationListener listener) {
         ThreadUtility.checkUIThread();
         this.mNavigationListenerList.remove(listener);
     }
 
-    @UiThread
+    @MainThread
     public void addOnBackPressedListener(@NonNull final LifecycleOwner lifecycleOwner, @NonNull final OnBackPressedListener onBackPressedListener) {
         ThreadUtility.checkUIThread();
         if (lifecycleOwner.getLifecycle().getCurrentState() == DESTROYED) {
@@ -153,13 +153,13 @@ public final class NavigationScene extends Scene implements NavigationListener {
         });
     }
 
-    @UiThread
+    @MainThread
     public void removeOnBackPressedListener(@NonNull OnBackPressedListener onBackPressedListener) {
         ThreadUtility.checkUIThread();
         this.mNavigationSceneManager.removeOnBackPressedListener(onBackPressedListener);
     }
 
-    @UiThread
+    @MainThread
     public void addConfigurationChangedListener(@NonNull final LifecycleOwner lifecycleOwner, @NonNull final ConfigurationChangedListener configurationChangedListener) {
         ThreadUtility.checkUIThread();
         if (lifecycleOwner.getLifecycle().getCurrentState() == DESTROYED) {
@@ -200,11 +200,11 @@ public final class NavigationScene extends Scene implements NavigationListener {
         return this.mDefaultNavigationAnimationExecutor;
     }
 
-    public void setNavigationSceneHost(NavigationSceneHost navigationSceneHost) {
+    public void setNavigationSceneHost(@Nullable NavigationSceneHost navigationSceneHost) {
         this.mNavigationSceneHost = navigationSceneHost;
     }
 
-    public void setRootSceneComponentFactory(SceneComponentFactory rootSceneComponentFactory) {
+    public void setRootSceneComponentFactory(@Nullable SceneComponentFactory rootSceneComponentFactory) {
         this.mRootSceneComponentFactory = rootSceneComponentFactory;
     }
 
@@ -235,10 +235,15 @@ public final class NavigationScene extends Scene implements NavigationListener {
         push(clazz, argument, new PushOptions.Builder().build());
     }
 
-    void addToReusePool(ReuseGroupScene scene) {
+    void addToReusePool(@NonNull ReuseGroupScene scene) {
         mLruCache.put(scene.getClass(), scene);
     }
 
+    /**
+     * Push a new Scene.
+     *
+     * @see #pop()
+     */
     public void push(@NonNull Class<? extends Scene> clazz, @Nullable Bundle argument, @Nullable PushOptions pushOptions) {
         if (!Utility.isActivityStatusValid(getActivity())) {
             return;
@@ -317,7 +322,7 @@ public final class NavigationScene extends Scene implements NavigationListener {
         }
     }
 
-    public void setResult(@NonNull Scene scene, Object result) {
+    public void setResult(@NonNull Scene scene, @Nullable Object result) {
         mNavigationSceneManager.setResult(scene, result);
     }
 
@@ -337,6 +342,11 @@ public final class NavigationScene extends Scene implements NavigationListener {
         }
     }
 
+    /**
+     * Pop to previous Scene.
+     *
+     * @see #push(Class, Bundle, PushOptions)
+     */
     public void pop() {
         ThreadUtility.checkUIThread();
 
@@ -373,7 +383,7 @@ public final class NavigationScene extends Scene implements NavigationListener {
         requireActivity().onBackPressed();
     }
 
-    public void pop(PopOptions popOptions) {
+    public void pop(@NonNull PopOptions popOptions) {
         ThreadUtility.checkUIThread();
 
         if (!Utility.isActivityStatusValid(getActivity())) {
@@ -413,7 +423,7 @@ public final class NavigationScene extends Scene implements NavigationListener {
         mNavigationSceneManager.popToRoot(animationFactory);
     }
 
-    public void remove(Scene scene) {
+    public void remove(@NonNull Scene scene) {
         ThreadUtility.checkUIThread();
 
         if (!Utility.isActivityStatusValid(getActivity())) {
@@ -570,7 +580,7 @@ public final class NavigationScene extends Scene implements NavigationListener {
     }
 
     @Override
-    public void dispatchActivityCreated(Bundle savedInstanceState) {
+    public void dispatchActivityCreated(@Nullable Bundle savedInstanceState) {
         super.dispatchActivityCreated(savedInstanceState);
         this.mNavigationSceneManager.executePendingOperation();
     }
@@ -639,7 +649,7 @@ public final class NavigationScene extends Scene implements NavigationListener {
         mPermissionResultCallbackMap.clear();
     }
 
-    private void dispatchCurrentChildState(State state) {
+    private void dispatchCurrentChildState(@NonNull State state) {
         if (getState().value < State.VIEW_CREATED.value) {
             throw new IllegalArgumentException("dispatchCurrentChildState can only call when state is VIEW_CREATED, ACTIVITY_CREATED, STARTED, RESUMED");
         }
@@ -649,7 +659,7 @@ public final class NavigationScene extends Scene implements NavigationListener {
     /**
      * Destroy operation needs to synchronize all children
      */
-    private void dispatchChildrenState(State state) {
+    private void dispatchChildrenState(@NonNull State state) {
         mNavigationSceneManager.dispatchChildrenState(state);
     }
 
@@ -725,7 +735,7 @@ public final class NavigationScene extends Scene implements NavigationListener {
     }
 
     @RequiresApi(api = Build.VERSION_CODES.M)
-    public void requestPermissions(@NonNull String[] permissions, int requestCode, PermissionResultCallback resultCallback) {
+    public void requestPermissions(@NonNull String[] permissions, int requestCode, @NonNull PermissionResultCallback resultCallback) {
         ThreadUtility.checkUIThread();
         Activity activity = getActivity();
         if (!Utility.isActivityStatusValid(activity)) {
@@ -745,8 +755,7 @@ public final class NavigationScene extends Scene implements NavigationListener {
         mNavigationSceneManager.onConfigurationChanged(newConfig);
     }
 
-    //todo 抽到SceneNavigation
-    public boolean pop(final InteractionNavigationPopAnimationFactory animationFactory) {
+    public boolean pop(@NonNull final InteractionNavigationPopAnimationFactory animationFactory) {
         ThreadUtility.checkUIThread();
 
         animationFactory.setCallback(mInteractionCallback);
@@ -784,7 +793,7 @@ public final class NavigationScene extends Scene implements NavigationListener {
         }
     };
 
-    public boolean isInteractionNavigationPopSupport(InteractionNavigationPopAnimationFactory animationFactory) {
+    public boolean isInteractionNavigationPopSupport(@NonNull InteractionNavigationPopAnimationFactory animationFactory) {
         return mNavigationSceneManager.isInteractionNavigationPopSupport(animationFactory);
     }
 

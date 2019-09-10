@@ -72,19 +72,43 @@ import static android.support.annotation.RestrictTo.Scope.LIBRARY_GROUP;
  * 3. Child: onDestroyView -> onDestroy -> onDetach
  * 4. Parent: onDestroyView -> onDestroy -> onDetach
  *
- * TODO: Must support tranaction, so we can add and hide without trigger onResume().
+ * TODO: Must support transaction, so we can add and hide without trigger onResume().
  *       Otherwise, ViewPager will be difficult to handle.
+ *
+ *
+ * common usage
+ * ```
+ * class TestChildScene : Scene() {
+ *     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup, savedInstanceState: Bundle?): View {
+ *         return View(requireSceneContext())
+ *     }
+ * }
+ *
+ * class TestGroupScene : GroupScene() {
+ *     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup, savedInstanceState: Bundle?): ViewGroup {
+ *         val layout = FrameLayout(requireSceneContext())
+ *         layout.id = View.generateViewId()
+ *         return layout
+ *     }
+ *
+ *     override fun onActivityCreated(savedInstanceState: Bundle?) {
+ *         super.onActivityCreated(savedInstanceState)
+ *         add(view.id, TestChildScene(), "Child_TAG")
+ *     }
+ * }
+ * ```
  */
 public abstract class GroupScene extends Scene {
-    private static final AnimationOrAnimatorFactory EMPTY_ANIMATION_FACTORY = new AnimationOrAnimatorFactory() {
-        @Override
-        public AnimationOrAnimator getAnimationOrAnimator() {
-            return null;
-        }
-    };
-    private final GroupSceneManager mGroupSceneManager = new GroupSceneManager();
+    @NonNull
+    private final GroupSceneManager mGroupSceneManager;
+    @NonNull
     private final List<NonNullPair<ChildSceneLifecycleCallbacks, Boolean>> mLifecycleCallbacks = new ArrayList<>();
 
+    public GroupScene() {
+        this.mGroupSceneManager = new GroupSceneManager(this);
+    }
+
+    @NonNull
     GroupSceneManager getGroupSceneManager() {
         return mGroupSceneManager;
     }
@@ -101,6 +125,13 @@ public abstract class GroupScene extends Scene {
     public final void commitTransaction() {
         this.mGroupSceneManager.commitTransaction();
     }
+
+    private static final AnimationOrAnimatorFactory EMPTY_ANIMATION_FACTORY = new AnimationOrAnimatorFactory() {
+        @Override
+        public AnimationOrAnimator getAnimationOrAnimator() {
+            return null;
+        }
+    };
 
     public final void add(@IdRes final int viewId, @NonNull final Scene scene, @NonNull final String tag) {
         add(viewId, scene, tag, EMPTY_ANIMATION_FACTORY);
@@ -267,10 +298,6 @@ public abstract class GroupScene extends Scene {
         return viewGroup;
     }
 
-    public GroupScene() {
-        mGroupSceneManager.setGroupScene(this);
-    }
-
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -280,7 +307,7 @@ public abstract class GroupScene extends Scene {
     }
 
     @Override
-    public final void dispatchAttachActivity(Activity activity) {
+    public final void dispatchAttachActivity(@NonNull Activity activity) {
         super.dispatchAttachActivity(activity);
     }
 
@@ -312,7 +339,7 @@ public abstract class GroupScene extends Scene {
     @NonNull
     public abstract ViewGroup onCreateView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container,
                                            @Nullable Bundle savedInstanceState);
-    
+
     /**
      * @hide
      */

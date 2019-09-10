@@ -50,6 +50,7 @@ public class Scope {
     private final Map<String, Scope> mChildrenScopes = new HashMap<>();
     private final Map<Object, Object> mServices = new HashMap<>();
 
+    @NonNull
     Scope buildScope(@NonNull Scene scene, @Nullable Bundle bundle) {
         String scopeKey = null;
         if (bundle != null) {

@@ -73,6 +73,40 @@ import static android.support.annotation.RestrictTo.Scope.LIBRARY_GROUP;
  * 2.onStop: set state to ACTIVITY_CREATED, and set Lifecycle to Lifecycle.Event.ON_STOP
  * 3.onDestroyView: set state to NONE, and set Lifecycle to Lifecycle.Event.ON_DESTROY
  * 4.onDestroy -> onDetach
+ *
+ *
+ * common usage
+ * ```
+ * class TestScene : Scene() {
+ *     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup, savedInstanceState: Bundle?): View {
+ *         return View(requireSceneContext())
+ *     }
+ *
+ *     override fun onActivityCreated(savedInstanceState: Bundle?) {
+ *         super.onActivityCreated(savedInstanceState)
+ *     }
+ *
+ *     override fun onStart() {
+ *         super.onStart()
+ *     }
+ *
+ *     override fun onResume() {
+ *         super.onResume()
+ *     }
+ *
+ *     override fun onPause() {
+ *         super.onPause()
+ *     }
+ *
+ *     override fun onStop() {
+ *         super.onStop()
+ *     }
+ *
+ *     override fun onDestroyView() {
+ *         super.onDestroyView()
+ *     }
+ * }
+ * ```
  */
 public abstract class Scene implements LifecycleOwner, ViewModelStoreOwner {
     public static final String SCENE_SERVICE = "scene";
@@ -88,15 +122,17 @@ public abstract class Scene implements LifecycleOwner, ViewModelStoreOwner {
     private Scope mScope;
     private NavigationScene mNavigationScene;
     private State mState = State.NONE;
-    private StringBuilder mStateHistoryBuilder = new StringBuilder(mState.name);
+    private final StringBuilder mStateHistoryBuilder = new StringBuilder(mState.name);
     private Bundle mArguments;
 
-    private Handler mHandler = new Handler(Looper.getMainLooper());
-    private List<Runnable> mPendingActionList = new ArrayList<>();
+    private final Handler mHandler = new Handler(Looper.getMainLooper());
+    private final List<Runnable> mPendingActionList = new ArrayList<>();
     private boolean mCalled = false;
     private boolean mVisibleDispatched = false;
 
+    @StyleRes
     private int mThemeResource;
+    private final FixSceneReuseLifecycleAdapter mLifecycleRegistry = new FixSceneReuseLifecycleAdapter(new LifecycleRegistry(this));
 
     /**
      * @hide
@@ -133,15 +169,37 @@ public abstract class Scene implements LifecycleOwner, ViewModelStoreOwner {
         this.mRootScopeFactory = rootScopeFactory;
     }
 
+    /**
+     * Supply the construction arguments for this Scene.
+     * The arguments supplied here will be retained across Scene destroy and
+     * creation.
+     *
+     * @see #getArguments()
+     * @see #requireArguments()
+     */
     public final void setArguments(@NonNull Bundle arguments) {
         this.mArguments = arguments;
     }
 
+    /**
+     * Return the arguments supplied when the Scene was instantiated,
+     * if any.
+     *
+     * @see #setArguments(Bundle)
+     * @see #requireArguments()
+     */
     @Nullable
     public final Bundle getArguments() {
         return this.mArguments;
     }
 
+    /**
+     * Return the arguments supplied when the Scene was instantiated.
+     *
+     * @throws IllegalStateException if no arguments were supplied to the Scene.
+     * @see #setArguments(Bundle)
+     * @see #getArguments()
+     */
     @NonNull
     public final Bundle requireArguments() {
         Bundle arguments = getArguments();
@@ -455,6 +513,7 @@ public abstract class Scene implements LifecycleOwner, ViewModelStoreOwner {
      * use {@link #onActivityCreated(Bundle)} instead
      */
     @Deprecated
+    @MainThread
     @CallSuper
     public void onAttach() {
         mCalled = true;
@@ -464,47 +523,89 @@ public abstract class Scene implements LifecycleOwner, ViewModelStoreOwner {
      * use {@link #onActivityCreated(Bundle)} instead
      */
     @Deprecated
+    @MainThread
     @CallSuper
     public void onCreate(@Nullable Bundle savedInstanceState) {
         mCalled = true;
     }
 
     /**
+     * Called when the Scene is no longer attached to its activity.  This
+     * is called after {@link #onDestroy()}.
+     * <p>
      * use {@link #onDestroyView()} instead
      */
     @Deprecated
+    @MainThread
     @CallSuper
     public void onDetach() {
         mCalled = true;
     }
 
+    /**
+     * Called to have the Scene instantiate its user interface view.
+     * <p>It is recommended to <strong>only</strong> inflate the layout in this method and move
+     * logic that operates on the returned View to {@link #onViewCreated(View, Bundle)}.or
+     * {@link #onActivityCreated(Bundle)}
+     *
+     * @param inflater           The LayoutInflater object that can be used to inflate
+     *                           any views in the Scene.
+     * @param container          This is the parent view that the Scene's UI should be attached to.
+     * @param savedInstanceState If non-null, this Scene is being re-constructed
+     *                           from a previous saved state as given here.
+     * @return Return the View for the Scene's UI.
+     * @see #onDestroyView
+     */
+    @MainThread
     @NonNull
     public abstract View onCreateView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container,
                                       @Nullable Bundle savedInstanceState);
 
+    @MainThread
     @CallSuper
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         mCalled = true;
     }
 
+    /**
+     * Called when the Scene is no longer in use.  This is called
+     * after {@link #onStop()} and before {@link #onDestroy()}.
+     * Then, {@link #mView} is reset to null.
+     */
     @CallSuper
+    @MainThread
     public void onDestroyView() {
         mCalled = true;
     }
 
     /**
+     * This is called after {@link #onDestroyView()} ()} and before {@link #onDetach()}.
+     * <p>
      * use {@link #onDestroyView()} instead
      */
     @Deprecated
+    @MainThread
     @CallSuper
     public void onDestroy() {
         mCalled = true;
     }
 
+    /**
+     * Get the root view for the Scene's layout (the one returned by {@link #onCreateView}),
+     * if provided.
+     *
+     * @return The Scene's root view, or null if Scene view is not created or has been destroyed.
+     */
     public final View getView() {
         return this.mView;
     }
 
+    /**
+     * Get the root view for the Scene's layout (the one returned by {@link #onCreateView}).
+     *
+     * @throws IllegalStateException if current Scene view is not created or has been destroyed.
+     * @see #getView()
+     */
     @NonNull
     public final View requireView() {
         View view = getView();
@@ -514,6 +615,11 @@ public abstract class Scene implements LifecycleOwner, ViewModelStoreOwner {
         return view;
     }
 
+    /**
+     * Return the {@link Activity} this Scene is currently associated with.
+     *
+     * @see #requireActivity()
+     */
     @Nullable
     public final Activity getActivity() {
         return this.mActivity;
@@ -592,6 +698,12 @@ public abstract class Scene implements LifecycleOwner, ViewModelStoreOwner {
         }
     }
 
+    /**
+     * Return the {@link Activity} this Scene is currently associated with.
+     *
+     * @throws IllegalStateException if not currently associated with an activity
+     * @see #getActivity()
+     */
     @NonNull
     public final Activity requireActivity() {
         Activity activity = getActivity();
@@ -610,19 +722,41 @@ public abstract class Scene implements LifecycleOwner, ViewModelStoreOwner {
         return context;
     }
 
+    @NonNull
     public final Resources getResources() {
         return requireActivity().getResources();
     }
 
+    /**
+     * Return a localized, styled CharSequence from the application's package's
+     * default string table.
+     *
+     * @param resId Resource id for the CharSequence text
+     */
+    @NonNull
     public final CharSequence getText(@StringRes int resId) {
         return getResources().getText(resId);
     }
 
+    /**
+     * Return a localized string from the application's package's
+     * default string table.
+     *
+     * @param resId Resource id for the string
+     */
     @NonNull
     public final String getString(@StringRes int resId) {
         return getResources().getString(resId);
     }
 
+    /**
+     * Return a localized formatted string from the application's package's
+     * default string table, substituting the format arguments as defined in
+     * {@link java.util.Formatter} and {@link java.lang.String#format}.
+     *
+     * @param resId      Resource id for the format string
+     * @param formatArgs The format arguments that will be used for substitution.
+     */
     @NonNull
     public final String getString(@StringRes int resId, Object... formatArgs) {
         return getResources().getString(resId, formatArgs);
@@ -666,6 +800,7 @@ public abstract class Scene implements LifecycleOwner, ViewModelStoreOwner {
         return navigationScene;
     }
 
+    @MainThread
     @CallSuper
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         Activity activity = requireActivity();
@@ -681,11 +816,21 @@ public abstract class Scene implements LifecycleOwner, ViewModelStoreOwner {
         mCalled = true;
     }
 
+    /**
+     * Called when the Scene is visible to the user. It will be followed by {@link #onResume} if it
+     * is not overlapped with other translucent Scene.
+     *
+     * @see #onActivityCreated
+     * @see #onStop
+     * @see #onResume
+     */
+    @MainThread
     @CallSuper
     public void onStart() {
         mCalled = true;
     }
 
+    @MainThread
     @CallSuper
     public void onViewStateRestored(@NonNull Bundle savedInstanceState) {
         mCalled = true;
@@ -708,17 +853,26 @@ public abstract class Scene implements LifecycleOwner, ViewModelStoreOwner {
         }
     }
 
+    /**
+     * Called when the Scene is visible to the user and it is not overlapped with other translucent Scene.
+     *
+     * @see #onStart()
+     * @see #onPause
+     */
+    @MainThread
     @CallSuper
     public void onResume() {
         mCalled = true;
         executePendingActions();
     }
 
+    @MainThread
     @CallSuper
     public void onPause() {
         mCalled = true;
     }
 
+    @MainThread
     @CallSuper
     public void onSaveInstanceState(@NonNull Bundle outState) {
         mCalled = true;
@@ -743,16 +897,19 @@ public abstract class Scene implements LifecycleOwner, ViewModelStoreOwner {
         dispatchOnSceneSaveInstanceState(this, outState, false);
     }
 
+    @MainThread
     @CallSuper
     public void onStop() {
         mCalled = true;
         dispatchVisibleChanged();
     }
 
+    @Nullable
     public final <T extends View> T findViewById(@IdRes int id) {
         return getView().findViewById(id);
     }
 
+    @NonNull
     public final String getStateHistory() {
         return this.mStateHistoryBuilder.toString();
     }
@@ -767,14 +924,31 @@ public abstract class Scene implements LifecycleOwner, ViewModelStoreOwner {
         }
     }
 
-    private FixSceneReuseLifecycleAdapter mLifecycleRegistry = new FixSceneReuseLifecycleAdapter(new LifecycleRegistry(this));
-
+    /**
+     * Get a {@link Lifecycle} that represents this Scene's lifecycle, Scene has just one lifecycle,
+     * the lifecycle of Scene and the lifecycle of Scene'view are the same.
+     * <p>
+     * Namely, the lifecycle of the Scene is:
+     * <ol>
+     * <li>{@link Lifecycle.Event#ON_CREATE created} after {@link #onActivityCreated(Bundle)}</li>
+     * <li>{@link Lifecycle.Event#ON_START started} after {@link #onStart()}</li>
+     * <li>{@link Lifecycle.Event#ON_RESUME resumed} after {@link #onResume()}</li>
+     * <li>{@link Lifecycle.Event#ON_PAUSE paused} before {@link #onPause()}</li>
+     * <li>{@link Lifecycle.Event#ON_STOP stopped} before {@link #onStop()}</li>
+     * <li>{@link Lifecycle.Event#ON_DESTROY destroyed} before {@link #onDestroyView()}</li>
+     * </ol>
+     */
+    @MainThread
     @NonNull
     @Override
     public final Lifecycle getLifecycle() {
         return mLifecycleRegistry;
     }
 
+    /**
+     * Returns the {@link ViewModelStore} associated with this Scene
+     */
+    @MainThread
     @NonNull
     @Override
     public final ViewModelStore getViewModelStore() {
@@ -806,12 +980,15 @@ public abstract class Scene implements LifecycleOwner, ViewModelStoreOwner {
         }
     }
 
-    public final void setTheme(@StyleRes int resid) {
+    /**
+     * Use another theme instead of inherit from Activity theme
+     */
+    public final void setTheme(@StyleRes int resId) {
         if (getView() != null) {
             throw new IllegalStateException("setTheme should be invoked before view is created, the best place is in onCreateView method");
         }
-        if (this.mThemeResource != resid) {
-            this.mThemeResource = resid;
+        if (this.mThemeResource != resId) {
+            this.mThemeResource = resId;
             if (this.mSceneContext != null) {
                 this.mSceneContext.setTheme(this.mThemeResource);
             }
@@ -950,6 +1127,7 @@ public abstract class Scene implements LifecycleOwner, ViewModelStoreOwner {
         return super.hashCode();
     }
 
+    @NonNull
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder(128);
