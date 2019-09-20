@@ -485,7 +485,8 @@ public abstract class GroupScene extends Scene {
         this.mGroupSceneManager.dispatchVisibleChildrenState(state);
     }
 
-    public final <T extends Scene> T createOrReuse(String tag, Creator<T> creator) {
+    @NonNull
+    public final <T extends Scene> T createOrReuse(@NonNull String tag, @NonNull Creator<T> creator) {
         Scene scene = findSceneByTag(tag);
         if (scene == null) {
             scene = creator.call();
