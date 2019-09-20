@@ -25,17 +25,77 @@ import com.bytedance.scene.Scene;
  * Created by JiangQi on 8/1/18.
  */
 public interface ChildSceneLifecycleCallbacks {
+
+    /**
+     * use {@link #onSceneActivityCreated(Scene, Bundle)} instead
+     * <p>
+     * Called after the Scene has returned from {@link Scene#onCreate(Bundle)}.
+     * View is not created at this moment
+     *
+     * @param scene              Scene changing state
+     * @param savedInstanceState Saved instance bundle from a previous instance
+     **/
+    @Deprecated
     void onSceneCreated(@NonNull Scene scene, @Nullable Bundle savedInstanceState);
 
+    /**
+     * Called after the Scene has returned from {@link Scene#onActivityCreated(Bundle)}.
+     * View is already created at this moment.
+     *
+     * @param scene              Scene changing state
+     * @param savedInstanceState Saved instance bundle from a previous instance
+     */
+    void onSceneActivityCreated(@NonNull Scene scene, @Nullable Bundle savedInstanceState);
+
+    /**
+     * Called after the Scene has returned from {@link Scene#onStart()}.
+     *
+     * @param scene Scene changing state
+     */
     void onSceneStarted(@NonNull Scene scene);
 
+    /**
+     * Called after the Scene has returned from {@link Scene#onResume()} ()}.
+     *
+     * @param scene Scene changing state
+     */
     void onSceneResumed(@NonNull Scene scene);
 
+    /**
+     * Called after the Scene has returned from {@link Scene#onSaveInstanceState(Bundle)}.
+     *
+     * @param scene    Scene changing state
+     * @param outState Saved state bundle for the Scene
+     */
     void onSceneSaveInstanceState(@NonNull Scene scene, @NonNull Bundle outState);
 
+    /**
+     * Called after the Scene has returned from {@link Scene#onPause()} ()}.
+     *
+     * @param scene Scene changing state
+     */
     void onScenePaused(@NonNull Scene scene);
 
+    /**
+     * Called after the Scene has returned from {@link Scene#onStop()}}.
+     *
+     * @param scene Scene changing state
+     */
     void onSceneStopped(@NonNull Scene scene);
 
+    /**
+     * Called after the Scene has returned from {@link Scene#onDestroyView()}.
+     * View is still available at this moment
+     *
+     * @param scene Scene changing state
+     */
+    void onSceneViewDestroyed(@NonNull Scene scene);
+
+    /**
+     * Called after the Scene has returned from {@link Scene#onDestroy()}.
+     * View is not available at this moment
+     *
+     * @param scene Scene changing state
+     */
     void onSceneDestroyed(@NonNull Scene scene);
 }

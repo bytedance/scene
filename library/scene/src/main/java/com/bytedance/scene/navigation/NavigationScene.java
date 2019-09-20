@@ -830,6 +830,7 @@ public final class NavigationScene extends Scene implements NavigationListener {
      * @hide
      */
     @RestrictTo(LIBRARY_GROUP)
+    @Override
     public void dispatchOnSceneCreated(@NonNull Scene scene, @Nullable Bundle savedInstanceState, boolean directChild) {
         if (scene != this) {
             List<NonNullPair<ChildSceneLifecycleCallbacks, Boolean>> list = new ArrayList<>(mLifecycleCallbacks);
@@ -847,6 +848,24 @@ public final class NavigationScene extends Scene implements NavigationListener {
      * @hide
      */
     @RestrictTo(LIBRARY_GROUP)
+    @Override
+    public void dispatchOnSceneActivityCreated(@NonNull Scene scene, @Nullable Bundle savedInstanceState, boolean directChild) {
+        if (scene != this) {
+            List<NonNullPair<ChildSceneLifecycleCallbacks, Boolean>> list = new ArrayList<>(mLifecycleCallbacks);
+            for (NonNullPair<ChildSceneLifecycleCallbacks, Boolean> pair : list) {
+                if (directChild || pair.second) {
+                    pair.first.onSceneActivityCreated(scene, savedInstanceState);
+                }
+            }
+        }
+        super.dispatchOnSceneActivityCreated(scene, savedInstanceState, directChild);
+    }
+
+    /**
+     * @hide
+     */
+    @RestrictTo(LIBRARY_GROUP)
+    @Override
     public void dispatchOnSceneStarted(@NonNull Scene scene, boolean directChild) {
         if (scene != this) {
             List<NonNullPair<ChildSceneLifecycleCallbacks, Boolean>> list = new ArrayList<>(mLifecycleCallbacks);
@@ -864,6 +883,7 @@ public final class NavigationScene extends Scene implements NavigationListener {
      * @hide
      */
     @RestrictTo(LIBRARY_GROUP)
+    @Override
     public void dispatchOnSceneResumed(@NonNull Scene scene, boolean directChild) {
         if (scene != this) {
             List<NonNullPair<ChildSceneLifecycleCallbacks, Boolean>> list = new ArrayList<>(mLifecycleCallbacks);
@@ -881,6 +901,7 @@ public final class NavigationScene extends Scene implements NavigationListener {
      * @hide
      */
     @RestrictTo(LIBRARY_GROUP)
+    @Override
     public void dispatchOnSceneStopped(@NonNull Scene scene, boolean directChild) {
         if (scene != this) {
             List<NonNullPair<ChildSceneLifecycleCallbacks, Boolean>> list = new ArrayList<>(mLifecycleCallbacks);
@@ -897,6 +918,7 @@ public final class NavigationScene extends Scene implements NavigationListener {
      * @hide
      */
     @RestrictTo(LIBRARY_GROUP)
+    @Override
     public void dispatchOnScenePaused(@NonNull Scene scene, boolean directChild) {
         if (scene != this) {
             List<NonNullPair<ChildSceneLifecycleCallbacks, Boolean>> list = new ArrayList<>(mLifecycleCallbacks);
@@ -914,6 +936,7 @@ public final class NavigationScene extends Scene implements NavigationListener {
      * @hide
      */
     @RestrictTo(LIBRARY_GROUP)
+    @Override
     public void dispatchOnSceneSaveInstanceState(@NonNull Scene scene, @NonNull Bundle outState, boolean directChild) {
         if (scene != this) {
             List<NonNullPair<ChildSceneLifecycleCallbacks, Boolean>> list = new ArrayList<>(mLifecycleCallbacks);
@@ -931,7 +954,26 @@ public final class NavigationScene extends Scene implements NavigationListener {
      * @hide
      */
     @RestrictTo(LIBRARY_GROUP)
-    public void dispatchOnSceneDestroyed(@NonNull Scene scene, boolean directChild) {
+    @Override
+    public void dispatchOnSceneViewDestroyed(@NonNull Scene scene, boolean directChild) {
+        if (scene != this) {
+            List<NonNullPair<ChildSceneLifecycleCallbacks, Boolean>> list = new ArrayList<>(mLifecycleCallbacks);
+            for (NonNullPair<ChildSceneLifecycleCallbacks, Boolean> pair : list) {
+                if (directChild || pair.second) {
+                    pair.first.onSceneViewDestroyed(scene);
+                }
+            }
+        }
+
+        super.dispatchOnSceneViewDestroyed(scene, directChild);
+    }
+
+    /**
+     * @hide
+     */
+    @RestrictTo(LIBRARY_GROUP)
+    @Override
+    public final void dispatchOnSceneDestroyed(@NonNull Scene scene, boolean directChild) {
         if (scene != this) {
             List<NonNullPair<ChildSceneLifecycleCallbacks, Boolean>> list = new ArrayList<>(mLifecycleCallbacks);
             for (NonNullPair<ChildSceneLifecycleCallbacks, Boolean> pair : list) {

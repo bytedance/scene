@@ -115,6 +115,11 @@ public class ChildSceneLifecycleCallbacksDemoScene extends GroupScene {
         }
 
         @Override
+        public void onSceneActivityCreated(@NonNull Scene scene, @Nullable Bundle savedInstanceState) {
+            log("Scene", scene.toString() + " onSceneActivityCreated");
+        }
+
+        @Override
         public void onSceneStarted(Scene scene) {
             log("Scene", scene.toString() + " onSceneStarted");
         }
@@ -140,7 +145,12 @@ public class ChildSceneLifecycleCallbacksDemoScene extends GroupScene {
         }
 
         @Override
-        public void onSceneDestroyed(Scene scene) {
+        public void onSceneViewDestroyed(Scene scene) {
+            log("Scene", scene.toString() + " onSceneViewDestroyed");
+        }
+
+        @Override
+        public void onSceneDestroyed(@NonNull Scene scene) {
             log("Scene", scene.toString() + " onSceneDestroyed");
         }
     };

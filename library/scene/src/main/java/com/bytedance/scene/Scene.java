@@ -356,17 +356,24 @@ public abstract class Scene implements LifecycleOwner, ViewModelStoreOwner {
         setState(State.VIEW_CREATED);
     }
 
-    /** @hide */
+    /**
+     * We hope the Scene state in {@link com.bytedance.scene.interfaces.ChildSceneLifecycleCallbacks#onSceneActivityCreated(Scene, Bundle)}
+     * and {@link #onActivityCreated(Bundle)} are the same, so {@link #dispatchOnSceneActivityCreated(Scene, Bundle, boolean)} is invoked
+     * after {@link #onActivityCreated(Bundle)} and before {@link #setState(State)}
+     *
+     * @hide
+     */
     @RestrictTo(LIBRARY_GROUP)
     public void dispatchActivityCreated(@Nullable Bundle savedInstanceState) {
         mCalled = false;
         onActivityCreated(savedInstanceState);
-        if (savedInstanceState != null) {
-            dispatchViewStateRestored(savedInstanceState);
-        }
         if (!mCalled) {
             throw new SuperNotCalledException("Scene " + this
                     + " did not call through to super.onActivityCreated()");
+        }
+        dispatchOnSceneActivityCreated(this, savedInstanceState, false);
+        if (savedInstanceState != null) {
+            dispatchViewStateRestored(savedInstanceState);
         }
         setState(State.ACTIVITY_CREATED);
         mLifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_CREATE);
@@ -381,10 +388,10 @@ public abstract class Scene implements LifecycleOwner, ViewModelStoreOwner {
             throw new SuperNotCalledException("Scene " + this
                     + " did not call through to super.onStart()");
         }
+        dispatchOnSceneStarted(this, false);
         setState(State.STARTED);
         dispatchVisibleChanged();
         mLifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_START);
-        dispatchOnSceneStarted(this, false);
     }
 
     /** @hide */
@@ -407,9 +414,9 @@ public abstract class Scene implements LifecycleOwner, ViewModelStoreOwner {
             throw new SuperNotCalledException("Scene " + this
                     + " did not call through to super.onResume()");
         }
+        dispatchOnSceneResumed(this, false);
         setState(State.RESUMED);
         mLifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_RESUME);
-        dispatchOnSceneResumed(this, false);
     }
 
     /** @hide */
@@ -462,6 +469,7 @@ public abstract class Scene implements LifecycleOwner, ViewModelStoreOwner {
             throw new SuperNotCalledException("Scene " + this
                     + " did not call through to super.onDestroyView()");
         }
+        dispatchOnSceneViewDestroyed(this, false);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             this.mView.cancelPendingInputEvents();
         }
@@ -1059,6 +1067,15 @@ public abstract class Scene implements LifecycleOwner, ViewModelStoreOwner {
 
     /** @hide */
     @RestrictTo(LIBRARY_GROUP)
+    public void dispatchOnSceneActivityCreated(@NonNull Scene scene, @Nullable Bundle savedInstanceState, boolean directChild) {
+        Scene parentScene = getParentScene();
+        if (parentScene != null) {
+            parentScene.dispatchOnSceneActivityCreated(scene, savedInstanceState, scene == this);
+        }
+    }
+
+    /** @hide */
+    @RestrictTo(LIBRARY_GROUP)
     public void dispatchOnSceneStarted(@NonNull Scene scene, boolean directChild) {
         Scene parentScene = getParentScene();
         if (parentScene != null) {
@@ -1099,6 +1116,15 @@ public abstract class Scene implements LifecycleOwner, ViewModelStoreOwner {
         Scene parentScene = getParentScene();
         if (parentScene != null) {
             parentScene.dispatchOnSceneSaveInstanceState(scene, outState, scene == this);
+        }
+    }
+
+    /** @hide */
+    @RestrictTo(LIBRARY_GROUP)
+    public void dispatchOnSceneViewDestroyed(@NonNull Scene scene, boolean directChild) {
+        Scene parentScene = getParentScene();
+        if (parentScene != null) {
+            parentScene.dispatchOnSceneViewDestroyed(scene, scene == this);
         }
     }
 

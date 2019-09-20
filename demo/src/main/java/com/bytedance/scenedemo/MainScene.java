@@ -96,6 +96,11 @@ public class MainScene extends GroupScene {
         }
 
         @Override
+        public void onSceneActivityCreated(@NonNull Scene scene, @Nullable Bundle savedInstanceState) {
+            log(scene.toString() + " onSceneActivityCreated");
+        }
+
+        @Override
         public void onSceneStarted(Scene scene) {
             log(scene.toString() + " onSceneStarted");
         }
@@ -106,7 +111,7 @@ public class MainScene extends GroupScene {
         }
 
         @Override
-        public void onSceneSaveInstanceState(Scene scene, Bundle outState) {
+        public void onSceneSaveInstanceState(Scene scene, @NonNull Bundle outState) {
             log(scene.toString() + " onSceneSaveInstanceState");
         }
 
@@ -118,6 +123,11 @@ public class MainScene extends GroupScene {
         @Override
         public void onSceneStopped(Scene scene) {
             log(scene.toString() + " onSceneStopped");
+        }
+
+        @Override
+        public void onSceneViewDestroyed(@NonNull Scene scene) {
+            log(scene.toString() + " onSceneViewDestroyed");
         }
 
         @Override

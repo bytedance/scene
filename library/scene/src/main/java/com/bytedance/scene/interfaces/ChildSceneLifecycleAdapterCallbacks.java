@@ -17,46 +17,60 @@ package com.bytedance.scene.interfaces;
 
 import android.os.Bundle;
 
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import com.bytedance.scene.Scene;
-import com.bytedance.scene.interfaces.ChildSceneLifecycleCallbacks;
 
 /**
  * Created by JiangQi on 8/1/18.
  */
 public class ChildSceneLifecycleAdapterCallbacks implements ChildSceneLifecycleCallbacks {
-
+    /**
+     * use {@link #onSceneActivityCreated(Scene, Bundle)} instead
+     */
+    @Deprecated
     @Override
-    public void onSceneCreated(Scene scene, Bundle savedInstanceState) {
+    public void onSceneCreated(@NonNull Scene scene, @Nullable Bundle savedInstanceState) {
 
     }
 
     @Override
-    public void onSceneStarted(Scene scene) {
+    public void onSceneActivityCreated(@NonNull Scene scene, @Nullable Bundle savedInstanceState) {
 
     }
 
     @Override
-    public void onSceneResumed(Scene scene) {
+    public void onSceneStarted(@NonNull Scene scene) {
 
     }
 
     @Override
-    public void onSceneSaveInstanceState(Scene scene, Bundle outState) {
+    public void onSceneResumed(@NonNull Scene scene) {
 
     }
 
     @Override
-    public void onScenePaused(Scene scene) {
+    public void onSceneSaveInstanceState(@NonNull Scene scene, @NonNull Bundle outState) {
 
     }
 
     @Override
-    public void onSceneStopped(Scene scene) {
+    public void onScenePaused(@NonNull Scene scene) {
 
     }
 
     @Override
-    public void onSceneDestroyed(Scene scene) {
+    public void onSceneStopped(@NonNull Scene scene) {
+
+    }
+
+    @Override
+    public void onSceneViewDestroyed(@NonNull Scene scene) {
+
+    }
+
+    @Override
+    public void onSceneDestroyed(@NonNull Scene scene) {
 
     }
 }
