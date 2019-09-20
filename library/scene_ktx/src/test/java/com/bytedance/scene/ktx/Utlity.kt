@@ -22,7 +22,7 @@ public fun createFromSceneLifecycleManager(rootScene: Scene): NavigationScene {
 }
 
 public fun createFromInitSceneLifecycleManager(rootScene: Scene): Pair<SceneLifecycleManager, NavigationScene> {
-    val controller = Robolectric.buildActivity<TestActivity>(TestActivity::class.java!!).create().start().resume()
+    val controller = Robolectric.buildActivity<TestActivity>(TestActivity::class.java).create().start().resume()
     val testActivity = controller.get()
     val navigationScene = NavigationScene()
     val options = NavigationSceneOptions(rootScene.javaClass)
@@ -44,7 +44,7 @@ public fun createFromInitSceneLifecycleManager(rootScene: Scene): Pair<SceneLife
 
     val rootScopeFactory = Scope.RootScopeFactory { Scope.DEFAULT_ROOT_SCOPE_FACTORY.rootScope }
 
-    val sceneComponentFactory = SceneComponentFactory { cl, className, bundle ->
+    val sceneComponentFactory = SceneComponentFactory { _, className, _ ->
         if (className == rootScene.javaClass.name) {
             rootScene
         } else null

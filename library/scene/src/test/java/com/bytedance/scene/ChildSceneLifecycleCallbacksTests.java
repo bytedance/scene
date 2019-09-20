@@ -497,6 +497,20 @@ public class ChildSceneLifecycleCallbacksTests {
         groupScene.unregisterChildSceneLifecycleCallbacks(callbacks);
     }
 
+    @Test
+    public void testNavigationSceneUnregisterChildSceneLifecycleCallbacks() {
+        NavigationScene navigationScene = NavigationSourceUtility.createFromSceneLifecycleManager(new Scene() {
+            @NonNull
+            @Override
+            public View onCreateView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container, @Nullable Bundle savedInstanceState) {
+                return new View(requireSceneContext());
+            }
+        });
+        ChildSceneLifecycleCallbacks callbacks = new ChildSceneLifecycleAdapterCallbacks();
+        navigationScene.registerChildSceneLifecycleCallbacks(callbacks, false);
+        navigationScene.unregisterChildSceneLifecycleCallbacks(callbacks);
+    }
+
     public static class TestActivity extends Activity {
         public FrameLayout mFrameLayout;
 

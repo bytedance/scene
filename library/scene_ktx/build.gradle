@@ -23,6 +23,22 @@ dependencies {
 
     testImplementation ROBOLECTRIC
     testImplementation JUNIT
+    testAnnotationProcessor AUTO_SERVICE
+}
+
+tasks.withType(Test) {
+    testLogging {
+        events "failed"
+    }
+
+    afterSuite { desc, result ->
+        if (!desc.parent)
+            println("${result.resultType} " +
+                    "(${result.testCount} tests, " +
+                    "${result.successfulTestCount} successes, " +
+                    "${result.failedTestCount} failures, " +
+                    "${result.skippedTestCount} skipped)")
+    }
 }
 
 task javadoc(type: Javadoc) {

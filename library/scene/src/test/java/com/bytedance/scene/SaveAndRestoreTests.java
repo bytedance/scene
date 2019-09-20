@@ -8,9 +8,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.FrameLayout;
 import com.bytedance.scene.animation.animatorexecutor.NoAnimationExecutor;
+import com.bytedance.scene.group.GroupScene;
 import com.bytedance.scene.navigation.NavigationScene;
 import com.bytedance.scene.navigation.NavigationSceneOptions;
+import com.bytedance.scene.utlity.ViewIdGenerator;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
@@ -134,7 +137,7 @@ public class SaveAndRestoreTests {
         assertEquals("Test", newRootScene.mValue);//check onSaveInstanceState and onViewStateRestored
     }
 
-    public static NavigationScene createNavigationScene(Scene rootScene) {
+    public static NavigationScene createNavigationScene(final Scene rootScene) {
         SceneLifecycleManager sceneLifecycleManager = new SceneLifecycleManager();
         NavigationScene navigationScene = new NavigationScene();
         ActivityController<NavigationSourceUtility.TestActivity> controller = Robolectric.buildActivity(NavigationSourceUtility.TestActivity.class).create().start().resume();
@@ -170,7 +173,12 @@ public class SaveAndRestoreTests {
 
         sceneLifecycleManager.onActivityCreated(testActivity, testActivity.mFrameLayout,
                 navigationScene, navigationSceneHost, rootScopeFactory,
-                null, null);
+                new SceneComponentFactory() {
+                    @Override
+                    public Scene instantiateScene(ClassLoader cl, String className, Bundle bundle) {
+                        return rootScene;
+                    }
+                }, null);
 
         sceneLifecycleManager.onStart();
         sceneLifecycleManager.onResume();
@@ -188,6 +196,19 @@ public class SaveAndRestoreTests {
                 return new View(requireSceneContext());
             }
         });//crash
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void crashGroupSceneAnonymousClass() {
+        TestGroupScene testGroupScene = new TestGroupScene();
+        createNavigationScene(testGroupScene);
+        testGroupScene.add(testGroupScene.id, new Scene() {
+            @NonNull
+            @Override
+            public View onCreateView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container, @Nullable Bundle savedInstanceState) {
+                return new View(requireSceneContext());
+            }
+        }, "TAG");//crash
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -397,6 +418,18 @@ public class SaveAndRestoreTests {
         public void onViewStateRestored(@NonNull Bundle savedInstanceState) {
             super.onViewStateRestored(savedInstanceState);
             this.mValue = savedInstanceState.getString("value");
+        }
+    }
+
+    public static class TestGroupScene extends GroupScene {
+        public final int id = ViewIdGenerator.generateViewId();
+
+        @NonNull
+        @Override
+        public ViewGroup onCreateView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container, @Nullable Bundle savedInstanceState) {
+            FrameLayout layout = new FrameLayout(requireSceneContext());
+            layout.setId(id);
+            return layout;
         }
     }
 }

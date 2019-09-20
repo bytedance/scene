@@ -14,8 +14,8 @@ import com.bytedance.scene.group.GroupScene
 import com.bytedance.scene.navigation.NavigationScene
 import com.bytedance.scene.navigation.NavigationSceneOptions
 import com.bytedance.scene.utlity.ViewIdGenerator
-import junit.framework.Assert.assertSame
-import junit.framework.Assert.assertTrue
+import org.junit.Assert.assertSame
+import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.Robolectric
@@ -114,7 +114,7 @@ fun createFromSceneLifecycleManagerByFragmentActivity(rootScene: Scene): Navigat
 }
 
 fun createFromInitSceneLifecycleManagerByFragmentActivity(rootScene: Scene): Pair<SceneLifecycleManager, NavigationScene> {
-    val controller = Robolectric.buildActivity<TestFragmentActivity>(TestFragmentActivity::class.java!!).create().start().resume()
+    val controller = Robolectric.buildActivity<TestFragmentActivity>(TestFragmentActivity::class.java).create().start().resume()
     val testActivity = controller.get()
     val navigationScene = NavigationScene()
     val options = NavigationSceneOptions(rootScene.javaClass)
@@ -136,7 +136,7 @@ fun createFromInitSceneLifecycleManagerByFragmentActivity(rootScene: Scene): Pai
 
     val rootScopeFactory = Scope.RootScopeFactory { Scope.DEFAULT_ROOT_SCOPE_FACTORY.rootScope }
 
-    val sceneComponentFactory = SceneComponentFactory { cl, className, bundle ->
+    val sceneComponentFactory = SceneComponentFactory { _, className, _ ->
         if (className == rootScene.javaClass.name) {
             rootScene
         } else null

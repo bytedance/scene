@@ -8,8 +8,8 @@ import android.widget.FrameLayout
 import com.bytedance.scene.Scene
 import com.bytedance.scene.group.GroupScene
 import com.bytedance.scene.utlity.ViewIdGenerator
-import junit.framework.Assert.assertEquals
-import junit.framework.Assert.assertFalse
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner

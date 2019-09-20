@@ -92,6 +92,18 @@ public class ViewModelTests {
         assertTrue(testViewModel.value[0]);
     }
 
+    @Test(expected = IllegalStateException.class)
+    public void testViewModelBeforeOnAttach() {
+        Scene scene = new Scene() {
+            @NonNull
+            @Override
+            public View onCreateView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container, @Nullable Bundle savedInstanceState) {
+                return new View(requireSceneContext());
+            }
+        };
+        SceneViewModelProviders.of(scene).get(TestViewModel.class);
+    }
+
     public static class TestViewModel extends ViewModel {
         final boolean[] value = new boolean[1];
 

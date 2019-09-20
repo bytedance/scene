@@ -120,6 +120,14 @@ public class GroupSceneExceptionTests {
         testScene.hide(childScene);//target Scene not found, throw exception
     }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void testAddToNotFoundViewException() {
+        TestEmptyScene testScene = new TestEmptyScene();
+        NavigationSourceUtility.createFromSceneLifecycleManager(testScene);
+        TestChildScene childScene = new TestChildScene();
+        testScene.add(ViewIdGenerator.generateViewId(), childScene, "TAG");//View not found, throw exception
+    }
+
     public static class TestEmptyScene extends GroupScene {
         public final int mId;
         public final int mId2;

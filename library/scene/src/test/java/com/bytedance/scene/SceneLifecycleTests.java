@@ -53,6 +53,13 @@ public class SceneLifecycleTests {
         assertEquals(testScene.getView().getContext().getSystemService(Scene.SCENE_SERVICE), testScene);
         assertFalse(testScene.isVisible());
 
+        testScene.requireView();
+        testScene.requireParentScene();
+        testScene.requireNavigationScene();
+        testScene.requireActivity();
+        testScene.requireSceneContext();
+        testScene.requireApplicationContext();
+
         sceneLifecycleManager.onStart();
         assertEquals(testScene.getLifecycle().getCurrentState(), Lifecycle.State.STARTED);
         assertEquals(testScene.getState(), State.STARTED);

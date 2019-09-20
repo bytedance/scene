@@ -1,6 +1,8 @@
 package com.bytedance.scene;
 
 
+import android.arch.lifecycle.LifecycleObserver;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -16,6 +18,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
+
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static org.junit.Assert.*;
 
@@ -140,6 +145,19 @@ public class SceneTests {
         scene.requireNavigationScene();
     }
 
+    @Test(expected = IllegalStateException.class)
+    public void testRequireNavigationSceneExceptionOnRootNavigationScene() {
+        Scene scene = new Scene() {
+            @NonNull
+            @Override
+            public View onCreateView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container, @Nullable Bundle savedInstanceState) {
+                return new View(requireSceneContext());
+            }
+        };
+        NavigationScene navigationScene = NavigationSourceUtility.createFromSceneLifecycleManager(scene);
+        navigationScene.requireNavigationScene();
+    }
+
     @Test
     public void testRequireNavigationSceneAfterAttach() {
         Scene scene = new Scene() {
@@ -177,5 +195,322 @@ public class SceneTests {
 
         assertNull(scene.requireNavigationScene().getNavigationScene());
         scene.requireNavigationScene().requireNavigationScene();
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void testRequireActivityBeforeOnAttach() {
+        Scene scene = new Scene() {
+            @NonNull
+            @Override
+            public View onCreateView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container, @Nullable Bundle savedInstanceState) {
+                return new View(requireSceneContext());
+            }
+        };
+        scene.requireActivity();
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void testRequireSceneContextBeforeOnAttach() {
+        Scene scene = new Scene() {
+            @NonNull
+            @Override
+            public View onCreateView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container, @Nullable Bundle savedInstanceState) {
+                return new View(requireSceneContext());
+            }
+        };
+        scene.requireSceneContext();
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void testRequireApplicationContextBeforeOnAttach() {
+        Scene scene = new Scene() {
+            @NonNull
+            @Override
+            public View onCreateView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container, @Nullable Bundle savedInstanceState) {
+                return new View(requireSceneContext());
+            }
+        };
+        scene.requireApplicationContext();
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void testGetLayoutInflaterBeforeOnAttach() {
+        Scene scene = new Scene() {
+            @NonNull
+            @Override
+            public View onCreateView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container, @Nullable Bundle savedInstanceState) {
+                return new View(requireSceneContext());
+            }
+        };
+        scene.getLayoutInflater();
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void testGetScopeBeforeOnCreate() {
+        Scene scene = new Scene() {
+            @NonNull
+            @Override
+            public View onCreateView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container, @Nullable Bundle savedInstanceState) {
+                return new View(requireSceneContext());
+            }
+        };
+        scene.getScope();
+    }
+
+    @Test
+    public void testExecuteNowOrScheduleAtNextResume() {
+        final AtomicBoolean mValue = new AtomicBoolean(false);
+        Scene scene = new Scene() {
+            @NonNull
+            @Override
+            public View onCreateView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container, @Nullable Bundle savedInstanceState) {
+                return new View(requireSceneContext());
+            }
+
+            @Override
+            public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+                super.onActivityCreated(savedInstanceState);
+                executeNowOrScheduleAtNextResume(new Runnable() {
+                    @Override
+                    public void run() {
+                        mValue.set(true);
+                    }
+                });
+                assertFalse(mValue.get());
+            }
+
+            @Override
+            public void onResume() {
+                super.onResume();
+                assertTrue(mValue.get());
+            }
+        };
+        NavigationSourceUtility.createFromSceneLifecycleManager(scene);
+        assertTrue(mValue.get());
+
+        final AtomicBoolean second = new AtomicBoolean();
+        scene.executeNowOrScheduleAtNextResume(new Runnable() {
+            @Override
+            public void run() {
+                second.set(true);
+            }
+        });
+        assertTrue(second.get());
+    }
+
+    @Test
+    public void test_LAYOUT_INFLATER_SERVICE() {
+        final AtomicReference<View> reference = new AtomicReference<>();
+        Scene scene = new Scene() {
+            @NonNull
+            @Override
+            public View onCreateView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container, @Nullable Bundle savedInstanceState) {
+                return new View(requireSceneContext());
+            }
+
+            @Override
+            public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+                super.onViewCreated(view, savedInstanceState);
+                reference.set(getView());
+            }
+        };
+        Pair<SceneLifecycleManager, NavigationScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(scene);
+        SceneLifecycleManager manager = pair.first;
+        manager.onStart();
+        manager.onResume();
+        assertNotNull(reference.get().getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE));
+    }
+
+    @Test
+    public void test_LAYOUT_INFLATER_SERVICE_WhenThemeSet() {
+        final AtomicReference<View> reference = new AtomicReference<>();
+        Scene scene = new Scene() {
+            @Override
+            public void onAttach() {
+                super.onAttach();
+                setTheme(android.R.style.Theme);
+            }
+
+            @NonNull
+            @Override
+            public View onCreateView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container, @Nullable Bundle savedInstanceState) {
+                return new View(requireSceneContext());
+            }
+
+            @Override
+            public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+                super.onViewCreated(view, savedInstanceState);
+                reference.set(getView());
+            }
+        };
+        Pair<SceneLifecycleManager, NavigationScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(scene);
+        SceneLifecycleManager manager = pair.first;
+        manager.onStart();
+        manager.onResume();
+        assertNotNull(reference.get().getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE));
+    }
+
+    @Test
+    public void test_LAYOUT_INFLATER_SERVICE_afterOnDestroyView() {
+        final AtomicReference<View> reference = new AtomicReference<>();
+        Scene scene = new Scene() {
+            @NonNull
+            @Override
+            public View onCreateView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container, @Nullable Bundle savedInstanceState) {
+                return new View(requireSceneContext());
+            }
+
+            @Override
+            public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+                super.onViewCreated(view, savedInstanceState);
+                reference.set(getView());
+            }
+        };
+        Pair<SceneLifecycleManager, NavigationScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(scene);
+        SceneLifecycleManager manager = pair.first;
+        manager.onStart();
+        manager.onResume();
+        manager.onPause();
+        manager.onStop();
+        manager.onDestroyView();
+        assertNotNull(reference.get().getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE));
+    }
+
+    @Test
+    public void test_LAYOUT_INFLATER_SERVICE_afterOnDestroyViewWhenThemeSet() {
+        final AtomicReference<View> reference = new AtomicReference<>();
+        Scene scene = new Scene() {
+            @Override
+            public void onAttach() {
+                super.onAttach();
+                setTheme(android.R.style.Theme);
+            }
+
+            @NonNull
+            @Override
+            public View onCreateView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container, @Nullable Bundle savedInstanceState) {
+                return new View(requireSceneContext());
+            }
+
+            @Override
+            public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+                super.onViewCreated(view, savedInstanceState);
+                reference.set(getView());
+            }
+        };
+        Pair<SceneLifecycleManager, NavigationScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(scene);
+        SceneLifecycleManager manager = pair.first;
+        manager.onStart();
+        manager.onResume();
+        manager.onPause();
+        manager.onStop();
+        manager.onDestroyView();
+        assertNotNull(reference.get().getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE));
+    }
+
+    @Test
+    public void testFindViewById() {
+        final int id = ViewIdGenerator.generateViewId();
+        final AtomicReference<View> reference = new AtomicReference<>();
+        Scene scene = new Scene() {
+            @NonNull
+            @Override
+            public View onCreateView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container, @Nullable Bundle savedInstanceState) {
+                View view = new View(requireSceneContext());
+                view.setId(id);
+                reference.set(view);
+                return view;
+            }
+        };
+        NavigationSourceUtility.createFromSceneLifecycleManager(scene);
+        assertNotNull(scene.findViewById(id));
+        assertSame(reference.get(), scene.findViewById(id));
+        assertNull(scene.findViewById(ViewIdGenerator.generateViewId()));
+    }
+
+    @Test
+    public void testFindViewByIdBeforeOnCreateView() {
+        final int id = ViewIdGenerator.generateViewId();
+        Scene scene = new Scene() {
+            @NonNull
+            @Override
+            public View onCreateView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container, @Nullable Bundle savedInstanceState) {
+                View view = new View(requireSceneContext());
+                view.setId(id);
+                return view;
+            }
+        };
+        assertNull(scene.findViewById(id));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testRequireViewById() {
+        final int id = ViewIdGenerator.generateViewId();
+        final AtomicReference<View> reference = new AtomicReference<>();
+        Scene scene = new Scene() {
+            @NonNull
+            @Override
+            public View onCreateView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container, @Nullable Bundle savedInstanceState) {
+                View view = new View(requireSceneContext());
+                reference.set(view);
+                return view;
+            }
+        };
+        NavigationSourceUtility.createFromSceneLifecycleManager(scene);
+        scene.requireViewById(id);
+    }
+
+    @Test
+    public void testGetString() {
+        Scene scene = new Scene() {
+            @NonNull
+            @Override
+            public View onCreateView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container, @Nullable Bundle savedInstanceState) {
+                return new View(requireSceneContext());
+            }
+        };
+        NavigationSourceUtility.createFromSceneLifecycleManager(scene);
+        assertNotNull(scene.getString(android.R.string.cancel));
+    }
+
+    @Test
+    public void testGetText() {
+        Scene scene = new Scene() {
+            @NonNull
+            @Override
+            public View onCreateView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container, @Nullable Bundle savedInstanceState) {
+                return new View(requireSceneContext());
+            }
+        };
+        NavigationSourceUtility.createFromSceneLifecycleManager(scene);
+        assertNotNull(scene.getText(android.R.string.cancel));
+    }
+
+    @Test
+    public void testFixSceneReuseLifecycleAdapterReset() {
+        final int id = ViewIdGenerator.generateViewId();
+        GroupScene groupScene = new GroupScene() {
+            @NonNull
+            @Override
+            public ViewGroup onCreateView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container, @Nullable Bundle savedInstanceState) {
+                FrameLayout layout = new FrameLayout(requireSceneContext());
+                layout.setId(id);
+                return layout;
+            }
+        };
+        NavigationSourceUtility.createFromSceneLifecycleManager(groupScene);
+        Scene scene = new Scene() {
+            @NonNull
+            @Override
+            public View onCreateView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container, @Nullable Bundle savedInstanceState) {
+                return new View(requireSceneContext());
+            }
+        };
+        scene.getLifecycle().addObserver(new LifecycleObserver() {
+
+        });
+        groupScene.add(id, scene, "TAG");
+        groupScene.remove(scene);
+        groupScene.add(id, scene, "TAG");
     }
 }
