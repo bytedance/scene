@@ -912,9 +912,44 @@ public abstract class Scene implements LifecycleOwner, ViewModelStoreOwner {
         dispatchVisibleChanged();
     }
 
+    /**
+     * Finds the first descendant view with the given ID, or {@code null} if there is no
+     * matching view in the hierarchy.
+     *
+     * @param id the ID to search for
+     * @return a view with given ID if found, or {@code null} otherwise
+     * @see #requireViewById(int)
+     */
     @Nullable
     public final <T extends View> T findViewById(@IdRes int id) {
-        return getView().findViewById(id);
+        View view = getView();
+        if (view == null) {
+            return null;
+        }
+        return view.findViewById(id);
+    }
+
+    /**
+     * Finds the first descendant view with the given ID, or throws an IllegalArgumentException
+     * if there is no matching view in the hierarchy.
+     *
+     * @param id the ID to search for
+     * @return a view with given ID
+     * @throws IllegalArgumentException if no matching view found
+     * @see #findViewById(int)
+     */
+    @NonNull
+    public final <T extends View> T requireViewById(@IdRes int id) {
+        T view = requireView().findViewById(id);
+        if (view == null) {
+            try {
+                String viewIdName = getResources().getResourceName(id);
+                throw new IllegalArgumentException(" " + viewIdName + " view not found");
+            } catch (Resources.NotFoundException exception) {
+                throw new IllegalArgumentException(" " + id + " view not found");
+            }
+        }
+        return view;
     }
 
     @NonNull
