@@ -1061,16 +1061,7 @@ public abstract class Scene implements LifecycleOwner, ViewModelStoreOwner {
         if (this.mPendingActionList.size() > 0) {
             List<Runnable> copy = new ArrayList<>(this.mPendingActionList);
             for (final Runnable runnable : copy) {
-                /*
-                 * What if the operation inside the PendingActionList is operating the life cycle?
-                 * So we must re-execute executeNowOrScheduleAtNextResume(), and have to wrap to a Runnable
-                 */
-                executeNowOrScheduleAtNextResume(new Runnable() {
-                    @Override
-                    public void run() {
-                        runnable.run();
-                    }
-                });
+                runnable.run();
             }
             this.mPendingActionList.removeAll(copy);
         }
