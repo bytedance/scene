@@ -111,8 +111,8 @@ public class SceneLifecycleManager {
     }
 
     public void onStop() {
-        if (mState != SceneLifecycleManagerState.PAUSE) {
-            throw new IllegalStateException("invoke onPause() first");
+        if (mState != SceneLifecycleManagerState.PAUSE && mState != SceneLifecycleManagerState.START) {
+            throw new IllegalStateException("invoke onPause() or onStart() first");
         }
         mState = SceneLifecycleManagerState.STOP;
         log("onStop");

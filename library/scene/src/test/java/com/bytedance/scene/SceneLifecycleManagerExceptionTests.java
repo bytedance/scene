@@ -26,6 +26,69 @@ import static org.robolectric.annotation.LooperMode.Mode.PAUSED;
 @Config(manifest = Config.NONE)
 @LooperMode(PAUSED)
 public class SceneLifecycleManagerExceptionTests {
+    @Test
+    public void testTranslucentActivity() {
+        final Scene scene = new Scene() {
+            @NonNull
+            @Override
+            public View onCreateView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container, @Nullable Bundle savedInstanceState) {
+                return new View(requireSceneContext());
+            }
+        };
+        ActivityController<NavigationSourceUtility.TestActivity> controller = Robolectric.buildActivity(NavigationSourceUtility.TestActivity.class).create().start().resume();
+        NavigationSourceUtility.TestActivity testActivity = controller.get();
+        NavigationScene navigationScene = new NavigationScene();
+        NavigationSceneOptions options = new NavigationSceneOptions(scene.getClass());
+        navigationScene.setArguments(options.toBundle());
+
+        NavigationScene.NavigationSceneHost navigationSceneHost = new NavigationScene.NavigationSceneHost() {
+            @Override
+            public boolean isSupportRestore() {
+                return false;
+            }
+
+            @Override
+            public void startActivityForResult(@NonNull Intent intent, int requestCode) {
+
+            }
+
+            @Override
+            public void requestPermissions(@NonNull String[] permissions, int requestCode) {
+
+            }
+        };
+
+        Scope.RootScopeFactory rootScopeFactory = new Scope.RootScopeFactory() {
+            @Override
+            public Scope getRootScope() {
+                return Scope.DEFAULT_ROOT_SCOPE_FACTORY.getRootScope();
+            }
+        };
+
+        SceneComponentFactory sceneComponentFactory = new SceneComponentFactory() {
+            @Override
+            public Scene instantiateScene(ClassLoader cl, String className, Bundle bundle) {
+                if (className.equals(scene.getClass().getName())) {
+                    return scene;
+                }
+                return null;
+            }
+        };
+
+        navigationScene.setDefaultNavigationAnimationExecutor(null);
+        SceneLifecycleManager sceneLifecycleManager = new SceneLifecycleManager();
+        sceneLifecycleManager.onActivityCreated(testActivity, testActivity.mFrameLayout,
+                navigationScene, navigationSceneHost, rootScopeFactory,
+                sceneComponentFactory, null);
+        sceneLifecycleManager.onStart();
+        sceneLifecycleManager.onResume();
+        sceneLifecycleManager.onPause();
+        sceneLifecycleManager.onStop();
+        sceneLifecycleManager.onStart();
+        sceneLifecycleManager.onStop();
+        sceneLifecycleManager.onDestroyView();
+    }
+
     @Test(expected = NullPointerException.class)
     public void testNPE() {
         SceneLifecycleManager sceneLifecycleManager = new SceneLifecycleManager();
