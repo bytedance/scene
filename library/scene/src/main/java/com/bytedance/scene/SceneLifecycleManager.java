@@ -49,8 +49,8 @@ public class SceneLifecycleManager {
                                   @NonNull Scope.RootScopeFactory rootScopeFactory,
                                   @Nullable SceneComponentFactory rootSceneComponentFactory,
                                   @Nullable Bundle savedInstanceState) {
-        if (mState != SceneLifecycleManagerState.NONE) {
-            throw new IllegalStateException("invoke onDestroyView() first");
+        if (this.mState != SceneLifecycleManagerState.NONE) {
+            throw new IllegalStateException("invoke onDestroyView() first, current state " + this.mState.toString());
         }
 
         Utility.requireNonNull(activity, "activity can't be null");
@@ -68,7 +68,7 @@ public class SceneLifecycleManager {
             throw new IllegalArgumentException("savedInstanceState should be null when not support restore");
         }
 
-        mState = SceneLifecycleManagerState.ACTIVITY_CREATED;
+        this.mState = SceneLifecycleManagerState.ACTIVITY_CREATED;
         log("onActivityCreated");
 
         this.mNavigationScene = navigationScene;
@@ -84,46 +84,55 @@ public class SceneLifecycleManager {
     }
 
     public void onStart() {
-        if (mState != SceneLifecycleManagerState.ACTIVITY_CREATED && mState != SceneLifecycleManagerState.STOP) {
-            throw new IllegalStateException("invoke onActivityCreated() or onStop() first");
+        if (this.mState != SceneLifecycleManagerState.ACTIVITY_CREATED && this.mState != SceneLifecycleManagerState.STOP) {
+            throw new IllegalStateException("invoke onActivityCreated() or onStop() first, current state " + this.mState.toString());
         }
-        mState = SceneLifecycleManagerState.START;
+        this.mState = SceneLifecycleManagerState.START;
         log("onStart");
         this.mNavigationScene.dispatchStart();
     }
 
     public void onResume() {
-        if (mState != SceneLifecycleManagerState.START && mState != SceneLifecycleManagerState.PAUSE) {
-            throw new IllegalStateException("invoke onStart() or onPause() first");
+        if (this.mState != SceneLifecycleManagerState.START && this.mState != SceneLifecycleManagerState.PAUSE) {
+            throw new IllegalStateException("invoke onStart() or onPause() first, current state " + this.mState.toString());
         }
-        mState = SceneLifecycleManagerState.RESUME;
+        this.mState = SceneLifecycleManagerState.RESUME;
         log("onResume");
         this.mNavigationScene.dispatchResume();
     }
 
     public void onPause() {
-        if (mState != SceneLifecycleManagerState.RESUME) {
-            throw new IllegalStateException("invoke onResume() first");
+        if (this.mState != SceneLifecycleManagerState.RESUME) {
+            throw new IllegalStateException("invoke onResume() first, current state " + this.mState.toString());
         }
-        mState = SceneLifecycleManagerState.PAUSE;
+        this.mState = SceneLifecycleManagerState.PAUSE;
         log("onPause");
         this.mNavigationScene.dispatchPause();
     }
 
     public void onStop() {
-        if (mState != SceneLifecycleManagerState.PAUSE && mState != SceneLifecycleManagerState.START) {
-            throw new IllegalStateException("invoke onPause() or onStart() first");
+        if (this.mState != SceneLifecycleManagerState.PAUSE && this.mState != SceneLifecycleManagerState.START) {
+            throw new IllegalStateException("invoke onPause() or onStart() first, current state " + this.mState.toString());
         }
-        mState = SceneLifecycleManagerState.STOP;
+        this.mState = SceneLifecycleManagerState.STOP;
         log("onStop");
         this.mNavigationScene.dispatchStop();
     }
 
+    /**
+     * extreme cases:
+     * <p>
+     * 1.If Scene's host is a Support Library Fragment, this host Fragment can be removed by commit() in Activity onCreate(), then Fragment will be destroyed in AppCompatActivity onStart(),
+     * this Fragment's lifecycle is from onActivityCreated() to onDestroyView(), skip onStart()/onResume()/onPause()/onStop()
+     * <p>
+     * 2.After NavigationSceneUtility/NavigationSceneCompatUtility bind Scene in onCreate()/onActivityCreated(), invoke returned SceneDelegate's abandon() in onStart(),
+     * LifCycleFragment/LifeCycleCompatFragment will skip onStart()/onResume()/onPause()/onStop() too
+     */
     public void onDestroyView() {
-        if (mState != SceneLifecycleManagerState.STOP) {
-            throw new IllegalStateException("invoke onStop() first");
+        if (this.mState != SceneLifecycleManagerState.STOP && this.mState != SceneLifecycleManagerState.ACTIVITY_CREATED) {
+            throw new IllegalStateException("invoke onStop() or onActivityCreated() first, current state " + this.mState.toString());
         }
-        mState = SceneLifecycleManagerState.NONE;
+        this.mState = SceneLifecycleManagerState.NONE;
         log("onDestroyView");
         this.mNavigationScene.dispatchDestroyView();
         this.mNavigationScene.dispatchDestroy();
@@ -137,8 +146,8 @@ public class SceneLifecycleManager {
 
     public void onSaveInstanceState(@NonNull Bundle outState) {
         Utility.requireNonNull(outState, "outState can't be null");
-        if (mState == SceneLifecycleManagerState.NONE) {
-            throw new IllegalStateException("invoke onActivityCreated() first");
+        if (this.mState == SceneLifecycleManagerState.NONE) {
+            throw new IllegalStateException("invoke onActivityCreated() first, current state " + this.mState.toString());
         }
         if (!this.mSupportRestore) {
             throw new IllegalArgumentException("cant invoke onSaveInstanceState when not support restore");
