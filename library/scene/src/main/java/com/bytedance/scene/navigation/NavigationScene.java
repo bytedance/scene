@@ -297,7 +297,8 @@ public final class NavigationScene extends Scene implements NavigationListener {
         }
 
         if (isSupportRestore() && !SceneInstanceUtility.isSupportRestore(scene)) {
-            throw new IllegalArgumentException("Scene must have only empty argument constructor when support restore");
+            throw new IllegalArgumentException("Scene " + scene.getClass().getName() + " must be a public class or public static class, " +
+                    "and have only one parameterless constructor to be properly recreated from instance state.");
         }
 
         hideSoftInputIfNeeded();

@@ -26,6 +26,7 @@ import com.bytedance.scene.Scene;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Modifier;
 
 import static android.support.annotation.RestrictTo.Scope.LIBRARY_GROUP;
 
@@ -83,9 +84,20 @@ public class SceneInstanceUtility {
         }
     }
 
-    //todo 检查是不是public/public static类
     public static boolean isSupportRestore(Scene scene) {
         Class<? extends Scene> clazz = scene.getClass();
+        if (clazz.isAnonymousClass() || clazz.isLocalClass()) {
+            return false;
+        }
+
+        final int modifiers = clazz.getModifiers();
+        if (!Modifier.isPublic(modifiers)) {
+            return false;
+        }
+        if (clazz.isMemberClass() && !Modifier.isStatic(modifiers)) {
+            return false;
+        }
+
         for (Constructor<?> constructor : clazz.getConstructors()) {
             Class<?>[] types = constructor.getParameterTypes();
             if (types.length > 0) {
