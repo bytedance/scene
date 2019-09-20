@@ -30,6 +30,7 @@ import com.bytedance.scene.animation.AnimationOrAnimator;
 import com.bytedance.scene.animation.AnimationOrAnimatorFactory;
 import com.bytedance.scene.interfaces.ChildSceneLifecycleCallbacks;
 import com.bytedance.scene.navigation.NavigationScene;
+import com.bytedance.scene.utlity.Experimental;
 import com.bytedance.scene.utlity.NonNullPair;
 import com.bytedance.scene.utlity.SceneInstanceUtility;
 import com.bytedance.scene.utlity.ThreadUtility;
@@ -349,6 +350,22 @@ public abstract class GroupScene extends Scene {
         super.dispatchActivityCreated(savedInstanceState);
         // Child scene's savedInstanceState is saved separately (in GroupRecord).
         dispatchChildrenState(State.ACTIVITY_CREATED);
+        onPostActivityCreated();
+    }
+
+    /**
+     * Method order:
+     * <p>
+     * Parent onActivityCreated()
+     * Child onActivityCreated()
+     * Child onPostActivityCreated()
+     * Parent onPostActivityCreated()
+     * <p>
+     * At this moment, all children Scene have finished onActivityCreated()
+     */
+    @Experimental
+    protected void onPostActivityCreated() {
+
     }
 
     @Override
@@ -370,6 +387,22 @@ public abstract class GroupScene extends Scene {
     public final void dispatchStart() {
         super.dispatchStart();
         dispatchVisibleChildrenState(State.STARTED);
+        onPostStart();
+    }
+
+    /**
+     * Method order:
+     * <p>
+     * Parent onStart()
+     * Child onStart()
+     * Child onPostStart()
+     * Parent onPostStart()
+     * <p>
+     * At this moment, all children Scene have finished onStart()
+     */
+    @Experimental
+    protected void onPostStart() {
+
     }
 
     /**
@@ -384,10 +417,16 @@ public abstract class GroupScene extends Scene {
     }
 
     /**
-     * @hide TestApi
+     * Method order:
+     * <p>
+     * Parent onResume()
+     * Child onResume()
+     * Child onPostResume()
+     * Parent onPostResume()
+     * <p>
+     * At this moment, all children Scene have finished onResume()
      */
-    @RestrictTo(LIBRARY)
-    @VisibleForTesting()
+    @Experimental
     protected void onPostResume() {
 
     }
