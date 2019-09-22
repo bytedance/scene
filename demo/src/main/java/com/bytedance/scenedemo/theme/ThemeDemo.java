@@ -23,7 +23,7 @@ public class ThemeDemo extends SwipeBackGroupScene {
     @NonNull
     @Override
     protected ViewGroup onCreateSwipeContentView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        ViewGroup root = (ViewGroup) inflater.inflate(R.layout.basic_layout, container, false);
+        ViewGroup root = (ViewGroup) inflater.inflate(R.layout.layout_theme, container, false);
         root.setBackgroundColor(ColorUtil.getMaterialColor(getResources(), 0));
         return root;
     }
@@ -68,8 +68,7 @@ public class ThemeDemo extends SwipeBackGroupScene {
         });
     }
 
-    private static class TestTheme0Scene extends Scene {
-
+    public static class TestTheme0Scene extends Scene {
         private TestTheme0Scene(@StyleRes int themeId) {
             setTheme(themeId);
         }
@@ -81,7 +80,7 @@ public class ThemeDemo extends SwipeBackGroupScene {
         }
     }
 
-    private static class TestTheme1Scene extends Scene {
+    public static class TestTheme1Scene extends Scene {
         private int mThemeId;
 
         private TestTheme1Scene(@StyleRes int themeId) {
