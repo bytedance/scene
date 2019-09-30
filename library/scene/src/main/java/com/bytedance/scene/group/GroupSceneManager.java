@@ -58,9 +58,7 @@ class GroupRecord implements Parcelable {
     String tag;
     boolean isHidden = false;
     boolean isCurrentFocus = false;
-
-    String className;
-
+    String sceneClassName;
     @Nullable
     Bundle bundle;
 
@@ -69,7 +67,7 @@ class GroupRecord implements Parcelable {
         tag = Utility.requireNonNull(in.readString(), "tag not found in Parcel");
         isHidden = in.readByte() != 0;
         isCurrentFocus = in.readByte() != 0;
-        className = Utility.requireNonNull(in.readString(), "class name not found in Parcel");
+        sceneClassName = Utility.requireNonNull(in.readString(), "class name not found in Parcel");
     }
 
     public static final Creator<GroupRecord> CREATOR = new Creator<GroupRecord>() {
@@ -93,6 +91,7 @@ class GroupRecord implements Parcelable {
         record.viewId = viewId;
         record.scene = Utility.requireNonNull(scene, "scene can't be null");
         record.tag = Utility.requireNonNull(tag, "tag can't be null");
+        record.sceneClassName = Utility.requireNonNull(scene.getClass().getName(), "Scene class name is null");
         return record;
     }
 
@@ -115,7 +114,7 @@ class GroupRecord implements Parcelable {
         dest.writeString(tag);
         dest.writeByte((byte) (isHidden ? 1 : 0));
         dest.writeByte((byte) (isCurrentFocus ? 1 : 0));
-        dest.writeString(scene.getClass().getName());
+        dest.writeString(sceneClassName);
     }
 }
 
@@ -187,7 +186,7 @@ class GroupRecordList {
         }
         this.mSceneList = new ArrayList<>(bundle.<GroupRecord>getParcelableArrayList(KEY_TAG));
         for (GroupRecord record : this.mSceneList) {
-            record.scene = SceneInstanceUtility.getInstanceFromClassName(context, record.className, null);
+            record.scene = SceneInstanceUtility.getInstanceFromClassName(context, record.sceneClassName, null);
         }
     }
 
