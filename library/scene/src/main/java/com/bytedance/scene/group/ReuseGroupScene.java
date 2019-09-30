@@ -90,7 +90,7 @@ public abstract class ReuseGroupScene extends GroupScene {
     }
 
     @NonNull
-    protected abstract ViewGroup onCreateNewView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState);
+    protected abstract ViewGroup onCreateNewView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState);
 
     @Override
     public void onDestroyView() {

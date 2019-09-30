@@ -634,6 +634,9 @@ class NavigationSceneManager {
                         mNavigationScene.getView().getRootView(),
                         fromInfo, toInfo, cancellationSignalList, endAction);
             } else {
+                if (currentRecord.mScene instanceof ReuseGroupScene) {
+                    mNavigationScene.addToReusePool((ReuseGroupScene) currentRecord.mScene);
+                }
                 operationEndAction.run();
             }
         }
