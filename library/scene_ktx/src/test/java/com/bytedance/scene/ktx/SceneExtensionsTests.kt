@@ -7,8 +7,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.bytedance.scene.Scene
-import org.junit.Assert.assertFalse
-import org.junit.Assert.assertTrue
+import com.bytedance.scene.ktx.utility.TestActivity
+import com.bytedance.scene.ktx.utility.TestAppCompatActivity
+import org.junit.Assert.*
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
@@ -153,5 +154,38 @@ class SceneExtensionsTests {
         assertFalse(scene.isDestroyed())
         manager.onDestroyView()
         assertTrue(scene.isDestroyed())
+    }
+
+    @Test
+    fun testGetFragmentActivityNull() {
+        val scene = object : Scene() {
+            override fun onCreateView(inflater: LayoutInflater, container: ViewGroup, savedInstanceState: Bundle?): View {
+                return View(requireSceneContext())
+            }
+        }
+        assertNull(scene.fragmentActivity())
+    }
+
+    @Test(expected = ClassCastException::class)
+    fun testGetFragmentActivityCastError() {
+        val scene = object : Scene() {
+            override fun onCreateView(inflater: LayoutInflater, container: ViewGroup, savedInstanceState: Bundle?): View {
+                return View(requireSceneContext())
+            }
+        }
+        val manager = createFromInitSceneLifecycleManager(TestActivity::class.java, scene).first
+        scene.fragmentActivity()
+    }
+
+    @Test
+    fun testGetFragmentActivity() {
+        val scene = object : Scene() {
+            override fun onCreateView(inflater: LayoutInflater, container: ViewGroup, savedInstanceState: Bundle?): View {
+                return View(requireSceneContext())
+            }
+        }
+        val manager = createFromInitSceneLifecycleManager(TestAppCompatActivity::class.java, scene).first
+        assertNotNull(scene.fragmentActivity())
+        assertNotNull(scene.requireFragmentActivity())
     }
 }

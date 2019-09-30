@@ -20,6 +20,7 @@ import android.arch.lifecycle.LifecycleObserver
 import android.arch.lifecycle.OnLifecycleEvent
 import android.os.Handler
 import android.os.Looper
+import android.support.v4.app.FragmentActivity
 import com.bytedance.scene.Scene
 
 @Suppress("all")
@@ -53,4 +54,12 @@ fun Scene.postDelayed(runnable: Runnable, delayMillis: Long) {
 
 fun Scene.isDestroyed(): Boolean {
     return this.lifecycle.currentState == Lifecycle.State.DESTROYED
+}
+
+fun Scene.fragmentActivity(): FragmentActivity? {
+    return activity as FragmentActivity?
+}
+
+fun Scene.requireFragmentActivity(): FragmentActivity {
+    return requireActivity() as FragmentActivity
 }

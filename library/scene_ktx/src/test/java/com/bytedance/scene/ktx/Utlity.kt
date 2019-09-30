@@ -9,6 +9,7 @@ import com.bytedance.scene.SceneComponentFactory
 import com.bytedance.scene.SceneLifecycleManager
 import com.bytedance.scene.Scope
 import com.bytedance.scene.animation.animatorexecutor.NoAnimationExecutor
+import com.bytedance.scene.ktx.utility.TestActivity
 import com.bytedance.scene.navigation.NavigationScene
 import com.bytedance.scene.navigation.NavigationSceneOptions
 import org.robolectric.Robolectric
@@ -59,12 +60,40 @@ public fun createFromInitSceneLifecycleManager(rootScene: Scene): Pair<SceneLife
     return Pair(sceneLifecycleManager, navigationScene)
 }
 
-class TestActivity : Activity() {
-    lateinit var mFrameLayout: FrameLayout
+public fun createFromInitSceneLifecycleManager(activityClass: Class<out Activity>, rootScene: Scene): Pair<SceneLifecycleManager, NavigationScene> {
+    val controller = Robolectric.buildActivity(activityClass).create().start().resume()
+    val testActivity = controller.get()
+    val navigationScene = NavigationScene()
+    val options = NavigationSceneOptions(rootScene.javaClass)
+    navigationScene.setArguments(options.toBundle())
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        mFrameLayout = FrameLayout(this)
-        setContentView(mFrameLayout)
+    val navigationSceneHost = object : NavigationScene.NavigationSceneHost {
+        override fun isSupportRestore(): Boolean {
+            return false
+        }
+
+        override fun startActivityForResult(intent: Intent, requestCode: Int) {
+
+        }
+
+        override fun requestPermissions(permissions: Array<String>, requestCode: Int) {
+
+        }
     }
+
+    val rootScopeFactory = Scope.RootScopeFactory { Scope.DEFAULT_ROOT_SCOPE_FACTORY.rootScope }
+
+    val sceneComponentFactory = SceneComponentFactory { _, className, _ ->
+        if (className == rootScene.javaClass.name) {
+            rootScene
+        } else null
+    }
+
+    navigationScene.defaultNavigationAnimationExecutor = NoAnimationExecutor()
+
+    val sceneLifecycleManager = SceneLifecycleManager()
+    sceneLifecycleManager.onActivityCreated(testActivity, testActivity.findViewById(android.R.id.content),
+            navigationScene, navigationSceneHost, rootScopeFactory,
+            sceneComponentFactory, null)
+    return Pair(sceneLifecycleManager, navigationScene)
 }
