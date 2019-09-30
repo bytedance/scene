@@ -786,11 +786,22 @@ public abstract class Scene implements LifecycleOwner, ViewModelStoreOwner {
         return getResources().getString(resId, formatArgs);
     }
 
+    /**
+     * Returns the parent NavigationScene or GroupScene containing this Scene.  If this Scene
+     * is attached directly to an Activity, returns null.
+     */
     @Nullable
     public final Scene getParentScene() {
         return this.mParentScene;
     }
 
+    /**
+     * Returns the parent NavigationScene or GroupScene containing this Scene.
+     *
+     * @throws IllegalStateException if this Scene is attached directly to an Activity or
+     *                               not attached.
+     * @see #getParentScene()
+     */
     @NonNull
     public final Scene requireParentScene() {
         Scene parentScene = getParentScene();
@@ -817,8 +828,10 @@ public abstract class Scene implements LifecycleOwner, ViewModelStoreOwner {
             Context context = getApplicationContext();
             if (context == null) {
                 throw new IllegalStateException("Scene " + this + " is not attached to any Scene");
-            } else {
+            } else if (this instanceof NavigationScene) {
                 throw new IllegalStateException("Scene " + this + " is root Scene");
+            } else {
+                throw new IllegalStateException("The root of the Scene hierarchy is not NavigationScene");
             }
         }
         return navigationScene;
