@@ -11,9 +11,9 @@ android {
 }
 
 dependencies {
-    api APPCOMPAT_LIB
-    api DESIGN_LIB
-    compile project(path: ':library:scene')
+    implementation APPCOMPAT_LIB
+    implementation DESIGN_LIB
+    api project(path: ':library:scene')
 }
 
 task javadoc(type: Javadoc) {

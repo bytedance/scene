@@ -27,9 +27,9 @@ dependencies {
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
 
-    compile project(path: ':library:scene')
-    compile project(path: ':library:scene_ui')
-    compile project(path: ':library:scene_shared_element_animation')
-    compile project(path: ':library:scene_ktx')
-    compile KOTLIN_LIB
+    implementation project(path: ':library:scene')
+    implementation project(path: ':library:scene_ui')
+    implementation project(path: ':library:scene_shared_element_animation')
+    implementation project(path: ':library:scene_ktx')
+    implementation KOTLIN_LIB
 }

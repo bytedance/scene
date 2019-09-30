@@ -16,9 +16,9 @@ android {
 }
 
 dependencies {
-    api APPCOMPAT_LIB
-    api LIFECYCLE_EXTENSIONS_LIB
-    api LIFECYCLE_RUNTIME_LIB
+    implementation APPCOMPAT_LIB
+    implementation LIFECYCLE_EXTENSIONS_LIB
+    implementation LIFECYCLE_RUNTIME_LIB
 
     testImplementation ROBOLECTRIC
     testImplementation JUNIT

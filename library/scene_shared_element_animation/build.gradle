@@ -11,11 +11,11 @@ android {
 }
 
 dependencies {
-    api APPCOMPAT_LIB
-    api TRANSITION_SUPPORT_LIB
-    api LIFECYCLE_EXTENSIONS_LIB
-    api LIFECYCLE_RUNTIME_LIB
-    compile project(path: ':library:scene')
+    implementation APPCOMPAT_LIB
+    implementation TRANSITION_SUPPORT_LIB
+    implementation LIFECYCLE_EXTENSIONS_LIB
+    implementation LIFECYCLE_RUNTIME_LIB
+    api project(path: ':library:scene')
 }
 
 task javadoc(type: Javadoc) {
