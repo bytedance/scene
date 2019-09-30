@@ -90,6 +90,10 @@ public abstract class AsyncLayoutGroupScene extends UserVisibleHintGroupScene {
         this.mAsyncLayoutEnabled = value;
     }
 
+    public boolean isAsyncLayoutEnabled() {
+        return this.mAsyncLayoutEnabled;
+    }
+
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
