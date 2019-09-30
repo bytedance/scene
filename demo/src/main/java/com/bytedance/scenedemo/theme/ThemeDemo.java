@@ -40,7 +40,7 @@ public class ThemeDemo extends SwipeBackGroupScene {
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                TestTheme0Scene scene = new TestTheme0Scene(R.style.AppTheme_Test1);
+                TestTheme0Scene scene = TestTheme0Scene.newInstance(R.style.AppTheme_Test1);
                 getNavigationScene().push(scene);
             }
         });
@@ -51,7 +51,7 @@ public class ThemeDemo extends SwipeBackGroupScene {
         btn2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                TestTheme0Scene scene = new TestTheme0Scene(R.style.AppTheme_Test2);
+                TestTheme0Scene scene = TestTheme0Scene.newInstance(R.style.AppTheme_Test2);
                 getNavigationScene().push(scene);
             }
         });
@@ -62,15 +62,22 @@ public class ThemeDemo extends SwipeBackGroupScene {
         btn3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                TestTheme1Scene scene = new TestTheme1Scene(R.style.AppTheme_Test3);
+                TestTheme1Scene scene = TestTheme1Scene.newInstance(R.style.AppTheme_Test3);
                 getNavigationScene().push(scene);
             }
         });
     }
 
     public static class TestTheme0Scene extends Scene {
-        private TestTheme0Scene(@StyleRes int themeId) {
-            setTheme(themeId);
+        private int mThemeId;
+
+        public static TestTheme0Scene newInstance(@StyleRes int themeId) {
+            TestTheme0Scene scene = new TestTheme0Scene();
+            Bundle bundle = new Bundle();
+            bundle.putInt("themeId", themeId);
+            scene.setArguments(bundle);
+            scene.setTheme(themeId);
+            return scene;
         }
 
         @NonNull
@@ -83,8 +90,18 @@ public class ThemeDemo extends SwipeBackGroupScene {
     public static class TestTheme1Scene extends Scene {
         private int mThemeId;
 
-        private TestTheme1Scene(@StyleRes int themeId) {
-            this.mThemeId = themeId;
+        public static TestTheme1Scene newInstance(@StyleRes int themeId) {
+            TestTheme1Scene scene = new TestTheme1Scene();
+            Bundle bundle = new Bundle();
+            bundle.putInt("themeId", themeId);
+            scene.setArguments(bundle);
+            return scene;
+        }
+
+        @Override
+        public void onCreate(@Nullable Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+            this.mThemeId = getArguments().getInt("themeId");
         }
 
         @NonNull

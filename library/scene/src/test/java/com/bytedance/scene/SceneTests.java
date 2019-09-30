@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.util.Pair;
+import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +15,7 @@ import android.widget.FrameLayout;
 import com.bytedance.scene.group.GroupScene;
 import com.bytedance.scene.navigation.NavigationScene;
 import com.bytedance.scene.utlity.ViewIdGenerator;
+import com.bytedance.scene.view.SceneContextThemeWrapper;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
@@ -527,5 +529,73 @@ public class SceneTests {
         groupScene.add(id, scene, "TAG");
         groupScene.remove(scene);
         groupScene.add(id, scene, "TAG");
+    }
+
+    @Test
+    public void testViewContext() {
+        Scene scene = new Scene() {
+            @NonNull
+            @Override
+            public View onCreateView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container, @Nullable Bundle savedInstanceState) {
+                return new View(requireActivity());
+            }
+        };
+        NavigationSourceUtility.createFromSceneLifecycleManager(scene);
+        assertSame(scene.requireActivity(), scene.getView().getContext());
+
+        Scene scene2 = new Scene() {
+            @NonNull
+            @Override
+            public View onCreateView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container, @Nullable Bundle savedInstanceState) {
+                return new View(new SceneContextThemeWrapper(requireActivity(), requireActivity().getTheme()));
+            }
+        };
+        NavigationSourceUtility.createFromSceneLifecycleManager(scene2);
+
+        Scene scene3 = new Scene() {
+            @NonNull
+            @Override
+            public View onCreateView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container, @Nullable Bundle savedInstanceState) {
+                return new View(new SceneContextThemeWrapper(requireSceneContext(), requireSceneContext().getTheme()) {
+                    //subclass of ContextWrapper
+                });
+            }
+        };
+        NavigationSourceUtility.createFromSceneLifecycleManager(scene3);
+
+        Scene scene4 = new Scene() {
+            @NonNull
+            @Override
+            public View onCreateView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container, @Nullable Bundle savedInstanceState) {
+                return new View(requireApplicationContext());
+            }
+        };
+        NavigationSourceUtility.createFromSceneLifecycleManager(scene4);
+    }
+
+    @Test
+    public void testViewSceneContext() {
+        Scene scene = new Scene() {
+            @NonNull
+            @Override
+            public View onCreateView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container, @Nullable Bundle savedInstanceState) {
+                return new View(requireSceneContext());
+            }
+        };
+        NavigationSourceUtility.createFromSceneLifecycleManager(scene);
+        assertSame(scene.requireSceneContext(), scene.getView().getContext());
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testViewContextThemeException() {
+        Scene scene = new Scene() {
+            @NonNull
+            @Override
+            public View onCreateView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container, @Nullable Bundle savedInstanceState) {
+                setTheme(android.R.style.Theme_Light);
+                return new View(requireActivity());
+            }
+        };
+        NavigationSourceUtility.createFromSceneLifecycleManager(scene);
     }
 }

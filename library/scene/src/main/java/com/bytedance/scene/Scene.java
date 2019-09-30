@@ -15,9 +15,12 @@
  */
 package com.bytedance.scene;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.Application;
 import android.arch.lifecycle.*;
 import android.content.Context;
+import android.content.ContextWrapper;
 import android.content.res.Resources;
 import android.os.*;
 import android.support.annotation.*;
@@ -326,7 +329,10 @@ public abstract class Scene implements LifecycleOwner, ViewModelStoreOwner {
         return this.mActivity.getLayoutInflater().cloneInContext(requireSceneContext());
     }
 
-    /** @hide */
+    /**
+     * @hide
+     */
+    @SuppressLint("WrongConstant")
     @RestrictTo(LIBRARY_GROUP)
     public void dispatchCreateView(@Nullable Bundle savedInstanceState, @NonNull ViewGroup container) {
         if (this.mView != null) {
@@ -339,11 +345,21 @@ public abstract class Scene implements LifecycleOwner, ViewModelStoreOwner {
         }
 
         if (view.getParent() != null) {
-            throw new IllegalArgumentException("onCreateView return view already has a parent. You must call removeView() on the view's parent first.");
+            throw new IllegalArgumentException("onCreateView returned view already has a parent. You must call removeView() on the view's parent first.");
         }
 
         if (view.getId() == View.NO_ID) {
 
+        }
+
+        //If view's context is not scene context, setTheme() will not work
+        Context sceneContext = requireSceneContext();
+        Context viewContext = view.getContext();
+        if (viewContext != sceneContext && getTheme() != 0) {
+            if (viewContext.getSystemService(SCENE_SERVICE) != this) {
+                throw new IllegalArgumentException("Scene view's context is incorrect, you should create view with " +
+                        "getLayoutInflater() or requireSceneContext() instead");
+            }
         }
 
         mView = view;
