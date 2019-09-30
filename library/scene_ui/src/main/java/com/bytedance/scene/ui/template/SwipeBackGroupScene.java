@@ -43,7 +43,7 @@ import java.util.List;
 
 /**
  * Created by JiangQi on 8/29/18.
- *
+ * <p>
  * Gestures like SwipeBack do not support pop interception
  */
 public abstract class SwipeBackGroupScene extends GroupScene {
@@ -106,7 +106,7 @@ public abstract class SwipeBackGroupScene extends GroupScene {
             @Override
             public boolean onBackPressed() {
                 interactionNavigationPopAnimationFactory.forceCancel();
-                getNavigationScene().removeOnBackPressedListener(this);
+                requireNavigationScene().removeOnBackPressedListener(this);
                 return true;
             }
         };
@@ -114,24 +114,27 @@ public abstract class SwipeBackGroupScene extends GroupScene {
         mSlidePercentFrameLayout.setCallback(new SlidePercentFrameLayout.Callback() {
             @Override
             public boolean isSupport() {
-                return ((NavigationScene) getNavigationScene()).isInteractionNavigationPopSupport(interactionNavigationPopAnimationFactory);
+                return requireNavigationScene().isInteractionNavigationPopSupport(interactionNavigationPopAnimationFactory);
             }
 
             @Override
             public void onStart() {
-                if (((NavigationScene) getNavigationScene()).pop(interactionNavigationPopAnimationFactory)) {
+                if (requireNavigationScene().pop(interactionNavigationPopAnimationFactory)) {
                     Resources r = getResources();
                     float px = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8, r.getDisplayMetrics());
                     ViewCompat.setElevation(swipeContainerView, px);
                     backgroundView.setVisibility(View.VISIBLE);
-                    getNavigationScene().addOnBackPressedListener(SwipeBackGroupScene.this, onBackPressedListener);
+                    requireNavigationScene().addOnBackPressedListener(SwipeBackGroupScene.this, onBackPressedListener);
                 }
             }
 
             @Override
             public void onFinish() {
-                getNavigationScene().removeOnBackPressedListener(onBackPressedListener);
-                interactionNavigationPopAnimationFactory.finish();
+                NavigationScene navigationScene = getNavigationScene();
+                if (navigationScene != null) {
+                    navigationScene.removeOnBackPressedListener(onBackPressedListener);
+                    interactionNavigationPopAnimationFactory.finish();
+                }
             }
 
             @Override
