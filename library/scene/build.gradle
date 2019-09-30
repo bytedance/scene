@@ -23,6 +23,7 @@ dependencies {
     testImplementation ROBOLECTRIC
     testImplementation JUNIT
     testAnnotationProcessor AUTO_SERVICE
+    testCompileOnly AUTO_SERVICE
 }
 
 tasks.withType(Test) {

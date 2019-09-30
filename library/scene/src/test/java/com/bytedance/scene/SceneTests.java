@@ -474,6 +474,21 @@ public class SceneTests {
     }
 
     @Test
+    public void testGetStringFormatArgs() {
+        Scene scene = new Scene() {
+            @NonNull
+            @Override
+            public View onCreateView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container, @Nullable Bundle savedInstanceState) {
+                return new View(requireSceneContext());
+            }
+        };
+        NavigationSourceUtility.createFromSceneLifecycleManager(scene);
+        assertNotNull(scene.getString(TestResources.getString(scene, "ut_get_string"), "Value"));
+        assertEquals("UnitTestGetStringValue", scene.getString(TestResources.getString(scene, "ut_get_string"), "Value"));
+    }
+
+
+    @Test
     public void testGetText() {
         Scene scene = new Scene() {
             @NonNull

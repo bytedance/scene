@@ -21,6 +21,8 @@ import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import static org.junit.Assert.*;
 
 @RunWith(RobolectricTestRunner.class)
@@ -82,6 +84,33 @@ public class NavigationSceneListenerTests {
     }
 
     @Test
+    public void testConfigurationChangedListenerRemoveAfterLifecycleDestroy() {
+        TestScene rootScene = new TestScene();
+        Pair<SceneLifecycleManager, NavigationScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(rootScene);
+        SceneLifecycleManager sceneLifecycleManager = pair.first;
+        NavigationScene navigationScene = pair.second;
+        sceneLifecycleManager.onStart();
+        sceneLifecycleManager.onResume();
+
+        TestChildScene child = new TestChildScene();
+        navigationScene.push(child);
+
+        final boolean[] value = new boolean[1];
+        navigationScene.addConfigurationChangedListener(child, new ConfigurationChangedListener() {
+            @Override
+            public void onConfigurationChanged(Configuration newConfig) {
+                if (value[0]) {
+                    return;
+                }
+                value[0] = true;
+            }
+        });
+        navigationScene.remove(child);
+        sceneLifecycleManager.onConfigurationChanged(new Configuration());
+        assertFalse(value[0]);
+    }
+
+    @Test
     public void testNavigationListener() {
         TestScene rootScene = new TestScene();
         Pair<SceneLifecycleManager, NavigationScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(rootScene);
@@ -115,6 +144,58 @@ public class NavigationSceneListenerTests {
         };
         navigationScene.addNavigationListener(child, navigationListener);
         navigationScene.pop();
+    }
+
+    @Test
+    public void testNavigationListenerRemoveAfterLifecycleDestroy() {
+        TestScene rootScene = new TestScene();
+        Pair<SceneLifecycleManager, NavigationScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(rootScene);
+        SceneLifecycleManager sceneLifecycleManager = pair.first;
+        NavigationScene navigationScene = pair.second;
+        sceneLifecycleManager.onStart();
+        sceneLifecycleManager.onResume();
+
+        final TestChildScene child = new TestChildScene();
+        navigationScene.push(child);
+
+        final AtomicBoolean called = new AtomicBoolean(false);
+        NavigationListener navigationListener = new NavigationListener() {
+            @Override
+            public void navigationChange(@Nullable Scene from, @NonNull Scene to, boolean isPush) {
+                called.set(true);
+            }
+        };
+        navigationScene.addNavigationListener(child, navigationListener);
+        navigationScene.remove(child);
+
+        navigationScene.push(TestChildScene.class);
+        assertFalse(called.get());
+    }
+
+    @Test
+    public void testNavigationListenerNotAddAfterLifecycleDestroy() {
+        TestScene rootScene = new TestScene();
+        Pair<SceneLifecycleManager, NavigationScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(rootScene);
+        SceneLifecycleManager sceneLifecycleManager = pair.first;
+        NavigationScene navigationScene = pair.second;
+        sceneLifecycleManager.onStart();
+        sceneLifecycleManager.onResume();
+
+        final TestChildScene child = new TestChildScene();
+        navigationScene.push(child);
+        navigationScene.remove(child);
+
+        final AtomicBoolean called = new AtomicBoolean(false);
+        NavigationListener navigationListener = new NavigationListener() {
+            @Override
+            public void navigationChange(@Nullable Scene from, @NonNull Scene to, boolean isPush) {
+                called.set(true);
+            }
+        };
+        navigationScene.addNavigationListener(child, navigationListener);
+
+        navigationScene.push(TestChildScene.class);
+        assertFalse(called.get());
     }
 
     public static class TestScene extends GroupScene {
