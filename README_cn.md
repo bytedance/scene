@@ -1,4 +1,4 @@
-# Scene
+# Bytedance Scene
 
 Scene是一个基于View的轻量级导航和页面切分组件库，主要特性：
 
