@@ -45,12 +45,12 @@ At the same time, we provide a series of migration solutions to help developers 
 
 Add to your build.gradle:
 
-~~~
+```gradle
 implementation 'com.bytedance.scene:scene:$latest_version'
 implementation 'com.bytedance.scene:scene-ui:$latest_version'
 implementation 'com.bytedance.scene:scene-shared-element-animation:$latest_version'
 implementation 'com.bytedance.scene:scene-ktx:$latest_version'
-~~~
+```
 
 Scene has 2 subclasses: NavigationScene and GroupScene:
 
@@ -59,7 +59,7 @@ Scene has 2 subclasses: NavigationScene and GroupScene:
 
 For simple usage, just let your Activity inherit from SceneActivity:
 
-~~~
+```kotlin
 class MainActivity : SceneActivity() {
     override fun getHomeSceneClass(): Class<out Scene> {
         return MainScene::class.java
@@ -69,11 +69,11 @@ class MainActivity : SceneActivity() {
         return false
     }
 }
-~~~
+```
 
 A simple Scene example:
 
-~~~
+```kotlin
 class MainScene : AppCompatScene() {
     private lateinit var mButton: Button
     override fun onCreateContentView(inflater: LayoutInflater, container: ViewGroup, savedInstanceState: Bundle?): View? {
@@ -89,7 +89,7 @@ class MainScene : AppCompatScene() {
         setTitle("Main")
         toolbar?.navigationIcon = null
         mButton.setOnClickListener {
-            navigationScene.push(SecondScene())
+            navigationScene?.push(SecondScene())
         }
     }
 }
@@ -117,7 +117,7 @@ class ChildScene : Scene() {
         return view
     }
 }
-~~~
+```
 
 ## Migrate to Scene
 
@@ -129,7 +129,7 @@ Take the homepage migration plan of XiguaVideo as an example:
 
 First, declares a layout in the XML of the home Activity for storing the Scene: scene_container
 
-~~~
+```xml
 <?xml version="1.0" encoding="utf-8"?>
 <merge xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
@@ -147,11 +147,11 @@ First, declares a layout in the XML of the home Activity for storing the Scene: 
         android:layout_height="match_parent" />
  
 </merge>
-~~~
+```
 
 Then create a transparent Scene as the root Scene:
 
-~~~
+```java
 public static class EmptyHolderScene extends Scene {
     @NonNull
     @Override
@@ -172,29 +172,29 @@ public static class EmptyHolderScene extends Scene {
         activity.createSceneLifecycleCallbacksToDispatchLifecycle(getNavigationScene());
     }
 }
-~~~
+```
 
 Bind this transparent Scene to R.id.scene_container:
 
-~~~
+```java
 mSceneActivityDelegate = NavigationSceneUtility.setupWithActivity(this, R.id.scene_container, null,
         new NavigationSceneOptions().setDrawWindowBackground(false)
                 .setFixSceneWindowBackgroundEnabled(true)
                 .setSceneBackground(R.color.material_default_window_bg)
                 .setRootScene(EmptyHolderScene.class, null), false);
-~~~
+```
 
 In essence, there is a transparent Scene cover on the Activity, but it is not visually visible.
 
 Then provide the Push method in the Activity:
 
-~~~
+```java
 public void push(@NonNull Class<? extends Scene> clazz, @Nullable Bundle argument, @Nullable PushOptions pushOptions) {
     if (mSceneActivityDelegate != null) {
         mSceneActivityDelegate.getNavigationScene().push(clazz, argument, pushOptions);
     }
 }
-~~~
+```
 
 This completes the basic migration, you can open a new Scene page directly in this Activity.
 

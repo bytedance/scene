@@ -43,12 +43,12 @@ Scene框架尝试去解决上面提到的Activity和Fragment存在的问题
 
 在依赖中添加：
 
-~~~
+```gradle
 implementation 'com.bytedance.scene:scene:$latest_version'
 implementation 'com.bytedance.scene:scene-ui:$latest_version'
 implementation 'com.bytedance.scene:scene-shared-element-animation:$latest_version'
 implementation 'com.bytedance.scene:scene-ktx:$latest_version'
-~~~
+```
 
 Scene有2个子类：NavigationScene和GroupScene，其中：
 
@@ -57,7 +57,7 @@ Scene有2个子类：NavigationScene和GroupScene，其中：
 
 简单的接入，让主Activity继承于SceneActivity即可：
 
-~~~
+```kotlin
 class MainActivity : SceneActivity() {
     override fun getHomeSceneClass(): Class<out Scene> {
         return MainScene::class.java
@@ -67,11 +67,11 @@ class MainActivity : SceneActivity() {
         return false
     }
 }
-~~~
+```
 
 一个简单的Scene示例：
 
-~~~
+```kotlin
 class MainScene : AppCompatScene() {
     private lateinit var mButton: Button
     override fun onCreateContentView(inflater: LayoutInflater, container: ViewGroup, savedInstanceState: Bundle?): View? {
@@ -87,7 +87,7 @@ class MainScene : AppCompatScene() {
         setTitle("Main")
         toolbar?.navigationIcon = null
         mButton.setOnClickListener {
-            navigationScene.push(SecondScene())
+            navigationScene?.push(SecondScene())
         }
     }
 }
@@ -115,7 +115,7 @@ class ChildScene : Scene() {
         return view
     }
 }
-~~~
+```
 
 ## Migrate to Scene
 
@@ -127,7 +127,7 @@ class ChildScene : Scene() {
 
 首先在首页的XML申明一个存放Scene的布局：scene_container
 
-~~~
+```xml
 <?xml version="1.0" encoding="utf-8"?>
 <merge xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
@@ -136,7 +136,7 @@ class ChildScene : Scene() {
     <...>
     
     <...>
- 
+
     <!-- 上面是这个Activity的已有布局 -->
  
     <FrameLayout
@@ -145,11 +145,11 @@ class ChildScene : Scene() {
         android:layout_height="match_parent" />
  
 </merge>
-~~~
+```
 
 再创建一个透明的Scene作为根Scene
 
-~~~
+```java
 public static class EmptyHolderScene extends Scene {
     @NonNull
     @Override
@@ -170,29 +170,29 @@ public static class EmptyHolderScene extends Scene {
         activity.createSceneLifecycleCallbacksToDispatchLifecycle(getNavigationScene());
     }
 }
-~~~
+```
 
 绑定这个透明的Scene到 R.id.scene_container
 
-~~~
+```java
 mSceneActivityDelegate = NavigationSceneUtility.setupWithActivity(this, R.id.scene_container, null,
         new NavigationSceneOptions().setDrawWindowBackground(false)
                 .setFixSceneWindowBackgroundEnabled(true)
                 .setSceneBackground(R.color.material_default_window_bg)
                 .setRootScene(EmptyHolderScene.class, null), false);
-~~~
+```
 
 实质上是有个透明的Scene盖在首页，但是视觉上看不出来
 
 然后在Activity中提供Push的方法
 
-~~~
+```java
 public void push(@NonNull Class<? extends Scene> clazz, @Nullable Bundle argument, @Nullable PushOptions pushOptions) {
     if (mSceneActivityDelegate != null) {
         mSceneActivityDelegate.getNavigationScene().push(clazz, argument, pushOptions);
     }
 }
-~~~
+```
 
 这样就基本迁移完成，可以在这个Activity中直接打开新的Scene页面了。
 
