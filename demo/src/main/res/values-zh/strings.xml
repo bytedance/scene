@@ -2,7 +2,11 @@
 <resources>
     <string name="app_name">SceneDemo</string>
     <string name="main_scene_title_navigation">导航</string>
+    <string name="main_scene_title_navigation_multi_stack">导航(MultiStack)</string>
+    <string name="main_scene_title_navigation_router">导航(Router)</string>
     <string name="main_scene_title_anim">动画</string>
+    <string name="main_scene_title_architecture_patterns">设计模式</string>
+    <string name="main_scene_title_activity_compatibility">Activity兼容</string>
     <string name="main_scene_title_extreme_case">极端Case</string>
     <string name="main_scene_title_lifecycle">生命周期</string>
     <string name="main_scene_title_part">局部</string>
@@ -30,7 +34,7 @@
     <string name="nav_clear_task_btn_3">点击跳到 PushClearScene_4</string>
     <string name="nav_clear_task_btn_4">点击 Pop 到栈底</string>
     <string name="nav_clear_current_btn">跳到新页面并且关闭当前页面</string>
-    <string name="main_nav_btn_for_result">拿返回值和申请权限</string>
+    <string name="main_nav_btn_for_result">拿返回值</string>
     <string name="main_nav_btn_interrupt_pop">拦截 Pop 的用法</string>
     <string name="main_nav_btn_pop_to">PopTo 的用法</string>
     <string name="nav_pop_to_btn_0">点击跳到 PopToScene_0</string>
@@ -89,7 +93,8 @@
     <string name="main_part_btn_drawer">侧边抽屉用法</string>
     <string name="main_part_btn_tab_view_pager">TabLayout + ViewPager</string>
     <string name="main_part_btn_dialog">对话框</string>
-    <string name="main_part_btn_child_scene">切分 Scene 用法</string>
+    <string name="main_part_btn_child_scene">切分 Scene 用法(add remove show hide)</string>
+    <string name="main_part_btn_scene_place_holder_view">ScenePlaceHolderView(xml)</string>
     <string name="main_part_btn_async_inflate">异步 Inflate</string>
     <string name="main_part_btn_bind_to_fragment">绑定到 Fragment</string>
     <string name="main_part_btn_bind_to_view">绑定到 View</string>
@@ -150,4 +155,9 @@
     <string name="case_push_pop_lifecycle_btn_2">Scene onCreateView 的时候执行 Pop</string>
     <string name="case_group_scene_btn_1">每次先生成GroupScene，添加Child后再添加进来</string>
     <string name="case_group_scene_btn_2">先生成GroupScene，复用反复删除添加</string>
+    <string name="main_activity_btn_for_result">拿返回值</string>
+    <string name="patterns_mvp">MVP</string>
+    <string name="patterns_mvvm">MVVM</string>
+    <string name="patterns_mvi">MVI/Redux/Unidirectional data flow</string>
+    <string name="patterns_viper">VIPER</string>
 </resources>

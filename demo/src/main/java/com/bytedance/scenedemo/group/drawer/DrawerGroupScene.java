@@ -5,7 +5,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.util.SparseArrayCompat;
 
 import com.bytedance.scene.Scene;
 import com.bytedance.scene.ui.template.NavigationViewScene;

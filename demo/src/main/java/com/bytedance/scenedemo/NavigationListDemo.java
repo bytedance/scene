@@ -13,9 +13,7 @@ import android.widget.Space;
 import android.widget.TextView;
 
 import com.bytedance.scene.group.UserVisibleHintGroupScene;
-import com.bytedance.scenedemo.multi_stack.MultiStackDemoScene;
-import com.bytedance.scenedemo.navigation.configuration.ConfigurationDemoScene;
-import com.bytedance.scenedemo.navigation.forresult.SceneResultRootScene;
+import com.bytedance.scenedemo.navigation.forresult.SceneResultScene_0;
 import com.bytedance.scenedemo.navigation.performance.PerformanceDemo;
 import com.bytedance.scenedemo.navigation.popinterupt.PopInterruptScene;
 import com.bytedance.scenedemo.navigation.popto.PopToScene;
@@ -26,9 +24,7 @@ import com.bytedance.scenedemo.navigation.pushandclear.PushClearTaskScene;
 import com.bytedance.scenedemo.navigation.remove.RemoveDemoScene;
 import com.bytedance.scenedemo.navigation.reuse.ReuseDemoScene;
 import com.bytedance.scenedemo.navigation.singletask.SingleTaskDemoScene;
-import com.bytedance.scenedemo.navigation.softkeyboard.SoftKeyboardDemoScene;
 import com.bytedance.scenedemo.template.DefaultScene;
-import com.bytedance.scenedemo.theme.ThemeDemo;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -71,13 +67,6 @@ public class NavigationListDemo extends UserVisibleHintGroupScene {
             }
         });
 
-        addButton(layout, getString(R.string.main_nav_btn_remove), new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                getNavigationScene().push(RemoveDemoScene.class);
-            }
-        });
-
         addButton(layout, getString(R.string.main_nav_btn_clear_task), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -89,6 +78,13 @@ public class NavigationListDemo extends UserVisibleHintGroupScene {
             @Override
             public void onClick(View v) {
                 getNavigationScene().push(PushClearCurrentDemoScene.class);
+            }
+        });
+
+        addButton(layout, getString(R.string.main_nav_btn_remove), new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getNavigationScene().push(RemoveDemoScene.class);
             }
         });
 
@@ -111,30 +107,16 @@ public class NavigationListDemo extends UserVisibleHintGroupScene {
         addButton(layout, getString(R.string.main_nav_btn_for_result), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getNavigationScene().push(SceneResultRootScene.class);
+                getNavigationScene().push(SceneResultScene_0.class);
             }
         });
 
         addTitle(layout, getString(R.string.main_title_other));
 
-        addButton(layout, getString(R.string.main_nav_btn_configuration_change), new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                getNavigationScene().push(ConfigurationDemoScene.class);
-            }
-        });
-
         addButton(layout, getString(R.string.main_nav_btn_reuse), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 getNavigationScene().push(ReuseDemoScene.class);
-            }
-        });
-
-        addButton(layout, getString(R.string.main_nav_btn_ime), new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                getNavigationScene().push(SoftKeyboardDemoScene.class);
             }
         });
 
@@ -152,40 +134,12 @@ public class NavigationListDemo extends UserVisibleHintGroupScene {
             }
         });
 
-        addButton(layout, getString(R.string.main_nav_btn_mutil_stack), new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                getNavigationScene().push(MultiStackDemoScene.class);
-            }
-        });
-
-        addButton(layout, getString(R.string.main_nav_btn_theme), new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                getNavigationScene().push(ThemeDemo.class);
-            }
-        });
-
         addTitle(layout, getString(R.string.main_title_todo));
-
-        addButton(layout, getString(R.string.main_nav_btn_router), new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-            }
-        });
 
         addButton(layout, getString(R.string.main_nav_btn_deep_link), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-            }
-        });
-
-        addButton(layout, getString(R.string.main_nav_btn_modify_activity_states), new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-//                getNavigationScene().push(WindowDemo.class);
             }
         });
 

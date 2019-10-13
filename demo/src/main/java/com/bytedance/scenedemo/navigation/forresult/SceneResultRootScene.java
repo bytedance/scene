@@ -1,11 +1,8 @@
 package com.bytedance.scenedemo.navigation.forresult;
 
-import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
@@ -20,7 +17,6 @@ import android.widget.Toast;
 
 import com.bytedance.scene.Scene;
 import com.bytedance.scene.interfaces.ActivityResultCallback;
-import com.bytedance.scene.interfaces.PermissionResultCallback;
 import com.bytedance.scenedemo.R;
 import com.bytedance.scenedemo.utility.ColorUtil;
 
@@ -44,16 +40,6 @@ public class SceneResultRootScene extends Scene {
         name.setText(getNavigationScene().getStackHistory());
 
         final ImageView image = getView().findViewById(R.id.image);
-
-        Button btn = getView().findViewById(R.id.btn);
-        btn.setText(getString(R.string.nav_result_scene_to_scene));
-        btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                getNavigationScene().push(SceneResultScene_0.class);
-            }
-        });
-
         Button btn2 = getView().findViewById(R.id.btn2);
         btn2.setText(getString(R.string.nav_result_scene_to_activity));
         btn2.setOnClickListener(new View.OnClickListener() {
@@ -99,27 +85,5 @@ public class SceneResultRootScene extends Scene {
                 getNavigationScene().startActivity(new Intent(requireActivity(), ActivityToSceneDemoActivity.class));
             }
         });
-
-        Button btn5 = getView().findViewById(R.id.btn5);
-        btn5.setText(getString(R.string.nav_result_permission));
-        btn5.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    getNavigationScene().requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 123, new PermissionResultCallback() {
-                        @Override
-                        public void onResult(@Nullable int[] grantResults) {
-                            if (grantResults != null && grantResults.length > 0
-                                    && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                                Toast.makeText(getActivity(), getString(R.string.nav_result_permission_tip_success), Toast.LENGTH_SHORT).show();
-                            } else {
-                                Toast.makeText(getActivity(), getString(R.string.nav_result_permission_tip_failed), Toast.LENGTH_SHORT).show();
-                            }
-                        }
-                    });
-                }
-            }
-        });
     }
-
 }

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/navigation"
+        android:title="@string/main_scene_title_navigation" />
+    <item
+        android:id="@+id/navigation_multi_stack"
+        android:title="@string/main_scene_title_navigation_multi_stack" />
+    <item
+        android:id="@+id/navigation_router"
+        android:title="@string/main_scene_title_navigation_router" />
+    <item
+        android:id="@+id/group"
+        android:title="@string/main_scene_title_part" />
+    <item
+        android:id="@+id/dialog"
+        android:title="@string/main_part_btn_dialog" />
+    <item
+        android:id="@+id/animation"
+        android:title="@string/main_scene_title_anim" />
+    <item
+        android:id="@+id/architecture_patterns"
+        android:title="@string/main_scene_title_architecture_patterns" />
+    <item
+        android:id="@+id/activity_compatibility"
+        android:title="@string/main_scene_title_activity_compatibility" />
+    <item
+        android:id="@+id/extreme_case"
+        android:title="@string/main_title_case" />
+
+</menu>

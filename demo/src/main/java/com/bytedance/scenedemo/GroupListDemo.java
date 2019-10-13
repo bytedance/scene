@@ -12,10 +12,10 @@ import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.Space;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bytedance.scene.group.UserVisibleHintGroupScene;
 import com.bytedance.scenedemo.async_inflate.AsyncInflateSceneDemo;
-import com.bytedance.scenedemo.dialog.DialogListDemoScene;
 import com.bytedance.scenedemo.group.drawer.DrawerGroupScene;
 import com.bytedance.scenedemo.group.fragment.FragmentBindingDemoActivity;
 import com.bytedance.scenedemo.group.fragment.TestSceneToViewActivity;
@@ -42,6 +42,22 @@ public class GroupListDemo extends UserVisibleHintGroupScene {
         addSpace(layout, 12);
         addTitle(layout, getString(R.string.main_title_basic));
 
+        addButton(layout, getString(R.string.main_part_btn_child_scene), new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getNavigationScene().push(PageBlockGroupScene.class);
+            }
+        });
+
+        addButton(layout, getString(R.string.main_part_btn_scene_place_holder_view), new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(requireActivity(), "TODO", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        addTitle(layout, getString(R.string.main_title_basic));
+
         addButton(layout, getString(R.string.main_part_btn_tab_view_pager), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -60,20 +76,6 @@ public class GroupListDemo extends UserVisibleHintGroupScene {
             @Override
             public void onClick(View v) {
                 getNavigationScene().push(MultiStackTabGroupScene.class);
-            }
-        });
-
-        addButton(layout, getString(R.string.main_part_btn_dialog), new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                getNavigationScene().push(DialogListDemoScene.class);
-            }
-        });
-
-        addButton(layout, getString(R.string.main_part_btn_child_scene), new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                getNavigationScene().push(PageBlockGroupScene.class);
             }
         });
 

@@ -15,14 +15,6 @@
         android:layout_height="wrap_content" />
 
     <Button
-        android:id="@+id/btn"
-        android:layout_width="match_parent"
-        android:layout_height="54dp"
-        android:textAllCaps="false"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"/>
-
-    <Button
         android:id="@+id/btn2"
         android:layout_width="match_parent"
         android:layout_height="54dp"
@@ -44,15 +36,6 @@
         android:layout_width="match_parent"
         android:layout_height="54dp"
         android:textAllCaps="false"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"/>
-
-    <Button
-        android:id="@+id/btn5"
-        android:layout_width="match_parent"
-        android:layout_height="54dp"
-        android:textAllCaps="false"
-        android:layout_marginTop="20dp"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"/>
 

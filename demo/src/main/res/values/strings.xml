@@ -5,9 +5,13 @@
     <string name="vd_second_hand" translatable="false">second_hand</string>
     <string name="vd_circle" translatable="false">circle</string>
 
-    <string name="main_scene_title_navigation">Nav</string>
+    <string name="main_scene_title_navigation">Navigation</string>
+    <string name="main_scene_title_navigation_multi_stack">Navigation(MultiStack)</string>
+    <string name="main_scene_title_navigation_router">Navigation(Router)</string>
     <string name="main_scene_title_part">Part</string>
-    <string name="main_scene_title_anim">Anim</string>
+    <string name="main_scene_title_anim">Animation</string>
+    <string name="main_scene_title_architecture_patterns">Architecture Patterns</string>
+    <string name="main_scene_title_activity_compatibility">Activity Compatibility</string>
     <string name="main_scene_title_lifecycle">LifeCycle</string>
     <string name="main_scene_title_extreme_case">Case</string>
 
@@ -18,14 +22,14 @@
     <string name="main_title_case">Extreme Cases</string>
 
     <string name="main_nav_btn_push_pop">Push and Pop</string>
-    <string name="main_nav_btn_single_top">Push wish SingleTop</string>
-    <string name="main_nav_btn_single_task">Push wish SingleTask</string>
+    <string name="main_nav_btn_single_top">Push with SingleTop</string>
+    <string name="main_nav_btn_single_task">Push with SingleTask</string>
     <string name="main_nav_btn_remove">Remove any Scene in Stack</string>
     <string name="main_nav_btn_clear_task">Push with ClearTask</string>
     <string name="main_nav_btn_clear_current">Push and Clear Current</string>
     <string name="main_nav_btn_pop_to">PopTo</string>
     <string name="main_nav_btn_interrupt_pop">Interrupt Pop</string>
-    <string name="main_nav_btn_for_result">Get result and Gain Permission</string>
+    <string name="main_nav_btn_for_result">Get result</string>
     <string name="main_nav_btn_configuration_change">Configuration Change</string>
     <string name="main_nav_btn_reuse">Reuse Scene to Speed up the Opening</string>
     <string name="main_nav_btn_ime">IME Problems</string>
@@ -35,12 +39,13 @@
     <string name="main_nav_btn_theme">Theme</string>
     <string name="main_nav_btn_router">Router (Todo)</string>
     <string name="main_nav_btn_deep_link">Deep Link (Todo)</string>
-    <string name="main_nav_btn_modify_activity_states">Modify and Recovery the states of Activity (Todo)</string>
+    <string name="main_nav_btn_modify_activity_states">Modify and Recovery the states of Activity</string>
     <string name="main_part_btn_tab_view_pager">TabLayout + ViewPager</string>
     <string name="main_part_btn_drawer">Drawer</string>
     <string name="main_part_btn_bottom_tab_layout">Bottom TabLayout</string>
     <string name="main_part_btn_dialog">Dialog</string>
-    <string name="main_part_btn_child_scene">Child Scene</string>
+    <string name="main_part_btn_child_scene">Child Scene(add remove show hide)</string>
+    <string name="main_part_btn_scene_place_holder_view">ScenePlaceHolderView(xml)</string>
     <string name="main_part_btn_bind_to_fragment">Bind to Fragment</string>
     <string name="main_part_btn_bind_to_view">Bind to View</string>
     <string name="main_part_btn_async_inflate">Async Inflate</string>
@@ -89,7 +94,7 @@
     <string name="nav_result_scene_to_activity">Scene start Activity for result</string>
     <string name="nav_result_scene_to_activity_without_result">Case: Scene start Activity but without set a result</string>
     <string name="nav_result_activity_to_scene">Activity push Scene(with SceneContainerActivity) for result</string>
-    <string name="nav_result_permission">Apply Permission in Scene</string>
+    <string name="nav_result_permission">Request Permission in Scene</string>
     <string name="nav_result_callback_tip">Callback</string>
     <string name="nav_result_permission_tip_success">Success</string>
     <string name="nav_result_permission_tip_failed">Failed</string>
@@ -163,5 +168,11 @@
     <string name="case_push_pop_lifecycle_btn_2">Pop during method onCreateView() of Scene</string>
     <string name="case_group_scene_btn_1">Create GroupScene and its Children first, then add it</string>
     <string name="case_group_scene_btn_2">Create GroupScene first, then Add/Remove by reusing</string>
+
+    <string name="main_activity_btn_for_result">Get result</string>
+    <string name="patterns_mvp">MVP</string>
+    <string name="patterns_mvvm">MVVM</string>
+    <string name="patterns_mvi">MVI/Redux/Unidirectional data flow</string>
+    <string name="patterns_viper">VIPER</string>
 
 </resources>
