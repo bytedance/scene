@@ -31,7 +31,7 @@ import android.view.ViewGroup;
 
 import com.bytedance.scene.Scene;
 import com.bytedance.scene.group.GroupScene;
-import com.bytedance.scene.ui.GroupSceneUtility;
+import com.bytedance.scene.ui.GroupSceneUIUtility;
 import com.bytedance.scene.ui.R;
 
 /**
@@ -65,7 +65,7 @@ public abstract class NavigationViewScene extends GroupScene {
         toggle.syncState();
 
         this.mNavigationView.inflateMenu(getMenuResId());
-        GroupSceneUtility.setupWithNavigationView(this.mDrawerLayout, this.mNavigationView, this, R.id.scene_container, getSceneMap());
+        GroupSceneUIUtility.setupWithNavigationView(this.mDrawerLayout, this.mNavigationView, this, R.id.scene_container, getSceneMap());
         this.mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

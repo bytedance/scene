@@ -17,7 +17,7 @@ import com.bytedance.scene.Scene;
 import com.bytedance.scene.interfaces.ChildSceneLifecycleCallbacks;
 import com.bytedance.scene.group.GroupScene;
 import com.bytedance.scene.group.UserVisibleHintGroupScene;
-import com.bytedance.scene.ui.GroupSceneUtility;
+import com.bytedance.scene.ui.GroupSceneUIUtility;
 import com.bytedance.scenedemo.animation.AnimationListDemoScene;
 
 import org.jetbrains.annotations.NotNull;
@@ -70,7 +70,7 @@ public class MainScene extends GroupScene {
 //        list.put(getString(R.string.main_scene_title_lifecycle), new LifeCycleListScene());
         list.put(getString(R.string.main_scene_title_extreme_case), new CaseListDemo());
 
-        GroupSceneUtility.setupWithViewPager(this.mViewPager, this, list);
+        GroupSceneUIUtility.setupWithViewPager(this.mViewPager, this, list);
     }
 
     @Override

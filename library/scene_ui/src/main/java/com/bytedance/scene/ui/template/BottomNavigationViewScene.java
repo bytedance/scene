@@ -28,7 +28,7 @@ import android.view.ViewGroup;
 
 import com.bytedance.scene.Scene;
 import com.bytedance.scene.group.GroupScene;
-import com.bytedance.scene.ui.GroupSceneUtility;
+import com.bytedance.scene.ui.GroupSceneUIUtility;
 import com.bytedance.scene.utlity.DispatchWindowInsetsListener;
 import com.bytedance.scene.ui.R;
 
@@ -57,7 +57,7 @@ public abstract class BottomNavigationViewScene extends GroupScene {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         this.mBottomNavigationView.inflateMenu(getMenuResId());
-        GroupSceneUtility.setupWithBottomNavigationView(this.mBottomNavigationView, this, R.id.scene_container, getSceneMap());
+        GroupSceneUIUtility.setupWithBottomNavigationView(this.mBottomNavigationView, this, R.id.scene_container, getSceneMap());
     }
 
     @MenuRes

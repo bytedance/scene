@@ -11,7 +11,7 @@ import android.view.ViewGroup;
 
 import com.bytedance.scene.group.GroupScene;
 import com.bytedance.scene.group.UserVisibleHintGroupScene;
-import com.bytedance.scene.ui.GroupSceneUtility;
+import com.bytedance.scene.ui.GroupSceneUIUtility;
 import com.bytedance.scenedemo.R;
 import com.bytedance.scenedemo.group.EmptyScene;
 
@@ -50,7 +50,7 @@ public class ViewPagerGroupScene extends GroupScene {
             list.put(String.valueOf(i), EmptyScene.newInstance(i));
         }
 
-        GroupSceneUtility.setupWithViewPager(this.mViewPager, this, list);
+        GroupSceneUIUtility.setupWithViewPager(this.mViewPager, this, list);
         this.mViewPager.setCurrentItem(1);
     }
 }

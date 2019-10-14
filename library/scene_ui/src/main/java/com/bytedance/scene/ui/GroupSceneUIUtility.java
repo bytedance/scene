@@ -35,7 +35,7 @@ import java.util.List;
 /**
  * Created by JiangQi on 8/16/18.
  */
-public class GroupSceneUtility {
+public class GroupSceneUIUtility {
     public static void setupWithBottomNavigationView(@NonNull final BottomNavigationView bottomNavigationView,
                                                      @NonNull final GroupScene groupScene,
                                                      @IdRes final int containerId,
