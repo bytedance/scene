@@ -2,7 +2,6 @@
 ext.compileSdkVersion = COMPILE_SDK_VERSION.toInteger()
 ext.miniSdkVersion = MIN_SDK_VERSION.toInteger()
 ext.targetSdkVersion = TARGET_SDK_VERSION.toInteger()
-ext.buildToolsVersion = BUILD_TOOLS_VERSION
 
 buildscript {
     repositories {
