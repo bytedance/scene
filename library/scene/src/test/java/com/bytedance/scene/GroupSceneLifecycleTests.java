@@ -44,30 +44,39 @@ public class GroupSceneLifecycleTests {
         assertEquals(childScene.getState(), State.ACTIVITY_CREATED);
         assertEquals(1, testScene.getSceneList().size());
         assertSame(childScene, testScene.getSceneList().get(0));
+        assertEquals(childScene.getView().getVisibility(), View.VISIBLE);
 
         sceneLifecycleManager.onStart();
         assertEquals(childScene.getState(), State.STARTED);
+        assertEquals(childScene.getView().getVisibility(), View.VISIBLE);
 
         sceneLifecycleManager.onResume();
         assertEquals(childScene.getState(), State.RESUMED);
+        assertEquals(childScene.getView().getVisibility(), View.VISIBLE);
 
         sceneLifecycleManager.onPause();
         assertEquals(childScene.getState(), State.STARTED);
+        assertEquals(childScene.getView().getVisibility(), View.VISIBLE);
 
         sceneLifecycleManager.onStop();
         assertEquals(childScene.getState(), State.ACTIVITY_CREATED);
+        assertEquals(childScene.getView().getVisibility(), View.VISIBLE);
 
         sceneLifecycleManager.onStart();
         assertEquals(childScene.getState(), State.STARTED);
+        assertEquals(childScene.getView().getVisibility(), View.VISIBLE);
 
         sceneLifecycleManager.onResume();
         assertEquals(childScene.getState(), State.RESUMED);
+        assertEquals(childScene.getView().getVisibility(), View.VISIBLE);
 
         sceneLifecycleManager.onPause();
         assertEquals(childScene.getState(), State.STARTED);
+        assertEquals(childScene.getView().getVisibility(), View.VISIBLE);
 
         sceneLifecycleManager.onStop();
         assertEquals(childScene.getState(), State.ACTIVITY_CREATED);
+        assertEquals(childScene.getView().getVisibility(), View.VISIBLE);
 
         sceneLifecycleManager.onDestroyView();
         assertEquals(childScene.getState(), State.NONE);
@@ -119,9 +128,11 @@ public class GroupSceneLifecycleTests {
         assertTrue(testScene.isShow(childScene));
         assertEquals(childScene.getState(), State.ACTIVITY_CREATED);
         assertNotNull(childScene.getView());
+        assertEquals(childScene.getView().getVisibility(), View.VISIBLE);
 
         sceneLifecycleManager.onStart();
         assertEquals(childScene.getState(), State.STARTED);
+        assertEquals(childScene.getView().getVisibility(), View.VISIBLE);
 
         testScene.hide(childScene);
         assertFalse(testScene.isShow(childScene));
@@ -131,6 +142,7 @@ public class GroupSceneLifecycleTests {
         testScene.show(childScene);
         assertTrue(testScene.isShow(childScene));
         assertEquals(childScene.getState(), State.STARTED);
+        assertEquals(childScene.getView().getVisibility(), View.VISIBLE);
 
         sceneLifecycleManager.onResume();
         assertEquals(childScene.getState(), State.RESUMED);
@@ -143,6 +155,7 @@ public class GroupSceneLifecycleTests {
         testScene.show(childScene);
         assertTrue(testScene.isShow(childScene));
         assertEquals(childScene.getState(), State.RESUMED);
+        assertEquals(childScene.getView().getVisibility(), View.VISIBLE);
 
         sceneLifecycleManager.onPause();
         assertEquals(childScene.getState(), State.STARTED);
@@ -155,6 +168,7 @@ public class GroupSceneLifecycleTests {
         testScene.show(childScene);
         assertTrue(testScene.isShow(childScene));
         assertEquals(childScene.getState(), State.STARTED);
+        assertEquals(childScene.getView().getVisibility(), View.VISIBLE);
 
         sceneLifecycleManager.onStop();
         assertEquals(childScene.getState(), State.ACTIVITY_CREATED);
@@ -162,10 +176,12 @@ public class GroupSceneLifecycleTests {
         testScene.hide(childScene);
         assertFalse(testScene.isShow(childScene));
         assertEquals(childScene.getState(), State.ACTIVITY_CREATED);
+        assertEquals(childScene.getView().getVisibility(), View.GONE);
 
         testScene.show(childScene);
         assertTrue(testScene.isShow(childScene));
         assertEquals(childScene.getState(), State.ACTIVITY_CREATED);
+        assertEquals(childScene.getView().getVisibility(), View.VISIBLE);
 
         sceneLifecycleManager.onDestroyView();
         assertNull(childScene.getView());
@@ -193,6 +209,7 @@ public class GroupSceneLifecycleTests {
 
         testScene.add(testScene.mId, childScene, "childScene");
         assertEquals(childScene.getState(), State.ACTIVITY_CREATED);
+        assertEquals(childScene.getView().getVisibility(), View.VISIBLE);
 
         testScene.hide(childScene);
         assertEquals(childScene.getState(), State.ACTIVITY_CREATED);
@@ -204,6 +221,7 @@ public class GroupSceneLifecycleTests {
 
         testScene.show(childScene);
         assertEquals(childScene.getState(), State.STARTED);
+        assertEquals(childScene.getView().getVisibility(), View.VISIBLE);
 
         testScene.hide(childScene);
         assertEquals(childScene.getState(), State.ACTIVITY_CREATED);
@@ -215,6 +233,7 @@ public class GroupSceneLifecycleTests {
 
         testScene.show(childScene);
         assertEquals(childScene.getState(), State.RESUMED);
+        assertEquals(childScene.getView().getVisibility(), View.VISIBLE);
 
         testScene.hide(childScene);
         assertEquals(childScene.getState(), State.ACTIVITY_CREATED);
@@ -226,6 +245,7 @@ public class GroupSceneLifecycleTests {
 
         testScene.show(childScene);
         assertEquals(childScene.getState(), State.STARTED);
+        assertEquals(childScene.getView().getVisibility(), View.VISIBLE);
     }
 
     @Test

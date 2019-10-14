@@ -22,6 +22,7 @@ import android.os.Looper;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.IdRes;
+import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.util.Pair;
@@ -40,6 +41,8 @@ import com.bytedance.scene.utlity.SceneInstanceUtility;
 import com.bytedance.scene.utlity.SceneInternalException;
 import com.bytedance.scene.utlity.Utility;
 
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 import java.util.*;
 
 /**
@@ -284,9 +287,9 @@ class GroupSceneManager {
                         throw new IllegalStateException("already have a Scene with tag " + addOperation.tag);
                     }
 
-                    executeOperation(new MoveStateOperation(scene, addOperation.viewId, addOperation.tag, dstState, forceShow, forceHide, forceRemove));
+                    executeOperation(new TransactionOperation(scene, addOperation.viewId, addOperation.tag, dstState, forceShow, forceHide, forceRemove));
                 } else {
-                    executeOperation(new MoveStateOperation(scene, View.NO_ID, null, dstState, forceShow, forceHide, forceRemove));
+                    executeOperation(new TransactionOperation(scene, View.NO_ID, null, dstState, forceShow, forceHide, forceRemove));
                 }
             }
             mOperationTransactionList.clear();
@@ -515,7 +518,7 @@ class GroupSceneManager {
                 throw new SceneInternalException("Scene is not found");
             }
             beginTrackSceneStateChange(scene);
-            moveState(this.mGroupScene, scene, mGroupScene.getState(), true, new Runnable() {
+            moveState(this.mGroupScene, scene, mGroupScene.getState(), false, new Runnable() {
                 @Override
                 public void run() {
                     endTrackSceneStateChange(scene);
@@ -558,7 +561,7 @@ class GroupSceneManager {
         return false;
     }
 
-    private class MoveStateOperation extends Operation {
+    private abstract class MoveStateOperation extends Operation {
         @IdRes
         final int viewId;
         @Nullable
@@ -596,40 +599,37 @@ class GroupSceneManager {
                 }
             }
 
-            boolean executeStateChange = scene.getState() != dstState;
-            if (executeStateChange) {
-                executeOnStart();
-            }
-
-            beginTrackSceneStateChange(scene);
-            moveState(mGroupScene, scene, dstState, true, new Runnable() {
-                @Override
-                public void run() {
-                    endTrackSceneStateChange(scene);
-                }
-            });
-
             if (forceShow) {
                 mSceneList.findByScene(scene).isHidden = false;
             }
             if (forceHide) {
                 mSceneList.findByScene(scene).isHidden = true;
             }
+
+            boolean executeStateChange = scene.getState() != dstState;
+            executeOnStart(executeStateChange);
+
+            beginTrackSceneStateChange(scene);
+            moveState(mGroupScene, scene, dstState, forceRemove, new Runnable() {
+                @Override
+                public void run() {
+                    endTrackSceneStateChange(scene);
+                }
+            });
+
             if (forceRemove) {
                 mSceneList.remove(mSceneList.findByScene(scene));
             }
 
-            if (executeStateChange) {
-                executeOnFinish();
-            }
+            executeOnFinish(executeStateChange);
             operationEndAction.run();
         }
 
-        protected void executeOnStart() {
+        protected void executeOnStart(boolean stateChanged) {
 
         }
 
-        protected void executeOnFinish() {
+        protected void executeOnFinish(boolean stateChanged) {
 
         }
     }
@@ -642,7 +642,13 @@ class GroupSceneManager {
         }
     }
 
-    private class AddOperation extends MoveStateOperation {
+    private final class TransactionOperation extends MoveStateOperation {
+        TransactionOperation(@NonNull Scene scene, int viewId, @Nullable String tag, @NonNull State dstState, boolean forceShow, boolean forceHide, boolean forceRemove) {
+            super(scene, viewId, tag, dstState, forceShow, forceHide, forceRemove);
+        }
+    }
+
+    private final class AddOperation extends MoveStateOperation {
         final int viewId;
         final String tag;
         final AnimationOrAnimatorFactory animationOrAnimatorFactory;
@@ -655,8 +661,11 @@ class GroupSceneManager {
         }
 
         @Override
-        protected void executeOnFinish() {
-            super.executeOnFinish();
+        protected void executeOnFinish(boolean stateChanged) {
+            super.executeOnFinish(stateChanged);
+            if (!stateChanged) {
+                return;
+            }
             final AnimationOrAnimator animationOrAnimator = animationOrAnimatorFactory.getAnimationOrAnimator();
             if (animationOrAnimator == null) {
                 return;
@@ -682,7 +691,7 @@ class GroupSceneManager {
         }
     }
 
-    private class RemoveOperation extends MoveStateOperation {
+    private final class RemoveOperation extends MoveStateOperation {
         private final AnimationOrAnimatorFactory animationOrAnimatorFactory;
         private final boolean canAnimation;
         private final View sceneView;
@@ -704,8 +713,11 @@ class GroupSceneManager {
         }
 
         @Override
-        protected void executeOnStart() {
-            super.executeOnStart();
+        protected void executeOnStart(boolean stateChanged) {
+            super.executeOnStart(stateChanged);
+            if (!stateChanged) {
+                return;
+            }
             if (!canAnimation) {
                 return;
             }
@@ -746,8 +758,11 @@ class GroupSceneManager {
         }
 
         @Override
-        protected void executeOnFinish() {
-            super.executeOnFinish();
+        protected void executeOnFinish(boolean stateChanged) {
+            super.executeOnFinish(stateChanged);
+            if (!stateChanged) {
+                return;
+            }
             if (!this.isAnimating) {
                 return;
             }
@@ -756,7 +771,7 @@ class GroupSceneManager {
         }
     }
 
-    private class HideOperation extends MoveStateOperation {
+    private final class HideOperation extends MoveStateOperation {
         private final AnimationOrAnimatorFactory animationOrAnimatorFactory;
 
         private HideOperation(Scene scene, AnimationOrAnimatorFactory animationOrAnimatorFactory) {
@@ -765,10 +780,15 @@ class GroupSceneManager {
         }
 
         @Override
-        protected void executeOnFinish() {
-            super.executeOnFinish();
+        protected void executeOnFinish(boolean stateChanged) {
+            super.executeOnFinish(stateChanged);
             final View sceneView = this.scene.getView();
             if (sceneView == null) {
+                return;
+            }
+            setSceneViewVisibility(scene, View.GONE);
+
+            if (!stateChanged) {
                 return;
             }
 
@@ -798,7 +818,7 @@ class GroupSceneManager {
         }
     }
 
-    private class ShowOperation extends MoveStateOperation {
+    private final class ShowOperation extends MoveStateOperation {
         private final AnimationOrAnimatorFactory animationOrAnimatorFactory;
 
         private ShowOperation(Scene scene, AnimationOrAnimatorFactory animationOrAnimatorFactory) {
@@ -807,8 +827,21 @@ class GroupSceneManager {
         }
 
         @Override
-        protected void executeOnFinish() {
-            super.executeOnFinish();
+        protected void executeOnStart(boolean stateChanged) {
+            super.executeOnStart(stateChanged);
+            final View sceneView = this.scene.getView();
+            if (sceneView == null) {
+                return;
+            }
+            setSceneViewVisibility(scene, View.VISIBLE);
+        }
+
+        @Override
+        protected void executeOnFinish(boolean stateChanged) {
+            super.executeOnFinish(stateChanged);
+            if (!stateChanged) {
+                return;
+            }
             final View sceneView = this.scene.getView();
             if (sceneView == null) {
                 return;
@@ -837,12 +870,23 @@ class GroupSceneManager {
     }
 
     /**
-     * child Scene state will be changed by parent GroupScene add/remove/show/hide operation or sync from parent GroupScene
-     * lifecycle, the former modifyViewHierarchy value is true, the latter modifyViewHierarchy value is false
+     * @hide
+     */
+    @IntDef({View.VISIBLE, View.INVISIBLE, View.GONE})
+    @Retention(RetentionPolicy.SOURCE)
+    @interface Visibility {
+    }
+
+    private static void setSceneViewVisibility(@NonNull Scene scene, @Visibility int visibility) {
+        scene.getView().setVisibility(visibility);
+    }
+
+    /**
+     * forceRemove value is true when be invoked by GroupScene.remove()
      */
     private static void moveState(@NonNull GroupScene groupScene,
                                   @NonNull Scene scene, @NonNull State to,
-                                  boolean modifyViewHierarchy,
+                                  boolean forceRemove,
                                   @Nullable Runnable endAction) {
         State currentState = scene.getState();
         if (currentState == to) {
@@ -864,48 +908,37 @@ class GroupSceneManager {
                     scene.dispatchCreate(sceneBundle);
                     ViewGroup containerView = groupScene.findContainerById(groupScene.getGroupSceneManager().findSceneViewId(scene));
                     scene.dispatchCreateView(sceneBundle, containerView);
-                    /*
-                     * Usually the lifecycle triggered state does not modify the View state,
-                     * But if this Scene was added long ago, it is not in the View tree at the beginning,
-                     * we need to add it in this case.
-                     */
-                    if (modifyViewHierarchy || scene.getView().getParent() == null) {
-                        containerView.addView(scene.getView());
-                        // It is possible to be in this state when recovery after destroying, so set it to GONE.
-                        scene.getView().setVisibility(View.GONE);
+                    containerView.addView(scene.getView());
+                    if (record.isHidden()) {
+                        setSceneViewVisibility(scene, View.GONE);
                     }
-                    moveState(groupScene, scene, to, modifyViewHierarchy, endAction);
+                    moveState(groupScene, scene, to, forceRemove, endAction);
                     break;
                 case VIEW_CREATED:
                     record = groupScene.getGroupSceneManager().findByScene(scene);
                     sceneBundle = record.bundle;
                     scene.dispatchActivityCreated(sceneBundle);
                     record.bundle = null;
-                    moveState(groupScene, scene, to, modifyViewHierarchy, endAction);
+                    moveState(groupScene, scene, to, forceRemove, endAction);
                     break;
                 case ACTIVITY_CREATED:
-                    // Whether modifyViewHierarchy is true or not, it must be set to visible
-                    scene.getView().setVisibility(View.VISIBLE);
                     scene.dispatchStart();
-                    moveState(groupScene, scene, to, modifyViewHierarchy, endAction);
+                    moveState(groupScene, scene, to, forceRemove, endAction);
                     break;
                 case STARTED:
                     scene.dispatchResume();
-                    moveState(groupScene, scene, to, modifyViewHierarchy, endAction);
+                    moveState(groupScene, scene, to, forceRemove, endAction);
                     break;
             }
         } else {
             switch (currentState) {
                 case RESUMED:
                     scene.dispatchPause();
-                    moveState(groupScene, scene, to, modifyViewHierarchy, endAction);
+                    moveState(groupScene, scene, to, forceRemove, endAction);
                     break;
                 case STARTED:
                     scene.dispatchStop();
-                    if (modifyViewHierarchy) {
-                        scene.getView().setVisibility(View.GONE);
-                    }
-                    moveState(groupScene, scene, to, modifyViewHierarchy, endAction);
+                    moveState(groupScene, scene, to, forceRemove, endAction);
                     break;
                 case ACTIVITY_CREATED:
                     if (to == State.VIEW_CREATED) {
@@ -915,7 +948,7 @@ class GroupSceneManager {
                 case VIEW_CREATED:
                     View view = scene.getView();
                     scene.dispatchDestroyView();
-                    if (modifyViewHierarchy) {
+                    if (forceRemove) {
                         /*
                          * case 1: Scene is removed from parent GroupScene, we should remove its view from parent's view hierarchy
                          * case 2: Parent GroupScene is pop from grandparent NavigationScene, this child Scene's state will sync to
@@ -926,7 +959,7 @@ class GroupSceneManager {
                     scene.dispatchDestroy();
                     scene.dispatchDetachScene();
                     scene.dispatchDetachActivity();
-                    moveState(groupScene, scene, to, modifyViewHierarchy, endAction);
+                    moveState(groupScene, scene, to, forceRemove, endAction);
                     break;
             }
         }
