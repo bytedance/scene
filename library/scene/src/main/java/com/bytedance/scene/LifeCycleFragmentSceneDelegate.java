@@ -31,6 +31,7 @@ final class LifeCycleFragmentSceneDelegate implements SceneDelegate, NavigationS
     private final Activity mActivity;
     private final LifeCycleFragment mLifeCycleFragment;
     private final ScopeHolderFragment mScopeHolderFragment;
+    private final SceneLifecycleDispatcher mSceneLifecycleDispatcher;
     private final Boolean mImmediate;
 
     private NavigationScene mNavigationScene;
@@ -38,16 +39,18 @@ final class LifeCycleFragmentSceneDelegate implements SceneDelegate, NavigationS
     private boolean mAbandoned = false;
 
     LifeCycleFragmentSceneDelegate(@NonNull Activity activity, @NonNull LifeCycleFragment lifeCycleFragment, @NonNull ScopeHolderFragment scopeHolderFragment,
+                                   @NonNull SceneLifecycleDispatcher dispatcher,
                                    boolean immediate) {
         this.mActivity = activity;
         this.mLifeCycleFragment = lifeCycleFragment;
         this.mScopeHolderFragment = scopeHolderFragment;
+        this.mSceneLifecycleDispatcher = dispatcher;
         this.mImmediate = immediate;
     }
 
     @Override
     public boolean onBackPressed() {
-        NavigationScene navigationScene = mLifeCycleFragment.getNavigationScene();
+        NavigationScene navigationScene = mSceneLifecycleDispatcher.getNavigationScene();
         return !this.mAbandoned && navigationScene != null && navigationScene.onBackPressed();
     }
 
@@ -57,7 +60,7 @@ final class LifeCycleFragmentSceneDelegate implements SceneDelegate, NavigationS
         if (this.mAbandoned) {
             return null;
         }
-        return mLifeCycleFragment.getNavigationScene();
+        return mSceneLifecycleDispatcher.getNavigationScene();
     }
 
     @Override

@@ -24,7 +24,7 @@ import android.support.v4.app.FragmentTransaction;
 
 import com.bytedance.scene.Scope;
 
-public class ScopeHolderCompatFragment extends Fragment {
+public class ScopeHolderCompatFragment extends Fragment implements Scope.RootScopeFactory {
     private static final String TAG = "ScopeHolderCompatFragment";
     private final Scope mRootScope = Scope.DEFAULT_ROOT_SCOPE_FACTORY.getRootScope();
 
@@ -60,6 +60,8 @@ public class ScopeHolderCompatFragment extends Fragment {
         return holderFragment;
     }
 
+    @NonNull
+    @Override
     public Scope getRootScope() {
         return mRootScope;
     }

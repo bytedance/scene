@@ -18,13 +18,11 @@ package com.bytedance.scene;
 import android.app.Activity;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-
 import com.bytedance.scene.navigation.NavigationScene;
 import com.bytedance.scene.navigation.NavigationSceneOptions;
 import com.bytedance.scene.utlity.SceneInstanceUtility;
@@ -241,36 +239,31 @@ public final class NavigationSceneUtility {
             lifeCycleFragment = null;
         }
 
+        ViewFinder viewFinder = new ActivityViewFinder(activity);
+        final NavigationScene navigationScene = (NavigationScene) SceneInstanceUtility.getInstanceFromClass(NavigationScene.class,
+                navigationSceneOptions.toBundle());
+
         ScopeHolderFragment targetScopeHolderFragment = null;
+        SceneLifecycleDispatcher dispatcher = null;
         if (lifeCycleFragment != null) {
             final ScopeHolderFragment scopeHolderFragment = ScopeHolderFragment.install(activity, tag, false, immediate);
-            lifeCycleFragment.setRootScopeFactory(new Scope.RootScopeFactory() {
-                @Override
-                public Scope getRootScope() {
-                    return scopeHolderFragment.getRootScope();
-                }
-            });
-            lifeCycleFragment.setRootSceneComponentFactory(rootSceneComponentFactory);
+            dispatcher = new SceneLifecycleDispatcher(idRes, viewFinder, navigationScene, lifeCycleFragment, scopeHolderFragment, rootSceneComponentFactory, supportRestore);
+            lifeCycleFragment.setSceneContainerLifecycleCallback(dispatcher);
             targetScopeHolderFragment = scopeHolderFragment;
         } else {
             lifeCycleFragment = LifeCycleFragment.newInstance(supportRestore);
             FragmentTransaction transaction = fragmentManager.beginTransaction();
             transaction.add(idRes, lifeCycleFragment, tag);
-            final NavigationScene navigationScene = (NavigationScene) SceneInstanceUtility.getInstanceFromClass(NavigationScene.class,
-                    navigationSceneOptions.toBundle());
+
             final ScopeHolderFragment scopeHolderFragment = ScopeHolderFragment.install(activity, tag, !supportRestore, immediate);
-            lifeCycleFragment.setNavigationScene(navigationScene, new Scope.RootScopeFactory() {
-                @Override
-                public Scope getRootScope() {
-                    return scopeHolderFragment.getRootScope();
-                }
-            });
-            lifeCycleFragment.setRootSceneComponentFactory(rootSceneComponentFactory);
+            dispatcher = new SceneLifecycleDispatcher(idRes, viewFinder, navigationScene, lifeCycleFragment, scopeHolderFragment, rootSceneComponentFactory, supportRestore);
+            lifeCycleFragment.setSceneContainerLifecycleCallback(dispatcher);
+
             Utility.commitFragment(fragmentManager, transaction, immediate);
             targetScopeHolderFragment = scopeHolderFragment;
         }
-        final LifeCycleFragmentSceneDelegate delegate = new LifeCycleFragmentSceneDelegate(activity, lifeCycleFragment, targetScopeHolderFragment, immediate);
-        lifeCycleFragment.setNavigationSceneAvailableCallback(new NavigationSceneAvailableCallback() {
+        final LifeCycleFragmentSceneDelegate delegate = new LifeCycleFragmentSceneDelegate(activity, lifeCycleFragment, targetScopeHolderFragment, dispatcher, immediate);
+        dispatcher.setNavigationSceneAvailableCallback(new NavigationSceneAvailableCallback() {
             @Override
             public void onNavigationSceneAvailable(@NonNull NavigationScene navigationScene) {
                 delegate.onNavigationSceneAvailable(navigationScene);

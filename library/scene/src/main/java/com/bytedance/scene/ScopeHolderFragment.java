@@ -36,7 +36,7 @@ import static android.support.annotation.RestrictTo.Scope.LIBRARY_GROUP;
  * @hide
  */
 @RestrictTo(LIBRARY_GROUP)
-public class ScopeHolderFragment extends Fragment {
+public class ScopeHolderFragment extends Fragment implements Scope.RootScopeFactory {
     private static final String TAG = "ScopeHolderFragment";
     private final Scope mRootScope = Scope.DEFAULT_ROOT_SCOPE_FACTORY.getRootScope();
 
@@ -72,6 +72,8 @@ public class ScopeHolderFragment extends Fragment {
         return holderFragment;
     }
 
+    @NonNull
+    @Override
     public Scope getRootScope() {
         return mRootScope;
     }

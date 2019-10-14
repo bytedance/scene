@@ -23,7 +23,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-
 import com.bytedance.scene.*;
 import com.bytedance.scene.navigation.NavigationScene;
 import com.bytedance.scene.navigation.NavigationSceneOptions;
@@ -240,41 +239,40 @@ public final class NavigationSceneCompatUtility {
             lifeCycleFragment = null;
         }
 
+        ViewFinder viewFinder = new FragmentViewFinder(fragment);
+        final NavigationScene navigationScene = (NavigationScene) SceneInstanceUtility.getInstanceFromClass(NavigationScene.class,
+                navigationSceneOptions.toBundle());
+
         ScopeHolderCompatFragment targetScopeHolderFragment = null;
+        SceneLifecycleDispatcher dispatcher = null;
         if (lifeCycleFragment != null) {
             final ScopeHolderCompatFragment scopeHolderFragment = ScopeHolderCompatFragment.install(fragment, tag, false, immediate);
-            lifeCycleFragment.setRootScopeFactory(new Scope.RootScopeFactory() {
-                @Override
-                public Scope getRootScope() {
-                    return scopeHolderFragment.getRootScope();
-                }
-            });
             targetScopeHolderFragment = scopeHolderFragment;
+
+            dispatcher = new SceneLifecycleDispatcher(containerId, viewFinder, navigationScene, lifeCycleFragment, scopeHolderFragment, rootSceneComponentFactory, supportRestore);
+            lifeCycleFragment.setSceneContainerLifecycleCallback(dispatcher);
         } else {
+            final ScopeHolderCompatFragment scopeHolderFragment = ScopeHolderCompatFragment.install(fragment, tag, !supportRestore, immediate);
             lifeCycleFragment = LifeCycleCompatFragment.newInstance(supportRestore);
+
+            dispatcher = new SceneLifecycleDispatcher(containerId, viewFinder, navigationScene, lifeCycleFragment, scopeHolderFragment, rootSceneComponentFactory, supportRestore);
+            lifeCycleFragment.setSceneContainerLifecycleCallback(dispatcher);
+
             FragmentTransaction transaction = fragmentManager.beginTransaction();
             transaction.add(containerId, lifeCycleFragment, tag);
-            final NavigationScene navigationScene = (NavigationScene) SceneInstanceUtility.getInstanceFromClass(NavigationScene.class,
-                    navigationSceneOptions.toBundle());
-            final ScopeHolderCompatFragment scopeHolderFragment = ScopeHolderCompatFragment.install(fragment, tag, !supportRestore, immediate);
-            lifeCycleFragment.setNavigationScene(navigationScene, new Scope.RootScopeFactory() {
-                @Override
-                public Scope getRootScope() {
-                    return scopeHolderFragment.getRootScope();
-                }
-            });
             FragmentUtility.commitFragment(transaction, immediate);
             targetScopeHolderFragment = scopeHolderFragment;
         }
 
         final LifeCycleCompatFragment finalLifeCycleFragment = lifeCycleFragment;
         final ScopeHolderCompatFragment finalTargetScopeHolderFragment = targetScopeHolderFragment;
+        final SceneLifecycleDispatcher finalDispatcher = dispatcher;
         final FragmentDelegateProxy proxy = new FragmentDelegateProxy() {
             private boolean mAbandoned = false;
 
             @Override
             public boolean onBackPressed() {
-                NavigationScene navigationScene = finalLifeCycleFragment.getNavigationScene();
+                NavigationScene navigationScene = finalDispatcher.getNavigationScene();
                 return !mAbandoned && navigationScene != null && navigationScene.onBackPressed();
             }
 
@@ -284,7 +282,7 @@ public final class NavigationSceneCompatUtility {
                 if (this.mAbandoned) {
                     return null;
                 }
-                return finalLifeCycleFragment.getNavigationScene();
+                return finalDispatcher.getNavigationScene();
             }
 
             @Override
@@ -313,13 +311,12 @@ public final class NavigationSceneCompatUtility {
                 }
             }
         };
-        finalLifeCycleFragment.setNavigationSceneAvailableCallback(new NavigationSceneAvailableCallback() {
+        dispatcher.setNavigationSceneAvailableCallback(new NavigationSceneAvailableCallback() {
             @Override
             public void onNavigationSceneAvailable(@NonNull NavigationScene navigationScene) {
                 proxy.onNavigationSceneAvailable(navigationScene);
             }
         });
-        finalLifeCycleFragment.setRootSceneComponentFactory(rootSceneComponentFactory);
         return proxy;
     }
 
