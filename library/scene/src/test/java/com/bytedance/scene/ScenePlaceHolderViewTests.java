@@ -50,9 +50,71 @@ public class ScenePlaceHolderViewTests {
                 assertFalse(targetView instanceof ScenePlaceHolderView);
                 Scene scene = findSceneByTag("Test_Tag");
                 assertNotNull(scene);
+                assertTrue(isShow(scene));
                 assertNotNull(scene.getArguments());
                 assertEquals("value", scene.requireArguments().getString("key"));
                 called.compareAndSet(false, true);
+            }
+        };
+
+        Pair<SceneLifecycleManager, NavigationScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(groupScene);
+        SceneLifecycleManager sceneLifecycleManager = pair.first;
+        NavigationScene navigationScene = pair.second;
+        sceneLifecycleManager.onStart();
+        sceneLifecycleManager.onResume();
+        assertTrue(called.get());
+    }
+
+    @Test
+    public void testHidden() {
+        final AtomicBoolean called = new AtomicBoolean();
+        GroupScene groupScene = new GroupScene() {
+            @NonNull
+            @Override
+            public ViewGroup onCreateView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container, @Nullable Bundle savedInstanceState) {
+                return (ViewGroup) inflater.inflate(TestResources.getLayout(this, "layout_place_holder_view"), container, false);
+            }
+
+            @Override
+            public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+                super.onViewCreated(view, savedInstanceState);
+                ScenePlaceHolderView holderView = requireViewById(TestResources.getId(this, "scene_place_holder"));
+                holderView.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+                super.onActivityCreated(savedInstanceState);
+                Scene scene = findSceneByTag("Test_Tag");
+                assertNotNull(scene);
+                assertFalse(isShow(scene));
+                called.compareAndSet(false, true);
+            }
+        };
+
+        Pair<SceneLifecycleManager, NavigationScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(groupScene);
+        SceneLifecycleManager sceneLifecycleManager = pair.first;
+        NavigationScene navigationScene = pair.second;
+        sceneLifecycleManager.onStart();
+        sceneLifecycleManager.onResume();
+        assertTrue(called.get());
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void testINVISIBLE_Exception() {
+        final AtomicBoolean called = new AtomicBoolean();
+        GroupScene groupScene = new GroupScene() {
+            @NonNull
+            @Override
+            public ViewGroup onCreateView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container, @Nullable Bundle savedInstanceState) {
+                return (ViewGroup) inflater.inflate(TestResources.getLayout(this, "layout_place_holder_view"), container, false);
+            }
+
+            @Override
+            public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+                super.onViewCreated(view, savedInstanceState);
+                ScenePlaceHolderView holderView = requireViewById(TestResources.getId(this, "scene_place_holder"));
+                holderView.setVisibility(View.INVISIBLE);
             }
         };
 

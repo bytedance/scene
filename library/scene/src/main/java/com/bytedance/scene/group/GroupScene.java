@@ -364,7 +364,16 @@ public abstract class GroupScene extends Scene {
             Scene scene = SceneInstanceUtility.getInstanceFromClassName(requireSceneContext(), name, holderView.getArguments());
             int index = parent.indexOfChild(holderView);
             parent.removeView(holderView);
-            add(parentId, scene, tag);
+            if (holderView.getVisibility() == View.VISIBLE) {
+                add(parentId, scene, tag);
+            } else if (holderView.getVisibility() == View.GONE) {
+                beginTransaction();
+                add(parentId, scene, tag);
+                hide(scene);
+                commitTransaction();
+            } else {
+                throw new IllegalStateException("ScenePlaceHolderView's visibility can't be View.INVISIBLE, use View.VISIBLE or View.GONE instead");
+            }
             View sceneView = scene.requireView();
             if (holderView.getId() != View.NO_ID) {
                 if (sceneView.getId() == View.NO_ID) {
