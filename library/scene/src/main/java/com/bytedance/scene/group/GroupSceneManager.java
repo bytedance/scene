@@ -273,7 +273,8 @@ class GroupSceneManager {
                 boolean forceHide = list.get(list.size() - 1).forceHide;
                 boolean forceRemove = list.get(list.size() - 1).forceRemove;
 
-                if (initState == dstState) {
+                if (initState == dstState && !forceShow && !forceHide && !forceRemove) {
+                    //nothing changed
                     continue;
                 }
 
@@ -581,7 +582,7 @@ class GroupSceneManager {
         }
 
         @Override
-        void execute(@NonNull Runnable operationEndAction) {
+        final void execute(@NonNull Runnable operationEndAction) {
             CancellationSignal cancellationSignal = SCENE_RUNNING_ANIMATION_CANCELLATION_SIGNAL_MAP.get(scene);
             if (cancellationSignal != null) {
                 cancellationSignal.cancel();
@@ -645,6 +646,24 @@ class GroupSceneManager {
     private final class TransactionOperation extends MoveStateOperation {
         TransactionOperation(@NonNull Scene scene, int viewId, @Nullable String tag, @NonNull State dstState, boolean forceShow, boolean forceHide, boolean forceRemove) {
             super(scene, viewId, tag, dstState, forceShow, forceHide, forceRemove);
+        }
+
+        @Override
+        protected void executeOnStart(boolean stateChanged) {
+            super.executeOnStart(stateChanged);
+            View view = this.scene.getView();
+            if (view != null && forceShow) {
+                setSceneViewVisibility(scene, View.VISIBLE);
+            }
+        }
+
+        @Override
+        protected void executeOnFinish(boolean stateChanged) {
+            super.executeOnFinish(stateChanged);
+            View view = this.scene.getView();
+            if (view != null && forceHide) {
+                setSceneViewVisibility(scene, View.GONE);
+            }
         }
     }
 
@@ -878,7 +897,10 @@ class GroupSceneManager {
     }
 
     private static void setSceneViewVisibility(@NonNull Scene scene, @Visibility int visibility) {
-        scene.getView().setVisibility(visibility);
+        View view = scene.getView();
+        if (view.getVisibility() != visibility) {
+            view.setVisibility(visibility);
+        }
     }
 
     /**

@@ -249,22 +249,6 @@ public class GroupSceneLifecycleTests {
     }
 
     @Test
-    public void testShowAndHide3() {
-        TestEmptyScene testScene = new TestEmptyScene();
-        TestChildScene childScene = new TestChildScene();
-
-        Pair<SceneLifecycleManager, NavigationScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(testScene);
-
-        testScene.beginTransaction();
-        testScene.add(testScene.mId, childScene, "childScene");
-        testScene.hide(childScene);
-        testScene.commitTransaction();
-
-        assertEquals(childScene.getState(), State.ACTIVITY_CREATED);
-        assertEquals(childScene.getView().getVisibility(), View.GONE);
-    }
-
-    @Test
     public void testGroupSceneLifecycle() {
         TestScene groupScene = new TestScene();
         Pair<SceneLifecycleManager, NavigationScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(groupScene);
