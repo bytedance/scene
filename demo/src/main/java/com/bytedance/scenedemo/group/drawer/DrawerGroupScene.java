@@ -12,6 +12,8 @@ import com.bytedance.scene.ui.template.NavigationViewScene;
 import com.bytedance.scenedemo.R;
 import com.bytedance.scenedemo.group.EmptyScene;
 
+import java.util.LinkedHashMap;
+
 /**
  * Created by JiangQi on 8/3/18.
  */
@@ -23,8 +25,8 @@ public class DrawerGroupScene extends NavigationViewScene {
 
     @NonNull
     @Override
-    protected SparseArrayCompat<Scene> getSceneMap() {
-        SparseArrayCompat<Scene> sparseArrayCompat = new SparseArrayCompat<>();
+    protected LinkedHashMap<Integer, Scene> getSceneMap() {
+        LinkedHashMap<Integer, Scene> sparseArrayCompat = new LinkedHashMap<>();
         sparseArrayCompat.put(R.id.nav_camera, getScene(0));
         sparseArrayCompat.put(R.id.nav_gallery, getScene(1));
         sparseArrayCompat.put(R.id.nav_slideshow, getScene(2));

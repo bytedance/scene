@@ -17,11 +17,13 @@ package com.bytedance.scene.ui;
 
 import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.NavigationView;
 import android.support.v4.util.SparseArrayCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
+import android.view.Menu;
 import android.view.MenuItem;
 
 import com.bytedance.scene.Scene;
@@ -31,6 +33,8 @@ import com.bytedance.scene.group.UserVisibleHintGroupScene;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Created by JiangQi on 8/16/18.
@@ -40,6 +44,9 @@ public class GroupSceneUIUtility {
                                                      @NonNull final GroupScene groupScene,
                                                      @IdRes final int containerId,
                                                      @NonNull final SparseArrayCompat<Scene> children) {
+        if (children.size() == 0) {
+            throw new IllegalArgumentException("children can't be empty");
+        }
 
         final List<String> menuIdList = new ArrayList<>();
         int menuSize = bottomNavigationView.getMenu().size();
@@ -96,7 +103,11 @@ public class GroupSceneUIUtility {
                                                @NonNull final NavigationView navigationView,
                                                @NonNull final GroupScene groupScene,
                                                @IdRes final int containerId,
-                                               @NonNull final SparseArrayCompat<Scene> children) {
+                                               @NonNull final LinkedHashMap<Integer, Scene> children,
+                                               @Nullable final NavigationView.OnNavigationItemSelectedListener onNavigationItemSelectedListener) {
+        if (children.size() == 0) {
+            throw new IllegalArgumentException("children can't be empty");
+        }
 
         final List<String> menuIdList = new ArrayList<>();
         int menuSize = navigationView.getMenu().size();
@@ -108,7 +119,19 @@ public class GroupSceneUIUtility {
                 new NavigationView.OnNavigationItemSelectedListener() {
                     @Override
                     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                        item.setChecked(true);
+                        if (onNavigationItemSelectedListener != null) {
+                            onNavigationItemSelectedListener.onNavigationItemSelected(item);
+                        }
+                        Menu menu = navigationView.getMenu();
+                        Set<Integer> menuItemIdSet = children.keySet();
+                        for (Integer menuItemId : menuItemIdSet) {
+                            MenuItem menuItemById = menu.findItem(menuItemId);
+                            if (menuItemById == item) {
+                                menuItemById.setChecked(true);
+                            } else {
+                                menuItemById.setChecked(false);
+                            }
+                        }
                         drawerLayout.closeDrawer(navigationView);
                         String tag = "" + item.getItemId();
 
@@ -132,10 +155,11 @@ public class GroupSceneUIUtility {
                         return true;
                     }
                 });
-        String tag = "" + children.keyAt(0);
+        Map.Entry<Integer, Scene> firstItem = children.entrySet().iterator().next();
+        String tag = "" + firstItem.getKey();
         Scene scene = groupScene.findSceneByTag(tag);
         if (scene == null) {
-            scene = children.valueAt(0);
+            scene = firstItem.getValue();
         }
 
         if (!groupScene.isAdded(scene)) {
@@ -143,8 +167,11 @@ public class GroupSceneUIUtility {
         } else if (!groupScene.isShow(scene)) {
             groupScene.show(scene);
         }
-
-        navigationView.getMenu().findItem(children.keyAt(0)).setChecked(true);
+        MenuItem menuItem = navigationView.getMenu().findItem(firstItem.getKey());
+        menuItem.setChecked(true);
+        if (onNavigationItemSelectedListener != null) {
+            onNavigationItemSelectedListener.onNavigationItemSelected(menuItem);
+        }
     }
 
     public static void setupWithViewPager(@NonNull final ViewPager viewPager,
