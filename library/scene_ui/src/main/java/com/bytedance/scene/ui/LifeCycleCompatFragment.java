@@ -51,22 +51,6 @@ public class LifeCycleCompatFragment extends Fragment implements NavigationScene
     }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (this.mSceneContainerLifecycleCallback != null) {
-            this.mSceneContainerLifecycleCallback.onActivityResult(requestCode, resultCode, data);
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (this.mSceneContainerLifecycleCallback != null) {
-            this.mSceneContainerLifecycleCallback.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        }
-    }
-
-    @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRetainInstance(false);
@@ -135,14 +119,6 @@ public class LifeCycleCompatFragment extends Fragment implements NavigationScene
         super.onDestroyView();
         if (this.mSceneContainerLifecycleCallback != null) {
             this.mSceneContainerLifecycleCallback.onViewDestroyed();
-        }
-    }
-
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-        if (this.mSceneContainerLifecycleCallback != null) {
-            this.mSceneContainerLifecycleCallback.onConfigurationChanged(newConfig);
         }
     }
 

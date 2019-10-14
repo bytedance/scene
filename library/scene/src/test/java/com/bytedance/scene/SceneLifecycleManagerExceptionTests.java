@@ -46,16 +46,6 @@ public class SceneLifecycleManagerExceptionTests {
             public boolean isSupportRestore() {
                 return false;
             }
-
-            @Override
-            public void startActivityForResult(@NonNull Intent intent, int requestCode) {
-
-            }
-
-            @Override
-            public void requestPermissions(@NonNull String[] permissions, int requestCode) {
-
-            }
         };
 
         Scope.RootScopeFactory rootScopeFactory = new Scope.RootScopeFactory() {
@@ -108,16 +98,6 @@ public class SceneLifecycleManagerExceptionTests {
             @Override
             public boolean isSupportRestore() {
                 return false;
-            }
-
-            @Override
-            public void startActivityForResult(@NonNull Intent intent, int requestCode) {
-
-            }
-
-            @Override
-            public void requestPermissions(@NonNull String[] permissions, int requestCode) {
-
             }
         };
 
@@ -205,16 +185,6 @@ public class SceneLifecycleManagerExceptionTests {
             public boolean isSupportRestore() {
                 return false;
             }
-
-            @Override
-            public void startActivityForResult(@NonNull Intent intent, int requestCode) {
-
-            }
-
-            @Override
-            public void requestPermissions(@NonNull String[] permissions, int requestCode) {
-
-            }
         };
 
         sceneLifecycleManager.onActivityCreated(testActivity, testActivity.mFrameLayout,
@@ -236,16 +206,6 @@ public class SceneLifecycleManagerExceptionTests {
             @Override
             public boolean isSupportRestore() {
                 return false;
-            }
-
-            @Override
-            public void startActivityForResult(@NonNull Intent intent, int requestCode) {
-
-            }
-
-            @Override
-            public void requestPermissions(@NonNull String[] permissions, int requestCode) {
-
             }
         };
 
@@ -275,16 +235,6 @@ public class SceneLifecycleManagerExceptionTests {
             public boolean isSupportRestore() {
                 return false;
             }
-
-            @Override
-            public void startActivityForResult(@NonNull Intent intent, int requestCode) {
-
-            }
-
-            @Override
-            public void requestPermissions(@NonNull String[] permissions, int requestCode) {
-
-            }
         };
 
         sceneLifecycleManager.onActivityCreated(testActivity, testActivity.mFrameLayout,
@@ -313,16 +263,6 @@ public class SceneLifecycleManagerExceptionTests {
             @Override
             public boolean isSupportRestore() {
                 return true;
-            }
-
-            @Override
-            public void startActivityForResult(@NonNull Intent intent, int requestCode) {
-
-            }
-
-            @Override
-            public void requestPermissions(@NonNull String[] permissions, int requestCode) {
-
             }
         };
 
@@ -357,16 +297,6 @@ public class SceneLifecycleManagerExceptionTests {
             public boolean isSupportRestore() {
                 return false;
             }
-
-            @Override
-            public void startActivityForResult(@NonNull Intent intent, int requestCode) {
-
-            }
-
-            @Override
-            public void requestPermissions(@NonNull String[] permissions, int requestCode) {
-
-            }
         };
 
         sceneLifecycleManager.onActivityCreated(testActivity, testActivity.mFrameLayout,
@@ -378,45 +308,6 @@ public class SceneLifecycleManagerExceptionTests {
                     }
                 },
                 null, null);
-    }
-
-    @Test(expected = NullPointerException.class)
-    public void testOnConfigurationChangedExceptionNPE() {
-        ActivityController<TestActivity> controller = Robolectric.buildActivity(TestActivity.class).create().start().resume();
-        TestActivity testActivity = controller.get();
-        SceneLifecycleManager sceneLifecycleManager = new SceneLifecycleManager();
-
-        NavigationScene navigationScene = new NavigationScene();
-        NavigationSceneOptions options = new NavigationSceneOptions(ChildScene.class);
-        navigationScene.setArguments(options.toBundle());
-
-        NavigationScene.NavigationSceneHost navigationSceneHost = new NavigationScene.NavigationSceneHost() {
-            @Override
-            public boolean isSupportRestore() {
-                return false;
-            }
-
-            @Override
-            public void startActivityForResult(@NonNull Intent intent, int requestCode) {
-
-            }
-
-            @Override
-            public void requestPermissions(@NonNull String[] permissions, int requestCode) {
-
-            }
-        };
-
-        sceneLifecycleManager.onActivityCreated(testActivity, testActivity.mFrameLayout,
-                navigationScene, navigationSceneHost, new Scope.RootScopeFactory() {
-                    @NonNull
-                    @Override
-                    public Scope getRootScope() {
-                        return Scope.DEFAULT_ROOT_SCOPE_FACTORY.getRootScope();
-                    }
-                },
-                null, null);
-        sceneLifecycleManager.onConfigurationChanged(null);
     }
 
     @Test(expected = IllegalStateException.class)
@@ -433,16 +324,6 @@ public class SceneLifecycleManagerExceptionTests {
             @Override
             public boolean isSupportRestore() {
                 return false;
-            }
-
-            @Override
-            public void startActivityForResult(@NonNull Intent intent, int requestCode) {
-
-            }
-
-            @Override
-            public void requestPermissions(@NonNull String[] permissions, int requestCode) {
-
             }
         };
 
@@ -473,16 +354,6 @@ public class SceneLifecycleManagerExceptionTests {
             public boolean isSupportRestore() {
                 return false;
             }
-
-            @Override
-            public void startActivityForResult(@NonNull Intent intent, int requestCode) {
-
-            }
-
-            @Override
-            public void requestPermissions(@NonNull String[] permissions, int requestCode) {
-
-            }
         };
 
         sceneLifecycleManager.onActivityCreated(testActivity, testActivity.mFrameLayout,
@@ -511,16 +382,6 @@ public class SceneLifecycleManagerExceptionTests {
             @Override
             public boolean isSupportRestore() {
                 return false;
-            }
-
-            @Override
-            public void startActivityForResult(@NonNull Intent intent, int requestCode) {
-
-            }
-
-            @Override
-            public void requestPermissions(@NonNull String[] permissions, int requestCode) {
-
             }
         };
 
@@ -551,16 +412,6 @@ public class SceneLifecycleManagerExceptionTests {
             public boolean isSupportRestore() {
                 return false;
             }
-
-            @Override
-            public void startActivityForResult(@NonNull Intent intent, int requestCode) {
-
-            }
-
-            @Override
-            public void requestPermissions(@NonNull String[] permissions, int requestCode) {
-
-            }
         };
         sceneLifecycleManager.onStart();
     }
@@ -579,16 +430,6 @@ public class SceneLifecycleManagerExceptionTests {
             @Override
             public boolean isSupportRestore() {
                 return false;
-            }
-
-            @Override
-            public void startActivityForResult(@NonNull Intent intent, int requestCode) {
-
-            }
-
-            @Override
-            public void requestPermissions(@NonNull String[] permissions, int requestCode) {
-
             }
         };
         sceneLifecycleManager.onActivityCreated(testActivity, testActivity.mFrameLayout,
@@ -625,16 +466,6 @@ public class SceneLifecycleManagerExceptionTests {
             @Override
             public boolean isSupportRestore() {
                 return true;
-            }
-
-            @Override
-            public void startActivityForResult(@NonNull Intent intent, int requestCode) {
-
-            }
-
-            @Override
-            public void requestPermissions(@NonNull String[] permissions, int requestCode) {
-
             }
         };
         sceneLifecycleManager.onSaveInstanceState(new Bundle());

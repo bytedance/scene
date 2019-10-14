@@ -19,8 +19,6 @@ import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
 import android.content.ContextWrapper;
-import android.content.Intent;
-import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -85,18 +83,6 @@ public abstract class LifeCycleFrameLayout extends FrameLayout implements Naviga
         return mNavigationScene;
     }
 
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (this.mNavigationScene != null) {
-            this.mNavigationScene.onActivityResult(requestCode, resultCode, data);
-        }
-    }
-
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        if (this.mNavigationScene != null) {
-            this.mNavigationScene.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        }
-    }
-
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         if (this.mNavigationScene == null) {
             throw new NullPointerException("NavigationScene is null");
@@ -115,7 +101,6 @@ public abstract class LifeCycleFrameLayout extends FrameLayout implements Naviga
         if (activity == null) {
             throw new IllegalStateException("cant find Activity attached to this View");
         }
-
         this.mLifecycleManager.onActivityCreated(activity,
                 this,
                 this.mNavigationScene,
@@ -150,11 +135,6 @@ public abstract class LifeCycleFrameLayout extends FrameLayout implements Naviga
 
     public void onDestroyView() {
         this.mLifecycleManager.onDestroyView();
-    }
-
-    public void onConfigurationChanged(@NonNull Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-        this.mLifecycleManager.onConfigurationChanged(newConfig);
     }
 
     private void log(String log) {

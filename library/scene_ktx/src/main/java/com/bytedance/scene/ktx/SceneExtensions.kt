@@ -18,10 +18,17 @@ package com.bytedance.scene.ktx
 import android.arch.lifecycle.Lifecycle
 import android.arch.lifecycle.LifecycleObserver
 import android.arch.lifecycle.OnLifecycleEvent
+import android.content.Intent
+import android.os.Build
 import android.os.Handler
 import android.os.Looper
+import android.support.annotation.RequiresApi
 import android.support.v4.app.FragmentActivity
+import com.bytedance.scene.ActivityCompatibilityUtility
 import com.bytedance.scene.Scene
+import com.bytedance.scene.interfaces.ActivityResultCallback
+import com.bytedance.scene.interfaces.PermissionResultCallback
+import com.bytedance.scene.navigation.ConfigurationChangedListener
 
 @Suppress("all")
 private val HANDLER by lazy { Handler(Looper.getMainLooper()) }
@@ -62,4 +69,23 @@ fun Scene.fragmentActivity(): FragmentActivity? {
 
 fun Scene.requireFragmentActivity(): FragmentActivity {
     return requireActivity() as FragmentActivity
+}
+
+fun Scene.startActivityForResult(intent: Intent, requestCode: Int, resultCallback: ActivityResultCallback) {
+    activity?.let {
+        ActivityCompatibilityUtility.startActivityForResult(it, this, intent, requestCode, resultCallback)
+    }
+}
+
+@RequiresApi(Build.VERSION_CODES.M)
+fun Scene.requestPermissions(permissions: Array<String>, requestCode: Int, resultCallback: PermissionResultCallback) {
+    activity?.let {
+        ActivityCompatibilityUtility.requestPermissions(it, this, permissions, requestCode, resultCallback)
+    }
+}
+
+fun Scene.addConfigurationChangedListener(configurationChangedListener: ConfigurationChangedListener) {
+    activity?.let {
+        ActivityCompatibilityUtility.addConfigurationChangedListener(it, this, configurationChangedListener)
+    }
 }

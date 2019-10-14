@@ -136,16 +136,6 @@ public class ChildSceneLifecycleCallbacksTests {
             public boolean isSupportRestore() {
                 return false;
             }
-
-            @Override
-            public void startActivityForResult(@NonNull Intent intent, int requestCode) {
-
-            }
-
-            @Override
-            public void requestPermissions(@NonNull String[] permissions, int requestCode) {
-
-            }
         };
 
         Scope.RootScopeFactory rootScopeFactory = new Scope.RootScopeFactory() {

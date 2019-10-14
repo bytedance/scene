@@ -69,22 +69,4 @@ public class TestSceneToViewActivity extends Activity {
             super.onBackPressed();
         }
     }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        NavigationScene navigationScene = viewView.getNavigationScene();
-        if (navigationScene != null) {
-            navigationScene.onActivityResult(requestCode, resultCode, data);
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        NavigationScene navigationScene = viewView.getNavigationScene();
-        if (navigationScene != null) {
-            navigationScene.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        }
-    }
 }

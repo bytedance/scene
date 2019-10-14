@@ -57,60 +57,6 @@ public class NavigationSceneListenerTests {
     }
 
     @Test
-    public void testConfigurationChangedListener() {
-        TestScene rootScene = new TestScene();
-        Pair<SceneLifecycleManager, NavigationScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(rootScene);
-        SceneLifecycleManager sceneLifecycleManager = pair.first;
-        NavigationScene navigationScene = pair.second;
-        sceneLifecycleManager.onStart();
-        sceneLifecycleManager.onResume();
-
-        TestChildScene child = new TestChildScene();
-        navigationScene.push(child);
-
-        final boolean[] value = new boolean[1];
-        navigationScene.addConfigurationChangedListener(child, new ConfigurationChangedListener() {
-            @Override
-            public void onConfigurationChanged(Configuration newConfig) {
-                if (value[0]) {
-                    return;
-                }
-                value[0] = true;
-            }
-        });
-
-        sceneLifecycleManager.onConfigurationChanged(new Configuration());
-        assertTrue(value[0]);
-    }
-
-    @Test
-    public void testConfigurationChangedListenerRemoveAfterLifecycleDestroy() {
-        TestScene rootScene = new TestScene();
-        Pair<SceneLifecycleManager, NavigationScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(rootScene);
-        SceneLifecycleManager sceneLifecycleManager = pair.first;
-        NavigationScene navigationScene = pair.second;
-        sceneLifecycleManager.onStart();
-        sceneLifecycleManager.onResume();
-
-        TestChildScene child = new TestChildScene();
-        navigationScene.push(child);
-
-        final boolean[] value = new boolean[1];
-        navigationScene.addConfigurationChangedListener(child, new ConfigurationChangedListener() {
-            @Override
-            public void onConfigurationChanged(Configuration newConfig) {
-                if (value[0]) {
-                    return;
-                }
-                value[0] = true;
-            }
-        });
-        navigationScene.remove(child);
-        sceneLifecycleManager.onConfigurationChanged(new Configuration());
-        assertFalse(value[0]);
-    }
-
-    @Test
     public void testNavigationListener() {
         TestScene rootScene = new TestScene();
         Pair<SceneLifecycleManager, NavigationScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(rootScene);

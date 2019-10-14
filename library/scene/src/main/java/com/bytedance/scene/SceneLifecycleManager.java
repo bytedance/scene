@@ -16,7 +16,6 @@
 package com.bytedance.scene;
 
 import android.app.Activity;
-import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -154,14 +153,6 @@ public class SceneLifecycleManager {
         }
         log("onSaveInstanceState");
         this.mNavigationScene.dispatchSaveInstanceState(outState);
-    }
-
-    public void onConfigurationChanged(@NonNull Configuration newConfig) {
-        Utility.requireNonNull(newConfig, "newConfig can't be null");
-        log("onConfigurationChanged");
-        if (this.mNavigationScene != null) {
-            this.mNavigationScene.onConfigurationChanged(newConfig);
-        }
     }
 
     private void log(@NonNull String log) {

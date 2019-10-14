@@ -78,18 +78,6 @@ public class TestSceneDelegateToViewView extends LifeCycleFrameLayout {
         return true;
     }
 
-    @Override
-    public void startActivityForResult(@NonNull Intent intent, int requestCode) {
-        getActivity().startActivityForResult(intent, requestCode);
-    }
-
-    @Override
-    public void requestPermissions(@NonNull String[] permissions, int requestCode) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            getActivity().requestPermissions(permissions, requestCode);
-        }
-    }
-
     private Activity getActivity() {
         Activity activity = null;
         Context context = getContext();

@@ -36,10 +36,4 @@ public interface SceneContainerLifecycleCallback {
     void onViewDestroyed();
 
     void onSaveInstanceState(@NonNull Bundle outState);
-
-    void onActivityResult(int requestCode, int resultCode, Intent data);
-
-    void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults);
-
-    void onConfigurationChanged(Configuration newConfig);
 }

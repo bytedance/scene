@@ -106,19 +106,4 @@ public final class SceneLifecycleDispatcher implements SceneContainerLifecycleCa
             this.mLifecycleManager.onSaveInstanceState(outState);
         }
     }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        this.mNavigationScene.onActivityResult(requestCode, resultCode, data);
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        this.mNavigationScene.onRequestPermissionsResult(requestCode, permissions, grantResults);
-    }
-
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        this.mLifecycleManager.onConfigurationChanged(newConfig);
-    }
 }

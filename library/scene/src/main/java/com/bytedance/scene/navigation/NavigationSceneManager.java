@@ -19,7 +19,6 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.arch.lifecycle.LifecycleOwner;
 import android.content.Context;
-import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -351,26 +350,6 @@ class NavigationSceneManager {
             }
         }
         return false;
-    }
-
-    private List<ConfigurationChangedListener> mConfigurationChangedListenerList = new ArrayList<>();
-
-    public void addConfigurationChangedListener(@NonNull LifecycleOwner lifecycleOwner, @NonNull ConfigurationChangedListener configurationChangedListener) {
-        mConfigurationChangedListenerList.add(configurationChangedListener);
-    }
-
-    public void removeConfigurationChangedListener(@NonNull ConfigurationChangedListener configurationChangedListener) {
-        mConfigurationChangedListenerList.remove(configurationChangedListener);
-    }
-
-    public void onConfigurationChanged(@NonNull Configuration newConfig) {
-        List<ConfigurationChangedListener> copy = new ArrayList<>(mConfigurationChangedListenerList);
-        for (int i = copy.size() - 1; i >= 0; i--) {
-            ConfigurationChangedListener listener = copy.get(i);
-            if (listener != null) {
-                listener.onConfigurationChanged(newConfig);
-            }
-        }
     }
 
     private static void moveState(@NonNull NavigationScene navigationScene,

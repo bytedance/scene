@@ -21,22 +21,18 @@ import android.arch.lifecycle.LifecycleObserver;
 import android.arch.lifecycle.LifecycleOwner;
 import android.arch.lifecycle.OnLifecycleEvent;
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.*;
 import android.support.v4.util.LruCache;
-import android.support.v4.util.SparseArrayCompat;
 import android.support.v4.view.ViewCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
-import com.bytedance.scene.Scene;
-import com.bytedance.scene.SceneComponentFactory;
-import com.bytedance.scene.State;
+import com.bytedance.scene.*;
 import com.bytedance.scene.animation.NavigationAnimationExecutor;
 import com.bytedance.scene.animation.animatorexecutor.Android8DefaultSceneAnimatorExecutor;
 import com.bytedance.scene.animation.interaction.InteractionNavigationPopAnimationFactory;
@@ -54,7 +50,6 @@ import com.bytedance.scene.utlity.ThreadUtility;
 import com.bytedance.scene.utlity.Utility;
 import com.bytedance.scene.view.NavigationFrameLayout;
 import com.bytedance.scene.view.NoneTouchFrameLayout;
-import com.bytedance.scene.R;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -89,10 +84,6 @@ import static android.support.annotation.RestrictTo.Scope.LIBRARY_GROUP;
 public final class NavigationScene extends Scene implements NavigationListener {
     public static interface NavigationSceneHost {
         boolean isSupportRestore();
-
-        void startActivityForResult(@NonNull Intent intent, int requestCode);
-
-        void requestPermissions(@NonNull String[] permissions, int requestCode);
     }
 
     private NavigationSceneHost mNavigationSceneHost;
@@ -110,8 +101,6 @@ public final class NavigationScene extends Scene implements NavigationListener {
 
     private final List<NavigationListener> mNavigationListenerList = new ArrayList<>();
     private final List<NonNullPair<ChildSceneLifecycleCallbacks, Boolean>> mLifecycleCallbacks = new ArrayList<>();
-    private final SparseArrayCompat<ActivityResultCallback> mResultCallbackMap = new SparseArrayCompat<>();
-    private final SparseArrayCompat<PermissionResultCallback> mPermissionResultCallbackMap = new SparseArrayCompat<>();
 
     @MainThread
     public void addNavigationListener(@NonNull final LifecycleOwner lifecycleOwner, @NonNull final NavigationListener listener) {
@@ -161,19 +150,11 @@ public final class NavigationScene extends Scene implements NavigationListener {
 
     @MainThread
     public void addConfigurationChangedListener(@NonNull final LifecycleOwner lifecycleOwner, @NonNull final ConfigurationChangedListener configurationChangedListener) {
-        ThreadUtility.checkUIThread();
-        if (lifecycleOwner.getLifecycle().getCurrentState() == DESTROYED) {
-            // ignore
+        Activity activity = getActivity();
+        if (!Utility.isActivityStatusValid(activity)) {
             return;
         }
-        this.mNavigationSceneManager.addConfigurationChangedListener(lifecycleOwner, configurationChangedListener);
-        lifecycleOwner.getLifecycle().addObserver(new LifecycleObserver() {
-            @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
-            void onDestroy() {
-                lifecycleOwner.getLifecycle().removeObserver(this);
-                mNavigationSceneManager.removeConfigurationChangedListener(configurationChangedListener);
-            }
-        });
+        ActivityCompatibilityUtility.addConfigurationChangedListener(activity, lifecycleOwner, configurationChangedListener);
     }
 
     @NonNull
@@ -571,12 +552,6 @@ public final class NavigationScene extends Scene implements NavigationListener {
                     return NavigationScene.this.onBackPressed();
                 }
             });
-            parentSceneNavigation.addConfigurationChangedListener(this, new ConfigurationChangedListener() {
-                @Override
-                public void onConfigurationChanged(Configuration newConfig) {
-                    NavigationScene.this.onConfigurationChanged(newConfig);
-                }
-            });
         }
     }
 
@@ -646,8 +621,6 @@ public final class NavigationScene extends Scene implements NavigationListener {
     public void onDestroyView() {
         dispatchChildrenState(State.NONE);
         super.onDestroyView();
-        mResultCallbackMap.clear();
-        mPermissionResultCallbackMap.clear();
     }
 
     private void dispatchCurrentChildState(@NonNull State state) {
@@ -686,45 +659,12 @@ public final class NavigationScene extends Scene implements NavigationListener {
         }
     }
 
-    /**
-     * Todo: What if the Activity is empty?
-     * Todo: What if the memory leaks as storing object directly?
-     */
     public void startActivityForResult(@NonNull Intent intent, int requestCode, ActivityResultCallback resultCallback) {
-        if (requestCode < 0) {
-            startActivity(intent);
-            return;
-        }
-
-        ThreadUtility.checkUIThread();
         Activity activity = getActivity();
         if (!Utility.isActivityStatusValid(activity)) {
             return;
         }
-
-        NavigationScene parentSceneNavigation = getNavigationScene();
-        if (parentSceneNavigation == null) {
-            mResultCallbackMap.put(requestCode, resultCallback);
-            this.mNavigationSceneHost.startActivityForResult(intent, requestCode);
-        } else {
-            parentSceneNavigation.startActivityForResult(intent, requestCode, resultCallback);
-        }
-    }
-
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        ActivityResultCallback callback = mResultCallbackMap.get(requestCode);
-        if (callback != null) {
-            callback.onResult(resultCode, data);
-            mResultCallbackMap.remove(requestCode);
-        }
-    }
-
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        PermissionResultCallback callback = mPermissionResultCallbackMap.get(requestCode);
-        if (callback != null) {
-            callback.onResult(grantResults);
-            mPermissionResultCallbackMap.remove(requestCode);
-        }
+        ActivityCompatibilityUtility.startActivityForResult(activity, this, intent, requestCode, resultCallback);
     }
 
     public void startActivity(@NonNull Intent intent) {
@@ -737,23 +677,11 @@ public final class NavigationScene extends Scene implements NavigationListener {
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     public void requestPermissions(@NonNull String[] permissions, int requestCode, @NonNull PermissionResultCallback resultCallback) {
-        ThreadUtility.checkUIThread();
         Activity activity = getActivity();
         if (!Utility.isActivityStatusValid(activity)) {
             return;
         }
-
-        NavigationScene parentSceneNavigation = getNavigationScene();
-        if (parentSceneNavigation == null) {
-            mPermissionResultCallbackMap.put(requestCode, resultCallback);
-            this.mNavigationSceneHost.requestPermissions(permissions, requestCode);
-        } else {
-            parentSceneNavigation.requestPermissions(permissions, requestCode, resultCallback);
-        }
-    }
-
-    public void onConfigurationChanged(@NonNull Configuration newConfig) {
-        mNavigationSceneManager.onConfigurationChanged(newConfig);
+        ActivityCompatibilityUtility.requestPermissions(activity, this, permissions, requestCode, resultCallback);
     }
 
     public boolean pop(@NonNull final InteractionNavigationPopAnimationFactory animationFactory) {
