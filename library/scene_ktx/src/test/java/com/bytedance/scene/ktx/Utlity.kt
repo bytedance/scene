@@ -33,14 +33,6 @@ public fun createFromInitSceneLifecycleManager(rootScene: Scene): Pair<SceneLife
         override fun isSupportRestore(): Boolean {
             return false
         }
-
-        override fun startActivityForResult(intent: Intent, requestCode: Int) {
-
-        }
-
-        override fun requestPermissions(permissions: Array<String>, requestCode: Int) {
-
-        }
     }
 
     val rootScopeFactory = Scope.RootScopeFactory { Scope.DEFAULT_ROOT_SCOPE_FACTORY.rootScope }
@@ -70,14 +62,6 @@ public fun createFromInitSceneLifecycleManager(activityClass: Class<out Activity
     val navigationSceneHost = object : NavigationScene.NavigationSceneHost {
         override fun isSupportRestore(): Boolean {
             return false
-        }
-
-        override fun startActivityForResult(intent: Intent, requestCode: Int) {
-
-        }
-
-        override fun requestPermissions(permissions: Array<String>, requestCode: Int) {
-
         }
     }
 

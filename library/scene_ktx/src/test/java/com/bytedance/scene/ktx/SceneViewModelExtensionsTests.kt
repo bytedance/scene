@@ -124,14 +124,6 @@ fun createFromInitSceneLifecycleManagerByFragmentActivity(rootScene: Scene): Pai
         override fun isSupportRestore(): Boolean {
             return false
         }
-
-        override fun startActivityForResult(intent: Intent, requestCode: Int) {
-
-        }
-
-        override fun requestPermissions(permissions: Array<String>, requestCode: Int) {
-
-        }
     }
 
     val rootScopeFactory = Scope.RootScopeFactory { Scope.DEFAULT_ROOT_SCOPE_FACTORY.rootScope }
