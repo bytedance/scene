@@ -14,4 +14,8 @@ public class TestResources {
     public static int getStyle(@NonNull Scene scene, @NonNull String name) {
         return scene.getResources().getIdentifier(name, "style", scene.requireActivity().getPackageName());
     }
+
+    public static int getId(@NonNull Scene scene, @NonNull String name) {
+        return scene.getResources().getIdentifier(name, "id", scene.requireActivity().getPackageName());
+    }
 }

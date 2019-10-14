@@ -29,11 +29,7 @@ import com.bytedance.scene.State;
 import com.bytedance.scene.animation.AnimationOrAnimator;
 import com.bytedance.scene.animation.AnimationOrAnimatorFactory;
 import com.bytedance.scene.interfaces.ChildSceneLifecycleCallbacks;
-import com.bytedance.scene.navigation.NavigationScene;
-import com.bytedance.scene.utlity.Experimental;
-import com.bytedance.scene.utlity.NonNullPair;
-import com.bytedance.scene.utlity.SceneInstanceUtility;
-import com.bytedance.scene.utlity.ThreadUtility;
+import com.bytedance.scene.utlity.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -185,14 +181,17 @@ public abstract class GroupScene extends Scene {
             throw new IllegalArgumentException("Scene already has a parent, parent " + scene.getParentScene());
         }
 
-        if (getNavigationScene() != null
-                && getNavigationScene().isSupportRestore()
-                && !SceneInstanceUtility.isSupportRestore(scene)) {
+        if (isSupportRestore() && !SceneInstanceUtility.isSupportRestore(scene)) {
             throw new IllegalArgumentException("Scene " + scene.getClass().getName() + " must be a public class or public static class, " +
                     "and have only one parameterless constructor to be properly recreated from instance state.");
         }
 
         mGroupSceneManager.add(viewId, scene, tag, animationOrAnimatorFactory);
+    }
+
+    private boolean isSupportRestore() {
+        return getNavigationScene() != null
+                && getNavigationScene().isSupportRestore();
     }
 
     @Nullable
@@ -336,6 +335,65 @@ public abstract class GroupScene extends Scene {
         }
         this.mGroupSceneManager.setView((ViewGroup) getView());
         dispatchChildrenState(State.VIEW_CREATED);
+        replacePlaceHolderViewToTargetScene();
+    }
+
+    private void replacePlaceHolderViewToTargetScene() {
+        List<ScenePlaceHolderView> holderViewList = new ArrayList<>();
+        extractScenePlaceHolder(holderViewList, (ViewGroup) requireView());
+        if (holderViewList.size() == 0) {
+            return;
+        }
+
+        if (isSupportRestore()) {
+            //We can't handle user remove Scene, then add same tag Scene to another ViewGroup
+            throw new IllegalStateException("ScenePlaceHolderView can only be used when support restore is disabled");
+        }
+
+        for (int i = 0, N = holderViewList.size(); i < N; i++) {
+            ScenePlaceHolderView holderView = holderViewList.get(i);
+            ViewGroup parent = (ViewGroup) holderView.getParent();
+            int parentId = parent.getId();
+            if (parentId == View.NO_ID) {
+                throw new IllegalArgumentException("ScenePlaceHolderView parent id can't be View.NO_ID");
+            }
+            ViewGroup.LayoutParams layoutParams = holderView.getLayoutParams();
+            String name = holderView.getSceneName();
+            String tag = holderView.getSceneTag();
+
+            Scene scene = SceneInstanceUtility.getInstanceFromClassName(requireSceneContext(), name, holderView.getArguments());
+            int index = parent.indexOfChild(holderView);
+            parent.removeView(holderView);
+            add(parentId, scene, tag);
+            View sceneView = scene.requireView();
+            if (holderView.getId() != View.NO_ID) {
+                if (sceneView.getId() == View.NO_ID) {
+                    sceneView.setId(holderView.getId());
+                } else {
+                    String holderViewIdName = Utility.getIdName(requireSceneContext(), holderView.getId());
+                    String sceneViewIdName = Utility.getIdName(requireSceneContext(), holderView.getId());
+                    throw new IllegalStateException(String.format("ScenePlaceHolderView's id %s is different from Scene root view's id %s"
+                            , holderViewIdName, sceneViewIdName));
+                }
+            }
+            parent.removeView(sceneView);
+            parent.addView(sceneView, index, layoutParams);
+        }
+    }
+
+    private static void extractScenePlaceHolder(List<ScenePlaceHolderView> list, ViewGroup viewGroup) {
+        int count = viewGroup.getChildCount();
+        if (count == 0) {
+            return;
+        }
+        for (int i = 0; i < count; i++) {
+            View view = viewGroup.getChildAt(i);
+            if (view instanceof ScenePlaceHolderView) {
+                list.add((ScenePlaceHolderView) view);
+            } else if (view instanceof ViewGroup) {
+                extractScenePlaceHolder(list, (ViewGroup) view);
+            }
+        }
     }
 
     @NonNull

@@ -19,13 +19,16 @@ import android.app.Activity;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
+import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.RestrictTo;
 import android.support.v4.os.CancellationSignal;
+import android.text.TextUtils;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
@@ -85,7 +88,7 @@ public class Utility {
 
     /**
      * This is especially error-prone, so the ViewTreeObserver parameter is mandatory.
-     *
+     * <p>
      * If a View does not have attachedWindow(), the getViewTreeObserver is created internally by itself,
      * and ready to be merged into the system when attachedToWindow.
      * But if you need to remove this View in somewhere (such as Scene's own lifecycle)
@@ -164,6 +167,12 @@ public class Utility {
         return obj;
     }
 
+    public static String requireNonEmpty(String obj, String message) {
+        if (TextUtils.isEmpty(obj))
+            throw new IllegalArgumentException(message);
+        return obj;
+    }
+
     public static void commitFragment(@NonNull FragmentManager fragmentManager, @NonNull FragmentTransaction transaction, boolean commitNow) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             if (commitNow) {
@@ -196,5 +205,16 @@ public class Utility {
             out.append(Integer.toHexString(System.identityHashCode(cls)));
             out.append('}');
         }
+    }
+
+    @NonNull
+    public static String getIdName(@NonNull Context context, @IdRes int viewId) {
+        String resName;
+        try {
+            resName = context.getResources().getResourceName(viewId);
+        } catch (Resources.NotFoundException e) {
+            resName = String.valueOf(viewId);
+        }
+        return resName;
     }
 }
