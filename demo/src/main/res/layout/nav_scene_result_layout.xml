@@ -1,49 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:fitsSystemWindows="true"
-              android:orientation="vertical">
-
-    <TextView
-        android:id="@+id/name"
-        android:layout_marginTop="16dp"
-        android:layout_marginBottom="12dp"
-        android:layout_marginLeft="12dp"
-        android:layout_marginRight="12dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    android:orientation="vertical">
 
     <Button
         android:id="@+id/btn2"
         android:layout_width="match_parent"
         android:layout_height="54dp"
-        android:textAllCaps="false"
         android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"/>
+        android:layout_marginRight="8dp"
+        android:textAllCaps="false" />
 
     <Button
         android:id="@+id/btn3"
         android:layout_width="match_parent"
         android:layout_height="54dp"
-        android:textAllCaps="false"
+        android:layout_marginLeft="8dp"
         android:layout_marginTop="20dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"/>
-
-    <Button
-        android:id="@+id/btn4"
-        android:layout_width="match_parent"
-        android:layout_height="54dp"
-        android:textAllCaps="false"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"/>
+        android:layout_marginRight="8dp"
+        android:textAllCaps="false" />
 
     <ImageView
         android:id="@+id/image"
         android:layout_width="300dp"
         android:layout_height="100dp"
+        android:layout_gravity="center"
         android:layout_marginTop="12dp"
-        android:layout_gravity="center"/>
+        android:background="@color/blue_300" />
 
+    <com.bytedance.scenedemo.view.ClassPathInfoTextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 </LinearLayout>

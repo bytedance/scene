@@ -19,6 +19,7 @@ import com.bytedance.scene.animation.interaction.progressanimation.InteractionAn
 import com.bytedance.scene.animation.interaction.progressanimation.InteractionAnimationBuilder;
 import com.bytedance.scene.interfaces.PopOptions;
 import com.bytedance.scene.view.SlidePercentFrameLayout;
+import com.bytedance.scenedemo.AnimationListDemoScene;
 import com.bytedance.scenedemo.MainScene;
 import com.bytedance.scenedemo.R;
 import com.bytedance.scenedemo.utility.ColorUtil;

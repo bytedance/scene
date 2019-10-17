@@ -5,57 +5,61 @@
     android:fitsSystemWindows="true"
     android:orientation="vertical">
 
+    <com.bytedance.scenedemo.view.ClassPathInfoTextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
     <Button
         android:id="@+id/btn_0"
         android:layout_width="match_parent"
         android:layout_height="54dp"
-        android:textAllCaps="false"
-        android:layout_marginTop="8dp"
         android:layout_marginLeft="8dp"
+        android:layout_marginTop="8dp"
         android:layout_marginRight="8dp"
-        android:text="@string/part_child_btn_1" />
+        android:text="@string/part_child_btn_1"
+        android:textAllCaps="false" />
 
     <Button
         android:id="@+id/btn_1"
         android:layout_width="match_parent"
         android:layout_height="54dp"
-        android:textAllCaps="false"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
-        android:text="@string/part_child_btn_2" />
+        android:text="@string/part_child_btn_2"
+        android:textAllCaps="false" />
 
     <Button
         android:id="@+id/btn_2"
         android:layout_width="match_parent"
         android:layout_height="54dp"
-        android:textAllCaps="false"
-        android:layout_marginBottom="8dp"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
-        android:text="@string/part_child_btn_3" />
+        android:layout_marginBottom="8dp"
+        android:text="@string/part_child_btn_3"
+        android:textAllCaps="false" />
 
     <FrameLayout
         android:id="@+id/block_0"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"/>
+        android:layout_weight="1" />
 
     <FrameLayout
         android:id="@+id/block_1"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"/>
+        android:layout_weight="1" />
 
     <FrameLayout
         android:id="@+id/block_2"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"/>
+        android:layout_weight="1" />
 
     <FrameLayout
         android:id="@+id/block_3"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"/>
+        android:layout_weight="1" />
 
 </LinearLayout>

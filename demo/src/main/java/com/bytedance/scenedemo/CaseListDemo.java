@@ -14,12 +14,12 @@ import android.widget.Space;
 import android.widget.TextView;
 
 import com.bytedance.scene.group.UserVisibleHintGroupScene;
-import com.bytedance.scenedemo.case0.Case0Scene;
-import com.bytedance.scenedemo.case0.Case1Scene;
-import com.bytedance.scenedemo.case0.Case2Scene;
-import com.bytedance.scenedemo.case0.Case3Scene;
-import com.bytedance.scenedemo.case0.Case4Scene;
-import com.bytedance.scenedemo.case0.Case5Scene;
+import com.bytedance.scenedemo.extreme_case.Case0Scene;
+import com.bytedance.scenedemo.extreme_case.Case1Scene;
+import com.bytedance.scenedemo.extreme_case.Case2Scene;
+import com.bytedance.scenedemo.extreme_case.Case3Scene;
+import com.bytedance.scenedemo.extreme_case.Case4Scene;
+import com.bytedance.scenedemo.extreme_case.Case5Scene;
 import com.bytedance.scenedemo.restore.SupportRestoreActivity;
 
 /**

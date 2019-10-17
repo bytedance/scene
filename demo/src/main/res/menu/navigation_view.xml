@@ -25,6 +25,12 @@
         android:id="@+id/activity_compatibility"
         android:title="@string/main_scene_title_activity_compatibility" />
     <item
+        android:id="@+id/migrate"
+        android:title="@string/main_scene_title_migrate" />
+    <item
+        android:id="@+id/benchmark"
+        android:title="@string/main_scene_title_benchmark" />
+    <item
         android:id="@+id/extreme_case"
         android:title="@string/main_title_case" />
 

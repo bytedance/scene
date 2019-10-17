@@ -13,14 +13,16 @@ import android.widget.TextView;
 
 import com.bytedance.scene.group.UserVisibleHintGroupScene;
 import com.bytedance.scenedemo.animation.AnimationResDemoScene;
-import com.bytedance.scenedemo.lifecycle.ChildSceneLifecycleCallbacksDemoScene;
-import com.bytedance.scenedemo.lifecycle.LifeCycleDemoScene;
-import com.bytedance.scenedemo.architecture_patterns.livedata.LiveDataScene;
+import com.bytedance.scenedemo.animation.SlideBackButtonDemoScene;
+import com.bytedance.scenedemo.animation.SwipeBackDemo;
+import com.bytedance.scenedemo.animation.TransitionDemo;
 
 /**
- * Created by JiangQi on 8/21/18.
+ * Created by JiangQi on 8/9/18.
  */
-public class LifeCycleListScene extends UserVisibleHintGroupScene {
+public class AnimationListDemoScene extends UserVisibleHintGroupScene {
+
+    public Button mInteractionButton;
 
     @NonNull
     @Override
@@ -31,42 +33,33 @@ public class LifeCycleListScene extends UserVisibleHintGroupScene {
         addSpace(layout, 12);
         addTitle(layout, getString(R.string.main_title_basic));
 
-        addButton(layout, getString(R.string.main_lifecycle_child_callbacks), new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                getNavigationScene().push(ChildSceneLifecycleCallbacksDemoScene.class);
-            }
-        });
-
-        addButton(layout, getString(R.string.main_lifecycle_status), new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                getNavigationScene().push(LifeCycleDemoScene.class);
-            }
-        });
-
-        addTitle(layout, getString(R.string.main_title_pro));
-
-        addButton(layout, getString(R.string.main_lifecycle_rx_java), new View.OnClickListener() {
+        addButton(layout, getString(R.string.main_anim_btn_res_anim), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 getNavigationScene().push(AnimationResDemoScene.class);
             }
         });
 
-        addButton(layout, getString(R.string.main_lifecycle_live_data), new View.OnClickListener() {
+        addButton(layout, getString(R.string.main_anim_btn_swipe_back), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getNavigationScene().push(LiveDataScene.class);
+                getNavigationScene().push(SwipeBackDemo.class);
             }
         });
 
-        addTitle(layout, getString(R.string.main_title_todo));
+        addTitle(layout, getString(R.string.main_title_pro));
 
-        addButton(layout, getString(R.string.main_lifecycle_scope), new View.OnClickListener() {
+        mInteractionButton = addButton(layout, getString(R.string.main_anim_btn_ios_anim), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                getNavigationScene().push(SlideBackButtonDemoScene.class);
+            }
+        });
 
+        addButton(layout, getString(R.string.main_anim_btn_share_element), new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getNavigationScene().push(TransitionDemo.class);
             }
         });
 

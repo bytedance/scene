@@ -7,6 +7,8 @@
     <string name="main_scene_title_anim">动画</string>
     <string name="main_scene_title_architecture_patterns">设计模式</string>
     <string name="main_scene_title_activity_compatibility">Activity兼容</string>
+    <string name="main_scene_title_migrate">迁移</string>
+    <string name="main_scene_title_benchmark">Benchmark</string>
     <string name="main_scene_title_extreme_case">极端Case</string>
     <string name="main_scene_title_lifecycle">生命周期</string>
     <string name="main_scene_title_part">局部</string>
@@ -49,7 +51,6 @@
     <string name="nav_result_scene_to_activity">Scene 启动 Activity</string>
     <string name="nav_result_scene_to_activity_without_result">极端 Case：Scene 启动 Activity 但是 Activity 并未 setResult</string>
     <string name="nav_result_scene_to_scene">Scene 启动 Scene</string>
-    <string name="nav_result_activity_to_scene">Activity 启动 Scene（托管到SceneContainerActivity）</string>
     <string name="nav_result_callback_tip">回调</string>
     <string name="nav_result_permission_tip_failed">失败</string>
     <string name="nav_result_permission_tip_success">成功</string>
@@ -90,13 +91,13 @@
     <string name="nav_ime_btn_1">使用 AdjustResize 模式打开新页面</string>
     <string name="nav_ime_btn_top">只是一个按钮</string>
     <string name="main_part_btn_bottom_tab_layout">底部 TabLayout 用法</string>
-    <string name="main_part_btn_drawer">侧边抽屉用法</string>
+    <string name="main_part_btn_drawer">侧边抽屉用法(NavigationView)</string>
     <string name="main_part_btn_tab_view_pager">TabLayout + ViewPager</string>
     <string name="main_part_btn_dialog">对话框</string>
     <string name="main_part_btn_child_scene">切分 Scene 用法(add remove show hide)</string>
     <string name="main_part_btn_scene_place_holder_view">ScenePlaceHolderView(xml)</string>
     <string name="main_part_btn_async_inflate">异步 Inflate</string>
-    <string name="main_part_btn_bind_to_fragment">绑定到 Fragment</string>
+    <string name="main_part_btn_bind_navigationscene_to_fragment">NavigationScene 绑定到 Fragment</string>
     <string name="main_part_btn_bind_to_view">绑定到 View</string>
     <string name="main_part_btn_floating_window">悬浮窗（未完成）</string>
     <string name="main_part_btn_inherited_scene">继承的 Scene</string>
@@ -155,7 +156,9 @@
     <string name="case_push_pop_lifecycle_btn_2">Scene onCreateView 的时候执行 Pop</string>
     <string name="case_group_scene_btn_1">每次先生成GroupScene，添加Child后再添加进来</string>
     <string name="case_group_scene_btn_2">先生成GroupScene，复用反复删除添加</string>
-    <string name="main_activity_btn_for_result">拿返回值</string>
+    <string name="main_activity_btn_scene_get_activity_result">Scene拿Activity返回值</string>
+    <string name="main_activity_btn_activity_get_scene_result">Activity 启动 Scene（托管到SceneContainerActivity）</string>
+    <string name="patterns_scope">Scope</string>
     <string name="patterns_mvp">MVP</string>
     <string name="patterns_mvvm">MVVM</string>
     <string name="patterns_mvi">MVI/Redux/Unidirectional data flow</string>
