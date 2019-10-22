@@ -2,6 +2,9 @@
 
 [简体中文版说明 >>>](/README_cn.md)
 
+[![GitHub license](https://img.shields.io/github/license/bytedance/scene)](https://github.com/bytedance/scene/blob/master/LICENSE) 
+![Maven metadata URL](https://img.shields.io/maven-metadata/v?color=green&label=version&metadataUrl=http%3A%2F%2Fjcenter.bintray.com%2Fcom%2Fbytedance%2Fscene%2Fscene%2Fmaven-metadata.xml)
+
 Scene is a lightweight library of navigation and page segmentation based on view.
 
 1. Simple and convenient navigation and stack management, support multi-stack
