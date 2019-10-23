@@ -11,6 +11,12 @@ Scene是一个基于View的轻量级导航和页面切分组件库，主要特�
 
 [Demo下载地址](https://www.bytedance.com)
 
+## Who's using Scene?
+
+| <img src="misc/xigua.png" alt="xigua" width="100"/> | <img src="misc/douyin.png" alt="douyin" width="100"/> | <img src="misc/musical.ly.png" alt="musical.ly.png" width="90"/> |
+|:-------:|:--------:|:----------:|
+| 西瓜视频 | 抖音短视频 | Musical.ly |
+
 ## Introduction
 
 Scene旨在导航和页面切分上替代Activity和Fragment的使用。
@@ -39,7 +45,7 @@ Scene框架尝试去解决上面提到的Activity和Fragment存在的问题
 
 同时我们提供了一系列的迁移方案，来帮助开发者渐进式地从Activity和Fragment迁移到Scene。
 
-## Getting Started
+## Get Started
 
 在依赖中添加：
 

@@ -13,6 +13,12 @@ Scene is a lightweight library of navigation and page segmentation based on view
 
 [Download the Demo](https://www.bytedance.com)
 
+## Who's using Scene?
+
+| <img src="misc/xigua.png" alt="xigua" width="100"/> | <img src="misc/douyin.png" alt="douyin" width="100"/> | <img src="misc/musical.ly.png" alt="musical.ly.png" width="90"/> |
+|:-----------:|:-------:|:----------:|
+| Xigua Video | Tik Tok | Musical.ly |
+
 ## Introduction
 
 Scene is designed to replace the use of Activity and Fragment on navigation and page segmentation.
@@ -41,7 +47,7 @@ Provides a simple, reliable, and extensible API for a lightweight navigation and
 
 At the same time, we provide a series of migration solutions to help developers gradually migrate from Activity and Fragment to Scene.
 
-## Getting Started
+## Get Started
 
 Add to your build.gradle:
 
