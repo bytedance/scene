@@ -11,7 +11,7 @@ Scene是一个基于View的轻量级导航和页面切分组件库，主要特�
 
 [Demo下载地址](https://www.bytedance.com)
 
-## Introduce
+## Introduction
 
 Scene旨在导航和页面切分上替代Activity和Fragment的使用。
 
@@ -39,7 +39,7 @@ Scene框架尝试去解决上面提到的Activity和Fragment存在的问题
 
 同时我们提供了一系列的迁移方案，来帮助开发者渐进式地从Activity和Fragment迁移到Scene。
 
-## Getting Start
+## Getting Started
 
 在依赖中添加：
 
@@ -117,7 +117,7 @@ class ChildScene : Scene() {
 }
 ```
 
-## Migrate to Scene
+## Migration to Scene
 
 一个新的App可以通过直接继承SceneActivity的方式接入Scene，
 

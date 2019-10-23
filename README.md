@@ -13,7 +13,7 @@ Scene is a lightweight library of navigation and page segmentation based on view
 
 [Download the Demo](https://www.bytedance.com)
 
-## Introduce
+## Introduction
 
 Scene is designed to replace the use of Activity and Fragment on navigation and page segmentation.
 
@@ -41,7 +41,7 @@ Provides a simple, reliable, and extensible API for a lightweight navigation and
 
 At the same time, we provide a series of migration solutions to help developers gradually migrate from Activity and Fragment to Scene.
 
-## Getting Start
+## Getting Started
 
 Add to your build.gradle:
 
@@ -119,7 +119,7 @@ class ChildScene : Scene() {
 }
 ```
 
-## Migrate to Scene
+## Migration to Scene
 
 A new app can use Scene by directly inheriting the SceneActivity.
 
