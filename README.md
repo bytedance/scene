@@ -11,9 +11,9 @@ Scene is a lightweight library of navigation and page segmentation based on view
 5. Support return value between Scenes, support request and grant permissions in Scene
 6. Support save and recovery state of Scene
 
-[Download the Demo](https://www.bytedance.com)
+[Download the Demo](https://github.com/bytedance/scene/releases/download/v1.0.0/Scene.Demo.apk)
 
-## Who's using Scene?
+## Apps using Scene
 
 | <img src="misc/xigua.png" alt="xigua" width="100"/> | <img src="misc/douyin.png" alt="douyin" width="100"/> | <img src="misc/musical.ly.png" alt="musical.ly.png" width="90"/> |
 |:-----------:|:-------:|:----------:|
