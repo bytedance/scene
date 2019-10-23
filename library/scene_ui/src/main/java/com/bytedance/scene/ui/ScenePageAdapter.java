@@ -15,11 +15,12 @@
  */
 package com.bytedance.scene.ui;
 
-import android.support.annotation.NonNull;
-import android.support.v4.view.PagerAdapter;
-import android.support.v4.view.ViewPager;
 import android.view.View;
 import android.view.ViewGroup;
+
+import androidx.annotation.NonNull;
+import androidx.viewpager.widget.PagerAdapter;
+import androidx.viewpager.widget.ViewPager;
 
 import com.bytedance.scene.Scene;
 import com.bytedance.scene.group.GroupScene;

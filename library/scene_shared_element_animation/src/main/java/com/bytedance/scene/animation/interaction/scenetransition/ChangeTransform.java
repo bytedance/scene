@@ -17,13 +17,14 @@ package com.bytedance.scene.animation.interaction.scenetransition;
 
 import android.graphics.Matrix;
 import android.os.Build;
-import android.support.annotation.NonNull;
-import android.support.annotation.RequiresApi;
-import android.support.v4.util.Pair;
-import android.support.v4.view.ViewCompat;
 import android.util.Property;
 import android.view.View;
 import android.view.ViewGroup;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
+import androidx.core.util.Pair;
+import androidx.core.view.ViewCompat;
 
 import com.bytedance.scene.animation.interaction.evaluator.MatrixEvaluator;
 import com.bytedance.scene.animation.interaction.progressanimation.AnimatorFactory;

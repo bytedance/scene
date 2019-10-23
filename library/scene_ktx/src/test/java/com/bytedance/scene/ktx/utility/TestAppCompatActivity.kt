@@ -1,8 +1,8 @@
 package com.bytedance.scene.ktx.utility
 
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
 import android.widget.FrameLayout
+import androidx.appcompat.app.AppCompatActivity
 
 class TestAppCompatActivity : AppCompatActivity() {
     lateinit var mFrameLayout: FrameLayout

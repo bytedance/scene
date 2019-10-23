@@ -16,9 +16,10 @@
 package com.bytedance.scene.animation.interaction.ghostview;
 
 import android.graphics.Matrix;
-import android.support.annotation.RequiresApi;
 import android.view.View;
 import android.view.ViewGroup;
+
+import androidx.annotation.RequiresApi;
 
 @RequiresApi(14)
 interface GhostViewImpl {

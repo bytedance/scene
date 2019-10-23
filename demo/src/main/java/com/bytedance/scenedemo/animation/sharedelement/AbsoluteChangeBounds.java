@@ -13,11 +13,12 @@ import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
-import android.support.transition.Transition;
-import android.support.transition.TransitionValues;
 import android.util.Property;
 import android.view.View;
 import android.view.ViewGroup;
+
+import androidx.transition.Transition;
+import androidx.transition.TransitionValues;
 
 @TargetApi(Build.VERSION_CODES.LOLLIPOP)
 public class AbsoluteChangeBounds extends Transition {

@@ -16,12 +16,12 @@
 package com.bytedance.scene.utlity;
 
 import android.os.Build;
-import android.support.annotation.RestrictTo;
+import androidx.annotation.RestrictTo;
 import android.view.View;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static android.support.annotation.RestrictTo.Scope.LIBRARY_GROUP;
+import static androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP;
 
 /**
  * @hide

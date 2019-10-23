@@ -15,9 +15,9 @@
  */
 package com.bytedance.scene;
 
-import android.support.annotation.RestrictTo;
+import androidx.annotation.RestrictTo;
 
-import static android.support.annotation.RestrictTo.Scope.LIBRARY_GROUP;
+import static androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP;
 
 /**
  * @hide

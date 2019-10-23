@@ -18,18 +18,23 @@ package com.bytedance.scene.group;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Message;
-import android.support.annotation.*;
-import android.support.v4.util.Pools;
-import android.support.v7.view.ContextThemeWrapper;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.LayoutRes;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.RestrictTo;
+import androidx.annotation.UiThread;
+import androidx.appcompat.view.ContextThemeWrapper;
+import androidx.core.util.Pools;
+
 import java.util.concurrent.ArrayBlockingQueue;
 
-import static android.support.annotation.RestrictTo.Scope.LIBRARY_GROUP;
+import static androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP;
 
 /** @hide */
 @RestrictTo(LIBRARY_GROUP)

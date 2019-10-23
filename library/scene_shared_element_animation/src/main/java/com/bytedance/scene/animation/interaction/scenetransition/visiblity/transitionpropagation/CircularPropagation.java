@@ -16,8 +16,9 @@
 package com.bytedance.scene.animation.interaction.scenetransition.visiblity.transitionpropagation;
 
 import android.graphics.Rect;
-import android.support.transition.TransitionValues;
 import android.view.ViewGroup;
+
+import androidx.transition.TransitionValues;
 
 import com.bytedance.scene.animation.interaction.scenetransition.visiblity.SceneVisibilityTransition;
 

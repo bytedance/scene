@@ -16,29 +16,31 @@
 package com.bytedance.scene.navigation;
 
 import android.app.Activity;
-import android.arch.lifecycle.Lifecycle;
-import android.arch.lifecycle.LifecycleObserver;
-import android.arch.lifecycle.LifecycleOwner;
-import android.arch.lifecycle.OnLifecycleEvent;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.*;
-import android.support.v4.util.LruCache;
-import android.support.v4.view.ViewCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
+import androidx.annotation.*;
+import androidx.collection.LruCache;
+import androidx.collection.SparseArrayCompat;
+import androidx.core.view.ViewCompat;
+import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.LifecycleObserver;
+import androidx.lifecycle.LifecycleOwner;
+import androidx.lifecycle.OnLifecycleEvent;
+
 import com.bytedance.scene.*;
 import com.bytedance.scene.animation.NavigationAnimationExecutor;
 import com.bytedance.scene.animation.animatorexecutor.Android8DefaultSceneAnimatorExecutor;
 import com.bytedance.scene.animation.interaction.InteractionNavigationPopAnimationFactory;
-import com.bytedance.scene.interfaces.ChildSceneLifecycleCallbacks;
 import com.bytedance.scene.group.ReuseGroupScene;
 import com.bytedance.scene.interfaces.ActivityResultCallback;
+import com.bytedance.scene.interfaces.ChildSceneLifecycleCallbacks;
 import com.bytedance.scene.interfaces.PermissionResultCallback;
 import com.bytedance.scene.interfaces.PopOptions;
 import com.bytedance.scene.interfaces.PushOptions;
@@ -54,9 +56,9 @@ import com.bytedance.scene.view.NoneTouchFrameLayout;
 import java.util.ArrayList;
 import java.util.List;
 
-import static android.arch.lifecycle.Lifecycle.State.DESTROYED;
-import static android.support.annotation.RestrictTo.Scope.LIBRARY;
-import static android.support.annotation.RestrictTo.Scope.LIBRARY_GROUP;
+import static androidx.annotation.RestrictTo.Scope.LIBRARY;
+import static androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP;
+import static androidx.lifecycle.Lifecycle.State.DESTROYED;
 
 /**
  * Created by JiangQi on 7/30/18.

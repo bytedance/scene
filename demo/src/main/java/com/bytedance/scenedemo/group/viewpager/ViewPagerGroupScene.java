@@ -1,19 +1,20 @@
 package com.bytedance.scenedemo.group.viewpager;
 
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.design.widget.TabLayout;
-import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.viewpager.widget.ViewPager;
 
 import com.bytedance.scene.group.GroupScene;
 import com.bytedance.scene.group.UserVisibleHintGroupScene;
 import com.bytedance.scene.ui.GroupSceneUIUtility;
 import com.bytedance.scenedemo.R;
 import com.bytedance.scenedemo.group.EmptyScene;
+import com.google.android.material.tabs.TabLayout;
 
 import java.util.LinkedHashMap;
 

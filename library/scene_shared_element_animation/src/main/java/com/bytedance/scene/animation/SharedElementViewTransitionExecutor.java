@@ -19,11 +19,12 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.os.Build;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.util.ArrayMap;
 import android.view.View;
 import android.view.ViewGroup;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.collection.ArrayMap;
 
 import com.bytedance.scene.animation.interaction.scenetransition.SceneTransition;
 import com.bytedance.scene.animation.interaction.scenetransition.utils.SceneViewCompatUtils;

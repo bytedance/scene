@@ -1,14 +1,14 @@
 package com.bytedance.scene.ktx
 
-import android.arch.lifecycle.ViewModel
-import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
 import android.os.Bundle
-import android.support.v4.app.FragmentActivity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
+import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProviders
 import com.bytedance.scene.*
 import com.bytedance.scene.group.GroupScene
 import com.bytedance.scene.navigation.NavigationScene

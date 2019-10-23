@@ -16,9 +16,10 @@
 package com.bytedance.scene.interfaces;
 
 import android.app.Activity;
-import android.support.annotation.AnimRes;
-import android.support.annotation.AnimatorRes;
-import android.support.annotation.NonNull;
+
+import androidx.annotation.AnimRes;
+import androidx.annotation.AnimatorRes;
+import androidx.annotation.NonNull;
 
 import com.bytedance.scene.Scene;
 import com.bytedance.scene.animation.NavigationAnimationExecutor;

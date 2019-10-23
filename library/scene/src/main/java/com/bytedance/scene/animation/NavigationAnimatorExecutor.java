@@ -18,8 +18,8 @@ package com.bytedance.scene.animation;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.os.Build;
-import android.support.annotation.NonNull;
-import android.support.v4.view.ViewCompat;
+import androidx.annotation.NonNull;
+import androidx.core.view.ViewCompat;
 import android.view.View;
 
 import com.bytedance.scene.utlity.AnimatorUtility;

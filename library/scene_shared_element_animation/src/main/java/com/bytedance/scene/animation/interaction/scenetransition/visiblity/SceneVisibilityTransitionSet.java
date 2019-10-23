@@ -1,7 +1,7 @@
 //package com.bytedance.scene.animation.interaction.scenetransition.visiblity;
 //
 //import android.animation.Animator;
-//import android.support.annotation.NonNull;
+//import androidx.annotation.NonNull;
 //import android.view.View;
 //import android.view.ViewGroup;
 //

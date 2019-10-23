@@ -15,11 +15,11 @@
  */
 package com.bytedance.scene.animation;
 
-import android.support.annotation.RestrictTo;
+import androidx.annotation.RestrictTo;
 import android.view.animation.Interpolator;
 import android.view.animation.LinearInterpolator;
 
-import static android.support.annotation.RestrictTo.Scope.LIBRARY_GROUP;
+import static androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP;
 
 @RestrictTo(LIBRARY_GROUP)
 class ReverseInterpolator implements Interpolator {

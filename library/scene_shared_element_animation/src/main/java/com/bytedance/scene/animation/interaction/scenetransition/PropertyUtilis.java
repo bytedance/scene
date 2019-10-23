@@ -16,7 +16,7 @@
 package com.bytedance.scene.animation.interaction.scenetransition;
 
 import android.graphics.Rect;
-import android.support.v4.view.ViewCompat;
+import androidx.core.view.ViewCompat;
 import android.util.Property;
 import android.view.View;
 

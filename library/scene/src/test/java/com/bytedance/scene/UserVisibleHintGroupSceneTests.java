@@ -1,14 +1,14 @@
 package com.bytedance.scene;
 
-import android.arch.lifecycle.Lifecycle;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.util.Pair;
+import androidx.lifecycle.Lifecycle;
 import com.bytedance.scene.group.UserVisibleHintGroupScene;
 import com.bytedance.scene.navigation.NavigationScene;
 import com.bytedance.scene.utility.TestUtility;

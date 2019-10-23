@@ -17,11 +17,12 @@ package com.bytedance.scene.animation.animatorexecutor;
 
 import android.app.Activity;
 import android.os.Build;
-import android.support.annotation.AnimRes;
-import android.support.annotation.AnimatorRes;
-import android.support.annotation.NonNull;
-import android.support.v4.view.ViewCompat;
 import android.view.View;
+
+import androidx.annotation.AnimRes;
+import androidx.annotation.AnimatorRes;
+import androidx.annotation.NonNull;
+import androidx.core.view.ViewCompat;
 
 import com.bytedance.scene.Scene;
 import com.bytedance.scene.State;

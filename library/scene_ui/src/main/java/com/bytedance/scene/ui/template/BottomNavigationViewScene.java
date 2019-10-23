@@ -17,19 +17,20 @@ package com.bytedance.scene.ui.template;
 
 import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.MenuRes;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.design.widget.BottomNavigationView;
-import android.support.v4.util.SparseArrayCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import androidx.annotation.MenuRes;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.collection.SparseArrayCompat;
 
 import com.bytedance.scene.Scene;
 import com.bytedance.scene.group.GroupScene;
 import com.bytedance.scene.ui.GroupSceneUIUtility;
 import com.bytedance.scene.utlity.DispatchWindowInsetsListener;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.bytedance.scene.ui.R;
 
 /**

@@ -2,17 +2,18 @@ package com.bytedance.scenedemo.animation;
 
 import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.annotation.RequiresApi;
-import android.support.transition.AutoTransition;
-import android.support.transition.ChangeTransform;
-import android.support.transition.Slide;
-import android.support.transition.Transition;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
+import androidx.transition.AutoTransition;
+import androidx.transition.ChangeTransform;
+import androidx.transition.Slide;
+import androidx.transition.Transition;
 
 import com.bytedance.scene.animation.NavigationTransitionExecutor;
 import com.bytedance.scene.group.GroupScene;

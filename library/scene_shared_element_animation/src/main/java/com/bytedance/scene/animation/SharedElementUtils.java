@@ -18,17 +18,22 @@ package com.bytedance.scene.animation;
 import android.annotation.TargetApi;
 import android.graphics.Matrix;
 import android.graphics.Rect;
-import android.support.v4.util.ArrayMap;
-import android.support.v4.util.Pair;
-import android.support.v4.view.ViewCompat;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
 
+import androidx.collection.ArrayMap;
+import androidx.core.util.Pair;
+import androidx.core.view.ViewCompat;
+
 import com.bytedance.scene.animation.interaction.ghostview.GhostViewUtils;
 import com.bytedance.scene.utlity.NonNullPair;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 
 @TargetApi(21)
 public class SharedElementUtils {

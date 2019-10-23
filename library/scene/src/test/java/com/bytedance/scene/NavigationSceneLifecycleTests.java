@@ -2,13 +2,13 @@ package com.bytedance.scene;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.util.Pair;
 import com.bytedance.scene.group.GroupScene;
 import com.bytedance.scene.interfaces.PushOptions;
 import com.bytedance.scene.navigation.NavigationScene;
@@ -159,8 +159,8 @@ public class NavigationSceneLifecycleTests {
         sceneLifecycleManager.onStart();
         assertEquals(secondScene.getState(), State.STARTED);
         assertEquals(groupScene.getState(), State.STARTED);
-        
-        
+
+
         assertNotNull(secondScene.getView().getParent());
         assertNotNull(groupScene.getView().getParent());
 
@@ -169,13 +169,13 @@ public class NavigationSceneLifecycleTests {
         assertEquals(secondScene.getState(), State.NONE);
         assertNull(secondSceneView.getParent());
         assertEquals(groupScene.getState(), State.STARTED);
-        
+
 
         navigationScene.push(secondScene, pushOptions);
         assertEquals(secondScene.getState(), State.STARTED);
         assertEquals(groupScene.getState(), State.STARTED);
-        
-        
+
+
         assertNotNull(secondScene.getView().getParent());
         assertNotNull(groupScene.getView().getParent());
 
@@ -183,8 +183,8 @@ public class NavigationSceneLifecycleTests {
         sceneLifecycleManager.onResume();
         assertEquals(secondScene.getState(), State.RESUMED);
         assertEquals(groupScene.getState(), State.STARTED);
-        
-        
+
+
         assertNotNull(secondScene.getView().getParent());
         assertNotNull(groupScene.getView().getParent());
 
@@ -193,13 +193,13 @@ public class NavigationSceneLifecycleTests {
         assertEquals(secondScene.getState(), State.NONE);
         assertNull(secondSceneView.getParent());
         assertEquals(groupScene.getState(), State.RESUMED);
-        
+
 
         navigationScene.push(secondScene, pushOptions);
         assertEquals(secondScene.getState(), State.RESUMED);
         assertEquals(groupScene.getState(), State.STARTED);
-        
-        
+
+
         assertNotNull(secondScene.getView().getParent());
         assertNotNull(groupScene.getView().getParent());
 
@@ -207,8 +207,8 @@ public class NavigationSceneLifecycleTests {
         sceneLifecycleManager.onPause();
         assertEquals(secondScene.getState(), State.STARTED);
         assertEquals(groupScene.getState(), State.STARTED);
-        
-        
+
+
         assertNotNull(secondScene.getView().getParent());
         assertNotNull(groupScene.getView().getParent());
 
@@ -217,13 +217,13 @@ public class NavigationSceneLifecycleTests {
         assertEquals(secondScene.getState(), State.NONE);
         assertNull(secondSceneView.getParent());
         assertEquals(groupScene.getState(), State.STARTED);
-        
+
 
         navigationScene.push(secondScene, pushOptions);
         assertEquals(secondScene.getState(), State.STARTED);
         assertEquals(groupScene.getState(), State.STARTED);
-        
-        
+
+
         assertNotNull(secondScene.getView().getParent());
         assertNotNull(groupScene.getView().getParent());
 
@@ -231,8 +231,8 @@ public class NavigationSceneLifecycleTests {
         sceneLifecycleManager.onStop();
         assertEquals(secondScene.getState(), State.ACTIVITY_CREATED);
         assertEquals(groupScene.getState(), State.ACTIVITY_CREATED);
-        
-        
+
+
         assertNotNull(secondScene.getView().getParent());
         assertNotNull(groupScene.getView().getParent());
 

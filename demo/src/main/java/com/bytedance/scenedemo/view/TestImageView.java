@@ -1,13 +1,14 @@
 package com.bytedance.scenedemo.view;
 
 import android.content.Context;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 import android.util.AttributeSet;
+import androidx.appcompat.widget.AppCompatImageView;
 
 /**
  * Created by JiangQi on 9/3/18.
  */
-public class TestImageView extends android.support.v7.widget.AppCompatImageView {
+public class TestImageView extends AppCompatImageView {
     public TestImageView(Context context) {
         super(context);
     }

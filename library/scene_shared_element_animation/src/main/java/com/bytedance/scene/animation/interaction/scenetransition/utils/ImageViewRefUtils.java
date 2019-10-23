@@ -16,9 +16,10 @@
 package com.bytedance.scene.animation.interaction.scenetransition.utils;
 
 import android.graphics.Matrix;
-import android.support.annotation.RequiresApi;
 import android.util.Log;
 import android.widget.ImageView;
+
+import androidx.annotation.RequiresApi;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;

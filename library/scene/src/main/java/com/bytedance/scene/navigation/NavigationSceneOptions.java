@@ -16,12 +16,12 @@
 package com.bytedance.scene.navigation;
 
 import android.os.Bundle;
-import android.support.annotation.*;
+import androidx.annotation.*;
 import android.text.TextUtils;
 
 import com.bytedance.scene.Scene;
 
-import static android.support.annotation.RestrictTo.Scope.LIBRARY_GROUP;
+import static androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP;
 
 /**
  * Created by JiangQi on 9/5/18.

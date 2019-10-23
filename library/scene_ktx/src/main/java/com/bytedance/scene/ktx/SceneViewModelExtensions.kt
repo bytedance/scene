@@ -15,12 +15,12 @@
  */
 package com.bytedance.scene.ktx
 
-import android.arch.lifecycle.ViewModel
-import android.arch.lifecycle.ViewModelProvider
-import android.arch.lifecycle.ViewModelStore
-import android.arch.lifecycle.ViewModelStoreOwner
-import android.support.annotation.MainThread
-import android.support.v4.app.FragmentActivity
+import androidx.annotation.MainThread
+import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelStore
+import androidx.lifecycle.ViewModelStoreOwner
 import com.bytedance.scene.Scene
 import kotlin.reflect.KClass
 

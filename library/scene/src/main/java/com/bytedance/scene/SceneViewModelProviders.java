@@ -19,9 +19,10 @@ package com.bytedance.scene;
 
 import android.app.Activity;
 import android.app.Application;
-import android.arch.lifecycle.ViewModelProvider;
-import android.support.annotation.MainThread;
-import android.support.annotation.NonNull;
+
+import androidx.annotation.MainThread;
+import androidx.annotation.NonNull;
+import androidx.lifecycle.ViewModelProvider;
 
 public class SceneViewModelProviders {
     private SceneViewModelProviders() {

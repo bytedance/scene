@@ -2,8 +2,8 @@ package com.bytedance.scene.utility;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.widget.FrameLayout;
+import androidx.annotation.Nullable;
 
 public class TestActivity extends Activity {
     public FrameLayout mFrameLayout;

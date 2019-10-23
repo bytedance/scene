@@ -20,11 +20,12 @@ import android.animation.IntEvaluator;
 import android.graphics.Outline;
 import android.graphics.Rect;
 import android.os.Build;
-import android.support.annotation.RequiresApi;
 import android.util.Property;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewOutlineProvider;
+
+import androidx.annotation.RequiresApi;
 
 import com.bytedance.scene.animation.interaction.evaluator.RectEvaluator;
 

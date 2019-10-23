@@ -2,7 +2,7 @@ package com.bytedance.scenedemo.navigation.forresult;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 
 /**
  * Created by JiangQi on 9/14/18.

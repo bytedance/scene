@@ -17,10 +17,11 @@ package com.bytedance.scene.animation.interaction.progressanimation;
 
 import android.annotation.SuppressLint;
 import android.os.Build;
-import android.support.v4.util.Pair;
-import android.support.v4.util.SparseArrayCompat;
 import android.util.Property;
 import android.view.View;
+
+import androidx.collection.SparseArrayCompat;
+import androidx.core.util.Pair;
 
 import java.util.HashMap;
 import java.util.Set;

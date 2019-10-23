@@ -1,7 +1,7 @@
 package com.bytedance.scene;
 
-import android.support.v4.util.Pair;
 import android.view.View;
+import androidx.core.util.Pair;
 import com.bytedance.scene.navigation.NavigationScene;
 import org.junit.Test;
 import org.junit.runner.RunWith;

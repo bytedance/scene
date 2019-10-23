@@ -15,7 +15,7 @@
  */
 package com.bytedance.scene.animation.interaction.scenetransition.utils;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import android.util.Log;
 import android.view.View;
 

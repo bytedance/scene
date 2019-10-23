@@ -18,9 +18,10 @@ package com.bytedance.scene.animation.interaction.scenetransition;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
-import android.support.annotation.CallSuper;
-import android.support.annotation.NonNull;
 import android.view.View;
+
+import androidx.annotation.CallSuper;
+import androidx.annotation.NonNull;
 
 import com.bytedance.scene.animation.interaction.progressanimation.InteractionAnimation;
 

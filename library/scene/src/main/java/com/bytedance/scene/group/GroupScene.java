@@ -18,7 +18,7 @@ package com.bytedance.scene.group;
 import android.app.Activity;
 import android.content.res.Resources;
 import android.os.Bundle;
-import android.support.annotation.*;
+import androidx.annotation.*;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -34,8 +34,8 @@ import com.bytedance.scene.utlity.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import static android.support.annotation.RestrictTo.Scope.LIBRARY;
-import static android.support.annotation.RestrictTo.Scope.LIBRARY_GROUP;
+import static androidx.annotation.RestrictTo.Scope.LIBRARY;
+import static androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP;
 
 /**
  * Created by JiangQi on 8/1/18.

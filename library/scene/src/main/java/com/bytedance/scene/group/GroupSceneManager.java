@@ -21,15 +21,16 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.support.annotation.IdRes;
-import android.support.annotation.IntDef;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.util.Pair;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.IdRes;
+import androidx.annotation.IntDef;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
+import androidx.core.util.Pair;
 import com.bytedance.scene.Scene;
 import com.bytedance.scene.State;
 import com.bytedance.scene.animation.AnimationOrAnimator;
@@ -41,6 +42,14 @@ import com.bytedance.scene.utlity.SceneInstanceUtility;
 import com.bytedance.scene.utlity.SceneInternalException;
 import com.bytedance.scene.utlity.Utility;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Set;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.*;

@@ -16,9 +16,11 @@
 package com.bytedance.scene.animation;
 
 import android.app.Activity;
-import android.support.annotation.TransitionRes;
-import android.support.transition.Transition;
-import android.support.transition.TransitionInflater;
+
+import androidx.annotation.TransitionRes;
+import androidx.transition.Transition;
+import androidx.transition.TransitionInflater;
+
 
 /**
  * Created by JiangQi on 8/15/18.

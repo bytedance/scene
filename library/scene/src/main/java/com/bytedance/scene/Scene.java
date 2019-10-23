@@ -18,19 +18,29 @@ package com.bytedance.scene;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Application;
-import android.arch.lifecycle.*;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.res.Resources;
-import android.os.*;
-import android.support.annotation.*;
-import android.support.v4.view.ViewCompat;
+import android.os.Build;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Parcelable;
 import android.util.Log;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+
+import androidx.annotation.*;
+import androidx.core.view.ViewCompat;
+import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.LifecycleObserver;
+import androidx.lifecycle.LifecycleOwner;
+import androidx.lifecycle.LifecycleRegistry;
+import androidx.lifecycle.ViewModelStore;
+import androidx.lifecycle.ViewModelStoreOwner;
 
 import com.bytedance.scene.navigation.NavigationScene;
 import com.bytedance.scene.parcel.ParcelConstants;
@@ -41,7 +51,7 @@ import com.bytedance.scene.view.SceneContextThemeWrapper;
 import java.util.ArrayList;
 import java.util.List;
 
-import static android.support.annotation.RestrictTo.Scope.LIBRARY_GROUP;
+import static androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP;
 
 /**
  * Created by JiangQi on 7/30/18.

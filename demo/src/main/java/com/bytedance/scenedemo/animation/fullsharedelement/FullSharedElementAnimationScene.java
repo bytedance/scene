@@ -1,12 +1,13 @@
 package com.bytedance.scenedemo.animation.fullsharedelement;
 
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.util.ArrayMap;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.collection.ArrayMap;
 
 import com.bytedance.scene.animation.SharedElementSceneTransitionExecutor;
 import com.bytedance.scene.animation.interaction.scenetransition.AutoSceneTransition;

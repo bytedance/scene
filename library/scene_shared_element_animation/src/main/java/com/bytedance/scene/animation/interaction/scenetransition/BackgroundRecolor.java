@@ -16,7 +16,7 @@
 package com.bytedance.scene.animation.interaction.scenetransition;
 
 import android.graphics.drawable.ColorDrawable;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import android.util.Property;
 import android.view.View;
 

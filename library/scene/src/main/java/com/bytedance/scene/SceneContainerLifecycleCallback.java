@@ -19,8 +19,8 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 public interface SceneContainerLifecycleCallback {
     void onActivityCreated(@NonNull Activity activity, @Nullable Bundle savedInstanceState);

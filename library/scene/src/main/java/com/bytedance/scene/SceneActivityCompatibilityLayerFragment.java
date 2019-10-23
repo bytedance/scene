@@ -17,16 +17,16 @@ package com.bytedance.scene;
 
 import android.app.Activity;
 import android.app.Fragment;
-import android.arch.lifecycle.Lifecycle;
-import android.arch.lifecycle.LifecycleObserver;
-import android.arch.lifecycle.LifecycleOwner;
-import android.arch.lifecycle.OnLifecycleEvent;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.*;
-import android.support.v4.util.SparseArrayCompat;
+import androidx.annotation.*;
+import androidx.collection.SparseArrayCompat;
+import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.LifecycleObserver;
+import androidx.lifecycle.LifecycleOwner;
+import androidx.lifecycle.OnLifecycleEvent;
 import com.bytedance.scene.interfaces.ActivityResultCallback;
 import com.bytedance.scene.interfaces.PermissionResultCallback;
 import com.bytedance.scene.navigation.ConfigurationChangedListener;
@@ -38,8 +38,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static android.arch.lifecycle.Lifecycle.State.DESTROYED;
-import static android.support.annotation.RestrictTo.Scope.LIBRARY_GROUP;
+import static androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP;
+import static androidx.lifecycle.Lifecycle.State.DESTROYED;
 
 /**
  * @hide

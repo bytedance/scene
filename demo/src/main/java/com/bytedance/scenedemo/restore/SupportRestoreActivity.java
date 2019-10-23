@@ -1,6 +1,6 @@
 package com.bytedance.scenedemo.restore;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import com.bytedance.scene.Scene;
 import com.bytedance.scene.ui.SceneActivity;
 

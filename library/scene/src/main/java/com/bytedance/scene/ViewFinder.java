@@ -15,12 +15,12 @@
  */
 package com.bytedance.scene;
 
-import android.support.annotation.IdRes;
-import android.support.annotation.NonNull;
-import android.support.annotation.RestrictTo;
 import android.view.View;
+import androidx.annotation.IdRes;
+import androidx.annotation.NonNull;
+import androidx.annotation.RestrictTo;
 
-import static android.support.annotation.RestrictTo.Scope.LIBRARY_GROUP;
+import static androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP;
 
 /**
  * @hide

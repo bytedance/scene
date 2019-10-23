@@ -18,9 +18,10 @@ package com.bytedance.scene;
 import android.app.Activity;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
-import android.support.annotation.NonNull;
+import android.os.Build;
+import androidx.annotation.NonNull;
 
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 import com.bytedance.scene.navigation.NavigationScene;
 import com.bytedance.scene.utlity.Utility;
 

@@ -16,7 +16,7 @@
 package com.bytedance.scene.group;
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 
 /**
  * Created by JiangQi on 8/21/18.

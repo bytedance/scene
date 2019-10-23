@@ -1,9 +1,9 @@
 package com.bytedance.scene;
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v4.util.Pair;
 import android.view.View;
+import androidx.annotation.Nullable;
+import androidx.core.util.Pair;
 import com.bytedance.scene.group.AsyncLayoutGroupScene;
 import com.bytedance.scene.navigation.NavigationScene;
 import org.junit.Test;

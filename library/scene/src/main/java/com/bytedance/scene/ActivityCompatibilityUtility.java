@@ -17,19 +17,19 @@ package com.bytedance.scene;
 
 import android.app.Activity;
 import android.app.FragmentTransaction;
-import android.arch.lifecycle.LifecycleOwner;
 import android.content.Intent;
 import android.os.Build;
-import android.support.annotation.MainThread;
-import android.support.annotation.NonNull;
-import android.support.annotation.RequiresApi;
+import androidx.annotation.MainThread;
+import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
+import androidx.lifecycle.LifecycleOwner;
 import com.bytedance.scene.interfaces.ActivityResultCallback;
 import com.bytedance.scene.interfaces.PermissionResultCallback;
 import com.bytedance.scene.navigation.ConfigurationChangedListener;
 import com.bytedance.scene.utlity.ThreadUtility;
 import com.bytedance.scene.utlity.Utility;
 
-import static android.arch.lifecycle.Lifecycle.State.DESTROYED;
+import static androidx.lifecycle.Lifecycle.State.DESTROYED;
 
 //TODO remove SceneActivityCompatibilityLayerFragment when none Scene exists
 public class ActivityCompatibilityUtility {

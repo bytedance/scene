@@ -15,9 +15,9 @@
  */
 package com.bytedance.scene.ktx
 
-import android.support.annotation.AnimRes
-import android.support.annotation.AnimatorRes
-import android.support.annotation.IdRes
+import androidx.annotation.AnimRes
+import androidx.annotation.AnimatorRes
+import androidx.annotation.IdRes
 import com.bytedance.scene.Scene
 import com.bytedance.scene.group.GroupScene
 

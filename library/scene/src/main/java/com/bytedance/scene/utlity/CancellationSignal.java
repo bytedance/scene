@@ -16,7 +16,7 @@
 package com.bytedance.scene.utlity;
 
 import android.os.Build;
-import android.support.v4.os.OperationCanceledException;
+import androidx.core.os.OperationCanceledException;
 
 public class CancellationSignal {
     private boolean mIsCanceled;
@@ -42,7 +42,7 @@ public class CancellationSignal {
     }
 
     /**
-     * Throws {@link android.support.v4.os.OperationCanceledException} if the operation has been canceled.
+     * Throws {@link androidx.core.os.OperationCanceledException} if the operation has been canceled.
      *
      * @throws OperationCanceledException if the operation has been canceled.
      */

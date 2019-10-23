@@ -15,7 +15,7 @@
  */
 package com.bytedance.scene.animation.animatorexecutor;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import com.bytedance.scene.Scene;
 import com.bytedance.scene.animation.AnimationInfo;

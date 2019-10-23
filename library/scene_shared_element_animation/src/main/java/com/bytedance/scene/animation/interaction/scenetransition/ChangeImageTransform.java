@@ -20,7 +20,7 @@ import android.annotation.TargetApi;
 import android.graphics.Matrix;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import android.util.Property;
 import android.view.View;
 import android.widget.ImageView;

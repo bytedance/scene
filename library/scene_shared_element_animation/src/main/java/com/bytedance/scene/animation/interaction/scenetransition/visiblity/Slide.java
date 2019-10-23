@@ -17,13 +17,14 @@ package com.bytedance.scene.animation.interaction.scenetransition.visiblity;
 
 import android.animation.TimeInterpolator;
 import android.annotation.TargetApi;
-import android.support.annotation.IntDef;
-import android.support.annotation.NonNull;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
+
+import androidx.annotation.IntDef;
+import androidx.annotation.NonNull;
 
 import com.bytedance.scene.animation.interaction.progressanimation.InteractionAnimation;
 import com.bytedance.scene.animation.interaction.scenetransition.visiblity.transitionpropagation.SidePropagation;

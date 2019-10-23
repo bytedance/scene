@@ -16,13 +16,14 @@
 package com.bytedance.scene.utlity;
 
 import android.os.Build;
-import android.support.annotation.RequiresApi;
-import android.support.annotation.RestrictTo;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowInsets;
 
-import static android.support.annotation.RestrictTo.Scope.LIBRARY_GROUP;
+import androidx.annotation.RequiresApi;
+import androidx.annotation.RestrictTo;
+
+import static androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP;
 
 /**
  * Created by JiangQi on 8/24/18.

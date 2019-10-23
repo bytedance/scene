@@ -17,9 +17,8 @@ package com.bytedance.scene.animation.interaction.scenetransition.visiblity;
 
 import android.animation.TimeInterpolator;
 import android.graphics.Path;
-import android.support.transition.Transition;
-import android.support.transition.TransitionValues;
 import android.view.View;
+
 import com.bytedance.scene.animation.interaction.progressanimation.PathInteractionAnimation;
 
 class TranslationAnimationCreator {

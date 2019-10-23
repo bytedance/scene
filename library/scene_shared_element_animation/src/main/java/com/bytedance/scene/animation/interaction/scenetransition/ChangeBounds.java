@@ -17,10 +17,11 @@ package com.bytedance.scene.animation.interaction.scenetransition;
 
 import android.graphics.Rect;
 import android.os.Build;
-import android.support.annotation.NonNull;
-import android.support.annotation.RequiresApi;
 import android.util.Property;
 import android.view.View;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 
 import com.bytedance.scene.animation.interaction.progressanimation.AnimatorFactory;
 import com.bytedance.scene.animation.interaction.progressanimation.InteractionAnimation;

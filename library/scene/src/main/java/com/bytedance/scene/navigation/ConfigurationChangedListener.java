@@ -16,7 +16,7 @@
 package com.bytedance.scene.navigation;
 
 import android.content.res.Configuration;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 /**
  * Created by JiangQi on 9/4/18.

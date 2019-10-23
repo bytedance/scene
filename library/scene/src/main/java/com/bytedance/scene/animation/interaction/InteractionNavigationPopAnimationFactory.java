@@ -19,10 +19,11 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ObjectAnimator;
 import android.graphics.drawable.Drawable;
-import android.support.v4.os.CancellationSignal;
-import android.support.v4.view.ViewCompat;
-import android.support.v4.view.animation.LinearOutSlowInInterpolator;
 import android.view.View;
+
+import androidx.core.os.CancellationSignal;
+import androidx.core.view.ViewCompat;
+import androidx.interpolator.view.animation.LinearOutSlowInInterpolator;
 
 import com.bytedance.scene.Scene;
 import com.bytedance.scene.animation.TransitionUtils;
