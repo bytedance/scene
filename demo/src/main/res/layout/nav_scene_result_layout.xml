@@ -39,7 +39,7 @@
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"/>
 
-    <android.support.v7.widget.AppCompatImageView
+    <ImageView
         android:id="@+id/image"
         android:layout_width="300dp"
         android:layout_height="100dp"
