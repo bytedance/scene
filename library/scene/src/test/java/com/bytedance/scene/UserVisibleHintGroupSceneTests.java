@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import com.bytedance.scene.group.UserVisibleHintGroupScene;
 import com.bytedance.scene.navigation.NavigationScene;
+import com.bytedance.scene.utility.TestUtility;
 import com.bytedance.scene.utlity.ViewIdGenerator;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -123,6 +124,28 @@ public class UserVisibleHintGroupSceneTests {
         assertEquals(childScene.getState(), State.NONE);
         assertFalse(testScene.isVisible());
         assertTrue(testScene.getUserVisibleHint());
+    }
+
+    /**
+     * androidx.lifecycle:lifecycle-runtime:2.1.0 exception
+     * <p>
+     * LifecycleOwner of this LifecycleRegistry is alreadygarbage collected. It is too late to change lifecycle state.
+     * java.lang.IllegalStateException: LifecycleOwner of this LifecycleRegistry is alreadygarbage collected. It is too late to change lifecycle state.
+     * at androidx.lifecycle.LifecycleRegistry.sync(LifecycleRegistry.java:327)
+     * at androidx.lifecycle.LifecycleRegistry.moveToState(LifecycleRegistry.java:145)
+     * at androidx.lifecycle.LifecycleRegistry.handleLifecycleEvent(LifecycleRegistry.java:131)
+     * at com.bytedance.scene.group.UserVisibleHintGroupScene.onActivityCreated(UserVisibleHintGroupScene.java:95)
+     */
+    @Test
+    public void testUserVisibleHintLifecycleGC() {
+        TestScene testScene = new TestScene();
+        Pair<SceneLifecycleManager, NavigationScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(testScene);
+        SceneLifecycleManager sceneLifecycleManager = pair.first;
+
+        sceneLifecycleManager.onStart();
+        sceneLifecycleManager.onResume();
+        TestUtility.forceGc();
+        testScene.setUserVisibleHint(false);
     }
 
     public static class TestScene extends UserVisibleHintGroupScene {

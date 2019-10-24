@@ -37,13 +37,7 @@ public abstract class UserVisibleHintGroupScene extends GroupScene {
     @RestrictTo(LIBRARY_GROUP)
     public static final String KEY_SCENE_USER_VISIBLE_HINT = "bd-scene-nav:scene_user_visible_hint";
 
-    private LifecycleRegistry mUserVisibleHintLifecycleRegistry = new LifecycleRegistry(new LifecycleOwner() {
-        @NonNull
-        @Override
-        public Lifecycle getLifecycle() {
-            return mUserVisibleHintLifecycleRegistry;
-        }
-    });
+    private final UserVisibleLifecycleOwner mUserVisibleLifecycleOwner = new UserVisibleLifecycleOwner();
 
     private boolean mUserVisibleHint = true;
     private boolean mResume = false;
@@ -72,18 +66,18 @@ public abstract class UserVisibleHintGroupScene extends GroupScene {
 
         if (mUserVisibleHint) {
             if (mStart) {
-                mUserVisibleHintLifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_START);
+                mUserVisibleLifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_START);
             }
             if (mResume) {
-                mUserVisibleHintLifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_RESUME);
+                mUserVisibleLifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_RESUME);
             }
         } else {
             if (mResume) {
-                mUserVisibleHintLifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_PAUSE);
+                mUserVisibleLifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_PAUSE);
             }
 
             if (mStart) {
-                mUserVisibleHintLifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_STOP);
+                mUserVisibleLifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_STOP);
             }
         }
     }
@@ -91,14 +85,14 @@ public abstract class UserVisibleHintGroupScene extends GroupScene {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mUserVisibleHintLifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_CREATE);
+        mUserVisibleLifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_CREATE);
 
         getLifecycle().addObserver(new LifecycleObserver() {
             @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
             void onPause() {
                 mResume = false;
                 if (mUserVisibleHint) {
-                    mUserVisibleHintLifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_PAUSE);
+                    mUserVisibleLifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_PAUSE);
                 }
             }
 
@@ -106,7 +100,7 @@ public abstract class UserVisibleHintGroupScene extends GroupScene {
             void onResume() {
                 mResume = true;
                 if (mUserVisibleHint) {
-                    mUserVisibleHintLifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_RESUME);
+                    mUserVisibleLifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_RESUME);
                 }
             }
 
@@ -114,7 +108,7 @@ public abstract class UserVisibleHintGroupScene extends GroupScene {
             void onStop() {
                 mStart = false;
                 if (mUserVisibleHint) {
-                    mUserVisibleHintLifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_STOP);
+                    mUserVisibleLifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_STOP);
                 }
             }
 
@@ -122,13 +116,13 @@ public abstract class UserVisibleHintGroupScene extends GroupScene {
             void onStart() {
                 mStart = true;
                 if (mUserVisibleHint) {
-                    mUserVisibleHintLifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_START);
+                    mUserVisibleLifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_START);
                 }
             }
 
             @OnLifecycleEvent(Lifecycle.Event.ON_START)
             void onDestroy() {
-                mUserVisibleHintLifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_DESTROY);
+                mUserVisibleLifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_DESTROY);
             }
         });
     }
@@ -137,8 +131,9 @@ public abstract class UserVisibleHintGroupScene extends GroupScene {
         return mUserVisibleHint;
     }
 
+    @NonNull
     public Lifecycle getUserVisibleHintLifecycle() {
-        return this.mUserVisibleHintLifecycleRegistry;
+        return this.mUserVisibleLifecycleOwner.getLifecycle();
     }
 
     @Override
