@@ -210,6 +210,22 @@ public abstract class GroupScene extends Scene {
         }
     }
 
+    @Nullable
+    public final String findTagByScene(@NonNull Scene scene) {
+        ThreadUtility.checkUIThread();
+
+        if (scene == null) {
+            return null;
+        }
+
+        GroupRecord record = this.mGroupSceneManager.findByScene(scene);
+        if (record != null) {
+            return record.tag;
+        } else {
+            return null;
+        }
+    }
+
     public final void remove(@NonNull Scene scene) {
         this.remove(scene, EMPTY_ANIMATION_FACTORY);
     }
