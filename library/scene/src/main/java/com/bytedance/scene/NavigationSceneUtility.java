@@ -230,6 +230,12 @@ public final class NavigationSceneUtility {
         }
         checkDuplicateTag(activity, tag);
 
+        final NavigationScene navigationScene = (NavigationScene) SceneInstanceUtility.getInstanceFromClass(NavigationScene.class,
+                navigationSceneOptions.toBundle());
+        if (!Utility.isActivityStatusValid(activity)) {
+            return new DestroyedSceneDelegate(navigationScene);
+        }
+
         FragmentManager fragmentManager = activity.getFragmentManager();
         LifeCycleFragment lifeCycleFragment = (LifeCycleFragment) fragmentManager.findFragmentByTag(tag);
         if (lifeCycleFragment != null && !supportRestore) {
@@ -240,8 +246,6 @@ public final class NavigationSceneUtility {
         }
 
         ViewFinder viewFinder = new ActivityViewFinder(activity);
-        final NavigationScene navigationScene = (NavigationScene) SceneInstanceUtility.getInstanceFromClass(NavigationScene.class,
-                navigationSceneOptions.toBundle());
 
         ScopeHolderFragment targetScopeHolderFragment = null;
         SceneLifecycleDispatcher dispatcher = null;
