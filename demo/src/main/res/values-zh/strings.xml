@@ -11,7 +11,7 @@
     <string name="main_scene_title_benchmark">Benchmark</string>
     <string name="main_scene_title_extreme_case">极端Case</string>
     <string name="main_scene_title_lifecycle">生命周期</string>
-    <string name="main_scene_title_part">局部</string>
+    <string name="main_scene_title_composition">UI组合</string>
     <string name="main_title_basic">基本用法</string>
     <string name="main_title_other">其他用法</string>
     <string name="main_title_pro">高级用法</string>
@@ -91,6 +91,7 @@
     <string name="nav_ime_btn_1">使用 AdjustResize 模式打开新页面</string>
     <string name="nav_ime_btn_top">只是一个按钮</string>
     <string name="main_part_btn_bottom_tab_layout">底部 TabLayout 用法</string>
+    <string name="main_part_btn_hybrid_layout">混合(Drawer+Tab+ViewPager)</string>
     <string name="main_part_btn_drawer">侧边抽屉用法(NavigationView)</string>
     <string name="main_part_btn_tab_view_pager">TabLayout + ViewPager</string>
     <string name="main_part_btn_dialog">对话框</string>
@@ -98,6 +99,7 @@
     <string name="main_part_btn_scene_place_holder_view">ScenePlaceHolderView(xml)</string>
     <string name="main_part_btn_async_inflate">异步 Inflate</string>
     <string name="main_part_btn_bind_navigationscene_to_fragment">NavigationScene 绑定到 Fragment</string>
+    <string name="main_part_btn_bind_groupscene_to_activity">GroupScene 绑定到 Activity</string>
     <string name="main_part_btn_bind_to_view">绑定到 View</string>
     <string name="main_part_btn_floating_window">悬浮窗（未完成）</string>
     <string name="main_part_btn_inherited_scene">继承的 Scene</string>
@@ -105,8 +107,9 @@
     <string name="part_dialog_btn_2">对话框，有背景暗色</string>
     <string name="part_dialog_btn_3">底部对话框（未完成）</string>
     <string name="part_child_btn_1">显示/隐藏 Child Scene0</string>
-    <string name="part_child_btn_2">动画显示/隐藏 Child Scene0</string>
-    <string name="part_child_btn_3">动画添加/删除 Child Scene0</string>
+    <string name="part_child_btn_2">添加/删除 Child Scene0</string>
+    <string name="part_child_btn_3">动画显示/隐藏 Child Scene0</string>
+    <string name="part_child_btn_4">动画添加/删除 Child Scene0</string>
     <string name="part_inherited_tip">当内嵌层级很深的时候，跨层级的Scene想共享数据会非常困难，所以提供了InheritedScene和InheritedScene.of方法直接取到最近的InheritedScene</string>
     <string name="main_anim_btn_ios_anim">iOS Interaction 动画</string>
     <string name="main_anim_btn_res_anim">使用 XML 资源自定义转场动画</string>

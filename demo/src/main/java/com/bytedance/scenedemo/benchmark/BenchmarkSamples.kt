@@ -8,7 +8,7 @@ import android.widget.LinearLayout
 import android.widget.ScrollView
 import com.bytedance.scene.Scene
 import com.bytedance.scenedemo.R
-import com.bytedance.scenedemo.navigation.performance.PerformanceDemo
+import com.bytedance.scenedemo.benchmark.performance.PerformanceDemo
 import com.bytedance.scenedemo.utility.addButton
 import com.bytedance.scenedemo.utility.addClassPathTitle
 import com.bytedance.scenedemo.utility.addSpace

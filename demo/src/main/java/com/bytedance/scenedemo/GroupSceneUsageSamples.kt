@@ -8,12 +8,13 @@ import android.widget.LinearLayout
 import android.widget.ScrollView
 import com.bytedance.scene.group.UserVisibleHintGroupScene
 import com.bytedance.scenedemo.group.async_inflate.AsyncInflateSceneDemo
-import com.bytedance.scenedemo.group.drawer.DrawerGroupScene
-import com.bytedance.scenedemo.group.inherited.InheritedDemo
 import com.bytedance.scenedemo.group.basic_usage.GroupSceneBasicUsageSample
+import com.bytedance.scenedemo.group.drawer.NavigationViewSample
+import com.bytedance.scenedemo.group.hybrid.HybridSample
+import com.bytedance.scenedemo.group.inherited.InheritedDemo
 import com.bytedance.scenedemo.group.placeholder.PlaceHolderViewSample
-import com.bytedance.scenedemo.group.viewpager.ViewPagerGroupScene
-import com.bytedance.scenedemo.multi_stack.MultiStackTabGroupScene
+import com.bytedance.scenedemo.group.tab.BottomNavigationViewSample
+import com.bytedance.scenedemo.group.viewpager.ViewPagerSample
 import com.bytedance.scenedemo.utility.addButton
 import com.bytedance.scenedemo.utility.addClassPathTitle
 import com.bytedance.scenedemo.utility.addSpace
@@ -41,15 +42,19 @@ class GroupSceneUsageSamples : UserVisibleHintGroupScene() {
         })
 
         addButton(layout, getString(R.string.main_part_btn_tab_view_pager), View.OnClickListener {
-            requireNavigationScene().push(ViewPagerGroupScene::class.java)
+            requireNavigationScene().push(ViewPagerSample::class.java)
         })
 
         addButton(layout, getString(R.string.main_part_btn_drawer), View.OnClickListener {
-            requireNavigationScene().push(DrawerGroupScene::class.java)
+            requireNavigationScene().push(NavigationViewSample::class.java)
         })
 
         addButton(layout, getString(R.string.main_part_btn_bottom_tab_layout), View.OnClickListener {
-            requireNavigationScene().push(MultiStackTabGroupScene::class.java)
+            requireNavigationScene().push(BottomNavigationViewSample::class.java)
+        })
+
+        addButton(layout, getString(R.string.main_part_btn_hybrid_layout), View.OnClickListener {
+            requireNavigationScene().push(HybridSample::class.java)
         })
 
         addTitle(layout, getString(R.string.main_title_pro));
