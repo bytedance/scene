@@ -425,9 +425,9 @@ public abstract class GroupScene extends Scene implements SceneParent {
             if (holderView.getId() != View.NO_ID) {
                 if (sceneView.getId() == View.NO_ID) {
                     sceneView.setId(holderView.getId());
-                } else {
+                } else if (holderView.getId() != sceneView.getId()) {
                     String holderViewIdName = Utility.getIdName(requireSceneContext(), holderView.getId());
-                    String sceneViewIdName = Utility.getIdName(requireSceneContext(), holderView.getId());
+                    String sceneViewIdName = Utility.getIdName(requireSceneContext(), sceneView.getId());
                     throw new IllegalStateException(String.format("ScenePlaceHolderView's id %s is different from Scene root view's id %s"
                             , holderViewIdName, sceneViewIdName));
                 }
