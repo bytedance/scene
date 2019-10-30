@@ -24,17 +24,11 @@ import android.os.Build;
 import android.support.annotation.ColorInt;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.Nullable;
-import android.support.annotation.RestrictTo;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.view.WindowInsetsCompat;
 import android.util.AttributeSet;
 import android.view.View;
-import android.widget.FrameLayout;
-import android.widget.LinearLayout;
-import com.bytedance.scene.ui.R;
-
-import static android.support.annotation.RestrictTo.Scope.LIBRARY_GROUP;
 
 /**
  * Created by JiangQi on 8/28/18.
@@ -59,6 +53,13 @@ public final class NavigationBarView extends View {
         init();
     }
 
+    private final Runnable REQUEST_LAYOUT_RUNNABLE = new Runnable() {
+        @Override
+        public void run() {
+            requestLayout();
+        }
+    };
+
     private void init() {
         ViewCompat.setOnApplyWindowInsetsListener(this,
                 new android.support.v4.view.OnApplyWindowInsetsListener() {
@@ -69,8 +70,13 @@ public final class NavigationBarView extends View {
                             mLastInsets = null;
                             return insets;
                         }
-                        mLastInsets = new WindowInsetsCompat(insets);
-                        requestLayout();
+                        WindowInsetsCompat insetsCompat = new WindowInsetsCompat(insets);
+                        if (!insetsCompat.equals(mLastInsets)) {
+                            mLastInsets = new WindowInsetsCompat(insets);
+                            //Must post requestLayout otherwise ViewGroup's state will freeze in isLayoutRequested()==true,
+                            //then following requestLayout will be ignored
+                            post(REQUEST_LAYOUT_RUNNABLE);
+                        }
                         return new WindowInsetsCompat(insets).replaceSystemWindowInsets(
                                 insets.getSystemWindowInsetLeft(),
                                 insets.getSystemWindowInsetTop(),
