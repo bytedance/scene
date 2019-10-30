@@ -25,12 +25,12 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.bytedance.scene.Scene;
+import com.bytedance.scene.SceneComponentFactory;
 import com.bytedance.scene.SceneParent;
 import com.bytedance.scene.State;
 import com.bytedance.scene.animation.AnimationOrAnimator;
 import com.bytedance.scene.animation.AnimationOrAnimatorFactory;
 import com.bytedance.scene.interfaces.ChildSceneLifecycleCallbacks;
-import com.bytedance.scene.navigation.NavigationScene;
 import com.bytedance.scene.utlity.Experimental;
 import com.bytedance.scene.utlity.NonNullPair;
 import com.bytedance.scene.utlity.SceneInstanceUtility;
@@ -407,8 +407,16 @@ public abstract class GroupScene extends Scene implements SceneParent {
             ViewGroup.LayoutParams layoutParams = holderView.getLayoutParams();
             String name = holderView.getSceneName();
             String tag = holderView.getSceneTag();
+            Bundle arguments = holderView.getArguments();
 
-            Scene scene = SceneInstanceUtility.getInstanceFromClassName(requireSceneContext(), name, holderView.getArguments());
+            Scene scene = null;
+            SceneComponentFactory componentFactory = holderView.getSceneComponentFactory();
+            if (componentFactory != null) {
+                scene = componentFactory.instantiateScene(requireSceneContext().getClassLoader(), name, arguments);
+            }
+            if (scene == null) {
+                scene = SceneInstanceUtility.getInstanceFromClassName(requireSceneContext(), name, arguments);
+            }
             int index = parent.indexOfChild(holderView);
             parent.removeView(holderView);
             if (holderView.getVisibility() == View.VISIBLE) {

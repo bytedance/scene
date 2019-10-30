@@ -26,12 +26,14 @@ import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.View;
 import com.bytedance.scene.R;
+import com.bytedance.scene.SceneComponentFactory;
 import com.bytedance.scene.utlity.Utility;
 
 public final class ScenePlaceHolderView extends View {
     private String mSceneName;
     private String mSceneTag;
     private Bundle mSceneArguments;
+    private SceneComponentFactory mSceneComponentFactory;
 
     public ScenePlaceHolderView(Context context, @Nullable AttributeSet attrs) {
         this(context, attrs, 0);
@@ -57,6 +59,15 @@ public final class ScenePlaceHolderView extends View {
         } finally {
             typedArray.recycle();
         }
+    }
+
+    public void setSceneComponentFactory(@Nullable SceneComponentFactory callback) {
+        this.mSceneComponentFactory = callback;
+    }
+
+    @Nullable
+    public SceneComponentFactory getSceneComponentFactory() {
+        return this.mSceneComponentFactory;
     }
 
     public void setSceneTag(@NonNull String tag) {
