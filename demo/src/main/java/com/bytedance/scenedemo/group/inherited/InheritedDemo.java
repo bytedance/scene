@@ -72,36 +72,36 @@ public class InheritedDemo extends InheritedScene {
         if (!isAdded(scene3))
             add(R.id.block_3, scene3, "3");
     }
-}
 
-class Child0Scene extends Scene {
+    public static class Child0Scene extends Scene {
 
-    public static Child0Scene newInstance(int index) {
-        Child0Scene scene = new Child0Scene();
-        Bundle bundle = new Bundle();
-        bundle.putInt("index", index);
-        scene.setArguments(bundle);
-        return scene;
-    }
+        public static Child0Scene newInstance(int index) {
+            Child0Scene scene = new Child0Scene();
+            Bundle bundle = new Bundle();
+            bundle.putInt("index", index);
+            scene.setArguments(bundle);
+            return scene;
+        }
 
-    @NonNull
-    @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return new View(getActivity());
-    }
+        @NonNull
+        @Override
+        public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+            return new View(getActivity());
+        }
 
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        final int index = getArguments().getInt("index", 0);
-        getView().setBackgroundColor(ColorUtil.getMaterialColor(getResources(), index));
+        @Override
+        public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+            super.onActivityCreated(savedInstanceState);
+            final int index = getArguments().getInt("index", 0);
+            getView().setBackgroundColor(ColorUtil.getMaterialColor(getResources(), index));
 
-        getView().setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                InheritedDemo inheritedScene = getScope().getService(InheritedDemo.class);
-                inheritedScene.summary.setText("Child Scene" + index);
-            }
-        });
+            getView().setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    InheritedDemo inheritedScene = getScope().getService(InheritedDemo.class);
+                    inheritedScene.summary.setText("Child Scene" + index);
+                }
+            });
+        }
     }
 }

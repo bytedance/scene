@@ -29,9 +29,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 import com.bytedance.scene.navigation.NavigationScene;
 import com.bytedance.scene.utlity.Utility;
 
@@ -75,25 +72,6 @@ public class LifeCycleFragment extends Fragment implements NavigationScene.Navig
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRetainInstance(false);
-    }
-
-    /**
-     * If framework Fragment don't have View, getFragmentManager().beginTransaction().show(fragment).commitNowAllowingStateLoss()
-     * may throw NPE in Android 8.1.0
-     *
-     * java.lang.NullPointerException: Attempt to invoke virtual method 'void android.view.View.setVisibility(int)' on a null object reference
-     *         at android.app.FragmentTransition.configureSharedElementsReordered(FragmentTransition.java:487)
-     *         at android.app.FragmentTransition.configureTransitionsReordered(FragmentTransition.java:212)
-     *         at android.app.FragmentTransition.startTransitions(FragmentTransition.java:116)
-     *         at android.app.FragmentManagerImpl.executeOpsTogether(FragmentManager.java:2194)
-     *         at android.app.FragmentManagerImpl.removeRedundantOperationsAndExecute(FragmentManager.java:2142)
-     *         at android.app.FragmentManagerImpl.execSingleAction(FragmentManager.java:2013)
-     *         at android.app.BackStackRecord.commitNowAllowingStateLoss(BackStackRecord.java:662)
-     */
-    @Nullable
-    @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return new View(getActivity());
     }
 
     @Override

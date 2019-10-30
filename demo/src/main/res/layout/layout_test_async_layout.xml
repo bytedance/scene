@@ -35,7 +35,7 @@
         android:layout_marginRight="8dp"
         android:text="Button" />
 
-    <com.bytedance.scenedemo.async_inflate.TestAsyncView
+    <com.bytedance.scenedemo.group.async_inflate.TestAsyncView
         android:layout_width="100dp"
         android:layout_height="100dp"
         android:layout_marginTop="16dp"

@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          xmlns:tools="http://schemas.android.com/tools"
-          package="com.bytedance.scenedemo">
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.bytedance.scenedemo">
 
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -14,8 +13,8 @@
         tools:ignore="GoogleAppIndexingWarning">
         <activity
             android:name=".MainActivity"
-            android:windowSoftInputMode="adjustNothing"
-            android:configChanges="orientation|screenSize|keyboardHidden">
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:windowSoftInputMode="adjustNothing">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -23,11 +22,13 @@
             </intent-filter>
         </activity>
         <activity android:name=".navigation.performance.EmptyActivity" />
-        <activity android:name=".group.fragment.FragmentBindingDemoActivity" />
-        <activity android:name=".group.fragment.TestSceneToViewActivity" />
+        <activity android:name=".migrate.FragmentBindingDemoActivity" />
+        <activity android:name=".migrate.TestSceneToViewActivity" />
         <activity android:name="com.bytedance.scenedemo.navigation.forresult.TestActivityResultActivity" />
-        <activity android:name="com.bytedance.scenedemo.navigation.forresult.ActivityToSceneDemoActivity" />
+        <activity android:name="com.bytedance.scenedemo.activity_compatibility.scene_result.ActivityGetSceneResultSampleActivity" />
         <activity android:name=".restore.SupportRestoreActivity" />
+        <activity android:name=".migrate.migrate_from_classic_activity_fragment.MigrateFromClassicAndroidActivitySamplesActivity" />
     </application>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
 </manifest>

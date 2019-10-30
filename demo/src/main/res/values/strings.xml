@@ -12,6 +12,8 @@
     <string name="main_scene_title_anim">Animation</string>
     <string name="main_scene_title_architecture_patterns">Architecture Patterns</string>
     <string name="main_scene_title_activity_compatibility">Activity Compatibility</string>
+    <string name="main_scene_title_migrate">Migrate Guide</string>
+    <string name="main_scene_title_benchmark">Benchmark</string>
     <string name="main_scene_title_lifecycle">LifeCycle</string>
     <string name="main_scene_title_extreme_case">Case</string>
 
@@ -41,13 +43,14 @@
     <string name="main_nav_btn_deep_link">Deep Link (Todo)</string>
     <string name="main_nav_btn_modify_activity_states">Modify and Recovery the states of Activity</string>
     <string name="main_part_btn_tab_view_pager">TabLayout + ViewPager</string>
-    <string name="main_part_btn_drawer">Drawer</string>
+    <string name="main_part_btn_drawer">Drawer(NavigationView)</string>
     <string name="main_part_btn_bottom_tab_layout">Bottom TabLayout</string>
     <string name="main_part_btn_dialog">Dialog</string>
     <string name="main_part_btn_child_scene">Child Scene(add remove show hide)</string>
     <string name="main_part_btn_scene_place_holder_view">ScenePlaceHolderView(xml)</string>
-    <string name="main_part_btn_bind_to_fragment">Bind to Fragment</string>
+    <string name="main_part_btn_bind_navigationscene_to_fragment">Bind NavigationScene to Fragment</string>
     <string name="main_part_btn_bind_to_view">Bind to View</string>
+    <string name="main_part_btn_migrate_from_classic_android_app">Migrate from classic Android app</string>
     <string name="main_part_btn_async_inflate">Async Inflate</string>
     <string name="main_part_btn_inherited_scene">Inherited Scene</string>
     <string name="main_part_btn_floating_window">Floating Window (Todo)</string>
@@ -93,7 +96,6 @@
     <string name="nav_result_scene_to_scene">Scene push Scene for result</string>
     <string name="nav_result_scene_to_activity">Scene start Activity for result</string>
     <string name="nav_result_scene_to_activity_without_result">Case: Scene start Activity but without set a result</string>
-    <string name="nav_result_activity_to_scene">Activity push Scene(with SceneContainerActivity) for result</string>
     <string name="nav_result_permission">Request Permission in Scene</string>
     <string name="nav_result_callback_tip">Callback</string>
     <string name="nav_result_permission_tip_success">Success</string>
@@ -169,7 +171,9 @@
     <string name="case_group_scene_btn_1">Create GroupScene and its Children first, then add it</string>
     <string name="case_group_scene_btn_2">Create GroupScene first, then Add/Remove by reusing</string>
 
-    <string name="main_activity_btn_for_result">Get result</string>
+    <string name="main_activity_btn_scene_get_activity_result">Scene get Activity result</string>
+    <string name="main_activity_btn_activity_get_scene_result">Activity push Scene(with SceneContainerActivity) for result</string>
+    <string name="patterns_scope">Scope</string>
     <string name="patterns_mvp">MVP</string>
     <string name="patterns_mvvm">MVVM</string>
     <string name="patterns_mvi">MVI/Redux/Unidirectional data flow</string>

@@ -6,11 +6,7 @@ import android.os.Bundle
 import android.view.View
 import com.bytedance.scene.Scene
 import com.bytedance.scene.ui.template.NavigationViewScene
-import com.bytedance.scenedemo.activity_compatibility.ActivityCompatibilitySamples
-import com.bytedance.scenedemo.animation.AnimationListDemoScene
-import com.bytedance.scenedemo.architecture_patterns.PatternsSamples
-import com.bytedance.scenedemo.dialog.DialogListDemoScene
-import com.bytedance.scenedemo.multi_stack.MultiStackDemoScene
+import com.bytedance.scenedemo.benchmark.BenchmarkSamples
 import com.bytedance.scenedemo.router.RouterSample
 
 
@@ -24,11 +20,13 @@ class MainScene : NavigationViewScene() {
         map[R.id.navigation] = NavigationListDemo()
         map[R.id.navigation_multi_stack] = MultiStackDemoScene()
         map[R.id.navigation_router] = RouterSample()
-        map[R.id.group] = GroupListDemo()
-        map[R.id.dialog] = DialogListDemoScene()
+        map[R.id.group] = GroupSceneUsageSamples()
+        map[R.id.dialog] = DialogSamples()
         map[R.id.animation] = AnimationListDemoScene()
         map[R.id.architecture_patterns] = PatternsSamples()
         map[R.id.activity_compatibility] = ActivityCompatibilitySamples()
+        map[R.id.migrate] = MigrateSamples()
+        map[R.id.benchmark] = BenchmarkSamples()
         map[R.id.extreme_case] = CaseListDemo()
         return map
     }

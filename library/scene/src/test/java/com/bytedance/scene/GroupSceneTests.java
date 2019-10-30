@@ -106,6 +106,35 @@ public class GroupSceneTests {
     }
 
     @Test
+    public void testFindTagByScene() {
+        final int id = ViewIdGenerator.generateViewId();
+        GroupScene groupScene = new GroupScene() {
+            @NonNull
+            @Override
+            public ViewGroup onCreateView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container, @Nullable Bundle savedInstanceState) {
+                return new FrameLayout(requireSceneContext());
+            }
+
+            @Override
+            public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+                super.onActivityCreated(savedInstanceState);
+                getView().setId(id);
+            }
+        };
+        NavigationSourceUtility.createFromSceneLifecycleManager(groupScene);
+
+        TestScene scene = new TestScene();
+        groupScene.add(id, scene, "TAG");
+        assertEquals("TAG", groupScene.findTagByScene(scene));
+
+        TestScene secondScene = new TestScene();
+        groupScene.add(id, secondScene, "TAG2");
+        assertNotEquals("TAG", groupScene.findTagByScene(secondScene));
+
+        assertNull(groupScene.findTagByScene(new TestScene()));
+    }
+
+    @Test
     public void testAnimation() {
         final int id = ViewIdGenerator.generateViewId();
         GroupScene groupScene = new GroupScene() {
