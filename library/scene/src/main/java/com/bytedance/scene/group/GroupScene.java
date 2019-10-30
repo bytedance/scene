@@ -200,12 +200,12 @@ public abstract class GroupScene extends Scene implements SceneParent {
     }
 
     @Override
-    public void disableSupportRestore() {
+    public final void disableSupportRestore() {
         this.mSupportRestore = false;
     }
 
     @Override
-    public boolean isSupportRestore() {
+    public final boolean isSupportRestore() {
         return this.mSupportRestore;
     }
 
