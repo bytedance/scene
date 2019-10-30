@@ -53,13 +53,7 @@ public final class ScenePlaceHolderView extends View {
                 0, 0);
         try {
             mSceneName = typedArray.getString(R.styleable.ScenePlaceHolderView_name);
-            if (TextUtils.isEmpty(mSceneName)) {
-                throw new IllegalArgumentException("ScenePlaceHolderView name can't be empty");
-            }
             mSceneTag = typedArray.getString(R.styleable.ScenePlaceHolderView_tag);
-            if (TextUtils.isEmpty(mSceneTag)) {
-                throw new IllegalArgumentException("ScenePlaceHolderView tag can't be empty");
-            }
         } finally {
             typedArray.recycle();
         }
@@ -71,6 +65,9 @@ public final class ScenePlaceHolderView extends View {
 
     @NonNull
     public String getSceneTag() {
+        if (TextUtils.isEmpty(mSceneTag)) {
+            throw new IllegalArgumentException("ScenePlaceHolderView tag is empty, invoke setSceneTag first");
+        }
         return this.mSceneTag;
     }
 
@@ -80,6 +77,9 @@ public final class ScenePlaceHolderView extends View {
 
     @NonNull
     public String getSceneName() {
+        if (TextUtils.isEmpty(mSceneName)) {
+            throw new IllegalArgumentException("ScenePlaceHolderView name is empty, invoke setSceneName first");
+        }
         return this.mSceneName;
     }
 
