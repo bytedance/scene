@@ -362,6 +362,7 @@ public abstract class Scene implements LifecycleOwner, ViewModelStoreOwner {
             }
         }
 
+        view.setSaveFromParentEnabled(false);
         mView = view;
         mCalled = false;
         onViewCreated(mView, savedInstanceState);

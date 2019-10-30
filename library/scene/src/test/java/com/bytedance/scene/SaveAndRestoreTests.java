@@ -2,8 +2,10 @@ package com.bytedance.scene;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +15,7 @@ import com.bytedance.scene.animation.animatorexecutor.NoAnimationExecutor;
 import com.bytedance.scene.group.GroupScene;
 import com.bytedance.scene.navigation.NavigationScene;
 import com.bytedance.scene.navigation.NavigationSceneOptions;
+import com.bytedance.scene.parcel.ParcelConstants;
 import com.bytedance.scene.utlity.ViewIdGenerator;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -21,10 +24,11 @@ import org.robolectric.RobolectricTestRunner;
 import org.robolectric.android.controller.ActivityController;
 import org.robolectric.annotation.Config;
 
+import java.util.ArrayList;
+
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertNotSame;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 
 @RunWith(RobolectricTestRunner.class)
@@ -308,6 +312,59 @@ public class SaveAndRestoreTests {
         assertNotSame(newChildScene, previousChildScene);
         assertTrue(newChildScene.getCheckBox().isChecked());//check View state restore
         assertEquals("Test", newChildScene.mValue);//check onSaveInstanceState and onViewStateRestored
+    }
+
+    @Test
+    public void testParentSceneViewStateBundleShouldNotSaveChildSceneViewState() {
+        SceneLifecycleManager sceneLifecycleManager = new SceneLifecycleManager();
+        NavigationScene navigationScene = new NavigationScene();
+        ActivityController<NavigationSourceUtility.TestActivity> controller = Robolectric.buildActivity(NavigationSourceUtility.TestActivity.class).create().start().resume();
+        NavigationSourceUtility.TestActivity testActivity = controller.get();
+        NavigationSceneOptions options = new NavigationSceneOptions(TestFixIdGroupScene.class);
+        navigationScene.setArguments(options.toBundle());
+
+        NavigationScene.NavigationSceneHost navigationSceneHost = new NavigationScene.NavigationSceneHost() {
+            @Override
+            public boolean isSupportRestore() {
+                return true;
+            }
+        };
+
+        Scope.RootScopeFactory rootScopeFactory = new Scope.RootScopeFactory() {
+            @Override
+            public Scope getRootScope() {
+                return Scope.DEFAULT_ROOT_SCOPE_FACTORY.getRootScope();
+            }
+        };
+
+        navigationScene.setDefaultNavigationAnimationExecutor(new NoAnimationExecutor());
+
+        sceneLifecycleManager.onActivityCreated(testActivity, testActivity.mFrameLayout,
+                navigationScene, navigationSceneHost, rootScopeFactory,
+                null, null);
+
+        sceneLifecycleManager.onStart();
+        sceneLifecycleManager.onResume();
+
+        TestFixIdGroupScene parentGroupScene = (TestFixIdGroupScene) navigationScene.getCurrentScene();
+        TestScene childScene = new TestScene();
+        parentGroupScene.add(parentGroupScene.id, childScene, "TAG");
+
+        childScene.setValue("Test");
+        childScene.getCheckBox().setChecked(true);
+
+        Bundle bundle = new Bundle();
+        sceneLifecycleManager.onSaveInstanceState(bundle);
+        ArrayList<Bundle> navigationSceneChildrenSceneBundleList = bundle.getParcelableArrayList(ParcelConstants.KEY_NAVIGATION_SCENE_MANAGER_TAG);
+        Bundle groupSceneBundle = navigationSceneChildrenSceneBundleList.get(0);
+        SparseArray<Parcelable> groupSceneViewStateArray = groupSceneBundle.getSparseParcelableArray(ParcelConstants.KEY_SCENE_VIEWS_TAG);
+        //Parent Scene's view state bundle should not have child Scene's view state, child Scene' view state is saved to child Scene's bundle.
+        assertNull(groupSceneViewStateArray.get(childScene.requireView().getId()));
+        ArrayList<Bundle> groupSceneChildrenSceneBundleList = groupSceneBundle.getParcelableArrayList(ParcelConstants.KEY_GROUP_SCENE_MANAGER_TAG);
+        Bundle groupChildSceneBundle = groupSceneChildrenSceneBundleList.get(0);
+        SparseArray<Parcelable> childSceneViewStateArray = groupChildSceneBundle.getSparseParcelableArray(ParcelConstants.KEY_SCENE_VIEWS_TAG);
+        //Child Scene's view state should be saved in this SparseArray
+        assertNotNull(childSceneViewStateArray.get(childScene.requireView().getId()));
     }
 
     public static NavigationScene createNavigationScene(final Scene rootScene) {
