@@ -25,10 +25,16 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.bytedance.scene.Scene;
+import com.bytedance.scene.SceneParent;
 import com.bytedance.scene.State;
 import com.bytedance.scene.animation.AnimationOrAnimator;
 import com.bytedance.scene.animation.AnimationOrAnimatorFactory;
 import com.bytedance.scene.interfaces.ChildSceneLifecycleCallbacks;
+import com.bytedance.scene.navigation.NavigationScene;
+import com.bytedance.scene.utlity.Experimental;
+import com.bytedance.scene.utlity.NonNullPair;
+import com.bytedance.scene.utlity.SceneInstanceUtility;
+import com.bytedance.scene.utlity.ThreadUtility;
 import com.bytedance.scene.utlity.*;
 
 import java.util.ArrayList;
@@ -95,11 +101,14 @@ import static android.support.annotation.RestrictTo.Scope.LIBRARY_GROUP;
  * }
  * ```
  */
-public abstract class GroupScene extends Scene {
+public abstract class GroupScene extends Scene implements SceneParent {
+    private static final String KEY_GROUP_SCENE_SUPPORT_RESTORE_ARGUMENT = "bd-scene-group:support_restore";
+
     @NonNull
     private final GroupSceneManager mGroupSceneManager;
     @NonNull
     private final List<NonNullPair<ChildSceneLifecycleCallbacks, Boolean>> mLifecycleCallbacks = new ArrayList<>();
+    private boolean mSupportRestore = true;
 
     public GroupScene() {
         this.mGroupSceneManager = new GroupSceneManager(this);
@@ -111,6 +120,7 @@ public abstract class GroupScene extends Scene {
     }
 
     @NonNull
+    @Override
     public final List<Scene> getSceneList() {
         return this.mGroupSceneManager.getChildSceneList();
     }
@@ -189,9 +199,14 @@ public abstract class GroupScene extends Scene {
         mGroupSceneManager.add(viewId, scene, tag, animationOrAnimatorFactory);
     }
 
-    private boolean isSupportRestore() {
-        return getNavigationScene() != null
-                && getNavigationScene().isSupportRestore();
+    @Override
+    public void disableSupportRestore() {
+        this.mSupportRestore = false;
+    }
+
+    @Override
+    public boolean isSupportRestore() {
+        return this.mSupportRestore;
     }
 
     @Nullable
@@ -316,14 +331,6 @@ public abstract class GroupScene extends Scene {
     }
 
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (savedInstanceState != null) {
-            this.mGroupSceneManager.restoreFromBundle(requireActivity(), savedInstanceState);
-        }
-    }
-
-    @Override
     public final void dispatchAttachActivity(@NonNull Activity activity) {
         super.dispatchAttachActivity(activity);
     }
@@ -331,11 +338,35 @@ public abstract class GroupScene extends Scene {
     @Override
     public final void dispatchAttachScene(@Nullable Scene parentScene) {
         super.dispatchAttachScene(parentScene);
+        if (parentScene == null) {
+            //ignore
+        } else if (parentScene instanceof SceneParent) {
+            SceneParent sceneParent = (SceneParent) parentScene;
+            if (!sceneParent.isSupportRestore()) {
+                disableSupportRestore();
+            }
+        } else {
+            throw new SceneInternalException("unknown parent Scene type " + parentScene.getClass());
+        }
     }
 
     @Override
     public final void dispatchCreate(@Nullable Bundle savedInstanceState) {
         super.dispatchCreate(savedInstanceState);
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (savedInstanceState != null) {
+            boolean supportRestore = savedInstanceState.getBoolean(KEY_GROUP_SCENE_SUPPORT_RESTORE_ARGUMENT, isSupportRestore());
+            if (!supportRestore) {
+                disableSupportRestore();
+            }
+            if (isSupportRestore()) {
+                this.mGroupSceneManager.restoreFromBundle(requireActivity(), savedInstanceState);
+            }
+        }
     }
 
     /**
@@ -460,7 +491,14 @@ public abstract class GroupScene extends Scene {
     @CallSuper
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        this.mGroupSceneManager.saveToBundle(outState);
+        if (outState.containsKey(KEY_GROUP_SCENE_SUPPORT_RESTORE_ARGUMENT)) {
+            throw new IllegalArgumentException("outState already contains key " + KEY_GROUP_SCENE_SUPPORT_RESTORE_ARGUMENT);
+        } else {
+            outState.putBoolean(KEY_GROUP_SCENE_SUPPORT_RESTORE_ARGUMENT, isSupportRestore());
+            if (isSupportRestore()) {
+                this.mGroupSceneManager.saveToBundle(outState);
+            }
+        }
     }
 
     /**
