@@ -27,12 +27,15 @@ public interface SceneDelegate {
 
     /**
      * The timing of creating NavigationScene is different:
-     *   1. the first time bind to Fragment
-     *   2. Fragment destruction recovery
+     * 1. the first time bind to Fragment
+     * 2. Fragment destruction recovery
      * This method can guarantee when the NavigationScene object is created.
      * Notice: The callback doesn't have the complete life cycle,
-     *         it's just a primitive Java object.
+     * it's just a primitive Java object.
+     * <p>
+     * deprecated because getNavigationScene() always return nonnull NavigationScene if not abandon
      */
+    @Deprecated
     void setNavigationSceneAvailableCallback(@NonNull NavigationSceneAvailableCallback callback);
 
     //clear all lifecycle fragment, scope fragment, NavigationScene, GroupScene relation to this SceneDelegate

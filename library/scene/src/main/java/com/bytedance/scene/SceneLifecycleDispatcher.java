@@ -40,7 +40,6 @@ public final class SceneLifecycleDispatcher implements SceneContainerLifecycleCa
     private final NavigationScene mNavigationScene;
     private final Scope.RootScopeFactory mRootScopeFactory;
     private final boolean mSupportRestore;
-    private NavigationSceneAvailableCallback mNavigationSceneAvailableCallback;
     private final SceneComponentFactory mRootSceneComponentFactory;
     private final SceneLifecycleManager mLifecycleManager = new SceneLifecycleManager();
 
@@ -56,17 +55,6 @@ public final class SceneLifecycleDispatcher implements SceneContainerLifecycleCa
         this.mRootScopeFactory = rootScopeFactory;
         this.mRootSceneComponentFactory = sceneComponentFactory;
         this.mSupportRestore = supportRestore;
-    }
-
-    public void setNavigationSceneAvailableCallback(NavigationSceneAvailableCallback callback) {
-        this.mNavigationSceneAvailableCallback = callback;
-        if (this.mNavigationScene != null) {
-            this.mNavigationSceneAvailableCallback.onNavigationSceneAvailable(this.mNavigationScene);
-        }
-    }
-
-    public NavigationScene getNavigationScene() {
-        return this.mNavigationScene;
     }
 
     @Override

@@ -266,13 +266,7 @@ public final class NavigationSceneUtility {
             Utility.commitFragment(fragmentManager, transaction, immediate);
             targetScopeHolderFragment = scopeHolderFragment;
         }
-        final LifeCycleFragmentSceneDelegate delegate = new LifeCycleFragmentSceneDelegate(activity, lifeCycleFragment, targetScopeHolderFragment, dispatcher, immediate);
-        dispatcher.setNavigationSceneAvailableCallback(new NavigationSceneAvailableCallback() {
-            @Override
-            public void onNavigationSceneAvailable(@NonNull NavigationScene navigationScene) {
-                delegate.onNavigationSceneAvailable(navigationScene);
-            }
-        });
+        final LifeCycleFragmentSceneDelegate delegate = new LifeCycleFragmentSceneDelegate(activity, navigationScene, lifeCycleFragment, targetScopeHolderFragment, immediate);
         return delegate;
     }
 

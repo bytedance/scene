@@ -266,13 +266,12 @@ public final class NavigationSceneCompatUtility {
         final LifeCycleCompatFragment finalLifeCycleFragment = lifeCycleFragment;
         final ScopeHolderCompatFragment finalTargetScopeHolderFragment = targetScopeHolderFragment;
         final SceneLifecycleDispatcher finalDispatcher = dispatcher;
-        final FragmentDelegateProxy proxy = new FragmentDelegateProxy() {
+        final SceneDelegate proxy = new SceneDelegate() {
             private boolean mAbandoned = false;
 
             @Override
             public boolean onBackPressed() {
-                NavigationScene navigationScene = finalDispatcher.getNavigationScene();
-                return !mAbandoned && navigationScene != null && navigationScene.onBackPressed();
+                return !mAbandoned && navigationScene.onBackPressed();
             }
 
             @Override
@@ -281,7 +280,12 @@ public final class NavigationSceneCompatUtility {
                 if (this.mAbandoned) {
                     return null;
                 }
-                return finalDispatcher.getNavigationScene();
+                return navigationScene;
+            }
+
+            @Override
+            public void setNavigationSceneAvailableCallback(@NonNull NavigationSceneAvailableCallback callback) {
+                callback.onNavigationSceneAvailable(navigationScene);
             }
 
             @Override
@@ -310,12 +314,6 @@ public final class NavigationSceneCompatUtility {
                 }
             }
         };
-        dispatcher.setNavigationSceneAvailableCallback(new NavigationSceneAvailableCallback() {
-            @Override
-            public void onNavigationSceneAvailable(@NonNull NavigationScene navigationScene) {
-                proxy.onNavigationSceneAvailable(navigationScene);
-            }
-        });
         return proxy;
     }
 
@@ -329,29 +327,6 @@ public final class NavigationSceneCompatUtility {
                 CHECK_DUPLICATE_TAG_MAP.put(fragment, set);
             }
             set.add(tag);
-        }
-    }
-
-    private static abstract class FragmentDelegateProxy implements SceneDelegate, NavigationSceneAvailableCallback {
-        @Nullable
-        private NavigationScene mNavigationScene;
-        @Nullable
-        private NavigationSceneAvailableCallback mNavigationSceneAvailableCallback;
-
-        @Override
-        public final void onNavigationSceneAvailable(@NonNull NavigationScene navigationScene) {
-            this.mNavigationScene = navigationScene;
-            if (this.mNavigationSceneAvailableCallback != null) {
-                this.mNavigationSceneAvailableCallback.onNavigationSceneAvailable(navigationScene);
-            }
-        }
-
-        @Override
-        public final void setNavigationSceneAvailableCallback(@NonNull NavigationSceneAvailableCallback callback) {
-            this.mNavigationSceneAvailableCallback = callback;
-            if (this.mNavigationScene != null) {
-                this.mNavigationSceneAvailableCallback.onNavigationSceneAvailable(this.mNavigationScene);
-            }
         }
     }
 }
