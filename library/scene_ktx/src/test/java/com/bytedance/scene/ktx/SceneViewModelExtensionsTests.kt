@@ -120,12 +120,6 @@ fun createFromInitSceneLifecycleManagerByFragmentActivity(rootScene: Scene): Pai
     val options = NavigationSceneOptions(rootScene.javaClass)
     navigationScene.setArguments(options.toBundle())
 
-    val navigationSceneHost = object : NavigationScene.NavigationSceneHost {
-        override fun isSupportRestore(): Boolean {
-            return false
-        }
-    }
-
     val rootScopeFactory = Scope.RootScopeFactory { Scope.DEFAULT_ROOT_SCOPE_FACTORY.rootScope }
 
     val sceneComponentFactory = SceneComponentFactory { _, className, _ ->
@@ -138,8 +132,8 @@ fun createFromInitSceneLifecycleManagerByFragmentActivity(rootScene: Scene): Pai
 
     val sceneLifecycleManager = SceneLifecycleManager()
     sceneLifecycleManager.onActivityCreated(testActivity, testActivity.mFrameLayout,
-            navigationScene, navigationSceneHost, rootScopeFactory,
-            sceneComponentFactory, null)
+            navigationScene, rootScopeFactory,
+            sceneComponentFactory, false, null)
     return Pair(sceneLifecycleManager, navigationScene)
 }
 

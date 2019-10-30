@@ -242,20 +242,19 @@ public final class NavigationSceneCompatUtility {
         ViewFinder viewFinder = new FragmentViewFinder(fragment);
         final NavigationScene navigationScene = (NavigationScene) SceneInstanceUtility.getInstanceFromClass(NavigationScene.class,
                 navigationSceneOptions.toBundle());
-
         ScopeHolderCompatFragment targetScopeHolderFragment = null;
         SceneLifecycleDispatcher dispatcher = null;
         if (lifeCycleFragment != null) {
             final ScopeHolderCompatFragment scopeHolderFragment = ScopeHolderCompatFragment.install(fragment, tag, false, immediate);
             targetScopeHolderFragment = scopeHolderFragment;
 
-            dispatcher = new SceneLifecycleDispatcher(containerId, viewFinder, navigationScene, lifeCycleFragment, scopeHolderFragment, rootSceneComponentFactory, supportRestore);
+            dispatcher = new SceneLifecycleDispatcher(containerId, viewFinder, navigationScene, scopeHolderFragment, rootSceneComponentFactory, supportRestore);
             lifeCycleFragment.setSceneContainerLifecycleCallback(dispatcher);
         } else {
             final ScopeHolderCompatFragment scopeHolderFragment = ScopeHolderCompatFragment.install(fragment, tag, !supportRestore, immediate);
             lifeCycleFragment = LifeCycleCompatFragment.newInstance(supportRestore);
 
-            dispatcher = new SceneLifecycleDispatcher(containerId, viewFinder, navigationScene, lifeCycleFragment, scopeHolderFragment, rootSceneComponentFactory, supportRestore);
+            dispatcher = new SceneLifecycleDispatcher(containerId, viewFinder, navigationScene, scopeHolderFragment, rootSceneComponentFactory, supportRestore);
             lifeCycleFragment.setSceneContainerLifecycleCallback(dispatcher);
 
             FragmentTransaction transaction = fragmentManager.beginTransaction();

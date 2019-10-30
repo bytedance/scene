@@ -251,7 +251,7 @@ public final class NavigationSceneUtility {
         SceneLifecycleDispatcher dispatcher = null;
         if (lifeCycleFragment != null) {
             final ScopeHolderFragment scopeHolderFragment = ScopeHolderFragment.install(activity, tag, false, immediate);
-            dispatcher = new SceneLifecycleDispatcher(idRes, viewFinder, navigationScene, lifeCycleFragment, scopeHolderFragment, rootSceneComponentFactory, supportRestore);
+            dispatcher = new SceneLifecycleDispatcher(idRes, viewFinder, navigationScene, scopeHolderFragment, rootSceneComponentFactory, supportRestore);
             lifeCycleFragment.setSceneContainerLifecycleCallback(dispatcher);
             targetScopeHolderFragment = scopeHolderFragment;
         } else {
@@ -260,7 +260,7 @@ public final class NavigationSceneUtility {
             transaction.add(idRes, lifeCycleFragment, tag);
 
             final ScopeHolderFragment scopeHolderFragment = ScopeHolderFragment.install(activity, tag, !supportRestore, immediate);
-            dispatcher = new SceneLifecycleDispatcher(idRes, viewFinder, navigationScene, lifeCycleFragment, scopeHolderFragment, rootSceneComponentFactory, supportRestore);
+            dispatcher = new SceneLifecycleDispatcher(idRes, viewFinder, navigationScene, scopeHolderFragment, rootSceneComponentFactory, supportRestore);
             lifeCycleFragment.setSceneContainerLifecycleCallback(dispatcher);
 
             Utility.commitFragment(fragmentManager, transaction, immediate);

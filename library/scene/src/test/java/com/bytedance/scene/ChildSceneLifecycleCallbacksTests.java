@@ -131,13 +131,6 @@ public class ChildSceneLifecycleCallbacksTests {
         navigationScene.setArguments(options.toBundle());
         navigationScene.registerChildSceneLifecycleCallbacks(callbacks, false);
 
-        NavigationScene.NavigationSceneHost navigationSceneHost = new NavigationScene.NavigationSceneHost() {
-            @Override
-            public boolean isSupportRestore() {
-                return false;
-            }
-        };
-
         Scope.RootScopeFactory rootScopeFactory = new Scope.RootScopeFactory() {
             @Override
             public Scope getRootScope() {
@@ -159,8 +152,8 @@ public class ChildSceneLifecycleCallbacksTests {
 
         SceneLifecycleManager lifecycleManager = new SceneLifecycleManager();
         lifecycleManager.onActivityCreated(testActivity, testActivity.mFrameLayout,
-                navigationScene, navigationSceneHost, rootScopeFactory,
-                sceneComponentFactory, null);
+                navigationScene, rootScopeFactory,
+                sceneComponentFactory, false, null);
         lifecycleManager.onStart();
         lifecycleManager.onResume();
         lifecycleManager.onPause();

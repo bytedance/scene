@@ -15,8 +15,6 @@
  */
 package com.bytedance.scene.ui;
 
-import android.content.Intent;
-import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -24,7 +22,6 @@ import android.support.annotation.RestrictTo;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import com.bytedance.scene.SceneContainerLifecycleCallback;
-import com.bytedance.scene.navigation.NavigationScene;
 
 import static android.support.annotation.RestrictTo.Scope.LIBRARY_GROUP;
 
@@ -32,18 +29,12 @@ import static android.support.annotation.RestrictTo.Scope.LIBRARY_GROUP;
  * @hide
  */
 @RestrictTo(LIBRARY_GROUP)
-public class LifeCycleCompatFragment extends Fragment implements NavigationScene.NavigationSceneHost {
+public class LifeCycleCompatFragment extends Fragment {
     public static LifeCycleCompatFragment newInstance(boolean supportRestore) {
         LifeCycleCompatFragment fragment = new LifeCycleCompatFragment();
-        Bundle bundle = new Bundle();
-        bundle.putBoolean(TAG_SUPPORT_RESTORE, supportRestore);
-        fragment.setArguments(bundle);
         return fragment;
     }
 
-    private static final String TAG_SUPPORT_RESTORE = "supportRestore";
-
-    private boolean mSupportRestore;
     private SceneContainerLifecycleCallback mSceneContainerLifecycleCallback = null;
 
     public void setSceneContainerLifecycleCallback(SceneContainerLifecycleCallback callback) {
@@ -59,7 +50,6 @@ public class LifeCycleCompatFragment extends Fragment implements NavigationScene
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        this.mSupportRestore = getArguments().getBoolean(TAG_SUPPORT_RESTORE);
         if (this.mSceneContainerLifecycleCallback != null) {
             this.mSceneContainerLifecycleCallback.onActivityCreated(getActivity(), savedInstanceState);
         } else {
@@ -99,7 +89,7 @@ public class LifeCycleCompatFragment extends Fragment implements NavigationScene
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState) {
+    public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         if (this.mSceneContainerLifecycleCallback != null) {
             this.mSceneContainerLifecycleCallback.onSaveInstanceState(outState);
@@ -120,10 +110,5 @@ public class LifeCycleCompatFragment extends Fragment implements NavigationScene
         if (this.mSceneContainerLifecycleCallback != null) {
             this.mSceneContainerLifecycleCallback.onViewDestroyed();
         }
-    }
-
-    @Override
-    public boolean isSupportRestore() {
-        return this.mSupportRestore;
     }
 }

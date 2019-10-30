@@ -48,13 +48,6 @@ public class SaveAndRestoreTests {
             NavigationSceneOptions options = new NavigationSceneOptions(TestScene.class);
             navigationScene.setArguments(options.toBundle());
 
-            NavigationScene.NavigationSceneHost navigationSceneHost = new NavigationScene.NavigationSceneHost() {
-                @Override
-                public boolean isSupportRestore() {
-                    return true;
-                }
-            };
-
             Scope.RootScopeFactory rootScopeFactory = new Scope.RootScopeFactory() {
                 @Override
                 public Scope getRootScope() {
@@ -65,8 +58,8 @@ public class SaveAndRestoreTests {
             navigationScene.setDefaultNavigationAnimationExecutor(new NoAnimationExecutor());
 
             sceneLifecycleManager.onActivityCreated(testActivity, testActivity.mFrameLayout,
-                    navigationScene, navigationSceneHost, rootScopeFactory,
-                    null, null);
+                    navigationScene, rootScopeFactory,
+                    null, true, null);
 
             sceneLifecycleManager.onStart();
             sceneLifecycleManager.onResume();
@@ -92,13 +85,6 @@ public class SaveAndRestoreTests {
             NavigationScene navigationScene = new NavigationScene();
             navigationScene.setArguments(options.toBundle());
 
-            NavigationScene.NavigationSceneHost navigationSceneHost = new NavigationScene.NavigationSceneHost() {
-                @Override
-                public boolean isSupportRestore() {
-                    return true;
-                }
-            };
-
             Scope.RootScopeFactory rootScopeFactory = new Scope.RootScopeFactory() {
                 @Override
                 public Scope getRootScope() {
@@ -109,8 +95,8 @@ public class SaveAndRestoreTests {
             navigationScene.setDefaultNavigationAnimationExecutor(new NoAnimationExecutor());
             SceneLifecycleManager sceneLifecycleManager = new SceneLifecycleManager();
             sceneLifecycleManager.onActivityCreated(testActivity, testActivity.mFrameLayout,
-                    navigationScene, navigationSceneHost, rootScopeFactory,
-                    null, bundle);
+                    navigationScene, rootScopeFactory,
+                    null, true, bundle);
             newRootScene = (TestScene) navigationScene.getCurrentScene();
         }
 
@@ -135,13 +121,6 @@ public class SaveAndRestoreTests {
             NavigationSceneOptions options = new NavigationSceneOptions(TestFixIdGroupScene.class);
             navigationScene.setArguments(options.toBundle());
 
-            NavigationScene.NavigationSceneHost navigationSceneHost = new NavigationScene.NavigationSceneHost() {
-                @Override
-                public boolean isSupportRestore() {
-                    return true;
-                }
-            };
-
             Scope.RootScopeFactory rootScopeFactory = new Scope.RootScopeFactory() {
                 @Override
                 public Scope getRootScope() {
@@ -152,8 +131,8 @@ public class SaveAndRestoreTests {
             navigationScene.setDefaultNavigationAnimationExecutor(new NoAnimationExecutor());
 
             sceneLifecycleManager.onActivityCreated(testActivity, testActivity.mFrameLayout,
-                    navigationScene, navigationSceneHost, rootScopeFactory,
-                    null, null);
+                    navigationScene, rootScopeFactory,
+                    null, true, null);
 
             sceneLifecycleManager.onStart();
             sceneLifecycleManager.onResume();
@@ -183,13 +162,6 @@ public class SaveAndRestoreTests {
             NavigationScene navigationScene = new NavigationScene();
             navigationScene.setArguments(options.toBundle());
 
-            NavigationScene.NavigationSceneHost navigationSceneHost = new NavigationScene.NavigationSceneHost() {
-                @Override
-                public boolean isSupportRestore() {
-                    return true;
-                }
-            };
-
             Scope.RootScopeFactory rootScopeFactory = new Scope.RootScopeFactory() {
                 @Override
                 public Scope getRootScope() {
@@ -200,8 +172,8 @@ public class SaveAndRestoreTests {
             navigationScene.setDefaultNavigationAnimationExecutor(new NoAnimationExecutor());
             SceneLifecycleManager sceneLifecycleManager = new SceneLifecycleManager();
             sceneLifecycleManager.onActivityCreated(testActivity, testActivity.mFrameLayout,
-                    navigationScene, navigationSceneHost, rootScopeFactory,
-                    null, bundle);
+                    navigationScene, rootScopeFactory,
+                    null, true, bundle);
             newRootScene = (TestFixIdGroupScene) navigationScene.getCurrentScene();
             newChildScene = newRootScene.findSceneByTag("TAG");
         }
@@ -233,13 +205,6 @@ public class SaveAndRestoreTests {
             NavigationSceneOptions options = new NavigationSceneOptions(TestGroupScene.class);
             navigationScene.setArguments(options.toBundle());
 
-            NavigationScene.NavigationSceneHost navigationSceneHost = new NavigationScene.NavigationSceneHost() {
-                @Override
-                public boolean isSupportRestore() {
-                    return true;
-                }
-            };
-
             Scope.RootScopeFactory rootScopeFactory = new Scope.RootScopeFactory() {
                 @Override
                 public Scope getRootScope() {
@@ -250,8 +215,8 @@ public class SaveAndRestoreTests {
             navigationScene.setDefaultNavigationAnimationExecutor(new NoAnimationExecutor());
 
             sceneLifecycleManager.onActivityCreated(testActivity, testActivity.mFrameLayout,
-                    navigationScene, navigationSceneHost, rootScopeFactory,
-                    null, null);
+                    navigationScene, rootScopeFactory,
+                    null, true, null);
 
             sceneLifecycleManager.onStart();
             sceneLifecycleManager.onResume();
@@ -281,13 +246,6 @@ public class SaveAndRestoreTests {
             NavigationScene navigationScene = new NavigationScene();
             navigationScene.setArguments(options.toBundle());
 
-            NavigationScene.NavigationSceneHost navigationSceneHost = new NavigationScene.NavigationSceneHost() {
-                @Override
-                public boolean isSupportRestore() {
-                    return true;
-                }
-            };
-
             Scope.RootScopeFactory rootScopeFactory = new Scope.RootScopeFactory() {
                 @Override
                 public Scope getRootScope() {
@@ -298,8 +256,8 @@ public class SaveAndRestoreTests {
             navigationScene.setDefaultNavigationAnimationExecutor(new NoAnimationExecutor());
             SceneLifecycleManager sceneLifecycleManager = new SceneLifecycleManager();
             sceneLifecycleManager.onActivityCreated(testActivity, testActivity.mFrameLayout,
-                    navigationScene, navigationSceneHost, rootScopeFactory,
-                    null, bundle);
+                    navigationScene, rootScopeFactory,
+                    null, true, bundle);
             newRootScene = (TestGroupScene) navigationScene.getCurrentScene();
             newChildScene = newRootScene.findSceneByTag("TAG");
         }
@@ -323,13 +281,6 @@ public class SaveAndRestoreTests {
         NavigationSceneOptions options = new NavigationSceneOptions(TestFixIdGroupScene.class);
         navigationScene.setArguments(options.toBundle());
 
-        NavigationScene.NavigationSceneHost navigationSceneHost = new NavigationScene.NavigationSceneHost() {
-            @Override
-            public boolean isSupportRestore() {
-                return true;
-            }
-        };
-
         Scope.RootScopeFactory rootScopeFactory = new Scope.RootScopeFactory() {
             @Override
             public Scope getRootScope() {
@@ -337,11 +288,11 @@ public class SaveAndRestoreTests {
             }
         };
 
-        navigationScene.setDefaultNavigationAnimationExecutor(new NoAnimationExecutor());
+        navigationScene.setDefaultNavigationAnimationExecutor(null);
 
         sceneLifecycleManager.onActivityCreated(testActivity, testActivity.mFrameLayout,
-                navigationScene, navigationSceneHost, rootScopeFactory,
-                null, null);
+                navigationScene, rootScopeFactory,
+                null, true, null);
 
         sceneLifecycleManager.onStart();
         sceneLifecycleManager.onResume();
@@ -375,13 +326,6 @@ public class SaveAndRestoreTests {
         NavigationSceneOptions options = new NavigationSceneOptions(TestScene.class);
         navigationScene.setArguments(options.toBundle());
 
-        NavigationScene.NavigationSceneHost navigationSceneHost = new NavigationScene.NavigationSceneHost() {
-            @Override
-            public boolean isSupportRestore() {
-                return true;
-            }
-        };
-
         Scope.RootScopeFactory rootScopeFactory = new Scope.RootScopeFactory() {
             @Override
             public Scope getRootScope() {
@@ -392,13 +336,13 @@ public class SaveAndRestoreTests {
         navigationScene.setDefaultNavigationAnimationExecutor(null);
 
         sceneLifecycleManager.onActivityCreated(testActivity, testActivity.mFrameLayout,
-                navigationScene, navigationSceneHost, rootScopeFactory,
+                navigationScene, rootScopeFactory,
                 new SceneComponentFactory() {
                     @Override
                     public Scene instantiateScene(ClassLoader cl, String className, Bundle bundle) {
                         return rootScene;
                     }
-                }, null);
+                }, true, null);
 
         sceneLifecycleManager.onStart();
         sceneLifecycleManager.onResume();

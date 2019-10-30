@@ -16,23 +16,28 @@
 package com.bytedance.scene;
 
 import android.app.Activity;
-import android.content.Intent;
-import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.RestrictTo;
 import android.view.ViewGroup;
 import com.bytedance.scene.navigation.NavigationScene;
 
-//TODO merge SceneLifecycleDispatcher SceneLifecycleManager?
+import static android.support.annotation.RestrictTo.Scope.LIBRARY_GROUP;
+
+/**
+ * TODO merge SceneLifecycleDispatcher SceneLifecycleManager?
+ *
+ * @hide
+ */
+@RestrictTo(LIBRARY_GROUP)
 public final class SceneLifecycleDispatcher implements SceneContainerLifecycleCallback {
     private static final String TAG = "SCENE";
     @IdRes
     private final int mSceneContainerViewId;
     private final ViewFinder mViewFinder;
     private final NavigationScene mNavigationScene;
-    private final NavigationScene.NavigationSceneHost mNavigationSceneHost;
     private final Scope.RootScopeFactory mRootScopeFactory;
     private final boolean mSupportRestore;
     private NavigationSceneAvailableCallback mNavigationSceneAvailableCallback;
@@ -42,14 +47,12 @@ public final class SceneLifecycleDispatcher implements SceneContainerLifecycleCa
     public SceneLifecycleDispatcher(@IdRes int sceneContainerViewId,
                                     ViewFinder viewFinder,
                                     NavigationScene rootScene,
-                                    NavigationScene.NavigationSceneHost navigationSceneHost,
                                     Scope.RootScopeFactory rootScopeFactory,
                                     SceneComponentFactory sceneComponentFactory,
                                     boolean supportRestore) {
         this.mSceneContainerViewId = sceneContainerViewId;
         this.mViewFinder = viewFinder;
         this.mNavigationScene = rootScene;
-        this.mNavigationSceneHost = navigationSceneHost;
         this.mRootScopeFactory = rootScopeFactory;
         this.mRootSceneComponentFactory = sceneComponentFactory;
         this.mSupportRestore = supportRestore;
@@ -70,8 +73,8 @@ public final class SceneLifecycleDispatcher implements SceneContainerLifecycleCa
     public void onActivityCreated(@NonNull Activity activity, @Nullable Bundle savedInstanceState) {
         ViewGroup viewGroup = this.mViewFinder.requireViewById(this.mSceneContainerViewId);
         this.mLifecycleManager.onActivityCreated(activity, viewGroup,
-                this.mNavigationScene, this.mNavigationSceneHost, this.mRootScopeFactory,
-                this.mRootSceneComponentFactory, this.mSupportRestore ? savedInstanceState : null);
+                this.mNavigationScene, this.mRootScopeFactory,
+                this.mRootSceneComponentFactory, this.mSupportRestore, this.mSupportRestore ? savedInstanceState : null);
     }
 
     @Override

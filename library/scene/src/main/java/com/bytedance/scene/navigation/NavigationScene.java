@@ -82,11 +82,7 @@ import static android.support.annotation.RestrictTo.Scope.LIBRARY_GROUP;
  * 6.Parent: onDestroyView -> onDestroy -> onDetach
  */
 public final class NavigationScene extends Scene implements NavigationListener {
-    public static interface NavigationSceneHost {
-        boolean isSupportRestore();
-    }
-
-    private NavigationSceneHost mNavigationSceneHost;
+    private boolean mSupportRestore = true;//default support restore
     private SceneComponentFactory mRootSceneComponentFactory;   // Use this when destroying recovery
     NavigationSceneOptions mNavigationSceneOptions;
 
@@ -181,12 +177,16 @@ public final class NavigationScene extends Scene implements NavigationListener {
         return this.mDefaultNavigationAnimationExecutor;
     }
 
-    public void setNavigationSceneHost(@Nullable NavigationSceneHost navigationSceneHost) {
-        this.mNavigationSceneHost = navigationSceneHost;
-    }
-
     public void setRootSceneComponentFactory(@Nullable SceneComponentFactory rootSceneComponentFactory) {
         this.mRootSceneComponentFactory = rootSceneComponentFactory;
+    }
+
+    /**
+     * @hide
+     */
+    @RestrictTo(LIBRARY)
+    public void disableSupportRestore() {
+        this.mSupportRestore = false;
     }
 
     private void createRootSceneIfNeeded() {
@@ -259,7 +259,7 @@ public final class NavigationScene extends Scene implements NavigationListener {
         if (navigationScene != null) {
             return navigationScene.isSupportRestore();
         } else {
-            return mNavigationSceneHost.isSupportRestore();
+            return this.mSupportRestore;
         }
     }
 

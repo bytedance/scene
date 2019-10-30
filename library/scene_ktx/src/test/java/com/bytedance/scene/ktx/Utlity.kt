@@ -29,12 +29,6 @@ public fun createFromInitSceneLifecycleManager(rootScene: Scene): Pair<SceneLife
     val options = NavigationSceneOptions(rootScene.javaClass)
     navigationScene.setArguments(options.toBundle())
 
-    val navigationSceneHost = object : NavigationScene.NavigationSceneHost {
-        override fun isSupportRestore(): Boolean {
-            return false
-        }
-    }
-
     val rootScopeFactory = Scope.RootScopeFactory { Scope.DEFAULT_ROOT_SCOPE_FACTORY.rootScope }
 
     val sceneComponentFactory = SceneComponentFactory { _, className, _ ->
@@ -47,8 +41,8 @@ public fun createFromInitSceneLifecycleManager(rootScene: Scene): Pair<SceneLife
 
     val sceneLifecycleManager = SceneLifecycleManager()
     sceneLifecycleManager.onActivityCreated(testActivity, testActivity.mFrameLayout,
-            navigationScene, navigationSceneHost, rootScopeFactory,
-            sceneComponentFactory, null)
+            navigationScene, rootScopeFactory,
+            sceneComponentFactory, false, null)
     return Pair(sceneLifecycleManager, navigationScene)
 }
 
@@ -58,12 +52,6 @@ public fun createFromInitSceneLifecycleManager(activityClass: Class<out Activity
     val navigationScene = NavigationScene()
     val options = NavigationSceneOptions(rootScene.javaClass)
     navigationScene.setArguments(options.toBundle())
-
-    val navigationSceneHost = object : NavigationScene.NavigationSceneHost {
-        override fun isSupportRestore(): Boolean {
-            return false
-        }
-    }
 
     val rootScopeFactory = Scope.RootScopeFactory { Scope.DEFAULT_ROOT_SCOPE_FACTORY.rootScope }
 
@@ -77,7 +65,7 @@ public fun createFromInitSceneLifecycleManager(activityClass: Class<out Activity
 
     val sceneLifecycleManager = SceneLifecycleManager()
     sceneLifecycleManager.onActivityCreated(testActivity, testActivity.findViewById(android.R.id.content),
-            navigationScene, navigationSceneHost, rootScopeFactory,
-            sceneComponentFactory, null)
+            navigationScene, rootScopeFactory,
+            sceneComponentFactory, false, null)
     return Pair(sceneLifecycleManager, navigationScene)
 }

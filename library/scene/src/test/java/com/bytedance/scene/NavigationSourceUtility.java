@@ -43,13 +43,6 @@ public class NavigationSourceUtility {
         NavigationSceneOptions options = new NavigationSceneOptions(rootScene.getClass());
         navigationScene.setArguments(options.toBundle());
 
-        NavigationScene.NavigationSceneHost navigationSceneHost = new NavigationScene.NavigationSceneHost() {
-            @Override
-            public boolean isSupportRestore() {
-                return false;
-            }
-        };
-
         Scope.RootScopeFactory rootScopeFactory = new Scope.RootScopeFactory() {
             @Override
             public Scope getRootScope() {
@@ -71,8 +64,8 @@ public class NavigationSourceUtility {
 
         SceneLifecycleManager sceneLifecycleManager = new SceneLifecycleManager();
         sceneLifecycleManager.onActivityCreated(testActivity, testActivity.mFrameLayout,
-                navigationScene, navigationSceneHost, rootScopeFactory,
-                sceneComponentFactory, null);
+                navigationScene, rootScopeFactory,
+                sceneComponentFactory, false, null);
         return Pair.create(sceneLifecycleManager, navigationScene);
     }
 

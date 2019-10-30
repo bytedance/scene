@@ -18,8 +18,6 @@ package com.bytedance.scene;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
-import android.content.Intent;
-import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -36,22 +34,16 @@ import static android.support.annotation.RestrictTo.Scope.LIBRARY_GROUP;
  * @hide
  **/
 @RestrictTo(LIBRARY_GROUP)
-public class LifeCycleFragment extends Fragment implements NavigationScene.NavigationSceneHost {
+public class LifeCycleFragment extends Fragment {
     public static LifeCycleFragment newInstance(boolean supportRestore) {
         LifeCycleFragment fragment = new LifeCycleFragment();
-        Bundle bundle = new Bundle();
-        bundle.putBoolean(TAG_SUPPORT_RESTORE, supportRestore);
-        fragment.setArguments(bundle);
         return fragment;
     }
-
-    private static final String TAG_SUPPORT_RESTORE = "supportRestore";
 
     public static interface LifecycleFragmentDetachCallback {
         void onDetach();
     }
 
-    private boolean mSupportRestore;
     @Nullable
     private LifecycleFragmentDetachCallback mLifecycleFragmentDetachCallback = null;
     private SceneContainerLifecycleCallback mSceneContainerLifecycleCallback = null;
@@ -73,7 +65,6 @@ public class LifeCycleFragment extends Fragment implements NavigationScene.Navig
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        this.mSupportRestore = getArguments().getBoolean(TAG_SUPPORT_RESTORE);
         if (this.mSceneContainerLifecycleCallback != null) {
             this.mSceneContainerLifecycleCallback.onActivityCreated(getActivity(), savedInstanceState);
         } else {
@@ -143,10 +134,5 @@ public class LifeCycleFragment extends Fragment implements NavigationScene.Navig
         if (this.mLifecycleFragmentDetachCallback != null) {
             this.mLifecycleFragmentDetachCallback.onDetach();
         }
-    }
-
-    @Override
-    public boolean isSupportRestore() {
-        return this.mSupportRestore;
     }
 }
