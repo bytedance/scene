@@ -19,6 +19,7 @@ import android.arch.lifecycle.Lifecycle
 import android.arch.lifecycle.LifecycleObserver
 import android.arch.lifecycle.OnLifecycleEvent
 import android.content.Intent
+import android.content.res.Configuration
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
@@ -71,12 +72,14 @@ fun Scene.requireFragmentActivity(): FragmentActivity {
     return requireActivity() as FragmentActivity
 }
 
+@Deprecated("use Scene.startActivityForResult(Intent, Int, (Int, Intent?) -> Unit)) instead")
 fun Scene.startActivityForResult(intent: Intent, requestCode: Int, resultCallback: ActivityResultCallback) {
     activity?.let {
         ActivityCompatibilityUtility.startActivityForResult(it, this, intent, requestCode, resultCallback)
     }
 }
 
+@Deprecated("use Scene.requestPermissions(Array<String>, Int, (IntArray?) -> Unit)) instead")
 @RequiresApi(Build.VERSION_CODES.M)
 fun Scene.requestPermissions(permissions: Array<String>, requestCode: Int, resultCallback: PermissionResultCallback) {
     activity?.let {
@@ -84,8 +87,37 @@ fun Scene.requestPermissions(permissions: Array<String>, requestCode: Int, resul
     }
 }
 
+@Deprecated("use Scene.addConfigurationChangedListener((Configuration) -> Unit)) instead")
 fun Scene.addConfigurationChangedListener(configurationChangedListener: ConfigurationChangedListener) {
     activity?.let {
         ActivityCompatibilityUtility.addConfigurationChangedListener(it, this, configurationChangedListener)
+    }
+}
+
+fun Scene.startActivityForResult(intent: Intent, requestCode: Int, resultCallback: (Int, Intent?) -> Unit) {
+    activity?.let {
+        ActivityCompatibilityUtility.startActivityForResult(it, this, intent, requestCode,
+                ActivityResultCallback { resultCode: Int, result: Intent? ->
+                    resultCallback(resultCode, result)
+                })
+    }
+}
+
+@RequiresApi(Build.VERSION_CODES.M)
+fun Scene.requestPermissions(permissions: Array<String>, requestCode: Int, resultCallback: (IntArray?) -> Unit) {
+    activity?.let {
+        ActivityCompatibilityUtility.requestPermissions(it, this, permissions, requestCode,
+                PermissionResultCallback { grantResults ->
+                    resultCallback(grantResults)
+                })
+    }
+}
+
+fun Scene.addConfigurationChangedListener(configurationChangedListener: (Configuration) -> Unit) {
+    activity?.let {
+        ActivityCompatibilityUtility.addConfigurationChangedListener(it, this,
+                ConfigurationChangedListener { newConfig ->
+                    configurationChangedListener(newConfig)
+                })
     }
 }
