@@ -6,7 +6,7 @@
 ![Maven metadata URL](https://img.shields.io/maven-metadata/v?color=green&label=version&metadataUrl=http%3A%2F%2Fjcenter.bintray.com%2Fcom%2Fbytedance%2Fscene%2Fscene%2Fmaven-metadata.xml)
 [![API](https://img.shields.io/badge/api-14%2B-green)](https://developer.android.com/about/dashboards)
 
-Scene is a lightweight library of navigation and page segmentation based on view.
+Scene is a lightweight library of navigation and ui composition based on view.
 
 1. Simple and convenient navigation and stack management, support multi-stack
 2. Improved lifecycle management and distribution
@@ -65,7 +65,11 @@ implementation 'com.bytedance.scene:scene-ktx:$latest_version'
 Scene has 2 subclasses: NavigationScene and GroupScene:
 
 1. NavigationScene supports navigation
-2. GroupScene supports page segmentation
+2. GroupScene supports ui composition
+
+Scene             | NavigationScene             |  GroupScene 
+:-------------------------:|:-------------------------:|:-------------------------:
+<img src="http://p3.pstatp.com/origin/2dd480002cd0b8584730a" width="400">  | <img src="http://p3.pstatp.com/origin/2dd450002cc210965bb20" width="400">  |  <img src="http://p3.pstatp.com/origin/2dd450002cbd848281018" width="400">
 
 For simple usage, just let your Activity inherit from SceneActivity:
 

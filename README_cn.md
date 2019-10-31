@@ -64,6 +64,10 @@ Scene有2个子类：NavigationScene和GroupScene，其中：
 1. NavigationScene支持页面切换
 2. GroupScene支持页面切分
 
+Scene             | NavigationScene             |  GroupScene 
+:-------------------------:|:-------------------------:|:-------------------------:
+<img src="http://p3.pstatp.com/origin/2dd480002cd0b8584730a" width="400">  | <img src="http://p3.pstatp.com/origin/2dd450002cc210965bb20" width="400">  |  <img src="http://p3.pstatp.com/origin/2dd450002cbd848281018" width="400">
+
 简单的接入，让主Activity继承于SceneActivity即可：
 
 ```kotlin
