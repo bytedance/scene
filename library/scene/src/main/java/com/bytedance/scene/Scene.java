@@ -16,6 +16,7 @@
 package com.bytedance.scene;
 
 import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.Application;
 import android.arch.lifecycle.*;
@@ -475,7 +476,9 @@ public abstract class Scene implements LifecycleOwner, ViewModelStoreOwner {
         dispatchOnSceneStopped(this, false);
     }
 
-    /** @hide */
+    /**
+     * @hide
+     */
     @RestrictTo(LIBRARY_GROUP)
     public void dispatchDestroyView() {
         mLifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_DESTROY);
@@ -488,10 +491,23 @@ public abstract class Scene implements LifecycleOwner, ViewModelStoreOwner {
         }
         dispatchOnSceneViewDestroyed(this, false);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            this.mView.cancelPendingInputEvents();
+            cancelViewPendingInputEvents(this.mView);
         }
         this.mView = null;
         this.mLayoutInflater = null;
+    }
+
+    @TargetApi(Build.VERSION_CODES.KITKAT)
+    private static void cancelViewPendingInputEvents(@Nullable View view) {
+        if (view != null) {
+            view.cancelPendingInputEvents();
+        }
+        if (view instanceof ViewGroup) {
+            ViewGroup viewGroup = (ViewGroup) view;
+            for (int i = 0; i < viewGroup.getChildCount(); i++) {
+                cancelViewPendingInputEvents(viewGroup.getChildAt(i));
+            }
+        }
     }
 
     /** @hide */
