@@ -21,17 +21,18 @@ import android.content.res.AssetManager;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.os.Build;
+import android.support.annotation.NonNull;
 import android.support.annotation.RestrictTo;
 import android.support.annotation.StyleRes;
 import android.view.LayoutInflater;
-import com.bytedance.scene.R;
+import com.bytedance.scene.utlity.Utility;
 
 import static android.support.annotation.RestrictTo.Scope.LIBRARY_GROUP;
 
 /**
  * A ContextWrapper that allows you to modify the theme from what is in the
  * wrapped context.
- *
+ * <p>
  * source code is copied from android.support.v7.view.ContextThemeWrapper, the difference is setTheme() method,
  * SceneContextThemeWrapper setTheme will not modify Activity's theme
  *
@@ -47,17 +48,6 @@ public class SceneContextThemeWrapper extends ContextWrapper {
     private boolean mIsThemeFromActivity;
 
     /**
-     * Creates a new context wrapper with no theme and no base context.
-     * <p class="note">
-     * <strong>Note:</strong> A base context <strong>must</strong> be attached
-     * using {@link #attachBaseContext(Context)} before calling any other
-     * method on the newly constructed context wrapper.
-     */
-    public SceneContextThemeWrapper() {
-        super(null);
-    }
-
-    /**
      * Creates a new context wrapper with the specified theme.
      * <p>
      * The specified theme will be applied on top of the base context's theme.
@@ -68,9 +58,12 @@ public class SceneContextThemeWrapper extends ContextWrapper {
      * @param themeResId the resource ID of the theme to be applied on top of
      *                   the base context's theme
      */
-    public SceneContextThemeWrapper(Context base, @StyleRes int themeResId) {
+    public SceneContextThemeWrapper(@NonNull Context base, @StyleRes int themeResId) {
         super(base);
         mThemeResource = themeResId;
+        if (mThemeResource == 0) {
+            throw new IllegalArgumentException("themeResId can't be zero");
+        }
     }
 
     /**
@@ -82,9 +75,9 @@ public class SceneContextThemeWrapper extends ContextWrapper {
      * @param base  the base context
      * @param theme the theme against which resources should be inflated
      */
-    public SceneContextThemeWrapper(Context base, Resources.Theme theme) {
+    public SceneContextThemeWrapper(@NonNull Context base, @NonNull Resources.Theme theme) {
         super(base);
-        mTheme = theme;
+        mTheme = Utility.requireNonNull(theme, "theme can't be null");
         mIsThemeFromActivity = true;
     }
 
@@ -142,7 +135,7 @@ public class SceneContextThemeWrapper extends ContextWrapper {
     }
 
     @Override
-    public void setTheme(int resid) {
+    public void setTheme(@StyleRes int resid) {
         if (mThemeResource != resid) {
             mThemeResource = resid;
             if (mIsThemeFromActivity) {
@@ -164,11 +157,7 @@ public class SceneContextThemeWrapper extends ContextWrapper {
             return mTheme;
         }
 
-        if (mThemeResource == 0) {
-            mThemeResource = R.style.Theme_AppCompat_Light;
-        }
         initializeTheme();
-
         return mTheme;
     }
 
