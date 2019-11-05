@@ -20,6 +20,7 @@ import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.annotation.*;
 import android.text.TextUtils;
+import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -397,12 +398,19 @@ public abstract class GroupScene extends Scene implements SceneParent {
             throw new IllegalStateException("ScenePlaceHolderView can only be used when support restore is disabled");
         }
 
+        SparseArray<ViewGroup> parentIdViewMap = new SparseArray<>();
         for (int i = 0, N = holderViewList.size(); i < N; i++) {
             ScenePlaceHolderView holderView = holderViewList.get(i);
             ViewGroup parent = (ViewGroup) holderView.getParent();
             int parentId = parent.getId();
             if (parentId == View.NO_ID) {
                 throw new IllegalArgumentException("ScenePlaceHolderView parent id can't be View.NO_ID");
+            }
+            if (parentIdViewMap.get(parentId) == null) {
+                parentIdViewMap.put(parentId, parent);
+            } else if (parentIdViewMap.get(parentId) != parent) {
+                throw new IllegalArgumentException("ScenePlaceHolderView' parent ViewGroup should have unique id," +
+                        " the duplicate id is " + Utility.getIdName(requireSceneContext(), parentId));
             }
             ViewGroup.LayoutParams layoutParams = holderView.getLayoutParams();
             String name = holderView.getSceneName();
