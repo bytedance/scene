@@ -37,7 +37,7 @@ public final class SceneLifecycleDispatcher implements SceneContainerLifecycleCa
     @IdRes
     private final int mSceneContainerViewId;
     private final ViewFinder mViewFinder;
-    private final NavigationScene mNavigationScene;
+    private final NavigationScene mScene;
     private final Scope.RootScopeFactory mRootScopeFactory;
     private final boolean mSupportRestore;
     private final SceneComponentFactory mRootSceneComponentFactory;
@@ -51,7 +51,7 @@ public final class SceneLifecycleDispatcher implements SceneContainerLifecycleCa
                                     boolean supportRestore) {
         this.mSceneContainerViewId = sceneContainerViewId;
         this.mViewFinder = viewFinder;
-        this.mNavigationScene = rootScene;
+        this.mScene = rootScene;
         this.mRootScopeFactory = rootScopeFactory;
         this.mRootSceneComponentFactory = sceneComponentFactory;
         this.mSupportRestore = supportRestore;
@@ -61,7 +61,7 @@ public final class SceneLifecycleDispatcher implements SceneContainerLifecycleCa
     public void onActivityCreated(@NonNull Activity activity, @Nullable Bundle savedInstanceState) {
         ViewGroup viewGroup = this.mViewFinder.requireViewById(this.mSceneContainerViewId);
         this.mLifecycleManager.onActivityCreated(activity, viewGroup,
-                this.mNavigationScene, this.mRootScopeFactory,
+                this.mScene, this.mRootScopeFactory,
                 this.mRootSceneComponentFactory, this.mSupportRestore, this.mSupportRestore ? savedInstanceState : null);
     }
 
@@ -93,7 +93,7 @@ public final class SceneLifecycleDispatcher implements SceneContainerLifecycleCa
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         if (this.mSupportRestore) {
-            outState.putString(TAG, this.mNavigationScene.getClass().getName());
+            outState.putString(TAG, this.mScene.getClass().getName());
             this.mLifecycleManager.onSaveInstanceState(outState);
         }
     }

@@ -38,7 +38,7 @@ public class SceneLifecycleManager {
     private static final boolean DEBUG = false;
     private static final String TAG = "SceneLifecycleManager";
 
-    private NavigationScene mNavigationScene;
+    private NavigationScene mScene;
     @NonNull
     private SceneLifecycleManagerState mState = SceneLifecycleManagerState.NONE;
     private boolean mSupportRestore = false;
@@ -75,18 +75,18 @@ public class SceneLifecycleManager {
         this.mState = SceneLifecycleManagerState.ACTIVITY_CREATED;
         log("onActivityCreated");
 
-        this.mNavigationScene = navigationScene;
+        this.mScene = navigationScene;
         if (!this.mSupportRestore) {
-            this.mNavigationScene.disableSupportRestore();
+            this.mScene.disableSupportRestore();
         }
-        this.mNavigationScene.setRootScopeFactory(rootScopeFactory);
-        this.mNavigationScene.setRootSceneComponentFactory(rootSceneComponentFactory);
-        this.mNavigationScene.dispatchAttachActivity(activity);
-        this.mNavigationScene.dispatchAttachScene(null);
-        this.mNavigationScene.dispatchCreate(savedInstanceState);
-        this.mNavigationScene.dispatchCreateView(savedInstanceState, viewGroup);
-        viewGroup.addView(this.mNavigationScene.getView(), new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-        this.mNavigationScene.dispatchActivityCreated(savedInstanceState);
+        this.mScene.setRootScopeFactory(rootScopeFactory);
+        this.mScene.setRootSceneComponentFactory(rootSceneComponentFactory);
+        this.mScene.dispatchAttachActivity(activity);
+        this.mScene.dispatchAttachScene(null);
+        this.mScene.dispatchCreate(savedInstanceState);
+        this.mScene.dispatchCreateView(savedInstanceState, viewGroup);
+        viewGroup.addView(this.mScene.getView(), new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        this.mScene.dispatchActivityCreated(savedInstanceState);
     }
 
     public void onStart() {
@@ -95,7 +95,7 @@ public class SceneLifecycleManager {
         }
         this.mState = SceneLifecycleManagerState.START;
         log("onStart");
-        this.mNavigationScene.dispatchStart();
+        this.mScene.dispatchStart();
     }
 
     public void onResume() {
@@ -104,7 +104,7 @@ public class SceneLifecycleManager {
         }
         this.mState = SceneLifecycleManagerState.RESUME;
         log("onResume");
-        this.mNavigationScene.dispatchResume();
+        this.mScene.dispatchResume();
     }
 
     public void onPause() {
@@ -113,7 +113,7 @@ public class SceneLifecycleManager {
         }
         this.mState = SceneLifecycleManagerState.PAUSE;
         log("onPause");
-        this.mNavigationScene.dispatchPause();
+        this.mScene.dispatchPause();
     }
 
     public void onStop() {
@@ -122,7 +122,7 @@ public class SceneLifecycleManager {
         }
         this.mState = SceneLifecycleManagerState.STOP;
         log("onStop");
-        this.mNavigationScene.dispatchStop();
+        this.mScene.dispatchStop();
     }
 
     /**
@@ -140,13 +140,13 @@ public class SceneLifecycleManager {
         }
         this.mState = SceneLifecycleManagerState.NONE;
         log("onDestroyView");
-        this.mNavigationScene.dispatchDestroyView();
-        this.mNavigationScene.dispatchDestroy();
-        this.mNavigationScene.dispatchDetachScene();
-        this.mNavigationScene.dispatchDetachActivity();
-        this.mNavigationScene.setRootSceneComponentFactory(null);
-        this.mNavigationScene.setRootScopeFactory(null);
-        this.mNavigationScene = null;
+        this.mScene.dispatchDestroyView();
+        this.mScene.dispatchDestroy();
+        this.mScene.dispatchDetachScene();
+        this.mScene.dispatchDetachActivity();
+        this.mScene.setRootSceneComponentFactory(null);
+        this.mScene.setRootScopeFactory(null);
+        this.mScene = null;
     }
 
     public void onSaveInstanceState(@NonNull Bundle outState) {
@@ -158,7 +158,7 @@ public class SceneLifecycleManager {
             throw new IllegalArgumentException("cant invoke onSaveInstanceState when not support restore");
         }
         log("onSaveInstanceState");
-        this.mNavigationScene.dispatchSaveInstanceState(outState);
+        this.mScene.dispatchSaveInstanceState(outState);
     }
 
     private void log(@NonNull String log) {
