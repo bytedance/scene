@@ -23,6 +23,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.view.View;
 import com.bytedance.scene.*;
 import com.bytedance.scene.navigation.NavigationScene;
 import com.bytedance.scene.navigation.NavigationSceneOptions;
@@ -294,6 +295,7 @@ public final class NavigationSceneCompatUtility {
                     return;
                 }
                 this.mAbandoned = true;
+                final View view = navigationScene.getView();
                 FragmentTransaction transaction = fragmentManager.beginTransaction().remove(finalLifeCycleFragment).remove(finalTargetScopeHolderFragment);
                 if (immediate) {
                     fragmentManager.registerFragmentLifecycleCallbacks(new FragmentManager.FragmentLifecycleCallbacks() {
@@ -305,12 +307,18 @@ public final class NavigationSceneCompatUtility {
                             }
                             fragmentManager.unregisterFragmentLifecycleCallbacks(this);
                             CHECK_DUPLICATE_TAG_MAP.get(fragment).remove(tag);
+                            if (view != null) {
+                                Utility.removeFromParentView(view);
+                            }
                         }
                     }, false);
                     FragmentUtility.commitFragment(transaction, true);
                 } else {
                     FragmentUtility.commitFragment(transaction, false);
                     CHECK_DUPLICATE_TAG_MAP.get(fragment).remove(tag);
+                    if (view != null) {
+                        Utility.removeFromParentView(view);
+                    }
                 }
             }
         };

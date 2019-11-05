@@ -21,6 +21,7 @@ import android.app.FragmentTransaction;
 import android.support.annotation.NonNull;
 
 import android.support.annotation.Nullable;
+import android.view.View;
 import com.bytedance.scene.navigation.NavigationScene;
 import com.bytedance.scene.utlity.Utility;
 
@@ -72,6 +73,7 @@ final class LifeCycleFragmentSceneDelegate implements SceneDelegate {
             return;
         }
         this.mAbandoned = true;
+        final View view = this.mNavigationScene.getView();
         FragmentManager fragmentManager = mActivity.getFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction().remove(this.mLifeCycleFragment).remove(this.mScopeHolderFragment);
         if (this.mImmediate) {
@@ -79,12 +81,18 @@ final class LifeCycleFragmentSceneDelegate implements SceneDelegate {
                 @Override
                 public void onDetach() {
                     NavigationSceneUtility.removeTag(mActivity, mLifeCycleFragment.getTag());
+                    if (view != null) {
+                        Utility.removeFromParentView(view);
+                    }
                 }
             });
             Utility.commitFragment(fragmentManager, fragmentTransaction, true);
         } else {
             Utility.commitFragment(fragmentManager, fragmentTransaction, false);
             NavigationSceneUtility.removeTag(mActivity, mLifeCycleFragment.getTag());
+            if (view != null) {
+                Utility.removeFromParentView(view);
+            }
         }
     }
 }

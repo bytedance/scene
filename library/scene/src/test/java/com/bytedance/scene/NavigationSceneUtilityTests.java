@@ -263,7 +263,10 @@ public class NavigationSceneUtilityTests {
         TestActivity activity = controller.get();
         SceneDelegate sceneDelegate = NavigationSceneUtility.setupWithActivity(activity, TestScene.class).build();
         controller.start().resume();
+        NavigationScene navigationScene = sceneDelegate.getNavigationScene();
+        View navigationSceneView = navigationScene.requireView();
         sceneDelegate.abandon();
+        assertNull(navigationSceneView.getParent());
         sceneDelegate = NavigationSceneUtility.setupWithActivity(activity, TestScene.class).build();
         sceneDelegate.abandon();
     }
