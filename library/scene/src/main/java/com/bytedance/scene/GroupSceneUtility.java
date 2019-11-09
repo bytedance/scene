@@ -19,20 +19,16 @@ import android.app.Activity;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.os.Bundle;
-import android.support.annotation.DrawableRes;
-import android.support.annotation.IdRes;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.view.View;
+
+import androidx.annotation.IdRes;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.bytedance.scene.group.GroupScene;
-import com.bytedance.scene.navigation.NavigationScene;
-import com.bytedance.scene.navigation.NavigationSceneOptions;
 import com.bytedance.scene.utlity.SceneInstanceUtility;
 import com.bytedance.scene.utlity.ThreadUtility;
 import com.bytedance.scene.utlity.Utility;
-
-import java.util.HashSet;
-import java.util.WeakHashMap;
 
 public final class GroupSceneUtility {
     private static final String LIFE_CYCLE_FRAGMENT_TAG = NavigationSceneUtility.LIFE_CYCLE_FRAGMENT_TAG;

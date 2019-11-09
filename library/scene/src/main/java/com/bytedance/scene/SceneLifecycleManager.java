@@ -19,13 +19,15 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.ViewGroup;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RestrictTo;
 
-import com.bytedance.scene.navigation.NavigationScene;
 import com.bytedance.scene.utlity.Utility;
 
-import static android.support.annotation.RestrictTo.Scope.LIBRARY_GROUP;
+import static androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP;
+
 
 /**
  * Created by JiangQi on 11/6/18.

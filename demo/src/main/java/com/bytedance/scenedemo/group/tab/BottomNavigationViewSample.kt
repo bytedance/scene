@@ -1,12 +1,12 @@
 package com.bytedance.scenedemo.group.tab
 
 import android.os.Bundle
-import android.support.v4.util.SparseArrayCompat
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.collection.SparseArrayCompat
 import com.bytedance.scene.Scene
 import com.bytedance.scene.ui.template.AppCompatScene
 import com.bytedance.scene.ui.template.BottomNavigationViewScene

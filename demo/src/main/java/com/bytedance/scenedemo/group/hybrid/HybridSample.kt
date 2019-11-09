@@ -3,15 +3,14 @@ package com.bytedance.scenedemo.group.hybrid
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
-import android.support.design.widget.TabLayout
-import android.support.v4.util.SparseArrayCompat
-import android.support.v4.view.ViewPager
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.TextView
+import androidx.collection.SparseArrayCompat
+import androidx.viewpager.widget.ViewPager
 import com.bytedance.scene.Scene
 import com.bytedance.scene.group.GroupScene
 import com.bytedance.scene.group.UserVisibleHintGroupScene
@@ -20,6 +19,7 @@ import com.bytedance.scene.ui.template.BottomNavigationViewScene
 import com.bytedance.scene.ui.template.NavigationViewScene
 import com.bytedance.scenedemo.R
 import com.bytedance.scenedemo.utility.ColorUtil
+import com.google.android.material.tabs.TabLayout
 import java.util.*
 
 

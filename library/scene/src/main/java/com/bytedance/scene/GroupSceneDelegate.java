@@ -15,7 +15,8 @@
  */
 package com.bytedance.scene;
 
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
+
 import com.bytedance.scene.group.GroupScene;
 
 public interface GroupSceneDelegate {

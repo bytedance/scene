@@ -22,10 +22,12 @@ import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.os.Build;
 import android.view.LayoutInflater;
-import com.bytedance.scene.R;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.RestrictTo;
 import androidx.annotation.StyleRes;
+
+import com.bytedance.scene.utlity.Utility;
 
 import static androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP;
 

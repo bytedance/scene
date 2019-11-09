@@ -17,6 +17,7 @@ android {
 dependencies {
     implementation LIFECYCLE_EXTENSIONS_LIB
     implementation LIFECYCLE_RUNTIME_LIB
+    implementation ANNOTATION_LIB
 
     testImplementation ROBOLECTRIC
     testImplementation JUNIT

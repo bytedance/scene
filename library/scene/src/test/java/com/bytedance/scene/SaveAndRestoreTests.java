@@ -1,20 +1,24 @@
 package com.bytedance.scene;
 
-import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
+import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.FrameLayout;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
 import com.bytedance.scene.animation.animatorexecutor.NoAnimationExecutor;
 import com.bytedance.scene.group.GroupScene;
 import com.bytedance.scene.navigation.NavigationScene;
 import com.bytedance.scene.navigation.NavigationSceneOptions;
 import com.bytedance.scene.parcel.ParcelConstants;
 import com.bytedance.scene.utlity.ViewIdGenerator;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
@@ -26,7 +30,9 @@ import java.util.ArrayList;
 
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertNotSame;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 
 @RunWith(RobolectricTestRunner.class)
