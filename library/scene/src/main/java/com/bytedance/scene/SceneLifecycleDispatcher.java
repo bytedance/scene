@@ -32,20 +32,20 @@ import static android.support.annotation.RestrictTo.Scope.LIBRARY_GROUP;
  * @hide
  */
 @RestrictTo(LIBRARY_GROUP)
-public final class SceneLifecycleDispatcher implements SceneContainerLifecycleCallback {
+public class SceneLifecycleDispatcher<T extends NavigationScene & SceneParent> implements SceneContainerLifecycleCallback {
     private static final String TAG = "SCENE";
     @IdRes
     private final int mSceneContainerViewId;
     private final ViewFinder mViewFinder;
-    private final NavigationScene mScene;
+    private final T mScene;
     private final Scope.RootScopeFactory mRootScopeFactory;
     private final boolean mSupportRestore;
     private final SceneComponentFactory mRootSceneComponentFactory;
-    private final SceneLifecycleManager mLifecycleManager = new SceneLifecycleManager();
+    private final SceneLifecycleManager<T> mLifecycleManager = new SceneLifecycleManager<>();
 
     public SceneLifecycleDispatcher(@IdRes int sceneContainerViewId,
                                     ViewFinder viewFinder,
-                                    NavigationScene rootScene,
+                                    T rootScene,
                                     Scope.RootScopeFactory rootScopeFactory,
                                     SceneComponentFactory sceneComponentFactory,
                                     boolean supportRestore) {
@@ -60,8 +60,7 @@ public final class SceneLifecycleDispatcher implements SceneContainerLifecycleCa
     @Override
     public void onActivityCreated(@NonNull Activity activity, @Nullable Bundle savedInstanceState) {
         ViewGroup viewGroup = this.mViewFinder.requireViewById(this.mSceneContainerViewId);
-        this.mLifecycleManager.onActivityCreated(activity, viewGroup,
-                this.mScene, this.mRootScopeFactory,
+        this.mLifecycleManager.onActivityCreated(activity, viewGroup, this.mScene, this.mRootScopeFactory,
                 this.mRootSceneComponentFactory, this.mSupportRestore, this.mSupportRestore ? savedInstanceState : null);
     }
 

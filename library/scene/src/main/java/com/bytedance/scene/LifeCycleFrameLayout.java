@@ -64,7 +64,7 @@ public abstract class LifeCycleFrameLayout extends FrameLayout {
             return Scope.DEFAULT_ROOT_SCOPE_FACTORY.getRootScope();
         }
     };
-    private final SceneLifecycleManager mLifecycleManager = new SceneLifecycleManager();
+    private final SceneLifecycleManager<NavigationScene> mLifecycleManager = new SceneLifecycleManager<>();
 
     public void setNavigationScene(@NonNull NavigationScene rootScene) {
         this.mNavigationScene = rootScene;

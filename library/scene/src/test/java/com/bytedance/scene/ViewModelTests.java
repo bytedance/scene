@@ -38,7 +38,7 @@ public class ViewModelTests {
                 assertNotNull(testViewModel);
             }
         };
-        Pair<SceneLifecycleManager, NavigationScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(scene);
+        Pair<SceneLifecycleManager<NavigationScene>, NavigationScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(scene);
     }
 
     @Test
@@ -57,7 +57,7 @@ public class ViewModelTests {
                 assertNotNull(testViewModel);
             }
         };
-        Pair<SceneLifecycleManager, NavigationScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(scene);
+        Pair<SceneLifecycleManager<NavigationScene>, NavigationScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(scene);
     }
 
     @Test
@@ -82,7 +82,7 @@ public class ViewModelTests {
                 }).get(testViewModel.getClass());
             }
         };
-        Pair<SceneLifecycleManager, NavigationScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(scene);
+        Pair<SceneLifecycleManager<NavigationScene>, NavigationScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(scene);
         SceneLifecycleManager lifecycleManager = pair.first;
         lifecycleManager.onStart();
         lifecycleManager.onResume();

@@ -31,7 +31,7 @@ public class NavigationSceneListenerTests {
     @Test
     public void testOnBackPressListener() {
         TestScene rootScene = new TestScene();
-        Pair<SceneLifecycleManager, NavigationScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(rootScene);
+        Pair<SceneLifecycleManager<NavigationScene>, NavigationScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(rootScene);
         SceneLifecycleManager sceneLifecycleManager = pair.first;
         final NavigationScene navigationScene = pair.second;
         sceneLifecycleManager.onStart();
@@ -59,7 +59,7 @@ public class NavigationSceneListenerTests {
     @Test
     public void testNavigationListener() {
         TestScene rootScene = new TestScene();
-        Pair<SceneLifecycleManager, NavigationScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(rootScene);
+        Pair<SceneLifecycleManager<NavigationScene>, NavigationScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(rootScene);
         SceneLifecycleManager sceneLifecycleManager = pair.first;
         NavigationScene navigationScene = pair.second;
         sceneLifecycleManager.onStart();
@@ -95,7 +95,7 @@ public class NavigationSceneListenerTests {
     @Test
     public void testNavigationListenerRemoveAfterLifecycleDestroy() {
         TestScene rootScene = new TestScene();
-        Pair<SceneLifecycleManager, NavigationScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(rootScene);
+        Pair<SceneLifecycleManager<NavigationScene>, NavigationScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(rootScene);
         SceneLifecycleManager sceneLifecycleManager = pair.first;
         NavigationScene navigationScene = pair.second;
         sceneLifecycleManager.onStart();
@@ -121,7 +121,7 @@ public class NavigationSceneListenerTests {
     @Test
     public void testNavigationListenerNotAddAfterLifecycleDestroy() {
         TestScene rootScene = new TestScene();
-        Pair<SceneLifecycleManager, NavigationScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(rootScene);
+        Pair<SceneLifecycleManager<NavigationScene>, NavigationScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(rootScene);
         SceneLifecycleManager sceneLifecycleManager = pair.first;
         NavigationScene navigationScene = pair.second;
         sceneLifecycleManager.onStart();

@@ -244,18 +244,18 @@ public final class NavigationSceneCompatUtility {
         final NavigationScene navigationScene = (NavigationScene) SceneInstanceUtility.getInstanceFromClass(NavigationScene.class,
                 navigationSceneOptions.toBundle());
         ScopeHolderCompatFragment targetScopeHolderFragment = null;
-        SceneLifecycleDispatcher dispatcher = null;
+        SceneLifecycleDispatcher<NavigationScene> dispatcher = null;
         if (lifeCycleFragment != null) {
             final ScopeHolderCompatFragment scopeHolderFragment = ScopeHolderCompatFragment.install(fragment, tag, false, immediate);
             targetScopeHolderFragment = scopeHolderFragment;
 
-            dispatcher = new SceneLifecycleDispatcher(containerId, viewFinder, navigationScene, scopeHolderFragment, rootSceneComponentFactory, supportRestore);
+            dispatcher = new SceneLifecycleDispatcher<>(containerId, viewFinder, navigationScene, scopeHolderFragment, rootSceneComponentFactory, supportRestore);
             lifeCycleFragment.setSceneContainerLifecycleCallback(dispatcher);
         } else {
             final ScopeHolderCompatFragment scopeHolderFragment = ScopeHolderCompatFragment.install(fragment, tag, !supportRestore, immediate);
             lifeCycleFragment = LifeCycleCompatFragment.newInstance(supportRestore);
 
-            dispatcher = new SceneLifecycleDispatcher(containerId, viewFinder, navigationScene, scopeHolderFragment, rootSceneComponentFactory, supportRestore);
+            dispatcher = new SceneLifecycleDispatcher<>(containerId, viewFinder, navigationScene, scopeHolderFragment, rootSceneComponentFactory, supportRestore);
             lifeCycleFragment.setSceneContainerLifecycleCallback(dispatcher);
 
             FragmentTransaction transaction = fragmentManager.beginTransaction();
@@ -266,7 +266,6 @@ public final class NavigationSceneCompatUtility {
 
         final LifeCycleCompatFragment finalLifeCycleFragment = lifeCycleFragment;
         final ScopeHolderCompatFragment finalTargetScopeHolderFragment = targetScopeHolderFragment;
-        final SceneLifecycleDispatcher finalDispatcher = dispatcher;
         final SceneDelegate proxy = new SceneDelegate() {
             private boolean mAbandoned = false;
 

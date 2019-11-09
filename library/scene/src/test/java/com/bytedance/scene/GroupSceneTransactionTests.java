@@ -19,7 +19,7 @@ public class GroupSceneTransactionTests {
         GroupSceneLifecycleTests.TestEmptyScene testScene = new GroupSceneLifecycleTests.TestEmptyScene();
         GroupSceneLifecycleTests.TestChildScene childScene = new GroupSceneLifecycleTests.TestChildScene();
 
-        Pair<SceneLifecycleManager, NavigationScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(testScene);
+        Pair<SceneLifecycleManager<NavigationScene>, NavigationScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(testScene);
 
         testScene.beginTransaction();
         testScene.add(testScene.mId, childScene, "childScene");
@@ -36,7 +36,7 @@ public class GroupSceneTransactionTests {
         GroupSceneLifecycleTests.TestEmptyScene testScene = new GroupSceneLifecycleTests.TestEmptyScene();
         GroupSceneLifecycleTests.TestChildScene childScene = new GroupSceneLifecycleTests.TestChildScene();
 
-        Pair<SceneLifecycleManager, NavigationScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(testScene);
+        Pair<SceneLifecycleManager<NavigationScene>, NavigationScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(testScene);
 
         testScene.add(testScene.mId, childScene, "childScene");
         assertEquals(View.VISIBLE, childScene.getView().getVisibility());
@@ -55,7 +55,7 @@ public class GroupSceneTransactionTests {
         GroupSceneLifecycleTests.TestEmptyScene testScene = new GroupSceneLifecycleTests.TestEmptyScene();
         GroupSceneLifecycleTests.TestChildScene childScene = new GroupSceneLifecycleTests.TestChildScene();
 
-        Pair<SceneLifecycleManager, NavigationScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(testScene);
+        Pair<SceneLifecycleManager<NavigationScene>, NavigationScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(testScene);
 
         testScene.add(testScene.mId, childScene, "childScene");
         assertEquals(View.VISIBLE, childScene.getView().getVisibility());

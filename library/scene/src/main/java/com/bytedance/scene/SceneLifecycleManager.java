@@ -34,11 +34,11 @@ import static android.support.annotation.RestrictTo.Scope.LIBRARY_GROUP;
  * @hide
  */
 @RestrictTo(LIBRARY_GROUP)
-public class SceneLifecycleManager {
+public class SceneLifecycleManager<T extends NavigationScene & SceneParent> {
     private static final boolean DEBUG = false;
     private static final String TAG = "SceneLifecycleManager";
 
-    private NavigationScene mScene;
+    private T mScene;
     @NonNull
     private SceneLifecycleManagerState mState = SceneLifecycleManagerState.NONE;
     private boolean mSupportRestore = false;
@@ -49,7 +49,7 @@ public class SceneLifecycleManager {
 
     public void onActivityCreated(@NonNull Activity activity,
                                   @NonNull ViewGroup viewGroup,
-                                  @NonNull NavigationScene navigationScene,
+                                  @NonNull T scene,
                                   @NonNull Scope.RootScopeFactory rootScopeFactory,
                                   @Nullable SceneComponentFactory rootSceneComponentFactory,
                                   boolean supportRestore,
@@ -60,11 +60,11 @@ public class SceneLifecycleManager {
 
         Utility.requireNonNull(activity, "activity can't be null");
         Utility.requireNonNull(viewGroup, "viewGroup can't be null");
-        Utility.requireNonNull(navigationScene, "navigationScene can't be null");
+        Utility.requireNonNull(scene, "scene can't be null");
         Utility.requireNonNull(rootScopeFactory, "rootScopeFactory can't be null");
 
-        if (navigationScene.getState() != State.NONE) {
-            throw new IllegalStateException("NavigationScene state must be " + State.NONE.name);
+        if (scene.getState() != State.NONE) {
+            throw new IllegalStateException("Scene state must be " + State.NONE.name);
         }
 
         this.mSupportRestore = supportRestore;
@@ -75,7 +75,7 @@ public class SceneLifecycleManager {
         this.mState = SceneLifecycleManagerState.ACTIVITY_CREATED;
         log("onActivityCreated");
 
-        this.mScene = navigationScene;
+        this.mScene = scene;
         if (!this.mSupportRestore) {
             this.mScene.disableSupportRestore();
         }
@@ -85,7 +85,7 @@ public class SceneLifecycleManager {
         this.mScene.dispatchAttachScene(null);
         this.mScene.dispatchCreate(savedInstanceState);
         this.mScene.dispatchCreateView(savedInstanceState, viewGroup);
-        viewGroup.addView(this.mScene.getView(), new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        viewGroup.addView(this.mScene.requireView(), new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         this.mScene.dispatchActivityCreated(savedInstanceState);
     }
 

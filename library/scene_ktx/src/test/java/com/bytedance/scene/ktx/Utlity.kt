@@ -22,7 +22,7 @@ public fun createFromSceneLifecycleManager(rootScene: Scene): NavigationScene {
     return pair.second
 }
 
-public fun createFromInitSceneLifecycleManager(rootScene: Scene): Pair<SceneLifecycleManager, NavigationScene> {
+public fun createFromInitSceneLifecycleManager(rootScene: Scene): Pair<SceneLifecycleManager<NavigationScene>, NavigationScene> {
     val controller = Robolectric.buildActivity<TestActivity>(TestActivity::class.java).create().start().resume()
     val testActivity = controller.get()
     val navigationScene = NavigationScene()
@@ -39,14 +39,14 @@ public fun createFromInitSceneLifecycleManager(rootScene: Scene): Pair<SceneLife
 
     navigationScene.defaultNavigationAnimationExecutor = NoAnimationExecutor()
 
-    val sceneLifecycleManager = SceneLifecycleManager()
+    val sceneLifecycleManager = SceneLifecycleManager<NavigationScene>()
     sceneLifecycleManager.onActivityCreated(testActivity, testActivity.mFrameLayout,
             navigationScene, rootScopeFactory,
             sceneComponentFactory, false, null)
     return Pair(sceneLifecycleManager, navigationScene)
 }
 
-public fun createFromInitSceneLifecycleManager(activityClass: Class<out Activity>, rootScene: Scene): Pair<SceneLifecycleManager, NavigationScene> {
+public fun createFromInitSceneLifecycleManager(activityClass: Class<out Activity>, rootScene: Scene): Pair<SceneLifecycleManager<NavigationScene>, NavigationScene> {
     val controller = Robolectric.buildActivity(activityClass).create().start().resume()
     val testActivity = controller.get()
     val navigationScene = NavigationScene()
@@ -63,7 +63,7 @@ public fun createFromInitSceneLifecycleManager(activityClass: Class<out Activity
 
     navigationScene.defaultNavigationAnimationExecutor = NoAnimationExecutor()
 
-    val sceneLifecycleManager = SceneLifecycleManager()
+    val sceneLifecycleManager = SceneLifecycleManager<NavigationScene>()
     sceneLifecycleManager.onActivityCreated(testActivity, testActivity.findViewById(android.R.id.content),
             navigationScene, rootScopeFactory,
             sceneComponentFactory, false, null)

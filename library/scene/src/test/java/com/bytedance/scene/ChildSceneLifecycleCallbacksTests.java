@@ -270,7 +270,7 @@ public class ChildSceneLifecycleCallbacksTests {
             }
         };
 
-        Pair<SceneLifecycleManager, NavigationScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(rootScene);
+        Pair<SceneLifecycleManager<NavigationScene>, NavigationScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(rootScene);
         rootScene.registerChildSceneLifecycleCallbacks(callbacks, false);
 
         SceneLifecycleManager lifecycleManager = pair.first;
@@ -430,7 +430,7 @@ public class ChildSceneLifecycleCallbacksTests {
             }
         };
 
-        Pair<SceneLifecycleManager, NavigationScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(rootScene);
+        Pair<SceneLifecycleManager<NavigationScene>, NavigationScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(rootScene);
         rootScene.registerChildSceneLifecycleCallbacks(callbacks, true);
 
         SceneLifecycleManager lifecycleManager = pair.first;

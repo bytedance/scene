@@ -113,7 +113,7 @@ fun createFromSceneLifecycleManagerByFragmentActivity(rootScene: Scene): Navigat
     return pair.second
 }
 
-fun createFromInitSceneLifecycleManagerByFragmentActivity(rootScene: Scene): Pair<SceneLifecycleManager, NavigationScene> {
+fun createFromInitSceneLifecycleManagerByFragmentActivity(rootScene: Scene): Pair<SceneLifecycleManager<NavigationScene>, NavigationScene> {
     val controller = Robolectric.buildActivity<TestFragmentActivity>(TestFragmentActivity::class.java).create().start().resume()
     val testActivity = controller.get()
     val navigationScene = NavigationScene()
@@ -130,7 +130,7 @@ fun createFromInitSceneLifecycleManagerByFragmentActivity(rootScene: Scene): Pai
 
     navigationScene.defaultNavigationAnimationExecutor = null
 
-    val sceneLifecycleManager = SceneLifecycleManager()
+    val sceneLifecycleManager = SceneLifecycleManager<NavigationScene>()
     sceneLifecycleManager.onActivityCreated(testActivity, testActivity.mFrameLayout,
             navigationScene, rootScopeFactory,
             sceneComponentFactory, false, null)
