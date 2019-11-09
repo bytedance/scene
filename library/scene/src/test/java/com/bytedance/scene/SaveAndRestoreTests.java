@@ -41,7 +41,7 @@ public class SaveAndRestoreTests {
         TestScene previousRootScene = null;
 
         {
-            SceneLifecycleManager sceneLifecycleManager = new SceneLifecycleManager();
+            SceneLifecycleManager<NavigationScene> sceneLifecycleManager = new SceneLifecycleManager<>();
             NavigationScene navigationScene = new NavigationScene();
             ActivityController<NavigationSourceUtility.TestActivity> controller = Robolectric.buildActivity(NavigationSourceUtility.TestActivity.class).create().start().resume();
             NavigationSourceUtility.TestActivity testActivity = controller.get();
@@ -59,7 +59,7 @@ public class SaveAndRestoreTests {
 
             sceneLifecycleManager.onActivityCreated(testActivity, testActivity.mFrameLayout,
                     navigationScene, rootScopeFactory,
-                    null, true, null);
+                    true, null);
 
             sceneLifecycleManager.onStart();
             sceneLifecycleManager.onResume();
@@ -93,10 +93,9 @@ public class SaveAndRestoreTests {
             };
 
             navigationScene.setDefaultNavigationAnimationExecutor(new NoAnimationExecutor());
-            SceneLifecycleManager sceneLifecycleManager = new SceneLifecycleManager();
+            SceneLifecycleManager<NavigationScene> sceneLifecycleManager = new SceneLifecycleManager<>();
             sceneLifecycleManager.onActivityCreated(testActivity, testActivity.mFrameLayout,
-                    navigationScene, rootScopeFactory,
-                    null, true, bundle);
+                    navigationScene, rootScopeFactory, true, bundle);
             newRootScene = (TestScene) navigationScene.getCurrentScene();
         }
 
@@ -114,7 +113,7 @@ public class SaveAndRestoreTests {
         TestScene previousChildScene = null;
 
         {
-            SceneLifecycleManager sceneLifecycleManager = new SceneLifecycleManager();
+            SceneLifecycleManager<NavigationScene> sceneLifecycleManager = new SceneLifecycleManager<>();
             NavigationScene navigationScene = new NavigationScene();
             ActivityController<NavigationSourceUtility.TestActivity> controller = Robolectric.buildActivity(NavigationSourceUtility.TestActivity.class).create().start().resume();
             NavigationSourceUtility.TestActivity testActivity = controller.get();
@@ -131,8 +130,7 @@ public class SaveAndRestoreTests {
             navigationScene.setDefaultNavigationAnimationExecutor(new NoAnimationExecutor());
 
             sceneLifecycleManager.onActivityCreated(testActivity, testActivity.mFrameLayout,
-                    navigationScene, rootScopeFactory,
-                    null, true, null);
+                    navigationScene, rootScopeFactory, true, null);
 
             sceneLifecycleManager.onStart();
             sceneLifecycleManager.onResume();
@@ -170,10 +168,9 @@ public class SaveAndRestoreTests {
             };
 
             navigationScene.setDefaultNavigationAnimationExecutor(new NoAnimationExecutor());
-            SceneLifecycleManager sceneLifecycleManager = new SceneLifecycleManager();
+            SceneLifecycleManager<NavigationScene> sceneLifecycleManager = new SceneLifecycleManager<>();
             sceneLifecycleManager.onActivityCreated(testActivity, testActivity.mFrameLayout,
-                    navigationScene, rootScopeFactory,
-                    null, true, bundle);
+                    navigationScene, rootScopeFactory, true, bundle);
             newRootScene = (TestFixIdGroupScene) navigationScene.getCurrentScene();
             newChildScene = newRootScene.findSceneByTag("TAG");
         }
@@ -198,7 +195,7 @@ public class SaveAndRestoreTests {
         TestScene previousChildScene = null;
 
         {
-            SceneLifecycleManager sceneLifecycleManager = new SceneLifecycleManager();
+            SceneLifecycleManager<NavigationScene> sceneLifecycleManager = new SceneLifecycleManager<>();
             NavigationScene navigationScene = new NavigationScene();
             ActivityController<NavigationSourceUtility.TestActivity> controller = Robolectric.buildActivity(NavigationSourceUtility.TestActivity.class).create().start().resume();
             NavigationSourceUtility.TestActivity testActivity = controller.get();
@@ -215,8 +212,7 @@ public class SaveAndRestoreTests {
             navigationScene.setDefaultNavigationAnimationExecutor(new NoAnimationExecutor());
 
             sceneLifecycleManager.onActivityCreated(testActivity, testActivity.mFrameLayout,
-                    navigationScene, rootScopeFactory,
-                    null, true, null);
+                    navigationScene, rootScopeFactory, true, null);
 
             sceneLifecycleManager.onStart();
             sceneLifecycleManager.onResume();
@@ -254,10 +250,9 @@ public class SaveAndRestoreTests {
             };
 
             navigationScene.setDefaultNavigationAnimationExecutor(new NoAnimationExecutor());
-            SceneLifecycleManager sceneLifecycleManager = new SceneLifecycleManager();
+            SceneLifecycleManager<NavigationScene> sceneLifecycleManager = new SceneLifecycleManager<>();
             sceneLifecycleManager.onActivityCreated(testActivity, testActivity.mFrameLayout,
-                    navigationScene, rootScopeFactory,
-                    null, true, bundle);
+                    navigationScene, rootScopeFactory, true, bundle);
             newRootScene = (TestGroupScene) navigationScene.getCurrentScene();
             newChildScene = newRootScene.findSceneByTag("TAG");
         }
@@ -274,7 +269,7 @@ public class SaveAndRestoreTests {
 
     @Test
     public void testParentSceneViewStateBundleShouldNotSaveChildSceneViewState() {
-        SceneLifecycleManager sceneLifecycleManager = new SceneLifecycleManager();
+        SceneLifecycleManager<NavigationScene> sceneLifecycleManager = new SceneLifecycleManager<>();
         NavigationScene navigationScene = new NavigationScene();
         ActivityController<NavigationSourceUtility.TestActivity> controller = Robolectric.buildActivity(NavigationSourceUtility.TestActivity.class).create().start().resume();
         NavigationSourceUtility.TestActivity testActivity = controller.get();
@@ -291,8 +286,7 @@ public class SaveAndRestoreTests {
         navigationScene.setDefaultNavigationAnimationExecutor(null);
 
         sceneLifecycleManager.onActivityCreated(testActivity, testActivity.mFrameLayout,
-                navigationScene, rootScopeFactory,
-                null, true, null);
+                navigationScene, rootScopeFactory, true, null);
 
         sceneLifecycleManager.onStart();
         sceneLifecycleManager.onResume();
@@ -319,7 +313,7 @@ public class SaveAndRestoreTests {
     }
 
     public static NavigationScene createNavigationScene(final Scene rootScene) {
-        SceneLifecycleManager sceneLifecycleManager = new SceneLifecycleManager();
+        SceneLifecycleManager<NavigationScene> sceneLifecycleManager = new SceneLifecycleManager<>();
         NavigationScene navigationScene = new NavigationScene();
         ActivityController<NavigationSourceUtility.TestActivity> controller = Robolectric.buildActivity(NavigationSourceUtility.TestActivity.class).create().start().resume();
         NavigationSourceUtility.TestActivity testActivity = controller.get();
@@ -334,15 +328,14 @@ public class SaveAndRestoreTests {
         };
 
         navigationScene.setDefaultNavigationAnimationExecutor(null);
-
+        navigationScene.setRootSceneComponentFactory(new SceneComponentFactory() {
+            @Override
+            public Scene instantiateScene(ClassLoader cl, String className, Bundle bundle) {
+                return rootScene;
+            }
+        });
         sceneLifecycleManager.onActivityCreated(testActivity, testActivity.mFrameLayout,
-                navigationScene, rootScopeFactory,
-                new SceneComponentFactory() {
-                    @Override
-                    public Scene instantiateScene(ClassLoader cl, String className, Bundle bundle) {
-                        return rootScene;
-                    }
-                }, true, null);
+                navigationScene, rootScopeFactory, true, null);
 
         sceneLifecycleManager.onStart();
         sceneLifecycleManager.onResume();

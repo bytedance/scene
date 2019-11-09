@@ -61,11 +61,12 @@ public class NavigationSourceUtility {
         };
 
         navigationScene.setDefaultNavigationAnimationExecutor(new NoAnimationExecutor());
+        navigationScene.setRootSceneComponentFactory(sceneComponentFactory);
 
         SceneLifecycleManager<NavigationScene> sceneLifecycleManager = new SceneLifecycleManager<>();
         sceneLifecycleManager.onActivityCreated(testActivity, testActivity.mFrameLayout,
                 navigationScene, rootScopeFactory,
-                sceneComponentFactory, false, null);
+                false, null);
         return Pair.create(sceneLifecycleManager, navigationScene);
     }
 

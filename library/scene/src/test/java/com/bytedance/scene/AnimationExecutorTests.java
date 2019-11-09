@@ -60,11 +60,11 @@ public class AnimationExecutorTests {
                 return null;
             }
         };
-
-        SceneLifecycleManager sceneLifecycleManager = new SceneLifecycleManager();
+        navigationScene.setRootSceneComponentFactory(sceneComponentFactory);
+        SceneLifecycleManager<NavigationScene> sceneLifecycleManager = new SceneLifecycleManager<>();
         sceneLifecycleManager.onActivityCreated(testActivity, testActivity.mFrameLayout,
                 navigationScene, rootScopeFactory,
-                sceneComponentFactory, false, null);
+                false, null);
 
         assertNotNull(navigationScene.getDefaultNavigationAnimationExecutor());
         NavigationAnimationExecutor navigationAnimationExecutor = new NavigationAnimationExecutor() {

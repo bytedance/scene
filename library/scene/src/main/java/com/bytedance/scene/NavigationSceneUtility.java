@@ -235,6 +235,7 @@ public final class NavigationSceneUtility {
         if (!Utility.isActivityStatusValid(activity)) {
             return new DestroyedSceneDelegate(navigationScene);
         }
+        navigationScene.setRootSceneComponentFactory(rootSceneComponentFactory);
 
         FragmentManager fragmentManager = activity.getFragmentManager();
         LifeCycleFragment lifeCycleFragment = (LifeCycleFragment) fragmentManager.findFragmentByTag(tag);
@@ -251,7 +252,7 @@ public final class NavigationSceneUtility {
         SceneLifecycleDispatcher<NavigationScene> dispatcher = null;
         if (lifeCycleFragment != null) {
             final ScopeHolderFragment scopeHolderFragment = ScopeHolderFragment.install(activity, tag, false, immediate);
-            dispatcher = new SceneLifecycleDispatcher<>(idRes, viewFinder, navigationScene, scopeHolderFragment, rootSceneComponentFactory, supportRestore);
+            dispatcher = new SceneLifecycleDispatcher<>(idRes, viewFinder, navigationScene, scopeHolderFragment, supportRestore);
             lifeCycleFragment.setSceneContainerLifecycleCallback(dispatcher);
             targetScopeHolderFragment = scopeHolderFragment;
         } else {
@@ -260,7 +261,7 @@ public final class NavigationSceneUtility {
             transaction.add(idRes, lifeCycleFragment, tag);
 
             final ScopeHolderFragment scopeHolderFragment = ScopeHolderFragment.install(activity, tag, !supportRestore, immediate);
-            dispatcher = new SceneLifecycleDispatcher<>(idRes, viewFinder, navigationScene, scopeHolderFragment, rootSceneComponentFactory, supportRestore);
+            dispatcher = new SceneLifecycleDispatcher<>(idRes, viewFinder, navigationScene, scopeHolderFragment, supportRestore);
             lifeCycleFragment.setSceneContainerLifecycleCallback(dispatcher);
 
             Utility.commitFragment(fragmentManager, transaction, immediate);

@@ -34,7 +34,7 @@ import static android.support.annotation.RestrictTo.Scope.LIBRARY_GROUP;
  * @hide
  */
 @RestrictTo(LIBRARY_GROUP)
-public class SceneLifecycleManager<T extends NavigationScene & SceneParent> {
+public class SceneLifecycleManager<T extends Scene & SceneParent> {
     private static final boolean DEBUG = false;
     private static final String TAG = "SceneLifecycleManager";
 
@@ -51,7 +51,6 @@ public class SceneLifecycleManager<T extends NavigationScene & SceneParent> {
                                   @NonNull ViewGroup viewGroup,
                                   @NonNull T scene,
                                   @NonNull Scope.RootScopeFactory rootScopeFactory,
-                                  @Nullable SceneComponentFactory rootSceneComponentFactory,
                                   boolean supportRestore,
                                   @Nullable Bundle savedInstanceState) {
         if (this.mState != SceneLifecycleManagerState.NONE) {
@@ -80,7 +79,6 @@ public class SceneLifecycleManager<T extends NavigationScene & SceneParent> {
             this.mScene.disableSupportRestore();
         }
         this.mScene.setRootScopeFactory(rootScopeFactory);
-        this.mScene.setRootSceneComponentFactory(rootSceneComponentFactory);
         this.mScene.dispatchAttachActivity(activity);
         this.mScene.dispatchAttachScene(null);
         this.mScene.dispatchCreate(savedInstanceState);
@@ -144,7 +142,6 @@ public class SceneLifecycleManager<T extends NavigationScene & SceneParent> {
         this.mScene.dispatchDestroy();
         this.mScene.dispatchDetachScene();
         this.mScene.dispatchDetachActivity();
-        this.mScene.setRootSceneComponentFactory(null);
         this.mScene.setRootScopeFactory(null);
         this.mScene = null;
     }

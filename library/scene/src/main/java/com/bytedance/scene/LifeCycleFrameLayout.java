@@ -101,13 +101,13 @@ public abstract class LifeCycleFrameLayout extends FrameLayout {
         if (activity == null) {
             throw new IllegalStateException("cant find Activity attached to this View");
         }
-
+        this.mNavigationScene.setRootSceneComponentFactory(this.mRootSceneComponentFactory);
         this.mLifecycleManager.onActivityCreated(activity,
                 this,
                 this.mNavigationScene,
                 this.mRootScopeFactory,
-                this.mRootSceneComponentFactory,
-                isSupportRestore(), isSupportRestore() ? savedInstanceState : null);
+                isSupportRestore(),
+                isSupportRestore() ? savedInstanceState : null);
     }
 
     public void onStart() {
@@ -135,6 +135,7 @@ public abstract class LifeCycleFrameLayout extends FrameLayout {
 
     public void onDestroyView() {
         this.mLifecycleManager.onDestroyView();
+        this.mNavigationScene.setRootSceneComponentFactory(null);
     }
 
     protected abstract boolean isSupportRestore();

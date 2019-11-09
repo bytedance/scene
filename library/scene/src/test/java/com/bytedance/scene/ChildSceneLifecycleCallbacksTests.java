@@ -149,11 +149,12 @@ public class ChildSceneLifecycleCallbacksTests {
         };
 
         navigationScene.setDefaultNavigationAnimationExecutor(null);
+        navigationScene.setRootSceneComponentFactory(sceneComponentFactory);
 
-        SceneLifecycleManager lifecycleManager = new SceneLifecycleManager();
+        SceneLifecycleManager<NavigationScene> lifecycleManager = new SceneLifecycleManager<>();
         lifecycleManager.onActivityCreated(testActivity, testActivity.mFrameLayout,
                 navigationScene, rootScopeFactory,
-                sceneComponentFactory, false, null);
+                false, null);
         lifecycleManager.onStart();
         lifecycleManager.onResume();
         lifecycleManager.onPause();

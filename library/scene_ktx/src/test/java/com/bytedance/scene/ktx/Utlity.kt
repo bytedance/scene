@@ -38,11 +38,10 @@ public fun createFromInitSceneLifecycleManager(rootScene: Scene): Pair<SceneLife
     }
 
     navigationScene.defaultNavigationAnimationExecutor = NoAnimationExecutor()
-
+    navigationScene.setRootSceneComponentFactory(sceneComponentFactory)
     val sceneLifecycleManager = SceneLifecycleManager<NavigationScene>()
     sceneLifecycleManager.onActivityCreated(testActivity, testActivity.mFrameLayout,
-            navigationScene, rootScopeFactory,
-            sceneComponentFactory, false, null)
+            navigationScene, rootScopeFactory, false, null)
     return Pair(sceneLifecycleManager, navigationScene)
 }
 
@@ -62,10 +61,9 @@ public fun createFromInitSceneLifecycleManager(activityClass: Class<out Activity
     }
 
     navigationScene.defaultNavigationAnimationExecutor = NoAnimationExecutor()
-
+    navigationScene.setRootSceneComponentFactory(sceneComponentFactory)
     val sceneLifecycleManager = SceneLifecycleManager<NavigationScene>()
     sceneLifecycleManager.onActivityCreated(testActivity, testActivity.findViewById(android.R.id.content),
-            navigationScene, rootScopeFactory,
-            sceneComponentFactory, false, null)
+            navigationScene, rootScopeFactory, false, null)
     return Pair(sceneLifecycleManager, navigationScene)
 }

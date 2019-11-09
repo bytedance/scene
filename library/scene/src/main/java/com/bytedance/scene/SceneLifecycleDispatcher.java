@@ -22,7 +22,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.RestrictTo;
 import android.view.ViewGroup;
-import com.bytedance.scene.navigation.NavigationScene;
 
 import static android.support.annotation.RestrictTo.Scope.LIBRARY_GROUP;
 
@@ -32,7 +31,7 @@ import static android.support.annotation.RestrictTo.Scope.LIBRARY_GROUP;
  * @hide
  */
 @RestrictTo(LIBRARY_GROUP)
-public class SceneLifecycleDispatcher<T extends NavigationScene & SceneParent> implements SceneContainerLifecycleCallback {
+public class SceneLifecycleDispatcher<T extends Scene & SceneParent> implements SceneContainerLifecycleCallback {
     private static final String TAG = "SCENE";
     @IdRes
     private final int mSceneContainerViewId;
@@ -40,20 +39,17 @@ public class SceneLifecycleDispatcher<T extends NavigationScene & SceneParent> i
     private final T mScene;
     private final Scope.RootScopeFactory mRootScopeFactory;
     private final boolean mSupportRestore;
-    private final SceneComponentFactory mRootSceneComponentFactory;
     private final SceneLifecycleManager<T> mLifecycleManager = new SceneLifecycleManager<>();
 
     public SceneLifecycleDispatcher(@IdRes int sceneContainerViewId,
                                     ViewFinder viewFinder,
                                     T rootScene,
                                     Scope.RootScopeFactory rootScopeFactory,
-                                    SceneComponentFactory sceneComponentFactory,
                                     boolean supportRestore) {
         this.mSceneContainerViewId = sceneContainerViewId;
         this.mViewFinder = viewFinder;
         this.mScene = rootScene;
         this.mRootScopeFactory = rootScopeFactory;
-        this.mRootSceneComponentFactory = sceneComponentFactory;
         this.mSupportRestore = supportRestore;
     }
 
@@ -61,7 +57,7 @@ public class SceneLifecycleDispatcher<T extends NavigationScene & SceneParent> i
     public void onActivityCreated(@NonNull Activity activity, @Nullable Bundle savedInstanceState) {
         ViewGroup viewGroup = this.mViewFinder.requireViewById(this.mSceneContainerViewId);
         this.mLifecycleManager.onActivityCreated(activity, viewGroup, this.mScene, this.mRootScopeFactory,
-                this.mRootSceneComponentFactory, this.mSupportRestore, this.mSupportRestore ? savedInstanceState : null);
+                this.mSupportRestore, this.mSupportRestore ? savedInstanceState : null);
     }
 
     @Override

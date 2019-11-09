@@ -129,11 +129,10 @@ fun createFromInitSceneLifecycleManagerByFragmentActivity(rootScene: Scene): Pai
     }
 
     navigationScene.defaultNavigationAnimationExecutor = null
-
+    navigationScene.setRootSceneComponentFactory(sceneComponentFactory)
     val sceneLifecycleManager = SceneLifecycleManager<NavigationScene>()
     sceneLifecycleManager.onActivityCreated(testActivity, testActivity.mFrameLayout,
-            navigationScene, rootScopeFactory,
-            sceneComponentFactory, false, null)
+            navigationScene, rootScopeFactory, false, null)
     return Pair(sceneLifecycleManager, navigationScene)
 }
 
