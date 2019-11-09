@@ -61,6 +61,13 @@ public final class StatusBarView extends View {
         init();
     }
 
+    private final Runnable REQUEST_LAYOUT_RUNNABLE = new Runnable() {
+        @Override
+        public void run() {
+            requestLayout();
+        }
+    };
+
     private void init() {
         ViewCompat.setOnApplyWindowInsetsListener(this,
                 new androidx.core.view.OnApplyWindowInsetsListener() {
@@ -71,8 +78,13 @@ public final class StatusBarView extends View {
                             mLastInsets = null;
                             return insets;
                         }
-                        mLastInsets = new WindowInsetsCompat(insets);
-                        requestLayout();
+                        WindowInsetsCompat insetsCompat = new WindowInsetsCompat(insets);
+                        if (!insetsCompat.equals(mLastInsets)) {
+                            mLastInsets = new WindowInsetsCompat(insets);
+                            //Must post requestLayout otherwise ViewGroup's state will freeze in isLayoutRequested()==true,
+                            //then following requestLayout will be ignored
+                            post(REQUEST_LAYOUT_RUNNABLE);
+                        }
                         return new WindowInsetsCompat(insets).replaceSystemWindowInsets(
                                 insets.getSystemWindowInsetLeft(),
                                 0,

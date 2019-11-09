@@ -31,7 +31,7 @@ public class NavigationStackTests {
     @Test
     public void testPushPop() {
         final TestScene rootScene = new TestScene();
-        Pair<SceneLifecycleManager, NavigationScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(rootScene);
+        Pair<SceneLifecycleManager<NavigationScene>, NavigationScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(rootScene);
 
         SceneLifecycleManager sceneLifecycleManager = pair.first;
         NavigationScene navigationScene = pair.second;
@@ -58,7 +58,7 @@ public class NavigationStackTests {
     @Test
     public void testPopToRoot() {
         final TestScene rootScene = new TestScene();
-        Pair<SceneLifecycleManager, NavigationScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(rootScene);
+        Pair<SceneLifecycleManager<NavigationScene>, NavigationScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(rootScene);
 
         SceneLifecycleManager sceneLifecycleManager = pair.first;
         NavigationScene navigationScene = pair.second;
@@ -95,7 +95,7 @@ public class NavigationStackTests {
     @Test
     public void testRemove() {
         final TestScene rootScene = new TestScene();
-        Pair<SceneLifecycleManager, NavigationScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(rootScene);
+        Pair<SceneLifecycleManager<NavigationScene>, NavigationScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(rootScene);
 
         SceneLifecycleManager sceneLifecycleManager = pair.first;
         NavigationScene navigationScene = pair.second;
@@ -144,7 +144,7 @@ public class NavigationStackTests {
     @Test
     public void testPopTo() {
         final TestScene groupScene = new TestScene();
-        Pair<SceneLifecycleManager, NavigationScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(groupScene);
+        Pair<SceneLifecycleManager<NavigationScene>, NavigationScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(groupScene);
 
         SceneLifecycleManager sceneLifecycleManager = pair.first;
         NavigationScene navigationScene = pair.second;
@@ -173,7 +173,7 @@ public class NavigationStackTests {
     @Test
     public void testPushReplacePredicate() {
         final TestScene groupScene = new TestScene();
-        Pair<SceneLifecycleManager, NavigationScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(groupScene);
+        Pair<SceneLifecycleManager<NavigationScene>, NavigationScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(groupScene);
 
         SceneLifecycleManager sceneLifecycleManager = pair.first;
         NavigationScene navigationScene = pair.second;
@@ -199,7 +199,7 @@ public class NavigationStackTests {
     @Test
     public void testPushClearTaskPredicate() {
         final TestScene groupScene = new TestScene();
-        Pair<SceneLifecycleManager, NavigationScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(groupScene);
+        Pair<SceneLifecycleManager<NavigationScene>, NavigationScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(groupScene);
 
         SceneLifecycleManager sceneLifecycleManager = pair.first;
         NavigationScene navigationScene = pair.second;
@@ -231,7 +231,7 @@ public class NavigationStackTests {
     @Test
     public void testPushSingleTopPredicate() {
         final TestScene groupScene = new TestScene();
-        Pair<SceneLifecycleManager, NavigationScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(groupScene);
+        Pair<SceneLifecycleManager<NavigationScene>, NavigationScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(groupScene);
 
         SceneLifecycleManager sceneLifecycleManager = pair.first;
         NavigationScene navigationScene = pair.second;
@@ -259,7 +259,7 @@ public class NavigationStackTests {
     @Test
     public void testPushCountPredicate() {
         final TestScene groupScene = new TestScene();
-        Pair<SceneLifecycleManager, NavigationScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(groupScene);
+        Pair<SceneLifecycleManager<NavigationScene>, NavigationScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(groupScene);
 
         SceneLifecycleManager sceneLifecycleManager = pair.first;
         NavigationScene navigationScene = pair.second;
@@ -279,7 +279,7 @@ public class NavigationStackTests {
     @Test
     public void testPushSingleTaskPredicate() {
         final TestScene groupScene = new TestScene();
-        Pair<SceneLifecycleManager, NavigationScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(groupScene);
+        Pair<SceneLifecycleManager<NavigationScene>, NavigationScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(groupScene);
 
         SceneLifecycleManager sceneLifecycleManager = pair.first;
         NavigationScene navigationScene = pair.second;
@@ -301,7 +301,7 @@ public class NavigationStackTests {
     @Test
     public void testPopCountUtilPredicate() {
         final TestScene groupScene = new TestScene();
-        Pair<SceneLifecycleManager, NavigationScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(groupScene);
+        Pair<SceneLifecycleManager<NavigationScene>, NavigationScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(groupScene);
 
         SceneLifecycleManager sceneLifecycleManager = pair.first;
         NavigationScene navigationScene = pair.second;

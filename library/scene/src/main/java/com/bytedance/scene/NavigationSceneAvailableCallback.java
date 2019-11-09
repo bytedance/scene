@@ -21,6 +21,7 @@ import com.bytedance.scene.navigation.NavigationScene;
 /**
  * Created by JiangQi on 10/25/18.
  */
+@Deprecated
 public interface NavigationSceneAvailableCallback {
     public void onNavigationSceneAvailable(@NonNull NavigationScene navigationScene);
 }

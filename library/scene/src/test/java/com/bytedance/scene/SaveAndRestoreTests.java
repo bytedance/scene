@@ -13,6 +13,7 @@ import com.bytedance.scene.animation.animatorexecutor.NoAnimationExecutor;
 import com.bytedance.scene.group.GroupScene;
 import com.bytedance.scene.navigation.NavigationScene;
 import com.bytedance.scene.navigation.NavigationSceneOptions;
+import com.bytedance.scene.parcel.ParcelConstants;
 import com.bytedance.scene.utlity.ViewIdGenerator;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -21,10 +22,11 @@ import org.robolectric.RobolectricTestRunner;
 import org.robolectric.android.controller.ActivityController;
 import org.robolectric.annotation.Config;
 
+import java.util.ArrayList;
+
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertNotSame;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 
 @RunWith(RobolectricTestRunner.class)
@@ -37,19 +39,12 @@ public class SaveAndRestoreTests {
         TestScene previousRootScene = null;
 
         {
-            SceneLifecycleManager sceneLifecycleManager = new SceneLifecycleManager();
+            SceneLifecycleManager<NavigationScene> sceneLifecycleManager = new SceneLifecycleManager<>();
             NavigationScene navigationScene = new NavigationScene();
             ActivityController<NavigationSourceUtility.TestActivity> controller = Robolectric.buildActivity(NavigationSourceUtility.TestActivity.class).create().start().resume();
             NavigationSourceUtility.TestActivity testActivity = controller.get();
             NavigationSceneOptions options = new NavigationSceneOptions(TestScene.class);
             navigationScene.setArguments(options.toBundle());
-
-            NavigationScene.NavigationSceneHost navigationSceneHost = new NavigationScene.NavigationSceneHost() {
-                @Override
-                public boolean isSupportRestore() {
-                    return true;
-                }
-            };
 
             Scope.RootScopeFactory rootScopeFactory = new Scope.RootScopeFactory() {
                 @Override
@@ -61,8 +56,8 @@ public class SaveAndRestoreTests {
             navigationScene.setDefaultNavigationAnimationExecutor(new NoAnimationExecutor());
 
             sceneLifecycleManager.onActivityCreated(testActivity, testActivity.mFrameLayout,
-                    navigationScene, navigationSceneHost, rootScopeFactory,
-                    null, null);
+                    navigationScene, rootScopeFactory,
+                    true, null);
 
             sceneLifecycleManager.onStart();
             sceneLifecycleManager.onResume();
@@ -88,13 +83,6 @@ public class SaveAndRestoreTests {
             NavigationScene navigationScene = new NavigationScene();
             navigationScene.setArguments(options.toBundle());
 
-            NavigationScene.NavigationSceneHost navigationSceneHost = new NavigationScene.NavigationSceneHost() {
-                @Override
-                public boolean isSupportRestore() {
-                    return true;
-                }
-            };
-
             Scope.RootScopeFactory rootScopeFactory = new Scope.RootScopeFactory() {
                 @Override
                 public Scope getRootScope() {
@@ -103,10 +91,9 @@ public class SaveAndRestoreTests {
             };
 
             navigationScene.setDefaultNavigationAnimationExecutor(new NoAnimationExecutor());
-            SceneLifecycleManager sceneLifecycleManager = new SceneLifecycleManager();
+            SceneLifecycleManager<NavigationScene> sceneLifecycleManager = new SceneLifecycleManager<>();
             sceneLifecycleManager.onActivityCreated(testActivity, testActivity.mFrameLayout,
-                    navigationScene, navigationSceneHost, rootScopeFactory,
-                    null, bundle);
+                    navigationScene, rootScopeFactory, true, bundle);
             newRootScene = (TestScene) navigationScene.getCurrentScene();
         }
 
@@ -124,19 +111,12 @@ public class SaveAndRestoreTests {
         TestScene previousChildScene = null;
 
         {
-            SceneLifecycleManager sceneLifecycleManager = new SceneLifecycleManager();
+            SceneLifecycleManager<NavigationScene> sceneLifecycleManager = new SceneLifecycleManager<>();
             NavigationScene navigationScene = new NavigationScene();
             ActivityController<NavigationSourceUtility.TestActivity> controller = Robolectric.buildActivity(NavigationSourceUtility.TestActivity.class).create().start().resume();
             NavigationSourceUtility.TestActivity testActivity = controller.get();
             NavigationSceneOptions options = new NavigationSceneOptions(TestFixIdGroupScene.class);
             navigationScene.setArguments(options.toBundle());
-
-            NavigationScene.NavigationSceneHost navigationSceneHost = new NavigationScene.NavigationSceneHost() {
-                @Override
-                public boolean isSupportRestore() {
-                    return true;
-                }
-            };
 
             Scope.RootScopeFactory rootScopeFactory = new Scope.RootScopeFactory() {
                 @Override
@@ -148,8 +128,7 @@ public class SaveAndRestoreTests {
             navigationScene.setDefaultNavigationAnimationExecutor(new NoAnimationExecutor());
 
             sceneLifecycleManager.onActivityCreated(testActivity, testActivity.mFrameLayout,
-                    navigationScene, navigationSceneHost, rootScopeFactory,
-                    null, null);
+                    navigationScene, rootScopeFactory, true, null);
 
             sceneLifecycleManager.onStart();
             sceneLifecycleManager.onResume();
@@ -179,13 +158,6 @@ public class SaveAndRestoreTests {
             NavigationScene navigationScene = new NavigationScene();
             navigationScene.setArguments(options.toBundle());
 
-            NavigationScene.NavigationSceneHost navigationSceneHost = new NavigationScene.NavigationSceneHost() {
-                @Override
-                public boolean isSupportRestore() {
-                    return true;
-                }
-            };
-
             Scope.RootScopeFactory rootScopeFactory = new Scope.RootScopeFactory() {
                 @Override
                 public Scope getRootScope() {
@@ -194,10 +166,9 @@ public class SaveAndRestoreTests {
             };
 
             navigationScene.setDefaultNavigationAnimationExecutor(new NoAnimationExecutor());
-            SceneLifecycleManager sceneLifecycleManager = new SceneLifecycleManager();
+            SceneLifecycleManager<NavigationScene> sceneLifecycleManager = new SceneLifecycleManager<>();
             sceneLifecycleManager.onActivityCreated(testActivity, testActivity.mFrameLayout,
-                    navigationScene, navigationSceneHost, rootScopeFactory,
-                    null, bundle);
+                    navigationScene, rootScopeFactory, true, bundle);
             newRootScene = (TestFixIdGroupScene) navigationScene.getCurrentScene();
             newChildScene = newRootScene.findSceneByTag("TAG");
         }
@@ -222,19 +193,12 @@ public class SaveAndRestoreTests {
         TestScene previousChildScene = null;
 
         {
-            SceneLifecycleManager sceneLifecycleManager = new SceneLifecycleManager();
+            SceneLifecycleManager<NavigationScene> sceneLifecycleManager = new SceneLifecycleManager<>();
             NavigationScene navigationScene = new NavigationScene();
             ActivityController<NavigationSourceUtility.TestActivity> controller = Robolectric.buildActivity(NavigationSourceUtility.TestActivity.class).create().start().resume();
             NavigationSourceUtility.TestActivity testActivity = controller.get();
             NavigationSceneOptions options = new NavigationSceneOptions(TestGroupScene.class);
             navigationScene.setArguments(options.toBundle());
-
-            NavigationScene.NavigationSceneHost navigationSceneHost = new NavigationScene.NavigationSceneHost() {
-                @Override
-                public boolean isSupportRestore() {
-                    return true;
-                }
-            };
 
             Scope.RootScopeFactory rootScopeFactory = new Scope.RootScopeFactory() {
                 @Override
@@ -246,8 +210,7 @@ public class SaveAndRestoreTests {
             navigationScene.setDefaultNavigationAnimationExecutor(new NoAnimationExecutor());
 
             sceneLifecycleManager.onActivityCreated(testActivity, testActivity.mFrameLayout,
-                    navigationScene, navigationSceneHost, rootScopeFactory,
-                    null, null);
+                    navigationScene, rootScopeFactory, true, null);
 
             sceneLifecycleManager.onStart();
             sceneLifecycleManager.onResume();
@@ -277,13 +240,6 @@ public class SaveAndRestoreTests {
             NavigationScene navigationScene = new NavigationScene();
             navigationScene.setArguments(options.toBundle());
 
-            NavigationScene.NavigationSceneHost navigationSceneHost = new NavigationScene.NavigationSceneHost() {
-                @Override
-                public boolean isSupportRestore() {
-                    return true;
-                }
-            };
-
             Scope.RootScopeFactory rootScopeFactory = new Scope.RootScopeFactory() {
                 @Override
                 public Scope getRootScope() {
@@ -292,10 +248,9 @@ public class SaveAndRestoreTests {
             };
 
             navigationScene.setDefaultNavigationAnimationExecutor(new NoAnimationExecutor());
-            SceneLifecycleManager sceneLifecycleManager = new SceneLifecycleManager();
+            SceneLifecycleManager<NavigationScene> sceneLifecycleManager = new SceneLifecycleManager<>();
             sceneLifecycleManager.onActivityCreated(testActivity, testActivity.mFrameLayout,
-                    navigationScene, navigationSceneHost, rootScopeFactory,
-                    null, bundle);
+                    navigationScene, rootScopeFactory, true, bundle);
             newRootScene = (TestGroupScene) navigationScene.getCurrentScene();
             newChildScene = newRootScene.findSceneByTag("TAG");
         }
@@ -310,20 +265,14 @@ public class SaveAndRestoreTests {
         assertEquals("Test", newChildScene.mValue);//check onSaveInstanceState and onViewStateRestored
     }
 
-    public static NavigationScene createNavigationScene(final Scene rootScene) {
-        SceneLifecycleManager sceneLifecycleManager = new SceneLifecycleManager();
+    @Test
+    public void testParentSceneViewStateBundleShouldNotSaveChildSceneViewState() {
+        SceneLifecycleManager<NavigationScene> sceneLifecycleManager = new SceneLifecycleManager<>();
         NavigationScene navigationScene = new NavigationScene();
         ActivityController<NavigationSourceUtility.TestActivity> controller = Robolectric.buildActivity(NavigationSourceUtility.TestActivity.class).create().start().resume();
         NavigationSourceUtility.TestActivity testActivity = controller.get();
-        NavigationSceneOptions options = new NavigationSceneOptions(TestScene.class);
+        NavigationSceneOptions options = new NavigationSceneOptions(TestFixIdGroupScene.class);
         navigationScene.setArguments(options.toBundle());
-
-        NavigationScene.NavigationSceneHost navigationSceneHost = new NavigationScene.NavigationSceneHost() {
-            @Override
-            public boolean isSupportRestore() {
-                return true;
-            }
-        };
 
         Scope.RootScopeFactory rootScopeFactory = new Scope.RootScopeFactory() {
             @Override
@@ -335,13 +284,56 @@ public class SaveAndRestoreTests {
         navigationScene.setDefaultNavigationAnimationExecutor(null);
 
         sceneLifecycleManager.onActivityCreated(testActivity, testActivity.mFrameLayout,
-                navigationScene, navigationSceneHost, rootScopeFactory,
-                new SceneComponentFactory() {
-                    @Override
-                    public Scene instantiateScene(ClassLoader cl, String className, Bundle bundle) {
-                        return rootScene;
-                    }
-                }, null);
+                navigationScene, rootScopeFactory, true, null);
+
+        sceneLifecycleManager.onStart();
+        sceneLifecycleManager.onResume();
+
+        TestFixIdGroupScene parentGroupScene = (TestFixIdGroupScene) navigationScene.getCurrentScene();
+        TestScene childScene = new TestScene();
+        parentGroupScene.add(parentGroupScene.id, childScene, "TAG");
+
+        childScene.setValue("Test");
+        childScene.getCheckBox().setChecked(true);
+
+        Bundle bundle = new Bundle();
+        sceneLifecycleManager.onSaveInstanceState(bundle);
+        ArrayList<Bundle> navigationSceneChildrenSceneBundleList = bundle.getParcelableArrayList(ParcelConstants.KEY_NAVIGATION_SCENE_MANAGER_TAG);
+        Bundle groupSceneBundle = navigationSceneChildrenSceneBundleList.get(0);
+        SparseArray<Parcelable> groupSceneViewStateArray = groupSceneBundle.getSparseParcelableArray(ParcelConstants.KEY_SCENE_VIEWS_TAG);
+        //Parent Scene's view state bundle should not have child Scene's view state, child Scene' view state is saved to child Scene's bundle.
+        assertNull(groupSceneViewStateArray.get(childScene.requireView().getId()));
+        ArrayList<Bundle> groupSceneChildrenSceneBundleList = groupSceneBundle.getParcelableArrayList(ParcelConstants.KEY_GROUP_SCENE_MANAGER_TAG);
+        Bundle groupChildSceneBundle = groupSceneChildrenSceneBundleList.get(0);
+        SparseArray<Parcelable> childSceneViewStateArray = groupChildSceneBundle.getSparseParcelableArray(ParcelConstants.KEY_SCENE_VIEWS_TAG);
+        //Child Scene's view state should be saved in this SparseArray
+        assertNotNull(childSceneViewStateArray.get(childScene.requireView().getId()));
+    }
+
+    public static NavigationScene createNavigationScene(final Scene rootScene) {
+        SceneLifecycleManager<NavigationScene> sceneLifecycleManager = new SceneLifecycleManager<>();
+        NavigationScene navigationScene = new NavigationScene();
+        ActivityController<NavigationSourceUtility.TestActivity> controller = Robolectric.buildActivity(NavigationSourceUtility.TestActivity.class).create().start().resume();
+        NavigationSourceUtility.TestActivity testActivity = controller.get();
+        NavigationSceneOptions options = new NavigationSceneOptions(TestScene.class);
+        navigationScene.setArguments(options.toBundle());
+
+        Scope.RootScopeFactory rootScopeFactory = new Scope.RootScopeFactory() {
+            @Override
+            public Scope getRootScope() {
+                return Scope.DEFAULT_ROOT_SCOPE_FACTORY.getRootScope();
+            }
+        };
+
+        navigationScene.setDefaultNavigationAnimationExecutor(null);
+        navigationScene.setRootSceneComponentFactory(new SceneComponentFactory() {
+            @Override
+            public Scene instantiateScene(ClassLoader cl, String className, Bundle bundle) {
+                return rootScene;
+            }
+        });
+        sceneLifecycleManager.onActivityCreated(testActivity, testActivity.mFrameLayout,
+                navigationScene, rootScopeFactory, true, null);
 
         sceneLifecycleManager.onStart();
         sceneLifecycleManager.onResume();

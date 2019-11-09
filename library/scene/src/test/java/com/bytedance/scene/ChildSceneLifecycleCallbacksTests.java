@@ -131,13 +131,6 @@ public class ChildSceneLifecycleCallbacksTests {
         navigationScene.setArguments(options.toBundle());
         navigationScene.registerChildSceneLifecycleCallbacks(callbacks, false);
 
-        NavigationScene.NavigationSceneHost navigationSceneHost = new NavigationScene.NavigationSceneHost() {
-            @Override
-            public boolean isSupportRestore() {
-                return false;
-            }
-        };
-
         Scope.RootScopeFactory rootScopeFactory = new Scope.RootScopeFactory() {
             @Override
             public Scope getRootScope() {
@@ -156,11 +149,12 @@ public class ChildSceneLifecycleCallbacksTests {
         };
 
         navigationScene.setDefaultNavigationAnimationExecutor(null);
+        navigationScene.setRootSceneComponentFactory(sceneComponentFactory);
 
-        SceneLifecycleManager lifecycleManager = new SceneLifecycleManager();
+        SceneLifecycleManager<NavigationScene> lifecycleManager = new SceneLifecycleManager<>();
         lifecycleManager.onActivityCreated(testActivity, testActivity.mFrameLayout,
-                navigationScene, navigationSceneHost, rootScopeFactory,
-                sceneComponentFactory, null);
+                navigationScene, rootScopeFactory,
+                false, null);
         lifecycleManager.onStart();
         lifecycleManager.onResume();
         lifecycleManager.onPause();
@@ -277,7 +271,7 @@ public class ChildSceneLifecycleCallbacksTests {
             }
         };
 
-        Pair<SceneLifecycleManager, NavigationScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(rootScene);
+        Pair<SceneLifecycleManager<NavigationScene>, NavigationScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(rootScene);
         rootScene.registerChildSceneLifecycleCallbacks(callbacks, false);
 
         SceneLifecycleManager lifecycleManager = pair.first;
@@ -437,7 +431,7 @@ public class ChildSceneLifecycleCallbacksTests {
             }
         };
 
-        Pair<SceneLifecycleManager, NavigationScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(rootScene);
+        Pair<SceneLifecycleManager<NavigationScene>, NavigationScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(rootScene);
         rootScene.registerChildSceneLifecycleCallbacks(callbacks, true);
 
         SceneLifecycleManager lifecycleManager = pair.first;

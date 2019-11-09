@@ -28,31 +28,29 @@ import com.bytedance.scene.utlity.Utility;
 /**
  * Created by JiangQi on 9/11/18.
  */
-final class LifeCycleFragmentSceneDelegate implements SceneDelegate, NavigationSceneAvailableCallback {
+final class LifeCycleFragmentSceneDelegate implements SceneDelegate {
     private final Activity mActivity;
+    private final NavigationScene mNavigationScene;
     private final LifeCycleFragment mLifeCycleFragment;
     private final ScopeHolderFragment mScopeHolderFragment;
-    private final SceneLifecycleDispatcher mSceneLifecycleDispatcher;
     private final Boolean mImmediate;
 
-    private NavigationScene mNavigationScene;
-    private NavigationSceneAvailableCallback mNavigationSceneAvailableCallback;
     private boolean mAbandoned = false;
 
-    LifeCycleFragmentSceneDelegate(@NonNull Activity activity, @NonNull LifeCycleFragment lifeCycleFragment, @NonNull ScopeHolderFragment scopeHolderFragment,
-                                   @NonNull SceneLifecycleDispatcher dispatcher,
+    LifeCycleFragmentSceneDelegate(@NonNull Activity activity, @NonNull NavigationScene navigationScene,
+                                   @NonNull LifeCycleFragment lifeCycleFragment,
+                                   @NonNull ScopeHolderFragment scopeHolderFragment,
                                    boolean immediate) {
         this.mActivity = activity;
+        this.mNavigationScene = navigationScene;
         this.mLifeCycleFragment = lifeCycleFragment;
         this.mScopeHolderFragment = scopeHolderFragment;
-        this.mSceneLifecycleDispatcher = dispatcher;
         this.mImmediate = immediate;
     }
 
     @Override
     public boolean onBackPressed() {
-        NavigationScene navigationScene = mSceneLifecycleDispatcher.getNavigationScene();
-        return !this.mAbandoned && navigationScene != null && navigationScene.onBackPressed();
+        return !this.mAbandoned && this.mNavigationScene.onBackPressed();
     }
 
     @Override
@@ -61,23 +59,12 @@ final class LifeCycleFragmentSceneDelegate implements SceneDelegate, NavigationS
         if (this.mAbandoned) {
             return null;
         }
-        return mSceneLifecycleDispatcher.getNavigationScene();
-    }
-
-    @Override
-    public final void onNavigationSceneAvailable(@NonNull NavigationScene navigationScene) {
-        this.mNavigationScene = navigationScene;
-        if (this.mNavigationSceneAvailableCallback != null) {
-            this.mNavigationSceneAvailableCallback.onNavigationSceneAvailable(navigationScene);
-        }
+        return this.mNavigationScene;
     }
 
     @Override
     public final void setNavigationSceneAvailableCallback(@NonNull NavigationSceneAvailableCallback callback) {
-        this.mNavigationSceneAvailableCallback = callback;
-        if (this.mNavigationScene != null) {
-            this.mNavigationSceneAvailableCallback.onNavigationSceneAvailable(this.mNavigationScene);
-        }
+        callback.onNavigationSceneAvailable(this.mNavigationScene);
     }
 
     @Override
@@ -86,6 +73,7 @@ final class LifeCycleFragmentSceneDelegate implements SceneDelegate, NavigationS
             return;
         }
         this.mAbandoned = true;
+        final View view = this.mNavigationScene.getView();
         FragmentManager fragmentManager = mActivity.getFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction().remove(this.mLifeCycleFragment).remove(this.mScopeHolderFragment);
         if (this.mImmediate) {
@@ -93,12 +81,18 @@ final class LifeCycleFragmentSceneDelegate implements SceneDelegate, NavigationS
                 @Override
                 public void onDetach() {
                     NavigationSceneUtility.removeTag(mActivity, mLifeCycleFragment.getTag());
+                    if (view != null) {
+                        Utility.removeFromParentView(view);
+                    }
                 }
             });
             Utility.commitFragment(fragmentManager, fragmentTransaction, true);
         } else {
             Utility.commitFragment(fragmentManager, fragmentTransaction, false);
             NavigationSceneUtility.removeTag(mActivity, mLifeCycleFragment.getTag());
+            if (view != null) {
+                Utility.removeFromParentView(view);
+            }
         }
     }
 }

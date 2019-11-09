@@ -41,13 +41,6 @@ public class SceneLifecycleManagerExceptionTests {
         NavigationSceneOptions options = new NavigationSceneOptions(scene.getClass());
         navigationScene.setArguments(options.toBundle());
 
-        NavigationScene.NavigationSceneHost navigationSceneHost = new NavigationScene.NavigationSceneHost() {
-            @Override
-            public boolean isSupportRestore() {
-                return false;
-            }
-        };
-
         Scope.RootScopeFactory rootScopeFactory = new Scope.RootScopeFactory() {
             @Override
             public Scope getRootScope() {
@@ -66,10 +59,10 @@ public class SceneLifecycleManagerExceptionTests {
         };
 
         navigationScene.setDefaultNavigationAnimationExecutor(null);
-        SceneLifecycleManager sceneLifecycleManager = new SceneLifecycleManager();
+        navigationScene.setRootSceneComponentFactory(sceneComponentFactory);
+        SceneLifecycleManager<NavigationScene> sceneLifecycleManager = new SceneLifecycleManager<>();
         sceneLifecycleManager.onActivityCreated(testActivity, testActivity.mFrameLayout,
-                navigationScene, navigationSceneHost, rootScopeFactory,
-                sceneComponentFactory, null);
+                navigationScene, rootScopeFactory, false, null);
         sceneLifecycleManager.onStart();
         sceneLifecycleManager.onResume();
         sceneLifecycleManager.onPause();
@@ -94,13 +87,6 @@ public class SceneLifecycleManagerExceptionTests {
         NavigationSceneOptions options = new NavigationSceneOptions(scene.getClass());
         navigationScene.setArguments(options.toBundle());
 
-        NavigationScene.NavigationSceneHost navigationSceneHost = new NavigationScene.NavigationSceneHost() {
-            @Override
-            public boolean isSupportRestore() {
-                return false;
-            }
-        };
-
         Scope.RootScopeFactory rootScopeFactory = new Scope.RootScopeFactory() {
             @Override
             public Scope getRootScope() {
@@ -119,39 +105,39 @@ public class SceneLifecycleManagerExceptionTests {
         };
 
         navigationScene.setDefaultNavigationAnimationExecutor(null);
-        SceneLifecycleManager sceneLifecycleManager = new SceneLifecycleManager();
+        navigationScene.setRootSceneComponentFactory(sceneComponentFactory);
+        SceneLifecycleManager<NavigationScene> sceneLifecycleManager = new SceneLifecycleManager<>();
         sceneLifecycleManager.onActivityCreated(testActivity, testActivity.mFrameLayout,
-                navigationScene, navigationSceneHost, rootScopeFactory,
-                sceneComponentFactory, null);
+                navigationScene, rootScopeFactory, false, null);
         sceneLifecycleManager.onDestroyView();
     }
 
     @Test(expected = NullPointerException.class)
     public void testNPE() {
-        SceneLifecycleManager sceneLifecycleManager = new SceneLifecycleManager();
+        SceneLifecycleManager<NavigationScene> sceneLifecycleManager = new SceneLifecycleManager<>();
         sceneLifecycleManager.onActivityCreated(null, null,
-                null, null, null,
-                null, null);
+                null, null,
+                false, null);
     }
 
     @Test(expected = NullPointerException.class)
     public void testNPE1() {
         ActivityController<TestActivity> controller = Robolectric.buildActivity(TestActivity.class).create().start().resume();
         TestActivity testActivity = controller.get();
-        SceneLifecycleManager sceneLifecycleManager = new SceneLifecycleManager();
+        SceneLifecycleManager<NavigationScene> sceneLifecycleManager = new SceneLifecycleManager<>();
         sceneLifecycleManager.onActivityCreated(testActivity, null,
-                null, null, null,
-                null, null);
+                null, null,
+                false, null);
     }
 
     @Test(expected = NullPointerException.class)
     public void testNPE2() {
         ActivityController<TestActivity> controller = Robolectric.buildActivity(TestActivity.class).create().start().resume();
         TestActivity testActivity = controller.get();
-        SceneLifecycleManager sceneLifecycleManager = new SceneLifecycleManager();
+        SceneLifecycleManager<NavigationScene> sceneLifecycleManager = new SceneLifecycleManager<>();
         sceneLifecycleManager.onActivityCreated(testActivity, testActivity.mFrameLayout,
-                null, null, null,
-                null, null);
+                null, null,
+                false, null);
 
     }
 
@@ -159,93 +145,54 @@ public class SceneLifecycleManagerExceptionTests {
     public void testNPE3() {
         ActivityController<TestActivity> controller = Robolectric.buildActivity(TestActivity.class).create().start().resume();
         TestActivity testActivity = controller.get();
-        SceneLifecycleManager sceneLifecycleManager = new SceneLifecycleManager();
+        SceneLifecycleManager<NavigationScene> sceneLifecycleManager = new SceneLifecycleManager<>();
 
         NavigationScene navigationScene = new NavigationScene();
         NavigationSceneOptions options = new NavigationSceneOptions(ChildScene.class);
         navigationScene.setArguments(options.toBundle());
 
         sceneLifecycleManager.onActivityCreated(testActivity, testActivity.mFrameLayout,
-                navigationScene, null, null,
-                null, null);
-    }
-
-    @Test(expected = NullPointerException.class)
-    public void testNPE4() {
-        ActivityController<TestActivity> controller = Robolectric.buildActivity(TestActivity.class).create().start().resume();
-        TestActivity testActivity = controller.get();
-        SceneLifecycleManager sceneLifecycleManager = new SceneLifecycleManager();
-
-        NavigationScene navigationScene = new NavigationScene();
-        NavigationSceneOptions options = new NavigationSceneOptions(ChildScene.class);
-        navigationScene.setArguments(options.toBundle());
-
-        NavigationScene.NavigationSceneHost navigationSceneHost = new NavigationScene.NavigationSceneHost() {
-            @Override
-            public boolean isSupportRestore() {
-                return false;
-            }
-        };
-
-        sceneLifecycleManager.onActivityCreated(testActivity, testActivity.mFrameLayout,
-                navigationScene, navigationSceneHost, null,
-                null, null);
+                navigationScene, null, false, null);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testOnSaveInstanceStateException() {
         ActivityController<TestActivity> controller = Robolectric.buildActivity(TestActivity.class).create().start().resume();
         TestActivity testActivity = controller.get();
-        SceneLifecycleManager sceneLifecycleManager = new SceneLifecycleManager();
+        SceneLifecycleManager<NavigationScene> sceneLifecycleManager = new SceneLifecycleManager<>();
 
         NavigationScene navigationScene = new NavigationScene();
         NavigationSceneOptions options = new NavigationSceneOptions(ChildScene.class);
         navigationScene.setArguments(options.toBundle());
 
-        NavigationScene.NavigationSceneHost navigationSceneHost = new NavigationScene.NavigationSceneHost() {
-            @Override
-            public boolean isSupportRestore() {
-                return false;
-            }
-        };
-
         sceneLifecycleManager.onActivityCreated(testActivity, testActivity.mFrameLayout,
-                navigationScene, navigationSceneHost, new Scope.RootScopeFactory() {
+                navigationScene, new Scope.RootScopeFactory() {
                     @NonNull
                     @Override
                     public Scope getRootScope() {
                         return Scope.DEFAULT_ROOT_SCOPE_FACTORY.getRootScope();
                     }
-                },
-                null, new Bundle());
+                }, false, new Bundle());
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testOnSaveInstanceStateException1() {
         ActivityController<TestActivity> controller = Robolectric.buildActivity(TestActivity.class).create().start().resume();
         TestActivity testActivity = controller.get();
-        SceneLifecycleManager sceneLifecycleManager = new SceneLifecycleManager();
+        SceneLifecycleManager<NavigationScene> sceneLifecycleManager = new SceneLifecycleManager<>();
 
         NavigationScene navigationScene = new NavigationScene();
         NavigationSceneOptions options = new NavigationSceneOptions(ChildScene.class);
         navigationScene.setArguments(options.toBundle());
 
-        NavigationScene.NavigationSceneHost navigationSceneHost = new NavigationScene.NavigationSceneHost() {
-            @Override
-            public boolean isSupportRestore() {
-                return false;
-            }
-        };
-
         sceneLifecycleManager.onActivityCreated(testActivity, testActivity.mFrameLayout,
-                navigationScene, navigationSceneHost, new Scope.RootScopeFactory() {
+                navigationScene, new Scope.RootScopeFactory() {
                     @NonNull
                     @Override
                     public Scope getRootScope() {
                         return Scope.DEFAULT_ROOT_SCOPE_FACTORY.getRootScope();
                     }
-                },
-                null, null);
+                }, false, null);
         sceneLifecycleManager.onSaveInstanceState(new Bundle());
     }
 
@@ -253,28 +200,20 @@ public class SceneLifecycleManagerExceptionTests {
     public void testOnSaveInstanceStateExceptionNPE() {
         ActivityController<TestActivity> controller = Robolectric.buildActivity(TestActivity.class).create().start().resume();
         TestActivity testActivity = controller.get();
-        SceneLifecycleManager sceneLifecycleManager = new SceneLifecycleManager();
+        SceneLifecycleManager<NavigationScene> sceneLifecycleManager = new SceneLifecycleManager<>();
 
         NavigationScene navigationScene = new NavigationScene();
         NavigationSceneOptions options = new NavigationSceneOptions(ChildScene.class);
         navigationScene.setArguments(options.toBundle());
 
-        NavigationScene.NavigationSceneHost navigationSceneHost = new NavigationScene.NavigationSceneHost() {
-            @Override
-            public boolean isSupportRestore() {
-                return true;
-            }
-        };
-
         sceneLifecycleManager.onActivityCreated(testActivity, testActivity.mFrameLayout,
-                navigationScene, navigationSceneHost, new Scope.RootScopeFactory() {
+                navigationScene, new Scope.RootScopeFactory() {
                     @NonNull
                     @Override
                     public Scope getRootScope() {
                         return Scope.DEFAULT_ROOT_SCOPE_FACTORY.getRootScope();
                     }
-                },
-                null, null);
+                }, true, null);
         sceneLifecycleManager.onSaveInstanceState(null);
     }
 
@@ -282,7 +221,7 @@ public class SceneLifecycleManagerExceptionTests {
     public void testNavigationSceneStateIncorrectExceptionNPE() {
         ActivityController<TestActivity> controller = Robolectric.buildActivity(TestActivity.class).create().start().resume();
         TestActivity testActivity = controller.get();
-        SceneLifecycleManager sceneLifecycleManager = new SceneLifecycleManager();
+        SceneLifecycleManager<NavigationScene> sceneLifecycleManager = new SceneLifecycleManager<>();
 
         NavigationScene navigationScene = new NavigationScene();
         NavigationSceneOptions options = new NavigationSceneOptions(ChildScene.class);
@@ -292,50 +231,35 @@ public class SceneLifecycleManagerExceptionTests {
         navigationScene.dispatchAttachScene(null);
         navigationScene.dispatchCreate(null);
         navigationScene.dispatchCreateView(null, new FrameLayout(testActivity));
-        NavigationScene.NavigationSceneHost navigationSceneHost = new NavigationScene.NavigationSceneHost() {
-            @Override
-            public boolean isSupportRestore() {
-                return false;
-            }
-        };
 
         sceneLifecycleManager.onActivityCreated(testActivity, testActivity.mFrameLayout,
-                navigationScene, navigationSceneHost, new Scope.RootScopeFactory() {
+                navigationScene, new Scope.RootScopeFactory() {
                     @NonNull
                     @Override
                     public Scope getRootScope() {
                         return Scope.DEFAULT_ROOT_SCOPE_FACTORY.getRootScope();
                     }
-                },
-                null, null);
+                }, false, null);
     }
 
     @Test(expected = IllegalStateException.class)
     public void testStateException() {
         ActivityController<TestActivity> controller = Robolectric.buildActivity(TestActivity.class).create().start().resume();
         TestActivity testActivity = controller.get();
-        SceneLifecycleManager sceneLifecycleManager = new SceneLifecycleManager();
+        SceneLifecycleManager<NavigationScene> sceneLifecycleManager = new SceneLifecycleManager<>();
 
         NavigationScene navigationScene = new NavigationScene();
         NavigationSceneOptions options = new NavigationSceneOptions(ChildScene.class);
         navigationScene.setArguments(options.toBundle());
 
-        NavigationScene.NavigationSceneHost navigationSceneHost = new NavigationScene.NavigationSceneHost() {
-            @Override
-            public boolean isSupportRestore() {
-                return false;
-            }
-        };
-
         sceneLifecycleManager.onActivityCreated(testActivity, testActivity.mFrameLayout,
-                navigationScene, navigationSceneHost, new Scope.RootScopeFactory() {
+                navigationScene, new Scope.RootScopeFactory() {
                     @NonNull
                     @Override
                     public Scope getRootScope() {
                         return Scope.DEFAULT_ROOT_SCOPE_FACTORY.getRootScope();
                     }
-                },
-                null, null);
+                }, false, null);
         sceneLifecycleManager.onResume();
     }
 
@@ -343,28 +267,20 @@ public class SceneLifecycleManagerExceptionTests {
     public void testStateException1() {
         ActivityController<TestActivity> controller = Robolectric.buildActivity(TestActivity.class).create().start().resume();
         TestActivity testActivity = controller.get();
-        SceneLifecycleManager sceneLifecycleManager = new SceneLifecycleManager();
+        SceneLifecycleManager<NavigationScene> sceneLifecycleManager = new SceneLifecycleManager<>();
 
         NavigationScene navigationScene = new NavigationScene();
         NavigationSceneOptions options = new NavigationSceneOptions(ChildScene.class);
         navigationScene.setArguments(options.toBundle());
 
-        NavigationScene.NavigationSceneHost navigationSceneHost = new NavigationScene.NavigationSceneHost() {
-            @Override
-            public boolean isSupportRestore() {
-                return false;
-            }
-        };
-
         sceneLifecycleManager.onActivityCreated(testActivity, testActivity.mFrameLayout,
-                navigationScene, navigationSceneHost, new Scope.RootScopeFactory() {
+                navigationScene, new Scope.RootScopeFactory() {
                     @NonNull
                     @Override
                     public Scope getRootScope() {
                         return Scope.DEFAULT_ROOT_SCOPE_FACTORY.getRootScope();
                     }
-                },
-                null, null);
+                }, false, null);
         sceneLifecycleManager.onPause();
     }
 
@@ -372,28 +288,20 @@ public class SceneLifecycleManagerExceptionTests {
     public void testStateException2() {
         ActivityController<TestActivity> controller = Robolectric.buildActivity(TestActivity.class).create().start().resume();
         TestActivity testActivity = controller.get();
-        SceneLifecycleManager sceneLifecycleManager = new SceneLifecycleManager();
+        SceneLifecycleManager<NavigationScene> sceneLifecycleManager = new SceneLifecycleManager<>();
 
         NavigationScene navigationScene = new NavigationScene();
         NavigationSceneOptions options = new NavigationSceneOptions(ChildScene.class);
         navigationScene.setArguments(options.toBundle());
 
-        NavigationScene.NavigationSceneHost navigationSceneHost = new NavigationScene.NavigationSceneHost() {
-            @Override
-            public boolean isSupportRestore() {
-                return false;
-            }
-        };
-
         sceneLifecycleManager.onActivityCreated(testActivity, testActivity.mFrameLayout,
-                navigationScene, navigationSceneHost, new Scope.RootScopeFactory() {
+                navigationScene, new Scope.RootScopeFactory() {
                     @NonNull
                     @Override
                     public Scope getRootScope() {
                         return Scope.DEFAULT_ROOT_SCOPE_FACTORY.getRootScope();
                     }
-                },
-                null, null);
+                }, false, null);
         sceneLifecycleManager.onStop();
     }
 
@@ -406,13 +314,6 @@ public class SceneLifecycleManagerExceptionTests {
         NavigationScene navigationScene = new NavigationScene();
         NavigationSceneOptions options = new NavigationSceneOptions(ChildScene.class);
         navigationScene.setArguments(options.toBundle());
-
-        NavigationScene.NavigationSceneHost navigationSceneHost = new NavigationScene.NavigationSceneHost() {
-            @Override
-            public boolean isSupportRestore() {
-                return false;
-            }
-        };
         sceneLifecycleManager.onStart();
     }
 
@@ -420,36 +321,27 @@ public class SceneLifecycleManagerExceptionTests {
     public void testStateException5() {
         ActivityController<TestActivity> controller = Robolectric.buildActivity(TestActivity.class).create().start().resume();
         TestActivity testActivity = controller.get();
-        SceneLifecycleManager sceneLifecycleManager = new SceneLifecycleManager();
+        SceneLifecycleManager<NavigationScene> sceneLifecycleManager = new SceneLifecycleManager<>();
 
         NavigationScene navigationScene = new NavigationScene();
         NavigationSceneOptions options = new NavigationSceneOptions(ChildScene.class);
         navigationScene.setArguments(options.toBundle());
-
-        NavigationScene.NavigationSceneHost navigationSceneHost = new NavigationScene.NavigationSceneHost() {
-            @Override
-            public boolean isSupportRestore() {
-                return false;
-            }
-        };
         sceneLifecycleManager.onActivityCreated(testActivity, testActivity.mFrameLayout,
-                navigationScene, navigationSceneHost, new Scope.RootScopeFactory() {
+                navigationScene, new Scope.RootScopeFactory() {
                     @NonNull
                     @Override
                     public Scope getRootScope() {
                         return Scope.DEFAULT_ROOT_SCOPE_FACTORY.getRootScope();
                     }
-                },
-                null, null);
+                }, false, null);
         sceneLifecycleManager.onActivityCreated(testActivity, testActivity.mFrameLayout,
-                navigationScene, navigationSceneHost, new Scope.RootScopeFactory() {
+                navigationScene, new Scope.RootScopeFactory() {
                     @NonNull
                     @Override
                     public Scope getRootScope() {
                         return Scope.DEFAULT_ROOT_SCOPE_FACTORY.getRootScope();
                     }
-                },
-                null, null);
+                }, false, null);
     }
 
     @Test(expected = IllegalStateException.class)
@@ -461,13 +353,6 @@ public class SceneLifecycleManagerExceptionTests {
         NavigationScene navigationScene = new NavigationScene();
         NavigationSceneOptions options = new NavigationSceneOptions(ChildScene.class);
         navigationScene.setArguments(options.toBundle());
-
-        NavigationScene.NavigationSceneHost navigationSceneHost = new NavigationScene.NavigationSceneHost() {
-            @Override
-            public boolean isSupportRestore() {
-                return true;
-            }
-        };
         sceneLifecycleManager.onSaveInstanceState(new Bundle());
     }
 

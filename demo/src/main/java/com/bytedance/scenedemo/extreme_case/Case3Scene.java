@@ -25,7 +25,7 @@ import com.bytedance.scene.animation.TransitionUtils;
 import com.bytedance.scene.group.GroupScene;
 import com.bytedance.scene.interfaces.PushOptions;
 import com.bytedance.scenedemo.R;
-import com.bytedance.scenedemo.group.EmptyScene;
+import com.bytedance.scenedemo.lifecycle.EmptyScene;
 import com.bytedance.scenedemo.utility.ColorUtil;
 
 /**

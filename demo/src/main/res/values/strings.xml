@@ -8,7 +8,7 @@
     <string name="main_scene_title_navigation">Navigation</string>
     <string name="main_scene_title_navigation_multi_stack">Navigation(MultiStack)</string>
     <string name="main_scene_title_navigation_router">Navigation(Router)</string>
-    <string name="main_scene_title_part">Part</string>
+    <string name="main_scene_title_composition">UI Composition</string>
     <string name="main_scene_title_anim">Animation</string>
     <string name="main_scene_title_architecture_patterns">Architecture Patterns</string>
     <string name="main_scene_title_activity_compatibility">Activity Compatibility</string>
@@ -45,10 +45,12 @@
     <string name="main_part_btn_tab_view_pager">TabLayout + ViewPager</string>
     <string name="main_part_btn_drawer">Drawer(NavigationView)</string>
     <string name="main_part_btn_bottom_tab_layout">Bottom TabLayout</string>
+    <string name="main_part_btn_hybrid_layout">Hybrid(Drawer+Tab+ViewPager)</string>
     <string name="main_part_btn_dialog">Dialog</string>
     <string name="main_part_btn_child_scene">Child Scene(add remove show hide)</string>
     <string name="main_part_btn_scene_place_holder_view">ScenePlaceHolderView(xml)</string>
     <string name="main_part_btn_bind_navigationscene_to_fragment">Bind NavigationScene to Fragment</string>
+    <string name="main_part_btn_bind_groupscene_to_activity">Bind GroupScene to Activity</string>
     <string name="main_part_btn_bind_to_view">Bind to View</string>
     <string name="main_part_btn_migrate_from_classic_android_app">Migrate from classic Android app</string>
     <string name="main_part_btn_async_inflate">Async Inflate</string>
@@ -132,8 +134,9 @@
     <string name="part_dialog_btn_2">Dialog with Background Dim</string>
     <string name="part_dialog_btn_3">Bottom sheet Dialog (Todo)</string>
     <string name="part_child_btn_1">Show/Hide Child Scene0</string>
-    <string name="part_child_btn_2">Show/Hide Child Scene0 with Animation</string>
-    <string name="part_child_btn_3">Add/Remove Child Scene0 with Animation</string>
+    <string name="part_child_btn_2">Add/Remove Child Scene0</string>
+    <string name="part_child_btn_3">Show/Hide Child Scene0 with Animation</string>
+    <string name="part_child_btn_4">Add/Remove Child Scene0 with Animation</string>
     <string name="part_inherited_tip">When the inherit level is deep, it is very difficult to share data between cross-level Scenes, so the InheritedScene and InheritedScene.of methods are provided directly to the nearest InheritedScene.</string>
 
     <string name="anim_xml_tip_1">Enter Animation</string>

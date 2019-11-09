@@ -1,6 +1,7 @@
 # Bytedance Scene
 [![GitHub license](https://img.shields.io/github/license/bytedance/scene)](https://github.com/bytedance/scene/blob/master/LICENSE) 
 ![Maven metadata URL](https://img.shields.io/maven-metadata/v?color=green&label=version&metadataUrl=http%3A%2F%2Fjcenter.bintray.com%2Fcom%2Fbytedance%2Fscene%2Fscene%2Fmaven-metadata.xml)
+[![API](https://img.shields.io/badge/api-14%2B-green)](https://developer.android.com/about/dashboards)
 
 Scene是一个基于View的轻量级导航和页面切分组件库，主要特性：
 
@@ -62,6 +63,10 @@ Scene有2个子类：NavigationScene和GroupScene，其中：
 
 1. NavigationScene支持页面切换
 2. GroupScene支持页面切分
+
+Scene             | NavigationScene             |  GroupScene 
+:-------------------------:|:-------------------------:|:-------------------------:
+<img src="http://p3.pstatp.com/origin/2dd480002cd0b8584730a" width="400">  | <img src="http://p3.pstatp.com/origin/2dd450002cc210965bb20" width="400">  |  <img src="http://p3.pstatp.com/origin/2dd450002cbd848281018" width="400">
 
 简单的接入，让主Activity继承于SceneActivity即可：
 

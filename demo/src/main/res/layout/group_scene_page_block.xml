@@ -34,8 +34,17 @@
         android:layout_height="54dp"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
-        android:layout_marginBottom="8dp"
         android:text="@string/part_child_btn_3"
+        android:textAllCaps="false" />
+
+    <Button
+        android:id="@+id/btn_3"
+        android:layout_width="match_parent"
+        android:layout_height="54dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginBottom="8dp"
+        android:text="@string/part_child_btn_4"
         android:textAllCaps="false" />
 
     <FrameLayout

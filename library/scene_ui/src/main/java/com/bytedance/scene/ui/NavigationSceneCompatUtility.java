@@ -244,20 +244,20 @@ public final class NavigationSceneCompatUtility {
         ViewFinder viewFinder = new FragmentViewFinder(fragment);
         final NavigationScene navigationScene = (NavigationScene) SceneInstanceUtility.getInstanceFromClass(NavigationScene.class,
                 navigationSceneOptions.toBundle());
-
+        navigationScene.setRootSceneComponentFactory(rootSceneComponentFactory);
         ScopeHolderCompatFragment targetScopeHolderFragment = null;
-        SceneLifecycleDispatcher dispatcher = null;
+        SceneLifecycleDispatcher<NavigationScene> dispatcher = null;
         if (lifeCycleFragment != null) {
             final ScopeHolderCompatFragment scopeHolderFragment = ScopeHolderCompatFragment.install(fragment, tag, false, immediate);
             targetScopeHolderFragment = scopeHolderFragment;
 
-            dispatcher = new SceneLifecycleDispatcher(containerId, viewFinder, navigationScene, lifeCycleFragment, scopeHolderFragment, rootSceneComponentFactory, supportRestore);
+            dispatcher = new SceneLifecycleDispatcher<>(containerId, viewFinder, navigationScene, scopeHolderFragment, supportRestore);
             lifeCycleFragment.setSceneContainerLifecycleCallback(dispatcher);
         } else {
             final ScopeHolderCompatFragment scopeHolderFragment = ScopeHolderCompatFragment.install(fragment, tag, !supportRestore, immediate);
             lifeCycleFragment = LifeCycleCompatFragment.newInstance(supportRestore);
 
-            dispatcher = new SceneLifecycleDispatcher(containerId, viewFinder, navigationScene, lifeCycleFragment, scopeHolderFragment, rootSceneComponentFactory, supportRestore);
+            dispatcher = new SceneLifecycleDispatcher<>(containerId, viewFinder, navigationScene, scopeHolderFragment, supportRestore);
             lifeCycleFragment.setSceneContainerLifecycleCallback(dispatcher);
 
             FragmentTransaction transaction = fragmentManager.beginTransaction();
@@ -268,14 +268,12 @@ public final class NavigationSceneCompatUtility {
 
         final LifeCycleCompatFragment finalLifeCycleFragment = lifeCycleFragment;
         final ScopeHolderCompatFragment finalTargetScopeHolderFragment = targetScopeHolderFragment;
-        final SceneLifecycleDispatcher finalDispatcher = dispatcher;
-        final FragmentDelegateProxy proxy = new FragmentDelegateProxy() {
+        final SceneDelegate proxy = new SceneDelegate() {
             private boolean mAbandoned = false;
 
             @Override
             public boolean onBackPressed() {
-                NavigationScene navigationScene = finalDispatcher.getNavigationScene();
-                return !mAbandoned && navigationScene != null && navigationScene.onBackPressed();
+                return !mAbandoned && navigationScene.onBackPressed();
             }
 
             @Override
@@ -284,7 +282,12 @@ public final class NavigationSceneCompatUtility {
                 if (this.mAbandoned) {
                     return null;
                 }
-                return finalDispatcher.getNavigationScene();
+                return navigationScene;
+            }
+
+            @Override
+            public void setNavigationSceneAvailableCallback(@NonNull NavigationSceneAvailableCallback callback) {
+                callback.onNavigationSceneAvailable(navigationScene);
             }
 
             @Override
@@ -293,6 +296,7 @@ public final class NavigationSceneCompatUtility {
                     return;
                 }
                 this.mAbandoned = true;
+                final View view = navigationScene.getView();
                 FragmentTransaction transaction = fragmentManager.beginTransaction().remove(finalLifeCycleFragment).remove(finalTargetScopeHolderFragment);
                 if (immediate) {
                     fragmentManager.registerFragmentLifecycleCallbacks(new FragmentManager.FragmentLifecycleCallbacks() {
@@ -304,21 +308,21 @@ public final class NavigationSceneCompatUtility {
                             }
                             fragmentManager.unregisterFragmentLifecycleCallbacks(this);
                             CHECK_DUPLICATE_TAG_MAP.get(fragment).remove(tag);
+                            if (view != null) {
+                                Utility.removeFromParentView(view);
+                            }
                         }
                     }, false);
                     FragmentUtility.commitFragment(transaction, true);
                 } else {
                     FragmentUtility.commitFragment(transaction, false);
                     CHECK_DUPLICATE_TAG_MAP.get(fragment).remove(tag);
+                    if (view != null) {
+                        Utility.removeFromParentView(view);
+                    }
                 }
             }
         };
-        dispatcher.setNavigationSceneAvailableCallback(new NavigationSceneAvailableCallback() {
-            @Override
-            public void onNavigationSceneAvailable(@NonNull NavigationScene navigationScene) {
-                proxy.onNavigationSceneAvailable(navigationScene);
-            }
-        });
         return proxy;
     }
 
@@ -332,29 +336,6 @@ public final class NavigationSceneCompatUtility {
                 CHECK_DUPLICATE_TAG_MAP.put(fragment, set);
             }
             set.add(tag);
-        }
-    }
-
-    private static abstract class FragmentDelegateProxy implements SceneDelegate, NavigationSceneAvailableCallback {
-        @Nullable
-        private NavigationScene mNavigationScene;
-        @Nullable
-        private NavigationSceneAvailableCallback mNavigationSceneAvailableCallback;
-
-        @Override
-        public final void onNavigationSceneAvailable(@NonNull NavigationScene navigationScene) {
-            this.mNavigationScene = navigationScene;
-            if (this.mNavigationSceneAvailableCallback != null) {
-                this.mNavigationSceneAvailableCallback.onNavigationSceneAvailable(navigationScene);
-            }
-        }
-
-        @Override
-        public final void setNavigationSceneAvailableCallback(@NonNull NavigationSceneAvailableCallback callback) {
-            this.mNavigationSceneAvailableCallback = callback;
-            if (this.mNavigationScene != null) {
-                this.mNavigationSceneAvailableCallback.onNavigationSceneAvailable(this.mNavigationScene);
-            }
         }
     }
 }

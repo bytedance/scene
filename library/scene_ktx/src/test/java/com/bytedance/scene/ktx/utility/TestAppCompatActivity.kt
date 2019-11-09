@@ -8,7 +8,7 @@ class TestAppCompatActivity : AppCompatActivity() {
     lateinit var mFrameLayout: FrameLayout
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        setTheme(com.bytedance.scene.R.style.Theme_AppCompat)
+        setTheme(com.bytedance.scene.ktx.R.style.Theme_AppCompat)
         super.onCreate(savedInstanceState)
         mFrameLayout = FrameLayout(this)
         setContentView(mFrameLayout)

@@ -241,13 +241,6 @@ public class SceneSuperNotCalledExceptionTests {
         NavigationSceneOptions options = new NavigationSceneOptions(scene.getClass());
         navigationScene.setArguments(options.toBundle());
 
-        NavigationScene.NavigationSceneHost navigationSceneHost = new NavigationScene.NavigationSceneHost() {
-            @Override
-            public boolean isSupportRestore() {
-                return true;
-            }
-        };
-
         Scope.RootScopeFactory rootScopeFactory = new Scope.RootScopeFactory() {
             @Override
             public Scope getRootScope() {
@@ -255,15 +248,16 @@ public class SceneSuperNotCalledExceptionTests {
             }
         };
         navigationScene.setDefaultNavigationAnimationExecutor(null);
-        SceneLifecycleManager manager = new SceneLifecycleManager();
+        navigationScene.setRootSceneComponentFactory(new SceneComponentFactory() {
+            @Nullable
+            @Override
+            public Scene instantiateScene(@NonNull ClassLoader cl, @NonNull String className, @Nullable Bundle bundle) {
+                return scene;
+            }
+        });
+        SceneLifecycleManager<NavigationScene> manager = new SceneLifecycleManager<>();
         manager.onActivityCreated(testActivity, testActivity.mFrameLayout,
-                navigationScene, navigationSceneHost, rootScopeFactory,
-                new SceneComponentFactory() {
-                    @Override
-                    public Scene instantiateScene(ClassLoader cl, String className, Bundle bundle) {
-                        return scene;
-                    }
-                }, null);
+                navigationScene, rootScopeFactory, true, null);
         manager.onStart();
         manager.onResume();
         manager.onSaveInstanceState(new Bundle());

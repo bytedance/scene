@@ -65,7 +65,7 @@ public class SceneTests {
                 return new View(requireSceneContext());
             }
         };
-        Pair<SceneLifecycleManager, NavigationScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(scene);
+        Pair<SceneLifecycleManager<NavigationScene>, NavigationScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(scene);
         assertNotNull(scene.getView());
         assertNotNull(scene.requireView());
     }
@@ -103,7 +103,7 @@ public class SceneTests {
                 return new FrameLayout(requireSceneContext());
             }
         };
-        Pair<SceneLifecycleManager, NavigationScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(scene);
+        Pair<SceneLifecycleManager<NavigationScene>, NavigationScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(scene);
 
         Scene childScene = new Scene() {
             @NonNull
@@ -129,7 +129,7 @@ public class SceneTests {
                 return new View(requireSceneContext());
             }
         };
-        Pair<SceneLifecycleManager, NavigationScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(scene);
+        Pair<SceneLifecycleManager<NavigationScene>, NavigationScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(scene);
 
         assertNull(scene.getNavigationScene().getParentScene());
         scene.getNavigationScene().requireParentScene();
@@ -169,7 +169,7 @@ public class SceneTests {
                 return new View(requireSceneContext());
             }
         };
-        Pair<SceneLifecycleManager, NavigationScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(scene);
+        Pair<SceneLifecycleManager<NavigationScene>, NavigationScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(scene);
 
         Scene childScene = new Scene() {
             @NonNull
@@ -193,7 +193,7 @@ public class SceneTests {
                 return new View(requireSceneContext());
             }
         };
-        Pair<SceneLifecycleManager, NavigationScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(scene);
+        Pair<SceneLifecycleManager<NavigationScene>, NavigationScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(scene);
 
         assertNull(scene.requireNavigationScene().getNavigationScene());
         scene.requireNavigationScene().requireNavigationScene();
@@ -316,7 +316,7 @@ public class SceneTests {
                 reference.set(getView());
             }
         };
-        Pair<SceneLifecycleManager, NavigationScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(scene);
+        Pair<SceneLifecycleManager<NavigationScene>, NavigationScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(scene);
         SceneLifecycleManager manager = pair.first;
         manager.onStart();
         manager.onResume();
@@ -345,7 +345,7 @@ public class SceneTests {
                 reference.set(getView());
             }
         };
-        Pair<SceneLifecycleManager, NavigationScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(scene);
+        Pair<SceneLifecycleManager<NavigationScene>, NavigationScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(scene);
         SceneLifecycleManager manager = pair.first;
         manager.onStart();
         manager.onResume();
@@ -368,7 +368,7 @@ public class SceneTests {
                 reference.set(getView());
             }
         };
-        Pair<SceneLifecycleManager, NavigationScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(scene);
+        Pair<SceneLifecycleManager<NavigationScene>, NavigationScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(scene);
         SceneLifecycleManager manager = pair.first;
         manager.onStart();
         manager.onResume();
@@ -400,7 +400,7 @@ public class SceneTests {
                 reference.set(getView());
             }
         };
-        Pair<SceneLifecycleManager, NavigationScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(scene);
+        Pair<SceneLifecycleManager<NavigationScene>, NavigationScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(scene);
         SceneLifecycleManager manager = pair.first;
         manager.onStart();
         manager.onResume();

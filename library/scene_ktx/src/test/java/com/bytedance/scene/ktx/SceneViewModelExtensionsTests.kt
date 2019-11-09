@@ -113,18 +113,12 @@ fun createFromSceneLifecycleManagerByFragmentActivity(rootScene: Scene): Navigat
     return pair.second
 }
 
-fun createFromInitSceneLifecycleManagerByFragmentActivity(rootScene: Scene): Pair<SceneLifecycleManager, NavigationScene> {
+fun createFromInitSceneLifecycleManagerByFragmentActivity(rootScene: Scene): Pair<SceneLifecycleManager<NavigationScene>, NavigationScene> {
     val controller = Robolectric.buildActivity<TestFragmentActivity>(TestFragmentActivity::class.java).create().start().resume()
     val testActivity = controller.get()
     val navigationScene = NavigationScene()
     val options = NavigationSceneOptions(rootScene.javaClass)
     navigationScene.setArguments(options.toBundle())
-
-    val navigationSceneHost = object : NavigationScene.NavigationSceneHost {
-        override fun isSupportRestore(): Boolean {
-            return false
-        }
-    }
 
     val rootScopeFactory = Scope.RootScopeFactory { Scope.DEFAULT_ROOT_SCOPE_FACTORY.rootScope }
 
@@ -135,11 +129,10 @@ fun createFromInitSceneLifecycleManagerByFragmentActivity(rootScene: Scene): Pai
     }
 
     navigationScene.defaultNavigationAnimationExecutor = null
-
-    val sceneLifecycleManager = SceneLifecycleManager()
+    navigationScene.setRootSceneComponentFactory(sceneComponentFactory)
+    val sceneLifecycleManager = SceneLifecycleManager<NavigationScene>()
     sceneLifecycleManager.onActivityCreated(testActivity, testActivity.mFrameLayout,
-            navigationScene, navigationSceneHost, rootScopeFactory,
-            sceneComponentFactory, null)
+            navigationScene, rootScopeFactory, false, null)
     return Pair(sceneLifecycleManager, navigationScene)
 }
 

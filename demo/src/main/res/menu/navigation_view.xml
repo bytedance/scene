@@ -11,7 +11,7 @@
         android:title="@string/main_scene_title_navigation_router" />
     <item
         android:id="@+id/group"
-        android:title="@string/main_scene_title_part" />
+        android:title="@string/main_scene_title_composition" />
     <item
         android:id="@+id/dialog"
         android:title="@string/main_part_btn_dialog" />

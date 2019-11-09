@@ -1,4 +1,4 @@
-package com.bytedance.scenedemo.navigation.performance;
+package com.bytedance.scenedemo.benchmark.performance;
 
 import android.graphics.Color;
 import android.os.Bundle;
@@ -10,17 +10,17 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.Toast;
 
-import com.bytedance.scene.Scene;
+import com.bytedance.scene.ui.template.AppCompatScene;
 import com.bytedance.scenedemo.R;
 
 /**
  * Created by JiangQi on 8/21/18.
  */
-public class EmptyScene extends Scene {
+public class EmptyAppCompatScene extends AppCompatScene {
 
     @NonNull
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateContentView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         final View view = new View(getActivity());
         view.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
             @Override

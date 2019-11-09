@@ -32,7 +32,7 @@ import com.bytedance.scene.navigation.NavigationScene;
 /**
  * Created by JiangQi on 11/6/18.
  */
-public abstract class LifeCycleFrameLayout extends FrameLayout implements NavigationScene.NavigationSceneHost {
+public abstract class LifeCycleFrameLayout extends FrameLayout {
     private static final boolean DEBUG = false;
     private static final String TAG = "LifeCycleFrameLayout";
 
@@ -64,7 +64,7 @@ public abstract class LifeCycleFrameLayout extends FrameLayout implements Naviga
             return Scope.DEFAULT_ROOT_SCOPE_FACTORY.getRootScope();
         }
     };
-    private final SceneLifecycleManager mLifecycleManager = new SceneLifecycleManager();
+    private final SceneLifecycleManager<NavigationScene> mLifecycleManager = new SceneLifecycleManager<>();
 
     public void setNavigationScene(@NonNull NavigationScene rootScene) {
         this.mNavigationScene = rootScene;
@@ -101,12 +101,12 @@ public abstract class LifeCycleFrameLayout extends FrameLayout implements Naviga
         if (activity == null) {
             throw new IllegalStateException("cant find Activity attached to this View");
         }
+        this.mNavigationScene.setRootSceneComponentFactory(this.mRootSceneComponentFactory);
         this.mLifecycleManager.onActivityCreated(activity,
                 this,
                 this.mNavigationScene,
-                this,
                 this.mRootScopeFactory,
-                this.mRootSceneComponentFactory,
+                isSupportRestore(),
                 isSupportRestore() ? savedInstanceState : null);
     }
 
@@ -135,7 +135,10 @@ public abstract class LifeCycleFrameLayout extends FrameLayout implements Naviga
 
     public void onDestroyView() {
         this.mLifecycleManager.onDestroyView();
+        this.mNavigationScene.setRootSceneComponentFactory(null);
     }
+
+    protected abstract boolean isSupportRestore();
 
     private void log(String log) {
         if (DEBUG) {

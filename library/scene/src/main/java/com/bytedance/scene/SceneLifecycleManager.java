@@ -25,14 +25,19 @@ import androidx.annotation.Nullable;
 import com.bytedance.scene.navigation.NavigationScene;
 import com.bytedance.scene.utlity.Utility;
 
+import static android.support.annotation.RestrictTo.Scope.LIBRARY_GROUP;
+
 /**
  * Created by JiangQi on 11/6/18.
+ *
+ * @hide
  */
-public class SceneLifecycleManager {
+@RestrictTo(LIBRARY_GROUP)
+public class SceneLifecycleManager<T extends Scene & SceneParent> {
     private static final boolean DEBUG = false;
     private static final String TAG = "SceneLifecycleManager";
 
-    private NavigationScene mNavigationScene;
+    private T mScene;
     @NonNull
     private SceneLifecycleManagerState mState = SceneLifecycleManagerState.NONE;
     private boolean mSupportRestore = false;
@@ -43,10 +48,9 @@ public class SceneLifecycleManager {
 
     public void onActivityCreated(@NonNull Activity activity,
                                   @NonNull ViewGroup viewGroup,
-                                  @NonNull NavigationScene navigationScene,
-                                  @NonNull NavigationScene.NavigationSceneHost navigationSceneHost,
+                                  @NonNull T scene,
                                   @NonNull Scope.RootScopeFactory rootScopeFactory,
-                                  @Nullable SceneComponentFactory rootSceneComponentFactory,
+                                  boolean supportRestore,
                                   @Nullable Bundle savedInstanceState) {
         if (this.mState != SceneLifecycleManagerState.NONE) {
             throw new IllegalStateException("invoke onDestroyView() first, current state " + this.mState.toString());
@@ -54,15 +58,14 @@ public class SceneLifecycleManager {
 
         Utility.requireNonNull(activity, "activity can't be null");
         Utility.requireNonNull(viewGroup, "viewGroup can't be null");
-        Utility.requireNonNull(navigationScene, "navigationScene can't be null");
-        Utility.requireNonNull(navigationSceneHost, "navigationSceneHost can't be null");
+        Utility.requireNonNull(scene, "scene can't be null");
         Utility.requireNonNull(rootScopeFactory, "rootScopeFactory can't be null");
 
-        if (navigationScene.getState() != State.NONE) {
-            throw new IllegalStateException("NavigationScene state must be " + State.NONE.name);
+        if (scene.getState() != State.NONE) {
+            throw new IllegalStateException("Scene state must be " + State.NONE.name);
         }
 
-        this.mSupportRestore = navigationSceneHost.isSupportRestore();
+        this.mSupportRestore = supportRestore;
         if (!this.mSupportRestore && savedInstanceState != null) {
             throw new IllegalArgumentException("savedInstanceState should be null when not support restore");
         }
@@ -70,16 +73,17 @@ public class SceneLifecycleManager {
         this.mState = SceneLifecycleManagerState.ACTIVITY_CREATED;
         log("onActivityCreated");
 
-        this.mNavigationScene = navigationScene;
-        this.mNavigationScene.setRootScopeFactory(rootScopeFactory);
-        this.mNavigationScene.setNavigationSceneHost(navigationSceneHost);
-        this.mNavigationScene.setRootSceneComponentFactory(rootSceneComponentFactory);
-        this.mNavigationScene.dispatchAttachActivity(activity);
-        this.mNavigationScene.dispatchAttachScene(null);
-        this.mNavigationScene.dispatchCreate(savedInstanceState);
-        this.mNavigationScene.dispatchCreateView(savedInstanceState, viewGroup);
-        viewGroup.addView(this.mNavigationScene.getView(), new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-        this.mNavigationScene.dispatchActivityCreated(savedInstanceState);
+        this.mScene = scene;
+        if (!this.mSupportRestore) {
+            this.mScene.disableSupportRestore();
+        }
+        this.mScene.setRootScopeFactory(rootScopeFactory);
+        this.mScene.dispatchAttachActivity(activity);
+        this.mScene.dispatchAttachScene(null);
+        this.mScene.dispatchCreate(savedInstanceState);
+        this.mScene.dispatchCreateView(savedInstanceState, viewGroup);
+        viewGroup.addView(this.mScene.requireView(), new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        this.mScene.dispatchActivityCreated(savedInstanceState);
     }
 
     public void onStart() {
@@ -88,7 +92,7 @@ public class SceneLifecycleManager {
         }
         this.mState = SceneLifecycleManagerState.START;
         log("onStart");
-        this.mNavigationScene.dispatchStart();
+        this.mScene.dispatchStart();
     }
 
     public void onResume() {
@@ -97,7 +101,7 @@ public class SceneLifecycleManager {
         }
         this.mState = SceneLifecycleManagerState.RESUME;
         log("onResume");
-        this.mNavigationScene.dispatchResume();
+        this.mScene.dispatchResume();
     }
 
     public void onPause() {
@@ -106,7 +110,7 @@ public class SceneLifecycleManager {
         }
         this.mState = SceneLifecycleManagerState.PAUSE;
         log("onPause");
-        this.mNavigationScene.dispatchPause();
+        this.mScene.dispatchPause();
     }
 
     public void onStop() {
@@ -115,7 +119,7 @@ public class SceneLifecycleManager {
         }
         this.mState = SceneLifecycleManagerState.STOP;
         log("onStop");
-        this.mNavigationScene.dispatchStop();
+        this.mScene.dispatchStop();
     }
 
     /**
@@ -133,14 +137,12 @@ public class SceneLifecycleManager {
         }
         this.mState = SceneLifecycleManagerState.NONE;
         log("onDestroyView");
-        this.mNavigationScene.dispatchDestroyView();
-        this.mNavigationScene.dispatchDestroy();
-        this.mNavigationScene.dispatchDetachScene();
-        this.mNavigationScene.dispatchDetachActivity();
-        this.mNavigationScene.setRootSceneComponentFactory(null);
-        this.mNavigationScene.setNavigationSceneHost(null);
-        this.mNavigationScene.setRootScopeFactory(null);
-        this.mNavigationScene = null;
+        this.mScene.dispatchDestroyView();
+        this.mScene.dispatchDestroy();
+        this.mScene.dispatchDetachScene();
+        this.mScene.dispatchDetachActivity();
+        this.mScene.setRootScopeFactory(null);
+        this.mScene = null;
     }
 
     public void onSaveInstanceState(@NonNull Bundle outState) {
@@ -152,7 +154,7 @@ public class SceneLifecycleManager {
             throw new IllegalArgumentException("cant invoke onSaveInstanceState when not support restore");
         }
         log("onSaveInstanceState");
-        this.mNavigationScene.dispatchSaveInstanceState(outState);
+        this.mScene.dispatchSaveInstanceState(outState);
     }
 
     private void log(@NonNull String log) {

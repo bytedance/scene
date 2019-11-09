@@ -16,8 +16,6 @@
 package com.bytedance.scene;
 
 import android.app.Activity;
-import android.content.Intent;
-import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.ViewGroup;
 import androidx.annotation.IdRes;
@@ -25,53 +23,41 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.bytedance.scene.navigation.NavigationScene;
 
-//TODO merge SceneLifecycleDispatcher SceneLifecycleManager?
-public final class SceneLifecycleDispatcher implements SceneContainerLifecycleCallback {
+import static android.support.annotation.RestrictTo.Scope.LIBRARY_GROUP;
+
+/**
+ * TODO merge SceneLifecycleDispatcher SceneLifecycleManager?
+ *
+ * @hide
+ */
+@RestrictTo(LIBRARY_GROUP)
+public class SceneLifecycleDispatcher<T extends Scene & SceneParent> implements SceneContainerLifecycleCallback {
     private static final String TAG = "SCENE";
     @IdRes
     private final int mSceneContainerViewId;
     private final ViewFinder mViewFinder;
-    private final NavigationScene mNavigationScene;
-    private final NavigationScene.NavigationSceneHost mNavigationSceneHost;
+    private final T mScene;
     private final Scope.RootScopeFactory mRootScopeFactory;
     private final boolean mSupportRestore;
-    private NavigationSceneAvailableCallback mNavigationSceneAvailableCallback;
-    private final SceneComponentFactory mRootSceneComponentFactory;
-    private final SceneLifecycleManager mLifecycleManager = new SceneLifecycleManager();
+    private final SceneLifecycleManager<T> mLifecycleManager = new SceneLifecycleManager<>();
 
     public SceneLifecycleDispatcher(@IdRes int sceneContainerViewId,
                                     ViewFinder viewFinder,
-                                    NavigationScene rootScene,
-                                    NavigationScene.NavigationSceneHost navigationSceneHost,
+                                    T rootScene,
                                     Scope.RootScopeFactory rootScopeFactory,
-                                    SceneComponentFactory sceneComponentFactory,
                                     boolean supportRestore) {
         this.mSceneContainerViewId = sceneContainerViewId;
         this.mViewFinder = viewFinder;
-        this.mNavigationScene = rootScene;
-        this.mNavigationSceneHost = navigationSceneHost;
+        this.mScene = rootScene;
         this.mRootScopeFactory = rootScopeFactory;
-        this.mRootSceneComponentFactory = sceneComponentFactory;
         this.mSupportRestore = supportRestore;
-    }
-
-    public void setNavigationSceneAvailableCallback(NavigationSceneAvailableCallback callback) {
-        this.mNavigationSceneAvailableCallback = callback;
-        if (this.mNavigationScene != null) {
-            this.mNavigationSceneAvailableCallback.onNavigationSceneAvailable(this.mNavigationScene);
-        }
-    }
-
-    public NavigationScene getNavigationScene() {
-        return this.mNavigationScene;
     }
 
     @Override
     public void onActivityCreated(@NonNull Activity activity, @Nullable Bundle savedInstanceState) {
         ViewGroup viewGroup = this.mViewFinder.requireViewById(this.mSceneContainerViewId);
-        this.mLifecycleManager.onActivityCreated(activity, viewGroup,
-                this.mNavigationScene, this.mNavigationSceneHost, this.mRootScopeFactory,
-                this.mRootSceneComponentFactory, this.mSupportRestore ? savedInstanceState : null);
+        this.mLifecycleManager.onActivityCreated(activity, viewGroup, this.mScene, this.mRootScopeFactory,
+                this.mSupportRestore, this.mSupportRestore ? savedInstanceState : null);
     }
 
     @Override
@@ -102,7 +88,7 @@ public final class SceneLifecycleDispatcher implements SceneContainerLifecycleCa
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         if (this.mSupportRestore) {
-            outState.putString(TAG, this.mNavigationScene.getClass().getName());
+            outState.putString(TAG, this.mScene.getClass().getName());
             this.mLifecycleManager.onSaveInstanceState(outState);
         }
     }

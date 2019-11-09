@@ -57,7 +57,7 @@ public class ScenePlaceHolderViewTests {
             }
         };
 
-        Pair<SceneLifecycleManager, NavigationScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(groupScene);
+        Pair<SceneLifecycleManager<NavigationScene>, NavigationScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(groupScene);
         SceneLifecycleManager sceneLifecycleManager = pair.first;
         NavigationScene navigationScene = pair.second;
         sceneLifecycleManager.onStart();
@@ -92,7 +92,7 @@ public class ScenePlaceHolderViewTests {
             }
         };
 
-        Pair<SceneLifecycleManager, NavigationScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(groupScene);
+        Pair<SceneLifecycleManager<NavigationScene>, NavigationScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(groupScene);
         SceneLifecycleManager sceneLifecycleManager = pair.first;
         NavigationScene navigationScene = pair.second;
         sceneLifecycleManager.onStart();
@@ -118,7 +118,86 @@ public class ScenePlaceHolderViewTests {
             }
         };
 
-        Pair<SceneLifecycleManager, NavigationScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(groupScene);
+        Pair<SceneLifecycleManager<NavigationScene>, NavigationScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(groupScene);
+        SceneLifecycleManager sceneLifecycleManager = pair.first;
+        NavigationScene navigationScene = pair.second;
+        sceneLifecycleManager.onStart();
+        sceneLifecycleManager.onResume();
+        assertTrue(called.get());
+    }
+
+    @Test
+    public void testSceneComponentFactory() {
+        final AtomicBoolean called = new AtomicBoolean();
+        GroupScene groupScene = new GroupScene() {
+            ScenePlaceHolderViewChildScene childScene;
+
+            @NonNull
+            @Override
+            public ViewGroup onCreateView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container, @Nullable Bundle savedInstanceState) {
+                return (ViewGroup) inflater.inflate(TestResources.getLayout(this, "layout_place_holder_view"), container, false);
+            }
+
+            @Override
+            public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+                super.onViewCreated(view, savedInstanceState);
+                childScene = new ScenePlaceHolderViewChildScene();
+                ScenePlaceHolderView holderView = requireViewById(TestResources.getId(this, "scene_place_holder"));
+                holderView.setSceneComponentFactory(new SceneComponentFactory() {
+                    @Override
+                    public Scene instantiateScene(@NonNull ClassLoader cl, @NonNull String className, @Nullable Bundle bundle) {
+                        return childScene;
+                    }
+                });
+            }
+
+            @Override
+            public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+                super.onActivityCreated(savedInstanceState);
+                assertSame(childScene, findSceneByTag("Test_Tag"));
+                called.compareAndSet(false, true);
+            }
+        };
+
+        Pair<SceneLifecycleManager<NavigationScene>, NavigationScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(groupScene);
+        SceneLifecycleManager sceneLifecycleManager = pair.first;
+        NavigationScene navigationScene = pair.second;
+        sceneLifecycleManager.onStart();
+        sceneLifecycleManager.onResume();
+        assertTrue(called.get());
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void test_parent_duplicate_id() {
+        final AtomicBoolean called = new AtomicBoolean();
+        GroupScene groupScene = new GroupScene() {
+            @NonNull
+            @Override
+            public ViewGroup onCreateView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container, @Nullable Bundle savedInstanceState) {
+                return (ViewGroup) inflater.inflate(TestResources.getLayout(this, "layout_place_holder_view_crash_parent_duplicate_id"), container, false);
+            }
+        };
+
+        Pair<SceneLifecycleManager<NavigationScene>, NavigationScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(groupScene);
+        SceneLifecycleManager sceneLifecycleManager = pair.first;
+        NavigationScene navigationScene = pair.second;
+        sceneLifecycleManager.onStart();
+        sceneLifecycleManager.onResume();
+        assertTrue(called.get());
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void test_parent_no_id() {
+        final AtomicBoolean called = new AtomicBoolean();
+        GroupScene groupScene = new GroupScene() {
+            @NonNull
+            @Override
+            public ViewGroup onCreateView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container, @Nullable Bundle savedInstanceState) {
+                return (ViewGroup) inflater.inflate(TestResources.getLayout(this, "layout_place_holder_view_crash_parent_no_id"), container, false);
+            }
+        };
+
+        Pair<SceneLifecycleManager<NavigationScene>, NavigationScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(groupScene);
         SceneLifecycleManager sceneLifecycleManager = pair.first;
         NavigationScene navigationScene = pair.second;
         sceneLifecycleManager.onStart();

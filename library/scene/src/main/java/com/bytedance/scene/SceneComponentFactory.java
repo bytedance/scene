@@ -16,10 +16,13 @@
 package com.bytedance.scene;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 /**
  * Created by JiangQi on 10/25/18.
  */
 public interface SceneComponentFactory {
-    Scene instantiateScene(ClassLoader cl, String className, Bundle bundle);
+    @Nullable
+    Scene instantiateScene(@NonNull ClassLoader cl, @NonNull String className, @Nullable Bundle bundle);
 }

@@ -20,7 +20,7 @@ import com.bytedance.scene.Scope;
 import com.bytedance.scene.navigation.NavigationScene;
 import com.bytedance.scene.navigation.NavigationSceneOptions;
 import com.bytedance.scene.utlity.SceneInstanceUtility;
-import com.bytedance.scenedemo.group.EmptyScene;
+import com.bytedance.scenedemo.lifecycle.EmptyScene;
 
 /**
  * Created by JiangQi on 11/6/18.

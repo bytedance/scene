@@ -15,7 +15,6 @@ android {
 }
 
 dependencies {
-    implementation APPCOMPAT_LIB
     implementation LIFECYCLE_EXTENSIONS_LIB
     implementation LIFECYCLE_RUNTIME_LIB
 

@@ -28,26 +28,19 @@ public class NavigationSourceUtility {
     }
 
     public static NavigationScene createFromSceneLifecycleManager(final Scene rootScene) {
-        Pair<SceneLifecycleManager, NavigationScene> pair = createFromInitSceneLifecycleManager(rootScene);
+        Pair<SceneLifecycleManager<NavigationScene>, NavigationScene> pair = createFromInitSceneLifecycleManager(rootScene);
         SceneLifecycleManager sceneLifecycleManager = pair.first;
         sceneLifecycleManager.onStart();
         sceneLifecycleManager.onResume();
         return pair.second;
     }
 
-    public static Pair<SceneLifecycleManager, NavigationScene> createFromInitSceneLifecycleManager(final Scene rootScene) {
+    public static Pair<SceneLifecycleManager<NavigationScene>, NavigationScene> createFromInitSceneLifecycleManager(final Scene rootScene) {
         ActivityController<TestActivity> controller = Robolectric.buildActivity(TestActivity.class).create().start().resume();
         TestActivity testActivity = controller.get();
         NavigationScene navigationScene = new NavigationScene();
         NavigationSceneOptions options = new NavigationSceneOptions(rootScene.getClass());
         navigationScene.setArguments(options.toBundle());
-
-        NavigationScene.NavigationSceneHost navigationSceneHost = new NavigationScene.NavigationSceneHost() {
-            @Override
-            public boolean isSupportRestore() {
-                return false;
-            }
-        };
 
         Scope.RootScopeFactory rootScopeFactory = new Scope.RootScopeFactory() {
             @Override
@@ -67,11 +60,12 @@ public class NavigationSourceUtility {
         };
 
         navigationScene.setDefaultNavigationAnimationExecutor(new NoAnimationExecutor());
+        navigationScene.setRootSceneComponentFactory(sceneComponentFactory);
 
-        SceneLifecycleManager sceneLifecycleManager = new SceneLifecycleManager();
+        SceneLifecycleManager<NavigationScene> sceneLifecycleManager = new SceneLifecycleManager<>();
         sceneLifecycleManager.onActivityCreated(testActivity, testActivity.mFrameLayout,
-                navigationScene, navigationSceneHost, rootScopeFactory,
-                sceneComponentFactory, null);
+                navigationScene, rootScopeFactory,
+                false, null);
         return Pair.create(sceneLifecycleManager, navigationScene);
     }
 

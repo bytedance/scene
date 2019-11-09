@@ -24,7 +24,7 @@ public class ScopeTests {
     @Test
     public void testRegisterScope() {
         TestScene rootScene = new TestScene();
-        Pair<SceneLifecycleManager, NavigationScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(rootScene);
+        Pair<SceneLifecycleManager<NavigationScene>, NavigationScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(rootScene);
         SceneLifecycleManager sceneLifecycleManager = pair.first;
         NavigationScene navigationScene = pair.second;
         sceneLifecycleManager.onStart();
@@ -50,7 +50,7 @@ public class ScopeTests {
     @Test
     public void testUnRegisterScope() {
         TestScene rootScene = new TestScene();
-        Pair<SceneLifecycleManager, NavigationScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(rootScene);
+        Pair<SceneLifecycleManager<NavigationScene>, NavigationScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(rootScene);
         SceneLifecycleManager sceneLifecycleManager = pair.first;
         NavigationScene navigationScene = pair.second;
         sceneLifecycleManager.onStart();
@@ -72,7 +72,7 @@ public class ScopeTests {
     @Test
     public void testUnRegisterScopeByDestroy() {
         TestScene rootScene = new TestScene();
-        Pair<SceneLifecycleManager, NavigationScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(rootScene);
+        Pair<SceneLifecycleManager<NavigationScene>, NavigationScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(rootScene);
         SceneLifecycleManager sceneLifecycleManager = pair.first;
         NavigationScene navigationScene = pair.second;
         sceneLifecycleManager.onStart();

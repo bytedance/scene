@@ -1,6 +1,7 @@
 package com.bytedance.scene;
 
 import android.app.Activity;
+import android.os.Build;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -8,29 +9,236 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import com.bytedance.scene.navigation.NavigationScene;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.android.controller.ActivityController;
 import org.robolectric.annotation.Config;
+import org.robolectric.annotation.LooperMode;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import static android.os.Looper.getMainLooper;
 import static org.junit.Assert.*;
+import static org.robolectric.Shadows.shadowOf;
+import static org.robolectric.annotation.LooperMode.Mode.PAUSED;
 
 @RunWith(RobolectricTestRunner.class)
 @Config(manifest = Config.NONE)
 public class NavigationSceneUtilityTests {
     @Test
-    public void test() {
+    public void testSetupInActivityOnCreate() {
         ActivityController<TestActivity> controller = Robolectric.buildActivity(TestActivity.class).create();
         TestActivity activity = controller.get();
         SceneDelegate sceneDelegate = NavigationSceneUtility.setupWithActivity(activity, TestScene.class).build();
-        controller.start().resume();
-        assertNotNull(sceneDelegate.getNavigationScene());
-        controller.pause().stop().destroy();
+        NavigationScene navigationScene = sceneDelegate.getNavigationScene();
+        assertNotNull(navigationScene);
+        assertEquals(State.ACTIVITY_CREATED, navigationScene.getState());
+        controller.start();
+        assertEquals(State.STARTED, navigationScene.getState());
+        controller.resume();
+        assertEquals(State.RESUMED, navigationScene.getState());
+        controller.pause();
+        assertEquals(State.STARTED, navigationScene.getState());
+        controller.stop();
+        assertEquals(State.ACTIVITY_CREATED, navigationScene.getState());
+        controller.destroy();
+        assertEquals(State.NONE, navigationScene.getState());
+    }
+
+    @LooperMode(PAUSED)
+    @Test
+    public void testNotImmediateSetupInActivityOnCreate() {
+        ActivityController<TestActivity> controller = Robolectric.buildActivity(TestActivity.class).create();
+        TestActivity activity = controller.get();
+        SceneDelegate sceneDelegate = NavigationSceneUtility.setupWithActivity(activity, TestScene.class).immediate(false).build();
+        NavigationScene navigationScene = sceneDelegate.getNavigationScene();
+        assertNotNull(navigationScene);
+
+        assertEquals(State.NONE, navigationScene.getState());
+        shadowOf(getMainLooper()).idle();//execute Handler posted task
+        assertEquals(State.ACTIVITY_CREATED, navigationScene.getState());
+
+        controller.start();
+        assertEquals(State.STARTED, navigationScene.getState());
+        controller.resume();
+        assertEquals(State.RESUMED, navigationScene.getState());
+        controller.pause();
+        assertEquals(State.STARTED, navigationScene.getState());
+        controller.stop();
+        assertEquals(State.ACTIVITY_CREATED, navigationScene.getState());
+        controller.destroy();
+        assertEquals(State.NONE, navigationScene.getState());
+    }
+
+    @Test
+    public void testSetupInActivityOnStart() {
+        ActivityController<TestActivity> controller = Robolectric.buildActivity(TestActivity.class).create().start();
+        TestActivity activity = controller.get();
+        SceneDelegate sceneDelegate = NavigationSceneUtility.setupWithActivity(activity, TestScene.class).build();
+        NavigationScene navigationScene = sceneDelegate.getNavigationScene();
+        assertNotNull(navigationScene);
+        assertEquals(State.STARTED, navigationScene.getState());
+        controller.resume();
+        assertEquals(State.RESUMED, navigationScene.getState());
+        controller.pause();
+        assertEquals(State.STARTED, navigationScene.getState());
+        controller.stop();
+        assertEquals(State.ACTIVITY_CREATED, navigationScene.getState());
+        controller.destroy();
+        assertEquals(State.NONE, navigationScene.getState());
+    }
+
+    @LooperMode(PAUSED)
+    @Test
+    public void testNotImmediateSetupInActivityOnStart() {
+        ActivityController<TestActivity> controller = Robolectric.buildActivity(TestActivity.class).create().start();
+        TestActivity activity = controller.get();
+        SceneDelegate sceneDelegate = NavigationSceneUtility.setupWithActivity(activity, TestScene.class).immediate(false).build();
+        NavigationScene navigationScene = sceneDelegate.getNavigationScene();
+        assertNotNull(navigationScene);
+
+        assertEquals(State.NONE, navigationScene.getState());
+        shadowOf(getMainLooper()).idle();//execute Handler posted task
+        assertEquals(State.STARTED, navigationScene.getState());
+
+        controller.resume();
+        assertEquals(State.RESUMED, navigationScene.getState());
+        controller.pause();
+        assertEquals(State.STARTED, navigationScene.getState());
+        controller.stop();
+        assertEquals(State.ACTIVITY_CREATED, navigationScene.getState());
+        controller.destroy();
+        assertEquals(State.NONE, navigationScene.getState());
+    }
+
+    @Test
+    public void testSetupInActivityOnResume() {
+        ActivityController<TestActivity> controller = Robolectric.buildActivity(TestActivity.class).create().start().resume();
+        TestActivity activity = controller.get();
+        SceneDelegate sceneDelegate = NavigationSceneUtility.setupWithActivity(activity, TestScene.class).build();
+        NavigationScene navigationScene = sceneDelegate.getNavigationScene();
+        assertNotNull(navigationScene);
+        assertEquals(State.RESUMED, navigationScene.getState());
+        controller.pause();
+        assertEquals(State.STARTED, navigationScene.getState());
+        controller.stop();
+        assertEquals(State.ACTIVITY_CREATED, navigationScene.getState());
+        controller.destroy();
+        assertEquals(State.NONE, navigationScene.getState());
+    }
+
+    @LooperMode(PAUSED)
+    @Test
+    public void testNotImmediateSetupInActivityOnResume() {
+        ActivityController<TestActivity> controller = Robolectric.buildActivity(TestActivity.class).create().start().resume();
+        TestActivity activity = controller.get();
+        SceneDelegate sceneDelegate = NavigationSceneUtility.setupWithActivity(activity, TestScene.class).immediate(false).build();
+        NavigationScene navigationScene = sceneDelegate.getNavigationScene();
+        assertNotNull(navigationScene);
+
+        assertEquals(State.NONE, navigationScene.getState());
+        shadowOf(getMainLooper()).idle();//execute Handler posted task
+        assertEquals(State.RESUMED, navigationScene.getState());
+
+        controller.pause();
+        assertEquals(State.STARTED, navigationScene.getState());
+        controller.stop();
+        assertEquals(State.ACTIVITY_CREATED, navigationScene.getState());
+        controller.destroy();
+        assertEquals(State.NONE, navigationScene.getState());
+    }
+
+    @Test
+    public void testSetupInActivityOnPause() {
+        ActivityController<TestActivity> controller = Robolectric.buildActivity(TestActivity.class).create().start().resume().pause();
+        TestActivity activity = controller.get();
+        SceneDelegate sceneDelegate = NavigationSceneUtility.setupWithActivity(activity, TestScene.class).build();
+        NavigationScene navigationScene = sceneDelegate.getNavigationScene();
+        assertNotNull(navigationScene);
+        assertEquals(State.STARTED, navigationScene.getState());
+        controller.stop();
+        assertEquals(State.ACTIVITY_CREATED, navigationScene.getState());
+        controller.destroy();
+        assertEquals(State.NONE, navigationScene.getState());
+    }
+
+    @LooperMode(PAUSED)
+    @Test
+    public void testNotImmediateSetupInActivityOnPause() {
+        ActivityController<TestActivity> controller = Robolectric.buildActivity(TestActivity.class).create().start().resume().pause();
+        TestActivity activity = controller.get();
+        SceneDelegate sceneDelegate = NavigationSceneUtility.setupWithActivity(activity, TestScene.class).immediate(false).build();
+        NavigationScene navigationScene = sceneDelegate.getNavigationScene();
+        assertNotNull(navigationScene);
+
+        assertEquals(State.NONE, navigationScene.getState());
+        shadowOf(getMainLooper()).idle();//execute Handler posted task
+        assertEquals(State.STARTED, navigationScene.getState());
+
+        controller.stop();
+        assertEquals(State.ACTIVITY_CREATED, navigationScene.getState());
+        controller.destroy();
+        assertEquals(State.NONE, navigationScene.getState());
+    }
+
+    @Test
+    public void testSetupInActivityOnStop() {
+        ActivityController<TestActivity> controller = Robolectric.buildActivity(TestActivity.class).create().start().resume().pause().stop();
+        TestActivity activity = controller.get();
+        SceneDelegate sceneDelegate = NavigationSceneUtility.setupWithActivity(activity, TestScene.class).build();
+        NavigationScene navigationScene = sceneDelegate.getNavigationScene();
+        assertNotNull(navigationScene);
+        assertEquals(State.ACTIVITY_CREATED, navigationScene.getState());
+        controller.destroy();
+        assertEquals(State.NONE, navigationScene.getState());
+    }
+
+    @LooperMode(PAUSED)
+    @Test
+    public void testNotImmediateSetupInActivityOnStop() {
+        ActivityController<TestActivity> controller = Robolectric.buildActivity(TestActivity.class).create().start().resume().pause().stop();
+        TestActivity activity = controller.get();
+        SceneDelegate sceneDelegate = NavigationSceneUtility.setupWithActivity(activity, TestScene.class).immediate(false).build();
+        NavigationScene navigationScene = sceneDelegate.getNavigationScene();
+        assertNotNull(navigationScene);
+
+        assertEquals(State.NONE, navigationScene.getState());
+        shadowOf(getMainLooper()).idle();//execute Handler posted task
+        assertEquals(State.ACTIVITY_CREATED, navigationScene.getState());
+        controller.destroy();
+        assertEquals(State.NONE, navigationScene.getState());
+    }
+
+    //api16 can't known whether Activity is destroyed
+    @Config(minSdk = Build.VERSION_CODES.JELLY_BEAN_MR1, maxSdk = Build.VERSION_CODES.P)
+    @Test
+    public void testSetupInActivityOnDestroy() {
+        ActivityController<TestActivity> controller = Robolectric.buildActivity(TestActivity.class).create().start().resume().pause().stop().destroy();
+        TestActivity activity = controller.get();
+        SceneDelegate sceneDelegate = NavigationSceneUtility.setupWithActivity(activity, TestScene.class).build();
+        NavigationScene navigationScene = sceneDelegate.getNavigationScene();
+        assertNotNull(navigationScene);
+        assertEquals(State.NONE, navigationScene.getState());
+    }
+
+    //api16 can't known whether Activity is destroyed
+    @Config(minSdk = Build.VERSION_CODES.JELLY_BEAN_MR1, maxSdk = Build.VERSION_CODES.P)
+    @LooperMode(PAUSED)
+    @Test
+    public void testNotImmediateSetupInActivityOnDestroy() {
+        ActivityController<TestActivity> controller = Robolectric.buildActivity(TestActivity.class).create().start().resume().pause().stop().destroy();
+        TestActivity activity = controller.get();
+        SceneDelegate sceneDelegate = NavigationSceneUtility.setupWithActivity(activity, TestScene.class).immediate(false).build();
+        NavigationScene navigationScene = sceneDelegate.getNavigationScene();
+        assertNotNull(navigationScene);
+
+        assertEquals(State.NONE, navigationScene.getState());
+        shadowOf(getMainLooper()).idle();//execute Handler posted task
+        assertEquals(State.NONE, navigationScene.getState());
     }
 
     @Test
@@ -55,7 +263,10 @@ public class NavigationSceneUtilityTests {
         TestActivity activity = controller.get();
         SceneDelegate sceneDelegate = NavigationSceneUtility.setupWithActivity(activity, TestScene.class).build();
         controller.start().resume();
+        NavigationScene navigationScene = sceneDelegate.getNavigationScene();
+        View navigationSceneView = navigationScene.requireView();
         sceneDelegate.abandon();
+        assertNull(navigationSceneView.getParent());
         sceneDelegate = NavigationSceneUtility.setupWithActivity(activity, TestScene.class).build();
         sceneDelegate.abandon();
     }

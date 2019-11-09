@@ -1,4 +1,4 @@
-package com.bytedance.scenedemo.navigation.performance;
+package com.bytedance.scenedemo.benchmark.performance;
 
 import android.os.Bundle;
 import android.view.View;
@@ -13,7 +13,7 @@ import com.bytedance.scenedemo.R;
 /**
  * Created by JiangQi on 8/21/18.
  */
-public class EmptyActivity extends AppCompatActivity {
+public class EmptyAppCompatActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -24,7 +24,7 @@ public class EmptyActivity extends AppCompatActivity {
             public boolean onPreDraw() {
                 view.getViewTreeObserver().removeOnPreDrawListener(this);
                 long a = System.currentTimeMillis() - PerformanceDemo.startTimestamp;
-                Toast.makeText(EmptyActivity.this, getString(R.string.nav_compare_tip, a), Toast.LENGTH_SHORT).show();
+                Toast.makeText(EmptyAppCompatActivity.this, getString(R.string.nav_compare_tip, a), Toast.LENGTH_SHORT).show();
                 return true;
             }
         });

@@ -1,4 +1,4 @@
-package com.bytedance.scenedemo.group;
+package com.bytedance.scenedemo.lifecycle;
 
 import android.os.Bundle;
 import androidx.annotation.NonNull;

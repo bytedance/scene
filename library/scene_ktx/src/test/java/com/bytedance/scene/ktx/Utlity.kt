@@ -22,19 +22,13 @@ public fun createFromSceneLifecycleManager(rootScene: Scene): NavigationScene {
     return pair.second
 }
 
-public fun createFromInitSceneLifecycleManager(rootScene: Scene): Pair<SceneLifecycleManager, NavigationScene> {
+public fun createFromInitSceneLifecycleManager(rootScene: Scene): Pair<SceneLifecycleManager<NavigationScene>, NavigationScene> {
     val controller = Robolectric.buildActivity<TestActivity>(TestActivity::class.java).create().start().resume()
     val testActivity = controller.get()
     val navigationScene = NavigationScene()
     val options = NavigationSceneOptions(rootScene.javaClass)
     navigationScene.setArguments(options.toBundle())
 
-    val navigationSceneHost = object : NavigationScene.NavigationSceneHost {
-        override fun isSupportRestore(): Boolean {
-            return false
-        }
-    }
-
     val rootScopeFactory = Scope.RootScopeFactory { Scope.DEFAULT_ROOT_SCOPE_FACTORY.rootScope }
 
     val sceneComponentFactory = SceneComponentFactory { _, className, _ ->
@@ -44,27 +38,20 @@ public fun createFromInitSceneLifecycleManager(rootScene: Scene): Pair<SceneLife
     }
 
     navigationScene.defaultNavigationAnimationExecutor = NoAnimationExecutor()
-
-    val sceneLifecycleManager = SceneLifecycleManager()
+    navigationScene.setRootSceneComponentFactory(sceneComponentFactory)
+    val sceneLifecycleManager = SceneLifecycleManager<NavigationScene>()
     sceneLifecycleManager.onActivityCreated(testActivity, testActivity.mFrameLayout,
-            navigationScene, navigationSceneHost, rootScopeFactory,
-            sceneComponentFactory, null)
+            navigationScene, rootScopeFactory, false, null)
     return Pair(sceneLifecycleManager, navigationScene)
 }
 
-public fun createFromInitSceneLifecycleManager(activityClass: Class<out Activity>, rootScene: Scene): Pair<SceneLifecycleManager, NavigationScene> {
+public fun createFromInitSceneLifecycleManager(activityClass: Class<out Activity>, rootScene: Scene): Pair<SceneLifecycleManager<NavigationScene>, NavigationScene> {
     val controller = Robolectric.buildActivity(activityClass).create().start().resume()
     val testActivity = controller.get()
     val navigationScene = NavigationScene()
     val options = NavigationSceneOptions(rootScene.javaClass)
     navigationScene.setArguments(options.toBundle())
 
-    val navigationSceneHost = object : NavigationScene.NavigationSceneHost {
-        override fun isSupportRestore(): Boolean {
-            return false
-        }
-    }
-
     val rootScopeFactory = Scope.RootScopeFactory { Scope.DEFAULT_ROOT_SCOPE_FACTORY.rootScope }
 
     val sceneComponentFactory = SceneComponentFactory { _, className, _ ->
@@ -74,10 +61,9 @@ public fun createFromInitSceneLifecycleManager(activityClass: Class<out Activity
     }
 
     navigationScene.defaultNavigationAnimationExecutor = NoAnimationExecutor()
-
-    val sceneLifecycleManager = SceneLifecycleManager()
+    navigationScene.setRootSceneComponentFactory(sceneComponentFactory)
+    val sceneLifecycleManager = SceneLifecycleManager<NavigationScene>()
     sceneLifecycleManager.onActivityCreated(testActivity, testActivity.findViewById(android.R.id.content),
-            navigationScene, navigationSceneHost, rootScopeFactory,
-            sceneComponentFactory, null)
+            navigationScene, rootScopeFactory, false, null)
     return Pair(sceneLifecycleManager, navigationScene)
 }

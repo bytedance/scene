@@ -18,11 +18,14 @@ package com.bytedance.scene.group;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Message;
+import android.support.annotation.*;
+import android.support.v4.util.Pools;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import com.bytedance.scene.view.SceneContextThemeWrapper;
 
 import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
@@ -46,7 +49,7 @@ public final class SceneAsyncLayoutInflater {
     InflateThread mInflateThread;
 
     public SceneAsyncLayoutInflater(@NonNull Context sceneContext) {
-        Context contextThemeWrapper = new ContextThemeWrapper(sceneContext, sceneContext.getTheme()) {
+        Context contextThemeWrapper = new SceneContextThemeWrapper(sceneContext, sceneContext.getTheme()) {
             @Override
             public Object getSystemService(@NonNull String name) {
                 if (Context.LAYOUT_INFLATER_SERVICE.equals(name)) {

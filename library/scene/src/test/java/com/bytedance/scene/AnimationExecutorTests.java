@@ -44,13 +44,6 @@ public class AnimationExecutorTests {
         NavigationSceneOptions options = new NavigationSceneOptions(scene.getClass());
         navigationScene.setArguments(options.toBundle());
 
-        NavigationScene.NavigationSceneHost navigationSceneHost = new NavigationScene.NavigationSceneHost() {
-            @Override
-            public boolean isSupportRestore() {
-                return false;
-            }
-        };
-
         Scope.RootScopeFactory rootScopeFactory = new Scope.RootScopeFactory() {
             @Override
             public Scope getRootScope() {
@@ -67,11 +60,11 @@ public class AnimationExecutorTests {
                 return null;
             }
         };
-
-        SceneLifecycleManager sceneLifecycleManager = new SceneLifecycleManager();
+        navigationScene.setRootSceneComponentFactory(sceneComponentFactory);
+        SceneLifecycleManager<NavigationScene> sceneLifecycleManager = new SceneLifecycleManager<>();
         sceneLifecycleManager.onActivityCreated(testActivity, testActivity.mFrameLayout,
-                navigationScene, navigationSceneHost, rootScopeFactory,
-                sceneComponentFactory, null);
+                navigationScene, rootScopeFactory,
+                false, null);
 
         assertNotNull(navigationScene.getDefaultNavigationAnimationExecutor());
         NavigationAnimationExecutor navigationAnimationExecutor = new NavigationAnimationExecutor() {

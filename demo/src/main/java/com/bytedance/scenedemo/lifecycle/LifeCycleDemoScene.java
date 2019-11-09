@@ -8,7 +8,6 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import androidx.annotation.NonNull;
 import com.bytedance.scene.group.GroupScene;
-import com.bytedance.scenedemo.group.EmptyScene;
 
 /**
  * Created by JiangQi on 8/28/18.
@@ -40,11 +39,11 @@ public class LifeCycleDemoScene extends GroupScene {
 
 //        beginTransaction();
 //        if (findSceneByTag("wo") == null) {
-//            add(frameLayout.getId(), EmptyScene.newInstance(0), "wo");
+//            add(frameLayout.getId(), EmptyAppCompatScene.newInstance(0), "wo");
 //        }
 //
 //        if (findSceneByTag("wo") == null) {
-//            add(frameLayout.getId(), EmptyScene.newInstance(0), "wo");
+//            add(frameLayout.getId(), EmptyAppCompatScene.newInstance(0), "wo");
 //        }
 //        commitTransaction();
     }

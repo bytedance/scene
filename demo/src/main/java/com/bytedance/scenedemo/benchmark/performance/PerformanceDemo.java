@@ -1,4 +1,4 @@
-package com.bytedance.scenedemo.navigation.performance;
+package com.bytedance.scenedemo.benchmark.performance;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -41,7 +41,7 @@ public class PerformanceDemo extends Scene {
             @Override
             public void onClick(View v) {
                 startTimestamp = System.currentTimeMillis();
-                getNavigationScene().startActivity(new Intent(getActivity(), EmptyActivity.class));
+                getNavigationScene().startActivity(new Intent(getActivity(), EmptyAppCompatActivity.class));
             }
         });
 
@@ -52,7 +52,7 @@ public class PerformanceDemo extends Scene {
             @Override
             public void onClick(View v) {
                 startTimestamp = System.currentTimeMillis();
-                getNavigationScene().push(EmptyScene.class);
+                getNavigationScene().push(EmptyAppCompatScene.class);
             }
         });
     }
