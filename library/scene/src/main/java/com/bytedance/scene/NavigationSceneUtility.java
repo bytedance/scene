@@ -36,7 +36,7 @@ import java.util.WeakHashMap;
  * Created by JiangQi on 7/30/18.
  */
 public final class NavigationSceneUtility {
-    private static final String LIFE_CYCLE_FRAGMENT_TAG = "LifeCycleFragment";
+    static final String LIFE_CYCLE_FRAGMENT_TAG = "LifeCycleFragment";
     private static final WeakHashMap<Activity, HashSet<String>> CHECK_DUPLICATE_TAG_MAP = new WeakHashMap<>();
 
     private NavigationSceneUtility() {
@@ -271,7 +271,7 @@ public final class NavigationSceneUtility {
         return delegate;
     }
 
-    private static void checkDuplicateTag(@NonNull Activity activity, @NonNull String tag) {
+    static void checkDuplicateTag(@NonNull Activity activity, @NonNull String tag) {
         if (CHECK_DUPLICATE_TAG_MAP.get(activity) != null && CHECK_DUPLICATE_TAG_MAP.get(activity).contains(tag)) {
             throw new IllegalArgumentException("tag duplicate, use another tag when invoke setupWithActivity for the second time in same Activity");
         } else {

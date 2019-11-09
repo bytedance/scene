@@ -28,6 +28,7 @@
         <activity android:name="com.bytedance.scenedemo.activity_compatibility.scene_result.ActivityGetSceneResultSampleActivity" />
         <activity android:name=".restore.SupportRestoreActivity" />
         <activity android:name=".migrate.migrate_from_classic_activity_fragment.MigrateFromClassicAndroidActivitySamplesActivity" />
+        <activity android:name=".group.activity.GroupSceneBindingSample" />
     </application>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
