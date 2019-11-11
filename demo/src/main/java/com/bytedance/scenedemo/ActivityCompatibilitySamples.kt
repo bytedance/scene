@@ -12,14 +12,13 @@ import android.widget.LinearLayout
 import android.widget.ScrollView
 import android.widget.Toast
 import com.bytedance.scene.Scene
-import com.bytedance.scene.interfaces.PermissionResultCallback
 import com.bytedance.scene.ktx.requestPermissions
 import com.bytedance.scenedemo.activity_compatibility.activity_result.SceneGetActivityResultSample
 import com.bytedance.scenedemo.activity_compatibility.configuration.ConfigurationDemoScene
+import com.bytedance.scenedemo.activity_compatibility.scene_result.ActivityGetSceneResultSampleActivity
 import com.bytedance.scenedemo.activity_compatibility.softkeyboard.SoftKeyboardDemoScene
 import com.bytedance.scenedemo.activity_compatibility.theme.ThemeDemo
 import com.bytedance.scenedemo.activity_compatibility.window.WindowDemo
-import com.bytedance.scenedemo.activity_compatibility.scene_result.ActivityGetSceneResultSampleActivity
 import com.bytedance.scenedemo.utility.addButton
 import com.bytedance.scenedemo.utility.addClassPathTitle
 import com.bytedance.scenedemo.utility.addSpace
@@ -47,14 +46,14 @@ class ActivityCompatibilitySamples : Scene() {
         })
         addButton(layout, getString(R.string.nav_result_permission), View.OnClickListener {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                requestPermissions(arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), 123, PermissionResultCallback {
+                requestPermissions(arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), 123) {
                     if (it != null && it.isNotEmpty()
                             && it[0] == PackageManager.PERMISSION_GRANTED) {
                         Toast.makeText(activity, getString(R.string.nav_result_permission_tip_success), Toast.LENGTH_SHORT).show()
                     } else {
                         Toast.makeText(activity, getString(R.string.nav_result_permission_tip_failed), Toast.LENGTH_SHORT).show()
                     }
-                })
+                }
             }
         })
         addButton(layout, getString(R.string.main_nav_btn_configuration_change), View.OnClickListener {

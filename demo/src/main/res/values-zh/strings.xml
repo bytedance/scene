@@ -163,6 +163,7 @@
     <string name="main_activity_btn_scene_get_activity_result">Scene拿Activity返回值</string>
     <string name="main_activity_btn_activity_get_scene_result">Activity 启动 Scene（托管到SceneContainerActivity）</string>
     <string name="patterns_scope">Scope</string>
+    <string name="patterns_constructor">构造方法传入</string>
     <string name="patterns_mvp">MVP</string>
     <string name="patterns_mvvm">MVVM</string>
     <string name="patterns_mvi">MVI/Redux/Unidirectional data flow</string>

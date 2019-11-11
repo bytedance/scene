@@ -37,7 +37,7 @@ public class WindowDemo extends Scene {
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getNavigationScene().push(WindowColorDemo.class);
+                requireNavigationScene().push(WindowColorDemo.class);
             }
         });
 
@@ -47,7 +47,7 @@ public class WindowDemo extends Scene {
         btn2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getNavigationScene().push(WindowLayoutDemo.class);
+                requireNavigationScene().push(WindowLayoutDemo.class);
             }
         });
     }

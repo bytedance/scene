@@ -42,57 +42,57 @@ public class CaseListDemo extends UserVisibleHintGroupScene {
         addButton(layout, getString(R.string.main_case_destroy_restore), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getNavigationScene().startActivity(new Intent(requireActivity(), SupportRestoreActivity.class));
+                requireNavigationScene().startActivity(new Intent(requireActivity(), SupportRestoreActivity.class));
             }
         });
 
         addButton(layout, getString(R.string.main_case_push_and_pop), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getNavigationScene().push(Case0Scene.class);
+                requireNavigationScene().push(Case0Scene.class);
             }
         });
 
         addButton(layout, getString(R.string.main_case_push_many), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getNavigationScene().push(Case1Scene.class);
+                requireNavigationScene().push(Case1Scene.class);
             }
         });
 
         addButton(layout, getString(R.string.main_case_pop_many), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getNavigationScene().push(Case2Scene.class);
+                requireNavigationScene().push(Case2Scene.class);
             }
         });
 
         addButton(layout, getString(R.string.main_case_push_pop_remove), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getNavigationScene().push(Case3Scene.class);
+                requireNavigationScene().push(Case3Scene.class);
             }
         });
 
         addButton(layout, getString(R.string.main_case_push_pop_in_lifecycle), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getNavigationScene().push(Case4Scene.class);
+                requireNavigationScene().push(Case4Scene.class);
             }
         });
 
         addButton(layout, getString(R.string.main_case_add_remove_group_scene), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getNavigationScene().push(Case5Scene.class);
+                requireNavigationScene().push(Case5Scene.class);
             }
         });
 
         addButton(layout, getString(R.string.main_case_push_pop_after_finish), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getActivity().finish();
-                getNavigationScene().push(Case0Scene.EmptyScene.class);
+                requireActivity().finish();
+                requireNavigationScene().push(Case0Scene.EmptyScene.class);
             }
         });
 

@@ -27,17 +27,17 @@ public class WindowColorDemo extends Scene {
         super.onActivityCreated(savedInstanceState);
         getView().setBackgroundColor(ColorUtil.getMaterialColor(getResources(), 1));
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            getActivity().getWindow().setStatusBarColor(ColorUtil.getMaterialColor(getResources(), 2));
-            getActivity().getWindow().setNavigationBarColor(ColorUtil.getMaterialColor(getResources(), 3));
+            requireActivity().getWindow().setStatusBarColor(ColorUtil.getMaterialColor(getResources(), 2));
+            requireActivity().getWindow().setNavigationBarColor(ColorUtil.getMaterialColor(getResources(), 3));
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            getActivity().getWindow().getDecorView().setSystemUiVisibility(getActivity().getWindow().getDecorView().getSystemUiVisibility()
+            requireActivity().getWindow().getDecorView().setSystemUiVisibility(requireActivity().getWindow().getDecorView().getSystemUiVisibility()
                     | View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            getActivity().getWindow().getDecorView().setSystemUiVisibility(getActivity().getWindow().getDecorView().getSystemUiVisibility()
+            requireActivity().getWindow().getDecorView().setSystemUiVisibility(requireActivity().getWindow().getDecorView().getSystemUiVisibility()
                     | View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR);
         }
     }

@@ -35,21 +35,21 @@ public class SoftKeyboardResizeScene extends AppCompatScene {
 
         mEditText = getView().findViewById(R.id.edit_text);
 
-        findViewById(R.id.resize).setOnClickListener(new View.OnClickListener() {
+        requireViewById(R.id.resize).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 requireActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
             }
         });
 
-        findViewById(R.id.pan).setOnClickListener(new View.OnClickListener() {
+        requireViewById(R.id.pan).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 requireActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
             }
         });
 
-        findViewById(R.id.nothing).setOnClickListener(new View.OnClickListener() {
+        requireViewById(R.id.nothing).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 requireActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING);

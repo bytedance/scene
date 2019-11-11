@@ -102,8 +102,8 @@ public class ActivityGetSceneResultSampleActivity extends Activity {
             tv.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    getNavigationScene().setResult(TestScene2.this, "Result is one");
-                    getNavigationScene().pop();
+                    requireNavigationScene().setResult(TestScene2.this, "Result is one");
+                    requireNavigationScene().pop();
                 }
             });
             FrameLayout frameLayout = new FrameLayout(requireActivity());

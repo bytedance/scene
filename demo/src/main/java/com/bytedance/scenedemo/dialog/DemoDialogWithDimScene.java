@@ -21,7 +21,7 @@ public class DemoDialogWithDimScene extends Scene {
     @NonNull
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        FrameLayout layout = new FrameLayout(getActivity());
+        FrameLayout layout = new FrameLayout(requireSceneContext());
         layout.setBackgroundColor(Color.parseColor("#99000000"));
 
         TextView textView = new TextView(getActivity());
@@ -35,7 +35,7 @@ public class DemoDialogWithDimScene extends Scene {
         layout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getNavigationScene().pop();
+                requireNavigationScene().pop();
             }
         });
 

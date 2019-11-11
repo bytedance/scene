@@ -8,6 +8,7 @@ import android.widget.LinearLayout
 import android.widget.ScrollView
 import android.widget.Toast
 import com.bytedance.scene.Scene
+import com.bytedance.scenedemo.architecture_patterns.by_constructor.ByConstructorSample
 import com.bytedance.scenedemo.architecture_patterns.mvvm.ViewModelSceneSamples
 import com.bytedance.scenedemo.architecture_patterns.scope.ScopeSample
 import com.bytedance.scenedemo.utility.addButton
@@ -31,6 +32,10 @@ class PatternsSamples : Scene() {
 
         addButton(layout, getString(R.string.patterns_scope), View.OnClickListener {
             requireNavigationScene().push(ScopeSample::class.java)
+        })
+
+        addButton(layout, getString(R.string.patterns_constructor), View.OnClickListener {
+            requireNavigationScene().push(ByConstructorSample::class.java)
         })
 
         addButton(layout, getString(R.string.patterns_mvvm), View.OnClickListener {
