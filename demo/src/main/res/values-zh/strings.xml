@@ -100,6 +100,7 @@
     <string name="main_part_btn_async_inflate">异步 Inflate</string>
     <string name="main_part_btn_bind_navigationscene_to_fragment">NavigationScene 绑定到 Fragment</string>
     <string name="main_part_btn_bind_groupscene_to_activity">GroupScene 绑定到 Activity</string>
+    <string name="main_part_btn_bind_groupscene_to_fragment">GroupScene 绑定到 Fragment</string>
     <string name="main_part_btn_bind_to_view">绑定到 View</string>
     <string name="main_part_btn_floating_window">悬浮窗（未完成）</string>
     <string name="main_part_btn_inherited_scene">继承的 Scene</string>

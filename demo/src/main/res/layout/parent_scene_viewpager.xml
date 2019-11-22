@@ -3,6 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/holo_green_light"
+    android:id="@+id/scene_root"
     android:orientation="vertical">
 
     <com.bytedance.scene.ui.view.StatusBarView

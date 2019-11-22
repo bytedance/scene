@@ -38,7 +38,7 @@ import java.util.WeakHashMap;
  * Created by JiangQi on 9/4/18.
  */
 public final class NavigationSceneCompatUtility {
-    private static final String LIFE_CYCLE_FRAGMENT_TAG = "LifeCycleCompatFragment";
+    static final String LIFE_CYCLE_FRAGMENT_TAG = "LifeCycleCompatFragment";
     private static final WeakHashMap<Fragment, HashSet<String>> CHECK_DUPLICATE_TAG_MAP = new WeakHashMap<>();
 
     private NavigationSceneCompatUtility() {
@@ -306,7 +306,7 @@ public final class NavigationSceneCompatUtility {
                                 return;
                             }
                             fragmentManager.unregisterFragmentLifecycleCallbacks(this);
-                            CHECK_DUPLICATE_TAG_MAP.get(fragment).remove(tag);
+                            removeTag(fragment, tag);
                             if (view != null) {
                                 Utility.removeFromParentView(view);
                             }
@@ -315,7 +315,7 @@ public final class NavigationSceneCompatUtility {
                     FragmentUtility.commitFragment(transaction, true);
                 } else {
                     FragmentUtility.commitFragment(transaction, false);
-                    CHECK_DUPLICATE_TAG_MAP.get(fragment).remove(tag);
+                    removeTag(fragment, tag);
                     if (view != null) {
                         Utility.removeFromParentView(view);
                     }
@@ -325,7 +325,7 @@ public final class NavigationSceneCompatUtility {
         return proxy;
     }
 
-    private static void checkDuplicateTag(@NonNull Fragment fragment, @NonNull String tag) {
+    static void checkDuplicateTag(@NonNull Fragment fragment, @NonNull String tag) {
         if (CHECK_DUPLICATE_TAG_MAP.get(fragment) != null && CHECK_DUPLICATE_TAG_MAP.get(fragment).contains(tag)) {
             throw new IllegalArgumentException("tag duplicate, use another tag when invoke setupWithActivity for the second time in same Fragment");
         } else {
@@ -336,5 +336,9 @@ public final class NavigationSceneCompatUtility {
             }
             set.add(tag);
         }
+    }
+
+    static void removeTag(@NonNull Fragment fragment, @NonNull String tag) {
+        CHECK_DUPLICATE_TAG_MAP.get(fragment).remove(tag);
     }
 }

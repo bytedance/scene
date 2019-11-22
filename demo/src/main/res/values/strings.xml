@@ -51,6 +51,7 @@
     <string name="main_part_btn_scene_place_holder_view">ScenePlaceHolderView(xml)</string>
     <string name="main_part_btn_bind_navigationscene_to_fragment">Bind NavigationScene to Fragment</string>
     <string name="main_part_btn_bind_groupscene_to_activity">Bind GroupScene to Activity</string>
+    <string name="main_part_btn_bind_groupscene_to_fragment">Bind GroupScene to Fragment</string>
     <string name="main_part_btn_bind_to_view">Bind to View</string>
     <string name="main_part_btn_migrate_from_classic_android_app">Migrate from classic Android app</string>
     <string name="main_part_btn_async_inflate">Async Inflate</string>
