@@ -210,11 +210,15 @@ class NavigationSceneManager {
     }
 
     public void dispatchCurrentChildState(State state) {
+        String suppressTag = beginSuppressStackOperation("NavigationManager dispatchCurrentChildState");
         new SyncCurrentSceneStateOperation(state).execute(EMPTY_RUNNABLE);
+        endSuppressStackOperation(suppressTag);
     }
 
     public void dispatchChildrenState(State state) {
+        String suppressTag = beginSuppressStackOperation("NavigationManager dispatchChildrenState");
         new SyncAllSceneStateOperation(state).execute(EMPTY_RUNNABLE);
+        endSuppressStackOperation(suppressTag);
     }
 
     public void setResult(Scene scene, Object result) {
