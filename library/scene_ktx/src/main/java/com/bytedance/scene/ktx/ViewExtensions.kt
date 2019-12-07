@@ -15,18 +15,24 @@
  */
 package com.bytedance.scene.ktx
 
-import android.annotation.SuppressLint
 import android.view.View
 import com.bytedance.scene.Scene
 import com.bytedance.scene.navigation.NavigationScene
+import com.bytedance.scene.utlity.ViewUtility
+import java.lang.IllegalStateException
 
-@SuppressLint("WrongConstant")
-fun View.getScene(): Scene {
-    val value = context.getSystemService(Scene.SCENE_SERVICE)
-            ?: throw IllegalArgumentException("Scene View should use getSceneContext() as View constructor argument in Scene.onCreateView()")
-    return value as Scene
+fun View.getScene(): Scene? {
+    return ViewUtility.findSceneByView(this)
+}
+
+fun View.requireScene(): Scene {
+    return ViewUtility.findSceneByView(this) ?: throw IllegalStateException("Scene not found")
 }
 
 fun View.getNavigationScene(): NavigationScene? {
-    return getScene().navigationScene
+    return getScene()?.navigationScene
+}
+
+fun View.requireNavigationScene(): NavigationScene {
+    return requireScene().requireNavigationScene()
 }
