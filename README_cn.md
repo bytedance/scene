@@ -12,7 +12,7 @@ Scene是一个基于View的轻量级导航和页面切分组件库，主要特�
 5. 支持页面之间拿返回值，支持在Scene中申请权限
 6. 支持页面销毁时保存状态和恢复
 
-[Demo下载地址](https://github.com/bytedance/scene/releases/download/v1.0.0/Scene.Demo.apk)
+[Demo下载地址](https://github.com/bytedance/scene/releases/download/v1.0.2/demo-debug.apk)
 
 ## Apps using Scene
 

@@ -15,7 +15,7 @@ Scene is a lightweight library of navigation and ui composition based on view.
 5. Support return value between Scenes, support request and grant permissions in Scene
 6. Support save and recovery state of Scene
 
-[Download the Demo](https://github.com/bytedance/scene/releases/download/v1.0.0/Scene.Demo.apk)
+[Download the Demo](https://github.com/bytedance/scene/releases/download/v1.0.2/demo-debug.apk)
 
 ## Apps using Scene
 
