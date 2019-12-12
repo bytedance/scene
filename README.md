@@ -19,9 +19,9 @@ Scene is a lightweight library of navigation and ui composition based on view.
 
 ## Apps using Scene
 
-| <img src="misc/xigua.png" alt="xigua" width="100"/> | <img src="misc/douyin.png" alt="douyin" width="100"/> | <img src="misc/musical.ly.png" alt="musical.ly.png" width="90"/> |
-|:-----------:|:-------:|:----------:|
-| Xigua Video | Tik Tok | Musical.ly |
+| <img src="misc/xigua.png" alt="xigua" width="100"/> | <img src="misc/douyin.png" alt="douyin" width="100"/> | 
+|:-----------:|:-------:|
+| Xigua Video | Tik Tok | 
 
 ## Introduction
 
