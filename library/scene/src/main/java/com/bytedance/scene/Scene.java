@@ -1219,4 +1219,9 @@ public abstract class Scene implements LifecycleOwner, ViewModelStoreOwner {
         Utility.buildShortClassTag(this, sb);
         return sb.toString();
     }
+
+    @NonNull
+    public final String getDebugSceneHierarchy() {
+        return Utility.getViewHierarchy(this);
+    }
 }
