@@ -32,6 +32,7 @@ import android.view.ViewGroup;
 
 import com.bytedance.scene.Scene;
 import com.bytedance.scene.SceneComponentFactory;
+import com.bytedance.scene.SceneTrace;
 import com.bytedance.scene.State;
 import com.bytedance.scene.animation.AnimationInfo;
 import com.bytedance.scene.animation.NavigationAnimationExecutor;
@@ -82,6 +83,9 @@ class AsyncHandler extends Handler {
 }
 
 class NavigationSceneManager {
+    private static final String TRACE_EXECUTE_OPERATION_TAG = "NavigationSceneManager#executeOperation";
+    private static final String TRACE_EXECUTE_PENDING_OPERATION_TAG = "NavigationSceneManager#executePendingOperation";
+
     private NavigationScene mNavigationScene;
     private final RecordStack mBackStackList = new RecordStack();
     private NavigationListener mNavigationListener;
@@ -164,9 +168,11 @@ class NavigationSceneManager {
                             throw new SceneInternalException("miss endSuppressStackOperation(), mIsNavigationStateChangeInProgress content " + exceptionInfo);
                         }
                         if (canExecuteNavigationStackOperation()) {
+                            SceneTrace.beginSection(TRACE_EXECUTE_OPERATION_TAG);
                             String suppressTag = beginSuppressStackOperation("NavigationManager execute operation by Handler.post()");
                             operation.execute(EMPTY_RUNNABLE);
                             endSuppressStackOperation(suppressTag);
+                            SceneTrace.endSection();
                         } else {
                             mPendingActionList.addLast(operation);
                             mLastPendingActionListItemTimestamp = System.currentTimeMillis();
@@ -176,9 +182,11 @@ class NavigationSceneManager {
                 mCurrentScheduledStackOperationCount++;
                 mHandler.postAsyncIfNeeded(task);
             } else {
+                SceneTrace.beginSection(TRACE_EXECUTE_OPERATION_TAG);
                 String suppressTag = beginSuppressStackOperation("NavigationManager execute operation directly");
                 operation.execute(EMPTY_RUNNABLE);
                 endSuppressStackOperation(suppressTag);
+                SceneTrace.endSection();
             }
         } else {
             /**
@@ -269,7 +277,7 @@ class NavigationSceneManager {
         if (this.mPendingActionList.size() == 0 || !canExecuteNavigationStackOperation()) {
             return;
         }
-
+        SceneTrace.beginSection(TRACE_EXECUTE_PENDING_OPERATION_TAG);
         /*
          * Only the last one need to do the transition animation, the previous doesn't.
          * If not, it is easy to see that the jump animation of SchemaActivity not be executed,
@@ -292,6 +300,7 @@ class NavigationSceneManager {
             throw new IllegalStateException("why mPendingActionList still have item?");
         }
         this.mLastPendingActionListItemTimestamp = -1L;
+        SceneTrace.endSection();
     }
 
     public boolean canPop() {
