@@ -1,4 +1,4 @@
-# Bytedance Scene
+# Scene
 
 [简体中文版说明 >>>](/README_cn.md)
 
