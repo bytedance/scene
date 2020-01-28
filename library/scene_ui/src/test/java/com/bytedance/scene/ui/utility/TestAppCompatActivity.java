@@ -1,9 +1,9 @@
 package com.bytedance.scene.ui.utility;
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
-import android.widget.FrameLayout;
+ import android.widget.FrameLayout;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import com.bytedance.scene.ui.R;
 import com.bytedance.scene.utlity.ViewIdGenerator;
 

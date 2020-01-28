@@ -1,8 +1,5 @@
 package com.bytedance.scenedemo.architecture_patterns.by_constructor
 
-import android.arch.lifecycle.LiveData
-import android.arch.lifecycle.MutableLiveData
-import android.arch.lifecycle.Observer
 import android.os.Bundle
 import android.view.Gravity
 import android.view.LayoutInflater
@@ -12,6 +9,9 @@ import android.widget.Button
 import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Observer
 import com.bytedance.scene.Scene
 import com.bytedance.scene.group.GroupScene
 import com.bytedance.scene.utlity.ViewIdGenerator
