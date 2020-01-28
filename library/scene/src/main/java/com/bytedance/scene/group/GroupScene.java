@@ -25,10 +25,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.bytedance.scene.Scene;
-import com.bytedance.scene.SceneComponentFactory;
-import com.bytedance.scene.SceneParent;
-import com.bytedance.scene.State;
+import com.bytedance.scene.*;
 import com.bytedance.scene.animation.AnimationOrAnimator;
 import com.bytedance.scene.animation.AnimationOrAnimatorFactory;
 import com.bytedance.scene.interfaces.ChildSceneLifecycleCallbacks;
@@ -321,9 +318,9 @@ public abstract class GroupScene extends Scene implements SceneParent {
                 if (tmp == getView()) {
                     break;
                 }
-                GroupRecord record = mGroupSceneManager.findByView(tmp);
-                if (record != null) {
-                    throw new IllegalArgumentException(String.format("cant add Scene to child Scene %s view hierarchy ", record.scene.toString()));
+                Scene scene = (Scene) tmp.getTag(R.id.bytedance_scene_view_scene_tag);
+                if (scene != null) {
+                    throw new IllegalArgumentException(String.format("cant add Scene to child Scene %s view hierarchy ", scene.toString()));
                 }
                 tmp = (ViewGroup) tmp.getParent();
             }
