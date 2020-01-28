@@ -1058,6 +1058,9 @@ public abstract class Scene implements LifecycleOwner, ViewModelStoreOwner {
 
     /**
      * Use another theme instead of inherit from Activity theme
+     * <p>
+     * This method will modify onCreateView inflated view context, View.getContext() will return ContextWrapper instead
+     * of Activity
      */
     public final void setTheme(@StyleRes int resId) {
         if (getView() != null) {
