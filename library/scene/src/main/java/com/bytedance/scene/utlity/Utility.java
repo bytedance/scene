@@ -18,6 +18,7 @@ package com.bytedance.scene.utlity;
 import android.app.Activity;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.arch.lifecycle.Lifecycle;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.drawable.ColorDrawable;
@@ -34,6 +35,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
 import android.view.ViewTreeObserver;
+import com.bytedance.scene.Scene;
+import com.bytedance.scene.group.GroupScene;
+import com.bytedance.scene.navigation.NavigationScene;
+
+import java.util.List;
 
 import static androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP;
 
@@ -216,5 +222,75 @@ public class Utility {
             resName = String.valueOf(viewId);
         }
         return resName;
+    }
+
+    public static String getViewHierarchy(@NonNull Scene scene) {
+        StringBuilder desc = new StringBuilder();
+        getViewHierarchy(scene, desc, 0);
+        return desc.toString();
+    }
+
+    private static void getViewHierarchy(Scene scene, StringBuilder desc, int margin) {
+        desc.append(getViewMessage(scene, margin));
+        if (scene instanceof NavigationScene) {
+            margin++;
+            NavigationScene navigationScene = (NavigationScene) scene;
+            List<Scene> list = navigationScene.getSceneList();
+            for (int i = 0; i < list.size(); i++) {
+                getViewHierarchy(list.get(i), desc, margin);
+            }
+        } else if (scene instanceof GroupScene) {
+            margin++;
+            GroupScene groupScene = (GroupScene) scene;
+            List<Scene> list = groupScene.getSceneList();
+            for (int i = 0; i < list.size(); i++) {
+                getViewHierarchy(list.get(i), desc, margin);
+            }
+        }
+    }
+
+    private static String getViewMessage(Scene scene, int marginOffset) {
+        String tag = null;
+        boolean isHidden = false;
+        String status = null;
+        if (scene.getParentScene() instanceof GroupScene) {
+            GroupScene groupScene = (GroupScene) scene.getParentScene();
+            tag = groupScene.findTagByScene(scene);
+            isHidden = !groupScene.isShow(scene);
+        } else if (scene.getParentScene() instanceof NavigationScene) {
+            Lifecycle.State state = scene.getLifecycle().getCurrentState();
+            if (state == Lifecycle.State.RESUMED) {
+                status = "resumed";
+            } else if (state == Lifecycle.State.STARTED) {
+                status = "paused";
+            } else if (state == Lifecycle.State.CREATED) {
+                status = "stopped";
+            }
+        }
+
+        String repeated = new String(new char[marginOffset]).replace("\0", "    ");
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append(repeated + "[" + scene.getClass().getSimpleName() + "] ");
+
+        if (tag != null) {
+            stringBuilder.append("tag: " + tag + " ");
+            if (isHidden) {
+                stringBuilder.append("hidden ");
+            }
+        }
+
+        if (status != null) {
+            stringBuilder.append("status: " + status + " ");
+        }
+
+        String resourceId = null;
+        if (scene.getApplicationContext() != null && scene.getView() != null && scene.getView().getId() != View.NO_ID) {
+            resourceId = getIdName(scene.requireApplicationContext(), scene.getView().getId());
+        }
+        if (resourceId != null) {
+            stringBuilder.append("viewId: " + resourceId + " ");
+        }
+        stringBuilder.append("\n");
+        return stringBuilder.toString();
     }
 }

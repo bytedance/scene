@@ -45,7 +45,7 @@ public class SceneGetActivityResultSample extends AppCompatScene {
                 intent.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
                 intent = Intent.createChooser(intent, "Select Image");
 
-                getNavigationScene().startActivityForResult(intent, 12345, new ActivityResultCallback() {
+                requireNavigationScene().startActivityForResult(intent, 12345, new ActivityResultCallback() {
                     @Override
                     public void onResult(int resultCode, @Nullable Intent result) {
                         if (resultCode == Activity.RESULT_OK) {
@@ -63,7 +63,7 @@ public class SceneGetActivityResultSample extends AppCompatScene {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(requireActivity(), TestActivityResultActivity.class);
-                getNavigationScene().startActivityForResult(intent, 5, new ActivityResultCallback() {
+                requireNavigationScene().startActivityForResult(intent, 5, new ActivityResultCallback() {
                     @Override
                     public void onResult(int resultCode, @Nullable Intent result) {
                         Toast.makeText(requireApplicationContext(), getString(R.string.nav_result_callback_tip), Toast.LENGTH_SHORT).show();

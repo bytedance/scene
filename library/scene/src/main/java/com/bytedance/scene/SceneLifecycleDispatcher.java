@@ -35,6 +35,15 @@ import static androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP;
 @RestrictTo(LIBRARY_GROUP)
 public class SceneLifecycleDispatcher<T extends Scene & SceneParent> implements SceneContainerLifecycleCallback {
     private static final String TAG = "SCENE";
+
+    private static final String TRACE_ACTIVITY_CREATED_TAG = "SceneLifecycleDispatcher#OnActivityCreated";
+    private static final String TRACE_START_TAG = "SceneLifecycleDispatcher#OnStart";
+    private static final String TRACE_RESUME_TAG = "SceneLifecycleDispatcher#OnResume";
+    private static final String TRACE_PAUSE_TAG = "SceneLifecycleDispatcher#OnPause";
+    private static final String TRACE_STOP_TAG = "SceneLifecycleDispatcher#OnStop";
+    private static final String TRACE_DESTROY_VIEW_TAG = "SceneLifecycleDispatcher#OnDestroyView";
+    private static final String TRACE_SAVE_INSTANCE_STATE_TAG = "SceneLifecycleDispatcher#OnSaveInstance";
+
     @IdRes
     private final int mSceneContainerViewId;
     private final ViewFinder mViewFinder;
@@ -57,41 +66,55 @@ public class SceneLifecycleDispatcher<T extends Scene & SceneParent> implements 
 
     @Override
     public void onActivityCreated(@NonNull Activity activity, @Nullable Bundle savedInstanceState) {
+        SceneTrace.beginSection(TRACE_ACTIVITY_CREATED_TAG);
         ViewGroup viewGroup = this.mViewFinder.requireViewById(this.mSceneContainerViewId);
         this.mLifecycleManager.onActivityCreated(activity, viewGroup, this.mScene, this.mRootScopeFactory,
                 this.mSupportRestore, this.mSupportRestore ? savedInstanceState : null);
+        SceneTrace.endSection();
     }
 
     @Override
     public void onStarted() {
+        SceneTrace.beginSection(TRACE_START_TAG);
         this.mLifecycleManager.onStart();
+        SceneTrace.endSection();
     }
 
     @Override
     public void onResumed() {
+        SceneTrace.beginSection(TRACE_RESUME_TAG);
         this.mLifecycleManager.onResume();
+        SceneTrace.endSection();
     }
 
     @Override
     public void onPaused() {
+        SceneTrace.beginSection(TRACE_PAUSE_TAG);
         this.mLifecycleManager.onPause();
+        SceneTrace.endSection();
     }
 
     @Override
     public void onStopped() {
+        SceneTrace.beginSection(TRACE_STOP_TAG);
         this.mLifecycleManager.onStop();
+        SceneTrace.endSection();
     }
 
     @Override
     public void onViewDestroyed() {
+        SceneTrace.beginSection(TRACE_DESTROY_VIEW_TAG);
         this.mLifecycleManager.onDestroyView();
+        SceneTrace.endSection();
     }
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         if (this.mSupportRestore) {
             outState.putString(TAG, this.mScene.getClass().getName());
+            SceneTrace.beginSection(TRACE_SAVE_INSTANCE_STATE_TAG);
             this.mLifecycleManager.onSaveInstanceState(outState);
+            SceneTrace.endSection();
         }
     }
 }

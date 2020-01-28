@@ -70,6 +70,33 @@ public class ActivityCompatibilityUtility {
         }
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
+    @MainThread
+    public static void startActivityForResult(@NonNull final Activity activity, @NonNull final LifecycleOwner lifecycleOwner,
+                                              @NonNull final Intent intent, final int requestCode,
+                                              @Nullable final Bundle options,
+                                              @NonNull final ActivityResultCallback resultCallback) {
+        ThreadUtility.checkUIThread();
+        if (isDestroyed(activity, lifecycleOwner)) {
+            return;
+        }
+        final SceneActivityCompatibilityLayerFragment fragment = install(activity);
+        if (fragment.isAdded()) {
+            fragment.startActivityForResultByScene(lifecycleOwner, intent, requestCode, options, resultCallback);
+        } else {
+            fragment.addOnActivityCreatedCallback(new SceneActivityCompatibilityLayerFragment.OnActivityCreatedCallback() {
+                @Override
+                public void onActivityCreated() {
+                    fragment.removeOnActivityCreatedCallback(this);
+                    if (isDestroyed(activity, lifecycleOwner)) {
+                        return;
+                    }
+                    fragment.startActivityForResultByScene(lifecycleOwner, intent, requestCode, options, resultCallback);
+                }
+            });
+        }
+    }
+
     @MainThread
     @RequiresApi(Build.VERSION_CODES.M)
     public static void requestPermissions(@NonNull final Activity activity, @NonNull final LifecycleOwner lifecycleOwner,

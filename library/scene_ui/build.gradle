@@ -7,12 +7,38 @@ android {
         minSdkVersion rootProject.ext.miniSdkVersion
     }
     resourcePrefix 'scene_'
+
+    testOptions {
+        unitTests {
+            includeAndroidResources = true
+        }
+    }
 }
 
 dependencies {
     implementation APPCOMPAT_LIB
     implementation DESIGN_LIB
     api project(path: ':library:scene')
+
+    testImplementation ROBOLECTRIC
+    testImplementation JUNIT
+    testAnnotationProcessor AUTO_SERVICE
+    testCompileOnly AUTO_SERVICE
+}
+
+tasks.withType(Test) {
+    testLogging {
+        events "failed"
+    }
+
+    afterSuite { desc, result ->
+        if (!desc.parent)
+            println("${result.resultType} " +
+                    "(${result.testCount} tests, " +
+                    "${result.successfulTestCount} successes, " +
+                    "${result.failedTestCount} failures, " +
+                    "${result.skippedTestCount} skipped)")
+    }
 }
 
 task javadoc(type: Javadoc) {

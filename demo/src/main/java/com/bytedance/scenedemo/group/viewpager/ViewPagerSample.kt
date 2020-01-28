@@ -70,4 +70,8 @@ class ViewPagerChildScene : UserVisibleHintGroupScene() {
         frameLayout.addView(textView)
         return frameLayout
     }
+
+    override fun setUserVisibleHint(isVisibleToUser: Boolean) {
+        super.setUserVisibleHint(isVisibleToUser)
+    }
 }

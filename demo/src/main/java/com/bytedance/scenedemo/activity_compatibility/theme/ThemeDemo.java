@@ -39,7 +39,7 @@ public class ThemeDemo extends AppCompatScene {
             @Override
             public void onClick(View v) {
                 TestTheme0Scene scene = TestTheme0Scene.newInstance(R.style.AppTheme_Test1);
-                getNavigationScene().push(scene);
+                requireNavigationScene().push(scene);
             }
         });
 
@@ -50,7 +50,7 @@ public class ThemeDemo extends AppCompatScene {
             @Override
             public void onClick(View v) {
                 TestTheme0Scene scene = TestTheme0Scene.newInstance(R.style.AppTheme_Test2);
-                getNavigationScene().push(scene);
+                requireNavigationScene().push(scene);
             }
         });
 
@@ -61,7 +61,7 @@ public class ThemeDemo extends AppCompatScene {
             @Override
             public void onClick(View v) {
                 TestTheme1Scene scene = TestTheme1Scene.newInstance(R.style.AppTheme_Test3);
-                getNavigationScene().push(scene);
+                requireNavigationScene().push(scene);
             }
         });
     }

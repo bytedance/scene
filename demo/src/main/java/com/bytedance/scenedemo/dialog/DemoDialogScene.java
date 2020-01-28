@@ -20,7 +20,7 @@ public class DemoDialogScene extends Scene {
     @NonNull
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        FrameLayout layout = new FrameLayout(getActivity());
+        FrameLayout layout = new FrameLayout(requireSceneContext());
 
         TextView textView = new TextView(getActivity());
         textView.setText(getNavigationScene().getStackHistory());
@@ -33,7 +33,7 @@ public class DemoDialogScene extends Scene {
         layout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getNavigationScene().pop();
+                requireNavigationScene().pop();
             }
         });
 

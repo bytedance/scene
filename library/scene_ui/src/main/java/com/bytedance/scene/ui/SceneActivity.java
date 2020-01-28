@@ -40,7 +40,8 @@ public abstract class SceneActivity extends AppCompatActivity {
             getWindow().getDecorView().setSystemUiVisibility(getWindow().getDecorView().getSystemUiVisibility()
                     | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
         }
-        this.mDelegate = NavigationSceneUtility.setupWithActivity(this, savedInstanceState, getHomeSceneClass(), supportRestore());
+        this.mDelegate = NavigationSceneUtility.setupWithActivity(this, getHomeSceneClass())
+                .supportRestore(supportRestore()).build();
     }
 
     @Override

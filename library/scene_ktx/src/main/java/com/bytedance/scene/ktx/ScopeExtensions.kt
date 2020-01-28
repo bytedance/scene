@@ -15,24 +15,12 @@
  */
 package com.bytedance.scene.ktx
 
-import android.view.View
-import com.bytedance.scene.Scene
-import com.bytedance.scene.navigation.NavigationScene
-import com.bytedance.scene.utlity.ViewUtility
-import java.lang.IllegalStateException
+import com.bytedance.scene.Scope
 
-fun View.getScene(): Scene? {
-    return ViewUtility.findSceneByView(this)
+inline operator fun <reified T> Scope.get(key: Any): T {
+    return getService<T>(key) as T
 }
 
-fun View.requireScene(): Scene {
-    return ViewUtility.findSceneByView(this) ?: throw IllegalStateException("Scene not found")
-}
-
-fun View.getNavigationScene(): NavigationScene? {
-    return getScene()?.navigationScene
-}
-
-fun View.requireNavigationScene(): NavigationScene {
-    return requireScene().requireNavigationScene()
+operator fun Scope.set(key: Any, value: Any) {
+    register(key, value)
 }

@@ -19,7 +19,6 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
-import android.content.ContextWrapper;
 import android.content.res.Resources;
 import android.os.Build;
 import android.os.Bundle;
@@ -122,6 +121,10 @@ import static androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP;
  * ```
  */
 public abstract class Scene implements LifecycleOwner, ViewModelStoreOwner {
+    /**
+     * use ViewUtility.findSceneByView(View) instead
+     */
+    @Deprecated
     public static final String SCENE_SERVICE = "scene";
     private static final String TAG = "Scene";
 
@@ -372,6 +375,7 @@ public abstract class Scene implements LifecycleOwner, ViewModelStoreOwner {
             }
         }
 
+        view.setTag(R.id.bytedance_scene_view_scene_tag, this);
         view.setSaveFromParentEnabled(false);
         mView = view;
         mCalled = false;
@@ -1225,5 +1229,10 @@ public abstract class Scene implements LifecycleOwner, ViewModelStoreOwner {
         StringBuilder sb = new StringBuilder(128);
         Utility.buildShortClassTag(this, sb);
         return sb.toString();
+    }
+
+    @NonNull
+    public final String getDebugSceneHierarchy() {
+        return Utility.getViewHierarchy(this);
     }
 }

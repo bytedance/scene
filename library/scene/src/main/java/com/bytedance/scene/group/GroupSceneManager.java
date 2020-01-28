@@ -32,6 +32,7 @@ import androidx.annotation.Nullable;
 
 import androidx.core.util.Pair;
 import com.bytedance.scene.Scene;
+import com.bytedance.scene.SceneTrace;
 import com.bytedance.scene.State;
 import com.bytedance.scene.animation.AnimationOrAnimator;
 import com.bytedance.scene.animation.AnimationOrAnimatorFactory;
@@ -208,6 +209,8 @@ class GroupRecordList {
 }
 
 class GroupSceneManager {
+    private static final String TRACE_EXECUTE_OPERATION_TAG = "GroupSceneManager#executeOperation";
+
     @NonNull
     private final GroupScene mGroupScene;
     @Nullable
@@ -237,7 +240,9 @@ class GroupSceneManager {
     };
 
     private void executeOperation(final Operation operation) {
+        SceneTrace.beginSection(TRACE_EXECUTE_OPERATION_TAG);
         operation.execute(EMPTY_RUNNABLE);
+        SceneTrace.endSection();
     }
 
     private boolean mIsInTransaction = false;

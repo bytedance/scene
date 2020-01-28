@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <item type="id" name="navigation_scene_content" />
+    <item type="id" name="bytedance_scene_view_scene_tag" />
 </resources>

@@ -18,7 +18,7 @@ import com.bytedance.scenedemo.group.viewpager.ViewPagerSample
 /**
  * Created by JiangQi on 9/5/18.
  */
-class FragmentBindingDemoActivity : AppCompatActivity() {
+class NavigationSceneBindToFragmentSample : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         supportFragmentManager.beginTransaction().add(android.R.id.content, AFragment()).commitNow()

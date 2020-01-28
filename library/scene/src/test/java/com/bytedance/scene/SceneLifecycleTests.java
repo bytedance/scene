@@ -9,6 +9,7 @@ import androidx.annotation.Nullable;
 import androidx.core.util.Pair;
 import androidx.lifecycle.Lifecycle;
 import com.bytedance.scene.navigation.NavigationScene;
+import com.bytedance.scene.utlity.ViewUtility;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
@@ -51,6 +52,7 @@ public class SceneLifecycleTests {
         assertTrue(testScene.getStateHistory().contains(State.ACTIVITY_CREATED.getName()));
 
         assertEquals(testScene.getView().getContext().getSystemService(Scene.SCENE_SERVICE), testScene);
+        assertEquals(ViewUtility.findSceneByView(testScene.getView()), testScene);
         assertFalse(testScene.isVisible());
 
         testScene.requireView();

@@ -77,7 +77,8 @@ public class SceneActivityCompatibilityLayerFragment extends Fragment {
     }
 
     @MainThread
-    void startActivityForResultByScene(@NonNull final LifecycleOwner lifecycleOwner, @NonNull Intent intent, final int requestCode, @NonNull ActivityResultCallback resultCallback) {
+    void startActivityForResultByScene(@NonNull final LifecycleOwner lifecycleOwner, @NonNull Intent intent,
+                                       final int requestCode, @NonNull ActivityResultCallback resultCallback) {
         if (!isCurrentStatusValid(lifecycleOwner)) {
             return;
         }
@@ -97,9 +98,34 @@ public class SceneActivityCompatibilityLayerFragment extends Fragment {
         });
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
+    @MainThread
+    void startActivityForResultByScene(@NonNull final LifecycleOwner lifecycleOwner, @NonNull Intent intent,
+                                       final int requestCode, @Nullable Bundle options,
+                                       @NonNull ActivityResultCallback resultCallback) {
+        if (!isCurrentStatusValid(lifecycleOwner)) {
+            return;
+        }
+
+        if (requestCode < 0) {
+            startActivity(intent);
+            return;
+        }
+        mResultCallbackMap.put(requestCode, resultCallback);
+        startActivityForResult(intent, requestCode, options);
+        lifecycleOwner.getLifecycle().addObserver(new LifecycleObserver() {
+            @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
+            void onDestroy() {
+                lifecycleOwner.getLifecycle().removeObserver(this);
+                mResultCallbackMap.remove(requestCode);
+            }
+        });
+    }
+
     @MainThread
     @RequiresApi(Build.VERSION_CODES.M)
-    void requestPermissionsByScene(@NonNull final LifecycleOwner lifecycleOwner, @NonNull String[] permissions, final int requestCode, @NonNull final PermissionResultCallback resultCallback) {
+    void requestPermissionsByScene(@NonNull final LifecycleOwner lifecycleOwner, @NonNull String[] permissions,
+                                   final int requestCode, @NonNull final PermissionResultCallback resultCallback) {
         if (!isCurrentStatusValid(lifecycleOwner)) {
             return;
         }
@@ -149,7 +175,8 @@ public class SceneActivityCompatibilityLayerFragment extends Fragment {
     }
 
     @MainThread
-    void addConfigurationChangedListener(@NonNull final LifecycleOwner lifecycleOwner, @NonNull final ConfigurationChangedListener configurationChangedListener) {
+    void addConfigurationChangedListener(@NonNull final LifecycleOwner lifecycleOwner,
+                                         @NonNull final ConfigurationChangedListener configurationChangedListener) {
         if (!isCurrentStatusValid(lifecycleOwner)) {
             return;
         }

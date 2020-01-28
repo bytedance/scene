@@ -1,4 +1,4 @@
-# Bytedance Scene
+# Scene
 [![GitHub license](https://img.shields.io/github/license/bytedance/scene)](https://github.com/bytedance/scene/blob/master/LICENSE) 
 ![Maven metadata URL](https://img.shields.io/maven-metadata/v?color=green&label=version&metadataUrl=http%3A%2F%2Fjcenter.bintray.com%2Fcom%2Fbytedance%2Fscene%2Fscene%2Fmaven-metadata.xml)
 [![API](https://img.shields.io/badge/api-14%2B-green)](https://developer.android.com/about/dashboards)
@@ -12,13 +12,13 @@ Scene是一个基于View的轻量级导航和页面切分组件库，主要特�
 5. 支持页面之间拿返回值，支持在Scene中申请权限
 6. 支持页面销毁时保存状态和恢复
 
-[Demo下载地址](https://github.com/bytedance/scene/releases/download/v1.0.0/Scene.Demo.apk)
+[Demo下载地址](https://github.com/bytedance/scene/releases/download/v1.0.2/demo-debug.apk)
 
 ## Apps using Scene
 
-| <img src="misc/xigua.png" alt="xigua" width="100"/> | <img src="misc/douyin.png" alt="douyin" width="100"/> | <img src="misc/musical.ly.png" alt="musical.ly.png" width="90"/> |
-|:-------:|:--------:|:----------:|
-| 西瓜视频 | 抖音短视频 | Musical.ly |
+| <img src="misc/xigua.png" alt="xigua" width="100"/> | <img src="misc/douyin.png" alt="douyin" width="100"/> |
+|:-------:|:--------:|
+| 西瓜视频 | 抖音短视频 | 
 
 ## Introduction
 

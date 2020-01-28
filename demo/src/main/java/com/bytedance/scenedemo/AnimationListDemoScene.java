@@ -37,14 +37,14 @@ public class AnimationListDemoScene extends UserVisibleHintGroupScene {
         addButton(layout, getString(R.string.main_anim_btn_res_anim), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getNavigationScene().push(AnimationResDemoScene.class);
+                requireNavigationScene().push(AnimationResDemoScene.class);
             }
         });
 
         addButton(layout, getString(R.string.main_anim_btn_swipe_back), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getNavigationScene().push(SwipeBackDemo.class);
+                requireNavigationScene().push(SwipeBackDemo.class);
             }
         });
 
@@ -53,14 +53,14 @@ public class AnimationListDemoScene extends UserVisibleHintGroupScene {
         mInteractionButton = addButton(layout, getString(R.string.main_anim_btn_ios_anim), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getNavigationScene().push(SlideBackButtonDemoScene.class);
+                requireNavigationScene().push(SlideBackButtonDemoScene.class);
             }
         });
 
         addButton(layout, getString(R.string.main_anim_btn_share_element), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getNavigationScene().push(TransitionDemo.class);
+                requireNavigationScene().push(TransitionDemo.class);
             }
         });
 

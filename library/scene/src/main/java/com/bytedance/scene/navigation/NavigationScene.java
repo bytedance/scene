@@ -38,7 +38,6 @@ import com.bytedance.scene.*;
 import com.bytedance.scene.animation.NavigationAnimationExecutor;
 import com.bytedance.scene.animation.animatorexecutor.Android8DefaultSceneAnimatorExecutor;
 import com.bytedance.scene.animation.interaction.InteractionNavigationPopAnimationFactory;
-import com.bytedance.scene.group.GroupScene;
 import com.bytedance.scene.interfaces.ChildSceneLifecycleCallbacks;
 import com.bytedance.scene.group.ReuseGroupScene;
 import com.bytedance.scene.interfaces.ActivityResultCallback;
@@ -48,7 +47,7 @@ import com.bytedance.scene.interfaces.PopOptions;
 import com.bytedance.scene.interfaces.PushOptions;
 import com.bytedance.scene.utlity.*;
 import com.bytedance.scene.view.NavigationFrameLayout;
-import com.bytedance.scene.view.NoneTouchFrameLayout;
+import com.bytedance.scene.view.AnimationContainerLayout;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -530,12 +529,11 @@ public final class NavigationScene extends Scene implements NavigationListener, 
         }
         frameLayout.addView(mSceneContainer, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
 
-        NoneTouchFrameLayout noneTouchFrameLayout = new NoneTouchFrameLayout(requireSceneContext());
+        AnimationContainerLayout animationContainerLayout = new AnimationContainerLayout(requireSceneContext());
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            noneTouchFrameLayout.setOnApplyWindowInsetsListener(new DispatchWindowInsetsListener());
+            animationContainerLayout.setOnApplyWindowInsetsListener(new DispatchWindowInsetsListener());
         }
-        noneTouchFrameLayout.setTouchEnabled(false);
-        mAnimationContainer = noneTouchFrameLayout;
+        mAnimationContainer = animationContainerLayout;
         frameLayout.addView(mAnimationContainer, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
 
         if (mNavigationSceneOptions.drawWindowBackground()) {

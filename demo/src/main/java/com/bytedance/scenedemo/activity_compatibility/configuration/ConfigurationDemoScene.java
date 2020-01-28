@@ -38,7 +38,7 @@ public class ConfigurationDemoScene extends GroupScene {
         Button btn = getView().findViewById(R.id.btn);
         btn.setVisibility(View.GONE);
 
-        getNavigationScene().addConfigurationChangedListener(this, new ConfigurationChangedListener() {
+        requireNavigationScene().addConfigurationChangedListener(this, new ConfigurationChangedListener() {
             @Override
             public void onConfigurationChanged(Configuration newConfig) {
                 Toast.makeText(getApplicationContext(), "onConfigurationChanged", Toast.LENGTH_SHORT).show();

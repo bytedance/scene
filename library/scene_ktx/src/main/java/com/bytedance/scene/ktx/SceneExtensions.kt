@@ -18,6 +18,7 @@ package com.bytedance.scene.ktx
 import android.content.Intent
 import android.content.res.Configuration
 import android.os.Build
+import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import androidx.annotation.RequiresApi
@@ -97,6 +98,16 @@ fun Scene.addConfigurationChangedListener(configurationChangedListener: Configur
 fun Scene.startActivityForResult(intent: Intent, requestCode: Int, resultCallback: (Int, Intent?) -> Unit) {
     activity?.let {
         ActivityCompatibilityUtility.startActivityForResult(it, this, intent, requestCode,
+                ActivityResultCallback { resultCode: Int, result: Intent? ->
+                    resultCallback(resultCode, result)
+                })
+    }
+}
+
+@RequiresApi(Build.VERSION_CODES.JELLY_BEAN)
+fun Scene.startActivityForResult(intent: Intent, requestCode: Int, options: Bundle?, resultCallback: (Int, Intent?) -> Unit) {
+    activity?.let {
+        ActivityCompatibilityUtility.startActivityForResult(it, this, intent, requestCode, options,
                 ActivityResultCallback { resultCode: Int, result: Intent? ->
                     resultCallback(resultCode, result)
                 })

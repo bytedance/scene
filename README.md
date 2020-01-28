@@ -1,4 +1,4 @@
-# Bytedance Scene
+# Scene
 
 [简体中文版说明 >>>](/README_cn.md)
 
@@ -15,13 +15,13 @@ Scene is a lightweight library of navigation and ui composition based on view.
 5. Support return value between Scenes, support request and grant permissions in Scene
 6. Support save and recovery state of Scene
 
-[Download the Demo](https://github.com/bytedance/scene/releases/download/v1.0.0/Scene.Demo.apk)
+[Download the Demo](https://github.com/bytedance/scene/releases/download/v1.0.2/demo-debug.apk)
 
 ## Apps using Scene
 
-| <img src="misc/xigua.png" alt="xigua" width="100"/> | <img src="misc/douyin.png" alt="douyin" width="100"/> | <img src="misc/musical.ly.png" alt="musical.ly.png" width="90"/> |
-|:-----------:|:-------:|:----------:|
-| Xigua Video | Tik Tok | Musical.ly |
+| <img src="misc/xigua.png" alt="xigua" width="100"/> | <img src="misc/douyin.png" alt="douyin" width="100"/> | 
+|:-----------:|:-------:|
+| Xigua Video | Tik Tok | 
 
 ## Introduction
 

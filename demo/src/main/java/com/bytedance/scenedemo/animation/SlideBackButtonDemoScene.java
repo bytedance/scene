@@ -17,6 +17,7 @@ import com.bytedance.scene.animation.interaction.InteractionNavigationPopAnimati
 import com.bytedance.scene.animation.interaction.progressanimation.DrawableAnimationBuilder;
 import com.bytedance.scene.animation.interaction.progressanimation.InteractionAnimation;
 import com.bytedance.scene.animation.interaction.progressanimation.InteractionAnimationBuilder;
+import com.bytedance.scene.group.GroupScene;
 import com.bytedance.scene.interfaces.PopOptions;
 import com.bytedance.scene.view.SlidePercentFrameLayout;
 import com.bytedance.scenedemo.AnimationListDemoScene;
@@ -55,7 +56,7 @@ public class SlideBackButtonDemoScene extends Scene {
             @Override
             protected List<InteractionAnimation> onPopInteraction(Scene from, Scene to) {
                 MainScene mainScene = (MainScene) to;
-                AnimationListDemoScene animationListDemoScene = mainScene.findSceneByTag("android:switcher:2");
+                AnimationListDemoScene animationListDemoScene = findTargetScene(mainScene);
 
                 int[] buttonLocation = new int[2];
                 button.getLocationInWindow(buttonLocation);
@@ -83,7 +84,7 @@ public class SlideBackButtonDemoScene extends Scene {
 
             @Override
             protected void onInteractionEnd() {
-                getNavigationScene().pop(new PopOptions.Builder().setAnimation(new NoAnimationExecutor()).build());
+                requireNavigationScene().pop(new PopOptions.Builder().setAnimation(new NoAnimationExecutor()).build());
             }
         };
         layout.setCallback(new SlidePercentFrameLayout.Callback() {
@@ -94,8 +95,8 @@ public class SlideBackButtonDemoScene extends Scene {
 
             @Override
             public void onStart() {
-                getNavigationScene().pop(interactionNavigationPopAnimationFactory);
-                getNavigationScene().convertBackgroundToBlack();
+                requireNavigationScene().pop(interactionNavigationPopAnimationFactory);
+                requireNavigationScene().convertBackgroundToBlack();
             }
 
             @Override
@@ -117,5 +118,21 @@ public class SlideBackButtonDemoScene extends Scene {
         layout.addView(textView, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 
         return layout;
+    }
+
+    private static AnimationListDemoScene findTargetScene(GroupScene groupScene) {
+        List<Scene> childSceneList = groupScene.getSceneList();
+        for (int i = 0; i < childSceneList.size(); i++) {
+            Scene scene = childSceneList.get(i);
+            if (scene instanceof AnimationListDemoScene) {
+                return (AnimationListDemoScene) scene;
+            } else if (scene instanceof GroupScene) {
+                AnimationListDemoScene animationListDemoScene = findTargetScene((GroupScene) scene);
+                if (animationListDemoScene != null) {
+                    return animationListDemoScene;
+                }
+            }
+        }
+        return null;
     }
 }

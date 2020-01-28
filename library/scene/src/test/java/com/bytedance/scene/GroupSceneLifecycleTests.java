@@ -15,6 +15,7 @@ import com.bytedance.scene.group.GroupScene;
 import com.bytedance.scene.navigation.NavigationScene;
 import com.bytedance.scene.utlity.ViewIdGenerator;
 
+import com.bytedance.scene.utlity.ViewUtility;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
@@ -578,6 +579,7 @@ public class GroupSceneLifecycleTests {
                 assertFalse(scene.isVisible());
                 assertNotNull(scene.getView());
                 assertSame(scene.getView().getContext().getSystemService(Scene.SCENE_SERVICE), scene);
+                assertEquals(ViewUtility.findSceneByView(scene.getView()), scene);
                 assertNotNull(scene.getParentScene());
                 assertNotNull(scene.getNavigationScene());
                 assertNotNull(scene.getActivity());
@@ -595,6 +597,7 @@ public class GroupSceneLifecycleTests {
                 assertTrue(scene.isVisible());
                 assertNotNull(scene.getView());
                 assertSame(scene.getView().getContext().getSystemService(Scene.SCENE_SERVICE), scene);
+                assertEquals(ViewUtility.findSceneByView(scene.getView()), scene);
                 assertNotNull(scene.getParentScene());
                 assertNotNull(scene.getNavigationScene());
                 assertNotNull(scene.getActivity());
@@ -612,6 +615,7 @@ public class GroupSceneLifecycleTests {
                 assertTrue(scene.isVisible());
                 assertNotNull(scene.getView());
                 assertSame(scene.getView().getContext().getSystemService(Scene.SCENE_SERVICE), scene);
+                assertEquals(ViewUtility.findSceneByView(scene.getView()), scene);
                 assertNotNull(scene.getParentScene());
                 assertNotNull(scene.getNavigationScene());
                 assertNotNull(scene.getActivity());

@@ -22,13 +22,14 @@
             </intent-filter>
         </activity>
         <activity android:name=".benchmark.performance.EmptyAppCompatActivity" />
-        <activity android:name=".migrate.FragmentBindingDemoActivity" />
+        <activity android:name=".migrate.NavigationSceneBindToFragmentSample" />
         <activity android:name=".migrate.TestSceneToViewActivity" />
         <activity android:name="com.bytedance.scenedemo.navigation.forresult.TestActivityResultActivity" />
         <activity android:name="com.bytedance.scenedemo.activity_compatibility.scene_result.ActivityGetSceneResultSampleActivity" />
         <activity android:name=".restore.SupportRestoreActivity" />
         <activity android:name=".migrate.migrate_from_classic_activity_fragment.MigrateFromClassicAndroidActivitySamplesActivity" />
-        <activity android:name=".migrate.GroupSceneBindingSample" />
+        <activity android:name=".migrate.GroupSceneBindToActivitySample" />
+        <activity android:name=".migrate.GroupSceneBindToFragmentSample"/>
     </application>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
