@@ -22,7 +22,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import org.xmlpull.v1.XmlPullParser;
 
-public final class SceneLayoutInflater extends LayoutInflater {
+final class SceneLayoutInflater extends LayoutInflater {
     private final Scene mScene;
     private LayoutInflater mLayoutInflater;
 
