@@ -119,7 +119,7 @@ public abstract class Scene implements LifecycleOwner, ViewModelStoreOwner {
 
     private Activity mActivity;
     private Context mSceneContext;
-    private LayoutInflater mLayoutInflater;
+    private SceneLayoutInflater mLayoutInflater;
     private View mView;
 
     private Scene mParentScene;
@@ -322,13 +322,13 @@ public abstract class Scene implements LifecycleOwner, ViewModelStoreOwner {
         return mLayoutInflater;
     }
 
-    protected LayoutInflater onGetLayoutInflater() {
+    private SceneLayoutInflater onGetLayoutInflater() {
         if (this.mActivity == null) {
             throw new IllegalStateException("onGetLayoutInflater() cannot be executed until the "
                     + "Scene is attached to the Activity.");
         }
 
-        return this.mActivity.getLayoutInflater().cloneInContext(requireSceneContext());
+        return new SceneLayoutInflater(requireActivity(), this);
     }
 
     /**
