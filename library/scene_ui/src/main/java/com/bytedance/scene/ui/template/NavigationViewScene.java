@@ -15,6 +15,7 @@
  */
 package com.bytedance.scene.ui.template;
 
+import android.arch.lifecycle.Lifecycle;
 import android.os.Bundle;
 import android.support.annotation.MenuRes;
 import android.support.annotation.NonNull;
@@ -31,6 +32,7 @@ import android.view.ViewGroup;
 
 import com.bytedance.scene.Scene;
 import com.bytedance.scene.group.GroupScene;
+import com.bytedance.scene.navigation.OnBackPressedListener;
 import com.bytedance.scene.ui.GroupSceneUIUtility;
 import com.bytedance.scene.ui.R;
 
@@ -79,6 +81,19 @@ public abstract class NavigationViewScene extends GroupScene {
             @Override
             public void onClick(View v) {
                 mDrawerLayout.openDrawer(Gravity.LEFT);
+            }
+        });
+        requireNavigationScene().addOnBackPressedListener(this, new OnBackPressedListener() {
+            @Override
+            public boolean onBackPressed() {
+                if (!getLifecycle().getCurrentState().isAtLeast(Lifecycle.State.RESUMED)) {
+                    return false;
+                }
+                if (mDrawerLayout.isDrawerOpen(mNavigationView)) {
+                    mDrawerLayout.closeDrawer(mNavigationView);
+                    return true;
+                }
+                return false;
             }
         });
     }
