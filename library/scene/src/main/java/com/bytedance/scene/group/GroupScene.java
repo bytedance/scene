@@ -294,12 +294,20 @@ public abstract class GroupScene extends Scene implements SceneParent {
         return this.mGroupSceneManager.findByScene(scene) != null;
     }
 
-    public final boolean isShow(@NonNull Scene scene) {
+    public final boolean isShowing(@NonNull Scene scene) {
         GroupRecord record = this.mGroupSceneManager.findByScene(scene);
         if (record == null) {
             return false;
         }
         return !record.isHidden;
+    }
+
+    /**
+     * use {@link #isShowing(Scene)} instead
+     */
+    @Deprecated
+    public final boolean isShow(@NonNull Scene scene) {
+        return isShowing(scene);
     }
 
     @NonNull
