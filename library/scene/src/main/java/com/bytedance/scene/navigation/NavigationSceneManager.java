@@ -17,6 +17,7 @@ package com.bytedance.scene.navigation;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.arch.lifecycle.Lifecycle;
 import android.arch.lifecycle.LifecycleOwner;
 import android.content.Context;
 import android.os.Build;
@@ -358,7 +359,8 @@ class NavigationSceneManager {
         List<NonNullPair<LifecycleOwner, OnBackPressedListener>> copy = new ArrayList<>(mOnBackPressedListenerList);
         for (int i = copy.size() - 1; i >= 0; i--) {
             NonNullPair<LifecycleOwner, OnBackPressedListener> pair = copy.get(i);
-            if (pair.second.onBackPressed()) {
+            if (pair.first.getLifecycle().getCurrentState().isAtLeast(Lifecycle.State.RESUMED)
+                    && pair.second.onBackPressed()) {
                 return true;
             }
         }

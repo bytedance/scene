@@ -86,9 +86,6 @@ public abstract class NavigationViewScene extends GroupScene {
         requireNavigationScene().addOnBackPressedListener(this, new OnBackPressedListener() {
             @Override
             public boolean onBackPressed() {
-                if (!getLifecycle().getCurrentState().isAtLeast(Lifecycle.State.RESUMED)) {
-                    return false;
-                }
                 if (mDrawerLayout.isDrawerOpen(mNavigationView)) {
                     mDrawerLayout.closeDrawer(mNavigationView);
                     return true;
