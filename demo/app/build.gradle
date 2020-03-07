@@ -28,9 +28,9 @@ dependencies {
 
     implementation COMMON_SCENE
     implementation COMMON_SCENE_UI
-    implementation project(path: ':app_lib')
+    implementation project(path: ':demo:app_lib')
 
-    implementation project(path: ':scenerouter_annotation')
-    implementation project(path: ':scenerouter_core')
-    annotationProcessor project(path: ":scenerouter_apt")
+    implementation project(path: ':library:scenerouter_annotation')
+    implementation project(path: ':library:scenerouter_core')
+    annotationProcessor project(path: ":library:scenerouter_apt")
 }

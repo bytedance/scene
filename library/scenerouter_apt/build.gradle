@@ -7,5 +7,5 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     compile 'com.google.auto.service:auto-service:1.0-rc4'
     compile 'com.squareup:javapoet:1.7.0'
-    compile project(path: ':scenerouter_annotation')
+    compile project(path: ':library:scenerouter_annotation')
 }

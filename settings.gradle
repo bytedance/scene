@@ -1,0 +1,6 @@
+include ':demo:app',
+        ':demo:app_lib',
+        ':library:scenerouter_core',
+        ':library:scenerouter_annotation',
+        ':library:scenerouter_apt',
+        ':library:scenerouter_plugin'
