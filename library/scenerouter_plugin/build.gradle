@@ -26,12 +26,8 @@ version='0.0.1'
 uploadArchives {
     repositories {
         mavenDeployer {
-            //提交到远程服务器：
-            // repository(url: "http://www.xxx.com/repos") {
-            //    authentication(userName: "admin", password: "admin")
-            // }
-            //本地的Maven地址:当前工程下
-            repository(url: uri('../my-plugin'))
+            //local dev maven path
+            repository(url: uri('../../local_dev_maven'))
         }
     }
 }
