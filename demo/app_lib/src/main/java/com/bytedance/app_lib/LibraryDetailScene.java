@@ -1,6 +1,5 @@
 package com.bytedance.app_lib;
 
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -113,7 +112,7 @@ public class LibraryDetailScene extends AppCompatScene {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        getView().setBackgroundColor(Color.RED);
+        setTitle("Library Scene");
         SceneRouters.bind(this);
         Toast.makeText(getSceneContext(), var00, Toast.LENGTH_SHORT).show();
     }

@@ -7,6 +7,8 @@ import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.FrameLayout;
 
 import com.bytedance.scene.ui.template.AppCompatScene;
 import com.bytedance.scenerouter.annotation.SceneUrl;
@@ -17,16 +19,27 @@ import com.bytedance.scenerouter.core.SceneRouters;
 
 @SceneUrl("/test")
 public class MainScene extends AppCompatScene {
+    private Button mButton;
+
     @NonNull
     @Override
     public View onCreateContentView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return new View(requireSceneContext());
+        FrameLayout layout = new FrameLayout(requireActivity());
+        mButton = new Button(requireActivity());
+        mButton.setAllCaps(false);
+        layout.addView(mButton, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        return layout;
     }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        getView().setOnClickListener(new View.OnClickListener() {
+        getToolbar().setNavigationIcon(null);
+        setTitle("Main");
+
+        final String targetUrl = "/test1";
+        mButton.setText("click to open " + targetUrl);
+        mButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 SceneRouter sceneRouter = SceneRouters.of(MainScene.this);
@@ -38,7 +51,7 @@ public class MainScene extends AppCompatScene {
 //                    }
 //                });
 //                sceneRouter.register();
-                sceneRouter.url("/test1").argument("haha", "成功").open(new OpenCallback() {
+                sceneRouter.url(targetUrl).argument("haha", "success").open(new OpenCallback() {
                     @Override
                     public void onSuccess() {
 
