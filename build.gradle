@@ -3,7 +3,7 @@
 buildscript {
     repositories {
         maven{
-            url uri('./my-plugin')
+            url uri('./local_dev_maven')
         }
         google()
         jcenter()
@@ -20,7 +20,7 @@ buildscript {
 allprojects {
     repositories {
         maven{
-            url uri('./Plugin/my-plugin')
+            url uri('./local_dev_maven')
         }
         google()
         jcenter()
