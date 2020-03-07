@@ -1,0 +1,29 @@
+apply plugin: 'com.android.library'
+
+android {
+    compileSdkVersion 28
+
+    defaultConfig {
+        minSdkVersion 27
+        targetSdkVersion 28
+        versionCode 1
+        versionName "1.0"
+
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments = [SCENE_ROUTER_MODULE_NAME: project.getName()]
+            }
+        }
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation COMMON_SCENE
+    implementation COMMON_SCENE_UI
+
+    compile project(path: ':scenerouter_annotation')
+    annotationProcessor project(path: ":scenerouter_apt")
+    compile project(path: ':scenerouter_core')
+
+}

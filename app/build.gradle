@@ -1,0 +1,36 @@
+apply plugin: 'com.android.application'
+apply plugin: 'com.bytedance.scenerouter'
+
+android {
+    compileSdkVersion 28
+    defaultConfig {
+        applicationId "com.bytedance.scene_router"
+        minSdkVersion 27
+        targetSdkVersion 28
+        versionCode 1
+        versionName "1.0"
+
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments = [SCENE_ROUTER_MODULE_NAME: project.getName(),
+                             SCENE_ROUTER_DEBUG       : "true"]
+            }
+        }
+    }
+}
+
+sceneRouter {
+    debug = true
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+
+    implementation COMMON_SCENE
+    implementation COMMON_SCENE_UI
+    implementation project(path: ':app_lib')
+
+    implementation project(path: ':scenerouter_annotation')
+    implementation project(path: ':scenerouter_core')
+    annotationProcessor project(path: ":scenerouter_apt")
+}
