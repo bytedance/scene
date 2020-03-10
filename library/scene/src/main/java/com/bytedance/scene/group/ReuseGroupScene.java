@@ -27,6 +27,7 @@ import android.view.ViewGroup;
  */
 public abstract class ReuseGroupScene extends GroupScene {
     private ViewGroup mReuseView;
+    private LayoutInflater mReuseLayoutInflater;
     private Context mReuseContextThemeWrapper;
     private int mReuseViewHostActivityIdentifyHashCode = -1;
     private int mReuseViewHostActivityThemeIdentifyHashCode = -1;
@@ -40,6 +41,7 @@ public abstract class ReuseGroupScene extends GroupScene {
         if (this.mReuseViewHostActivityIdentifyHashCode != requireActivity().hashCode() ||
                 this.mReuseViewHostActivityThemeIdentifyHashCode != requireActivity().getTheme().hashCode()) {
             this.mReuseView = null;
+            this.mReuseLayoutInflater = null;
             this.mReuseContextThemeWrapper = null;
         }
     }
@@ -64,6 +66,19 @@ public abstract class ReuseGroupScene extends GroupScene {
         }
     }
 
+    @Override
+    public final LayoutInflater onGetLayoutInflater() {
+        if (getActivity() == null) {
+            throw new IllegalStateException("onGetLayoutInflater() cannot be executed until the "
+                    + "Scene is attached to the Activity.");
+        }
+
+        if (this.mReuseLayoutInflater != null) {
+            return this.mReuseLayoutInflater;
+        }
+        return super.onGetLayoutInflater();
+    }
+
     @Nullable
     @Override
     public Context onGetSceneContext() {
@@ -81,6 +96,7 @@ public abstract class ReuseGroupScene extends GroupScene {
         super.onDestroyView();
         this.mReuseViewHostActivityIdentifyHashCode = requireActivity().hashCode();
         this.mReuseViewHostActivityThemeIdentifyHashCode = requireActivity().getTheme().hashCode();
+        this.mReuseLayoutInflater = getLayoutInflater();
         this.mReuseContextThemeWrapper = requireSceneContext();
         this.mReuseView = (ViewGroup) getView();
     }
