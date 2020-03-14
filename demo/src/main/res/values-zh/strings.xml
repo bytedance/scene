@@ -106,7 +106,7 @@
     <string name="main_part_btn_inherited_scene">继承的 Scene</string>
     <string name="part_dialog_btn_1">对话框，无背景暗色</string>
     <string name="part_dialog_btn_2">对话框，有背景暗色</string>
-    <string name="part_dialog_btn_3">底部对话框（未完成）</string>
+    <string name="part_dialog_btn_3">底部对话框</string>
     <string name="part_child_btn_1">显示/隐藏 Child Scene0</string>
     <string name="part_child_btn_2">添加/删除 Child Scene0</string>
     <string name="part_child_btn_3">动画显示/隐藏 Child Scene0</string>

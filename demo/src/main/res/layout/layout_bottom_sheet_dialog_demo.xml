@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--底部对话框示例代码
+    这里宽高不生效
+    宽固定为 match_parent
+    高固定为 wrap_content-->
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/blue_grey_300">
+
+    <TextView
+        android:id="@+id/tv_bottom_dialog_demo_text"
+        android:layout_alignParentTop="true"
+        android:textColor="@color/white_87"
+        android:textSize="30sp"
+        android:text="HelloWord :)"
+        android:gravity="center"
+        android:layout_width="match_parent"
+        android:layout_height="400dp"
+        tools:ignore="HardcodedText" />
+
+    <Button
+        android:id="@+id/btn_bottom_dialog_demo_hide"
+        android:layout_below="@id/tv_bottom_dialog_demo_text"
+        android:text="收起"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:ignore="HardcodedText" />
+
+    <Button
+        android:id="@+id/btn_bottom_dialog_demo_disable_swipe"
+        android:layout_below="@id/btn_bottom_dialog_demo_hide"
+        android:text="禁用滑动"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:ignore="HardcodedText" />
+
+    <Button
+        android:id="@+id/btn_bottom_dialog_demo_disable_cancelable"
+        android:layout_below="@id/btn_bottom_dialog_demo_disable_swipe"
+        android:text="禁用可取消"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:ignore="HardcodedText" />
+
+</RelativeLayout>
