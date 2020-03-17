@@ -84,6 +84,7 @@ public class SharedElementSceneTransitionExecutor extends NavigationAnimationExe
             this.mEnterTransitionRunnable.run();
             this.mEnterTransitionRunnable = null;
         }
+        this.mDelayEnterTransitionExecute = false;
     }
 
     @Override
