@@ -30,6 +30,7 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.LifecycleOwner;
+import androidx.arch.lifecycle.LifecycleOwner;
 
 import com.bytedance.scene.Scene;
 import com.bytedance.scene.SceneComponentFactory;
@@ -359,7 +360,8 @@ class NavigationSceneManager {
         List<NonNullPair<LifecycleOwner, OnBackPressedListener>> copy = new ArrayList<>(mOnBackPressedListenerList);
         for (int i = copy.size() - 1; i >= 0; i--) {
             NonNullPair<LifecycleOwner, OnBackPressedListener> pair = copy.get(i);
-            if (pair.second.onBackPressed()) {
+            if (pair.first.getLifecycle().getCurrentState().isAtLeast(Lifecycle.State.RESUMED)
+                    && pair.second.onBackPressed()) {
                 return true;
             }
         }

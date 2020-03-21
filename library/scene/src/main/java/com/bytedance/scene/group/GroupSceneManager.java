@@ -135,35 +135,27 @@ class GroupRecordList {
     private static final String KEY_TAG = ParcelConstants.KEY_GROUP_RECORD_LIST;
 
     private List<GroupRecord> mSceneList = new ArrayList<>();
+    private final Map<Scene, GroupRecord> mSceneMap = new HashMap<>();
+    private final Map<String, GroupRecord> mTagMap = new HashMap<>();
 
     public void add(GroupRecord record) {
-        mSceneList.add(record);
+        this.mSceneList.add(record);
+        this.mSceneMap.put(record.scene, record);
+        this.mTagMap.put(record.tag, record);
     }
 
     public void remove(GroupRecord record) {
-        mSceneList.remove(record);
+        this.mSceneList.remove(record);
+        this.mSceneMap.remove(record.scene);
+        this.mTagMap.remove(record.tag);
     }
 
     public GroupRecord findByScene(Scene scene) {
-        GroupRecord groupRecord = null;
-        for (GroupRecord record : mSceneList) {
-            if (record.scene == scene) {
-                groupRecord = record;
-                break;
-            }
-        }
-        return groupRecord;
+        return this.mSceneMap.get(scene);
     }
 
     public GroupRecord findByTag(String tag) {
-        GroupRecord groupRecord = null;
-        for (GroupRecord record : mSceneList) {
-            if (tag.equals(record.tag)) {
-                groupRecord = record;
-                break;
-            }
-        }
-        return groupRecord;
+        return this.mTagMap.get(tag);
     }
 
     public GroupRecord findByView(View view) {
@@ -200,11 +192,15 @@ class GroupRecordList {
         this.mSceneList = new ArrayList<>(bundle.<GroupRecord>getParcelableArrayList(KEY_TAG));
         for (GroupRecord record : this.mSceneList) {
             record.scene = SceneInstanceUtility.getInstanceFromClassName(context, record.sceneClassName, null);
+            this.mSceneMap.put(record.scene, record);
+            this.mTagMap.put(record.tag, record);
         }
     }
 
     public void clear() {
         this.mSceneList.clear();
+        this.mSceneMap.clear();
+        this.mTagMap.clear();
     }
 }
 

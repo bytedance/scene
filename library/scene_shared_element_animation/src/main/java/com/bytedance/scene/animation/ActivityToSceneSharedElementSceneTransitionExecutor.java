@@ -79,7 +79,9 @@ public class ActivityToSceneSharedElementSceneTransitionExecutor extends Navigat
     public void startPostponedEnterTransition() {
         if (this.mEnterTransitionRunnable != null) {
             this.mEnterTransitionRunnable.run();
+            this.mEnterTransitionRunnable = null;
         }
+        this.mDelayEnterTransitionExecute = false;
     }
 
     @Override
