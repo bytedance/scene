@@ -1,19 +1,22 @@
 package com.bytedance.scene.ui;
 
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+
 import com.bytedance.scene.Scene;
 import com.bytedance.scene.SceneDelegate;
 import com.bytedance.scene.State;
 import com.bytedance.scene.navigation.NavigationScene;
 import com.bytedance.scene.ui.utility.TestAppCompatActivity;
 import com.bytedance.scene.utlity.ViewIdGenerator;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;

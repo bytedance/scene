@@ -16,10 +16,12 @@
 package com.bytedance.scene;
 
 import android.content.Context;
-import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import androidx.annotation.Nullable;
+
 import org.xmlpull.v1.XmlPullParser;
 
 final class SceneLayoutInflater extends LayoutInflater {
