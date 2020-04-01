@@ -630,7 +630,7 @@ public final class NavigationScene extends Scene implements NavigationListener, 
 
     @Override
     public void onDestroyView() {
-        dispatchChildrenState(State.NONE);
+        dispatchChildrenState(State.NONE, true);
         super.onDestroyView();
     }
 
@@ -644,8 +644,8 @@ public final class NavigationScene extends Scene implements NavigationListener, 
     /**
      * Destroy operation needs to synchronize all children
      */
-    private void dispatchChildrenState(@NonNull State state) {
-        mNavigationSceneManager.dispatchChildrenState(state);
+    private void dispatchChildrenState(@NonNull State state, boolean reverseOrder) {
+        mNavigationSceneManager.dispatchChildrenState(state, reverseOrder);
     }
 
     Record findRecordByScene(Scene scene) {

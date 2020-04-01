@@ -159,8 +159,8 @@ public class NavigationSceneLifecycleTests {
         sceneLifecycleManager.onStart();
         assertEquals(secondScene.getState(), State.STARTED);
         assertEquals(groupScene.getState(), State.STARTED);
-        
-        
+
+
         assertNotNull(secondScene.getView().getParent());
         assertNotNull(groupScene.getView().getParent());
 
@@ -169,13 +169,13 @@ public class NavigationSceneLifecycleTests {
         assertEquals(secondScene.getState(), State.NONE);
         assertNull(secondSceneView.getParent());
         assertEquals(groupScene.getState(), State.STARTED);
-        
+
 
         navigationScene.push(secondScene, pushOptions);
         assertEquals(secondScene.getState(), State.STARTED);
         assertEquals(groupScene.getState(), State.STARTED);
-        
-        
+
+
         assertNotNull(secondScene.getView().getParent());
         assertNotNull(groupScene.getView().getParent());
 
@@ -183,8 +183,8 @@ public class NavigationSceneLifecycleTests {
         sceneLifecycleManager.onResume();
         assertEquals(secondScene.getState(), State.RESUMED);
         assertEquals(groupScene.getState(), State.STARTED);
-        
-        
+
+
         assertNotNull(secondScene.getView().getParent());
         assertNotNull(groupScene.getView().getParent());
 
@@ -193,13 +193,13 @@ public class NavigationSceneLifecycleTests {
         assertEquals(secondScene.getState(), State.NONE);
         assertNull(secondSceneView.getParent());
         assertEquals(groupScene.getState(), State.RESUMED);
-        
+
 
         navigationScene.push(secondScene, pushOptions);
         assertEquals(secondScene.getState(), State.RESUMED);
         assertEquals(groupScene.getState(), State.STARTED);
-        
-        
+
+
         assertNotNull(secondScene.getView().getParent());
         assertNotNull(groupScene.getView().getParent());
 
@@ -207,8 +207,8 @@ public class NavigationSceneLifecycleTests {
         sceneLifecycleManager.onPause();
         assertEquals(secondScene.getState(), State.STARTED);
         assertEquals(groupScene.getState(), State.STARTED);
-        
-        
+
+
         assertNotNull(secondScene.getView().getParent());
         assertNotNull(groupScene.getView().getParent());
 
@@ -217,13 +217,13 @@ public class NavigationSceneLifecycleTests {
         assertEquals(secondScene.getState(), State.NONE);
         assertNull(secondSceneView.getParent());
         assertEquals(groupScene.getState(), State.STARTED);
-        
+
 
         navigationScene.push(secondScene, pushOptions);
         assertEquals(secondScene.getState(), State.STARTED);
         assertEquals(groupScene.getState(), State.STARTED);
-        
-        
+
+
         assertNotNull(secondScene.getView().getParent());
         assertNotNull(groupScene.getView().getParent());
 
@@ -231,8 +231,8 @@ public class NavigationSceneLifecycleTests {
         sceneLifecycleManager.onStop();
         assertEquals(secondScene.getState(), State.ACTIVITY_CREATED);
         assertEquals(groupScene.getState(), State.ACTIVITY_CREATED);
-        
-        
+
+
         assertNotNull(secondScene.getView().getParent());
         assertNotNull(groupScene.getView().getParent());
 
@@ -518,6 +518,137 @@ public class NavigationSceneLifecycleTests {
             super.onDestroyView();
             assertTrue(View.VISIBLE == getView().getVisibility() || View.GONE == getView().getVisibility());
         }
+    }
+
+    /**
+     * stop order, FILO
+     */
+    @Test
+    public void testTranslucentStopOrder() {
+        final TestScene groupScene = new TestScene();
+
+        Pair<SceneLifecycleManager<NavigationScene>, NavigationScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(groupScene);
+
+        SceneLifecycleManager sceneLifecycleManager = pair.first;
+        NavigationScene navigationScene = pair.second;
+        navigationScene.setDefaultNavigationAnimationExecutor(null);
+
+        final StringBuilder closeLog = new StringBuilder();
+
+        navigationScene.push(new Scene() {
+            @NonNull
+            @Override
+            public View onCreateView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container, @Nullable Bundle savedInstanceState) {
+                return new View(requireActivity());
+            }
+
+            @Override
+            public void onStop() {
+                super.onStop();
+                closeLog.append("0");
+            }
+        });
+
+        navigationScene.push(new Scene() {
+            @NonNull
+            @Override
+            public View onCreateView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container, @Nullable Bundle savedInstanceState) {
+                return new View(requireActivity());
+            }
+
+            @Override
+            public void onStop() {
+                super.onStop();
+                closeLog.append("1");
+            }
+        },new PushOptions.Builder().setTranslucent(true).build());
+
+        navigationScene.push(new Scene() {
+            @NonNull
+            @Override
+            public View onCreateView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container, @Nullable Bundle savedInstanceState) {
+                return new View(requireActivity());
+            }
+
+            @Override
+            public void onStop() {
+                super.onStop();
+                closeLog.append("2");
+            }
+        },new PushOptions.Builder().setTranslucent(true).build());
+
+        sceneLifecycleManager.onStart();
+        sceneLifecycleManager.onResume();
+        sceneLifecycleManager.onPause();
+        sceneLifecycleManager.onStop();
+
+        assertEquals("210", closeLog.toString());
+    }
+
+    /**
+     * destroy order, FILO
+     */
+    @Test
+    public void testDestroyOrder() {
+        final TestScene groupScene = new TestScene();
+
+        Pair<SceneLifecycleManager<NavigationScene>, NavigationScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(groupScene);
+
+        SceneLifecycleManager sceneLifecycleManager = pair.first;
+        NavigationScene navigationScene = pair.second;
+        navigationScene.setDefaultNavigationAnimationExecutor(null);
+
+        final StringBuilder closeLog = new StringBuilder();
+
+        navigationScene.push(new Scene() {
+            @NonNull
+            @Override
+            public View onCreateView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container, @Nullable Bundle savedInstanceState) {
+                return new View(requireActivity());
+            }
+
+            @Override
+            public void onDestroyView() {
+                super.onDestroyView();
+                closeLog.append("0");
+            }
+        });
+
+        navigationScene.push(new Scene() {
+            @NonNull
+            @Override
+            public View onCreateView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container, @Nullable Bundle savedInstanceState) {
+                return new View(requireActivity());
+            }
+
+            @Override
+            public void onDestroyView() {
+                super.onDestroyView();
+                closeLog.append("1");
+            }
+        });
+
+        navigationScene.push(new Scene() {
+            @NonNull
+            @Override
+            public View onCreateView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container, @Nullable Bundle savedInstanceState) {
+                return new View(requireActivity());
+            }
+
+            @Override
+            public void onDestroyView() {
+                super.onDestroyView();
+                closeLog.append("2");
+            }
+        });
+
+        sceneLifecycleManager.onStart();
+        sceneLifecycleManager.onResume();
+        sceneLifecycleManager.onPause();
+        sceneLifecycleManager.onStop();
+        sceneLifecycleManager.onDestroyView();
+
+        assertEquals("210", closeLog.toString());
     }
 
     public static class TestChildScene extends Scene {

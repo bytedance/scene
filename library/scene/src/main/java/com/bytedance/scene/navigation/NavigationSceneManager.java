@@ -224,9 +224,9 @@ class NavigationSceneManager {
         endSuppressStackOperation(suppressTag);
     }
 
-    public void dispatchChildrenState(State state) {
+    public void dispatchChildrenState(State state, boolean reverseOrder) {
         String suppressTag = beginSuppressStackOperation("NavigationManager dispatchChildrenState");
-        new SyncAllSceneStateOperation(state).execute(EMPTY_RUNNABLE);
+        new SyncAllSceneStateOperation(state, reverseOrder).execute(EMPTY_RUNNABLE);
         endSuppressStackOperation(suppressTag);
     }
 
@@ -987,9 +987,11 @@ class NavigationSceneManager {
 
     private class SyncAllSceneStateOperation implements Operation {
         private final State state;
+        private final boolean reverseOrder;
 
-        private SyncAllSceneStateOperation(State state) {
+        private SyncAllSceneStateOperation(State state, boolean reverseOrder) {
             this.state = state;
+            this.reverseOrder = reverseOrder;
         }
 
         @Override
@@ -1000,7 +1002,13 @@ class NavigationSceneManager {
             }
 
             List<Record> recordList = mBackStackList.getCurrentRecordList();
-            for (final Record record : recordList) {
+            if (reverseOrder) {
+                recordList = new ArrayList<>(recordList);
+                Collections.reverse(recordList);
+            }
+
+            for (int i = 0; i < recordList.size(); i++) {
+                Record record = recordList.get(i);
                 Scene scene = record.mScene;
                 moveState(mNavigationScene, scene, state, null, true, null);
             }
