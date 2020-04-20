@@ -318,7 +318,7 @@ class GroupSceneManager {
     private void checkStateChange(@NonNull Scene scene) {
         for (Pair<Scene, String> pair : this.mCurrentTrackMoveStateSceneSet) {
             if (pair.first == scene) {
-                throw new IllegalStateException("Cant add/remove/show/hide " + scene.getClass().getSimpleName() + " before it finish previous add/remove/show/hide operation or in its lifecycle method");
+                throw new IllegalStateException("Cant add/remove/show/hide " + scene.getClass().getCanonicalName() + " before it finish previous add/remove/show/hide operation or in its lifecycle method");
             }
         }
     }
@@ -326,7 +326,7 @@ class GroupSceneManager {
     private void beginTrackSceneStateChange(@NonNull Scene scene) {
         for (Pair<Scene, String> pair : this.mCurrentTrackMoveStateSceneSet) {
             if (pair.first == scene) {
-                throw new SceneInternalException("Target scene is already tracked");
+                throw new SceneInternalException("Target scene " + scene.getClass().getCanonicalName() + " is already tracked");
             }
         }
         //forbid NavigationScene execute navigation stack operation immediately, otherwise GroupScene may sync lifecycle to child,
@@ -351,7 +351,7 @@ class GroupSceneManager {
             }
         }
         if (target == null) {
-            throw new SceneInternalException("Target scene is not tracked");
+            throw new SceneInternalException("Target scene " + scene.getClass().getCanonicalName() + " is not tracked");
         }
         String suppressTag = target.second;
         if (suppressTag != null) {
