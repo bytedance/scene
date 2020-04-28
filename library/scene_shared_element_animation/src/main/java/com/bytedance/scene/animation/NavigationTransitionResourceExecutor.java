@@ -23,6 +23,7 @@ import android.support.transition.TransitionInflater;
 /**
  * Created by JiangQi on 8/15/18.
  */
+@Deprecated
 public class NavigationTransitionResourceExecutor extends NavigationTransitionExecutor {
     private Transition mSharedTransition;
     private Transition mOtherTransition;
