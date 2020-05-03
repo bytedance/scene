@@ -1,19 +1,17 @@
 ### Introduction
 
-`scene-router` is the official router for [Bytedance Scene](https://github.com/bytedance/scene)
+`scene-router` is the official router for [Scene](https://github.com/bytedance/scene)
 
 
 ## Demo
 ```
-cd ./library/scenerouter_plugin
-../../gradlew clean uploadArchives
-cd ../..
+./gradlew clean :library:scenerouter_plugin:uploadArchives
 ./gradlew clean installDebug
 ```
 ## Get Started
 Configuration
 ```java
-@SceneUrl({"/test1", "/test2", "/test3"})
+@SceneUrl({"/test1", "app:///test2", "/test3/target"})
 public class LibraryScene extends Scene
 ```
 Open

@@ -15,7 +15,23 @@
  */
 package com.bytedance.scenerouter.apt;
 
+import java.util.regex.Pattern;
+
 public class Utility {
+    /**
+     * 要求
+     * 1，不能带host
+     * 2，不能带端口号
+     * 3，不能带除了/ : 英文和数字之外的其他字符
+     * app:///path/to/target
+     * \w+://(\/\w{1,})*\/?
+     * <p>
+     * /path/to/target
+     * (\/\w{1,})*\/?
+     */
+    private static final String URL_SCHEME_PATTERN = "\\w+://(\\/\\w{1,})*\\/?";
+    private static final String URL_WITHOUT_SCHEME_PATTERN = "(\\/\\w{1,})*\\/?";
+
     private Utility() {
 
     }
@@ -25,6 +41,13 @@ public class Utility {
             return true;
         } else {
             return false;
+        }
+    }
+
+    public static void throwExceptionIfUrlIncorrect(String url) {
+        url = url.toLowerCase().trim();
+        if (!Pattern.matches(URL_SCHEME_PATTERN, url) && !Pattern.matches(URL_WITHOUT_SCHEME_PATTERN, url)) {
+            throw new IllegalArgumentException("Url format invalidate, format should be schema:///path/to/target or /path/to/target, not support =? argument now, wrong url " + url);
         }
     }
 }

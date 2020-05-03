@@ -25,34 +25,53 @@ import java.util.Set;
 import java.util.regex.Pattern;
 
 final class Utility {
-    private Utility() {
-
-    }
-
     /**
      * 要求
      * 1，不能带host
      * 2，不能带端口号
      * 3，不能带除了/ : 英文和数字之外的其他字符
+     * <p>
+     * Url format:
+     * <p>
+     * app:///path/to/target
+     * \w+://(\/\w{1,})*\/?
+     * <p>
+     * /path/to/target
+     * (\/\w{1,})*\/?
      */
-    static void checkUrlInvalidate(@NonNull String url) {
-        url = url.toLowerCase().trim();
+    private static final String URL_SCHEME_PATTERN = "\\w+://(\\/\\w{1,})*\\/?";
+    private static final String URL_WITHOUT_SCHEME_PATTERN = "(\\/\\w{1,})*\\/?";
 
-        //万一aaa:///////////zzz怎么办
-        if (!Pattern.matches("[a-zA-Z0-9]*:///[a-zA-Z0-9/]*", url)) {
-            throw new IllegalArgumentException("Url format invalidate, format should be schema:///path");
+    private Utility() {
+
+    }
+
+
+    static void throwExceptionIfUrlIncorrect(@NonNull String url) {
+        if (!isUrlOk(url)) {
+            throw new IllegalArgumentException("Url format invalidate, format should be schema:///path/to/target or /path/to/target, not support =? argument now, wrong url " + url);
         }
+    }
 
-
+    private static boolean isUrlOk(@NonNull String url) {
+        url = url.toLowerCase().trim();
+        if (!Pattern.matches(URL_SCHEME_PATTERN, url) && !Pattern.matches(URL_WITHOUT_SCHEME_PATTERN, url)) {
+            return false;
+        } else {
+            return true;
+        }
     }
 
     @Nullable
     static Class<? extends Scene> findSceneByUrlFromStringMap(Map<String, String> map, @NonNull String url) {
+        if (!isUrlOk(url)) {
+            return null;
+        }
         url = url.toLowerCase().trim();
 
         Set<Map.Entry<String, String>> set = map.entrySet();
         for (Map.Entry<String, String> entry : set) {
-            if (isTargetValidate(url, entry.getKey())) {
+            if (url.equals(entry.getKey())) {
                 String clazzName = entry.getValue();
                 try {
                     return (Class<? extends Scene>) Class.forName(clazzName);
@@ -66,29 +85,18 @@ final class Utility {
 
     @Nullable
     static Class<? extends Scene> findSceneByUrlFromClassMap(Map<String, Class<? extends Scene>> map, @NonNull String url) {
+        if (!isUrlOk(url)) {
+            return null;
+        }
+
         url = url.toLowerCase().trim();
 
         Set<Map.Entry<String, Class<? extends Scene>>> set = map.entrySet();
         for (Map.Entry<String, Class<? extends Scene>> entry : set) {
-            if (isTargetValidate(url, entry.getKey())) {
+            if (url.equals(entry.getKey())) {
                 return entry.getValue();
             }
         }
         return null;
-    }
-
-    /**
-     * 要求
-     * 1，如果url没有scheme，补app://
-     */
-    private static boolean isTargetValidate(@NonNull String url, @NonNull String targetUrl) {
-        url = url.toLowerCase().trim();
-        targetUrl = targetUrl.toLowerCase().trim();
-
-        if (url.equals(targetUrl)) {
-            return true;
-        }
-
-        return false;
     }
 }

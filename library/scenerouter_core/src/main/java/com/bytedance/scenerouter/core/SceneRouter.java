@@ -40,7 +40,7 @@ public final class SceneRouter {
     }
 
     public void register(@NonNull String url, @NonNull Class<? extends Scene> clazz) {
-        Utility.checkUrlInvalidate(url);
+        Utility.throwExceptionIfUrlIncorrect(url);
         UrlMapContainer mapContainer = null;
         if (this.mNavigationScene.getScope().hasServiceInMyScope(UrlMapContainer.class)) {
             mapContainer = this.mNavigationScene.getScope().getService(UrlMapContainer.class);

@@ -124,6 +124,7 @@ public class SceneRouterProcessor extends AbstractProcessor {
                 if (urlAfterTrim.equals("")) {
                     throw new IllegalArgumentException("@SceneUrl Url scheme can't be empty " + typeElement.getQualifiedName());
                 }
+                Utility.throwExceptionIfUrlIncorrect(urlAfterTrim);
                 if (map.get(urlAfterTrim) != null) {
                     String previousSceneClazzName = map.get(urlAfterTrim);
                     throw new IllegalArgumentException("@SceneUrl " + previousSceneClazzName + " and " + clazzName + " url scheme duplicate " + urlAfterTrim);
