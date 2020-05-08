@@ -10,6 +10,7 @@ import android.widget.Toast
 import com.bytedance.scene.Scene
 import com.bytedance.scene.animation.animatorexecutor.DialogSceneAnimatorExecutor
 import com.bytedance.scene.interfaces.PushOptions
+import com.bytedance.scenedemo.dialog.BottomSheetDialogSample
 import com.bytedance.scenedemo.dialog.DemoDialogScene
 import com.bytedance.scenedemo.dialog.DemoDialogWithDimScene
 import com.bytedance.scenedemo.utility.addButton
@@ -18,7 +19,7 @@ import com.bytedance.scenedemo.utility.addSpace
 import com.bytedance.scenedemo.utility.addTitle
 
 
-class DialogSamples  : Scene() {
+class DialogSamples : Scene() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup, savedInstanceState: Bundle?): View {
         val scrollView = ScrollView(activity)
 
@@ -40,10 +41,10 @@ class DialogSamples  : Scene() {
                     .setTranslucent(true).setAnimation(DialogSceneAnimatorExecutor()).build())
         })
         addButton(layout, getString(R.string.part_dialog_btn_3), View.OnClickListener {
-            Toast.makeText(requireApplicationContext(),"TODO",Toast.LENGTH_SHORT).show()
+            BottomSheetDialogSample().show(this)
         })
         addButton(layout, getString(R.string.main_part_btn_floating_window), View.OnClickListener {
-            Toast.makeText(requireApplicationContext(),"TODO",Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireApplicationContext(), "TODO", Toast.LENGTH_SHORT).show()
         })
 
         addSpace(layout, 100)
