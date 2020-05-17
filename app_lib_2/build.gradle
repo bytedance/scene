@@ -1,0 +1,42 @@
+apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-kapt'
+
+android {
+    compileSdkVersion 29
+    buildToolsVersion "29.0.0"
+
+    defaultConfig {
+        minSdkVersion 23
+        targetSdkVersion 29
+        versionCode 1
+        versionName "1.0"
+
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments = [SCENE_ROUTER_MODULE_NAME: project.getName(),
+                             SCENE_ROUTER_DEBUG      : "true"]
+            }
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility 1.8
+        targetCompatibility 1.8
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+
+    implementation COMMON_SCENE
+    implementation COMMON_SCENE_UI
+
+    implementation SCENEROUTER_ANNOTATION
+    implementation SCENEROUTER_CORE
+    annotationProcessor SCENEROUTER_APT
+    kapt SCENEROUTER_APT
+    implementation SCENEROUTER_APT
+}

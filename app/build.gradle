@@ -1,0 +1,56 @@
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-kapt'
+apply plugin: 'com.bytedance.scenerouter'
+
+android {
+    compileSdkVersion 29
+    buildToolsVersion "29.0.0"
+
+    defaultConfig {
+        applicationId "org.qiibeta.testscenerouter"
+        minSdkVersion 23
+        targetSdkVersion 29
+        versionCode 1
+        versionName "1.0"
+
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments = [SCENE_ROUTER_MODULE_NAME: project.getName(),
+                             SCENE_ROUTER_DEBUG      : "true"]
+            }
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility 1.8
+        targetCompatibility 1.8
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+
+    implementation project(path: ':app_lib_1')
+    implementation project(path: ':app_lib_2')
+
+    implementation COMMON_SCENE
+    implementation COMMON_SCENE_UI
+
+    implementation SCENEROUTER_ANNOTATION
+    implementation SCENEROUTER_CORE
+    annotationProcessor SCENEROUTER_APT
+    kapt SCENEROUTER_APT
+    implementation SCENEROUTER_APT
+
+    implementation 'com.android.support:appcompat-v7:28.0.0'
+}

@@ -1,0 +1,4 @@
+rootProject.name='TestSceneRouter'
+include ':app'
+include ':app_lib_1'
+include ':app_lib_2'
