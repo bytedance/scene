@@ -422,6 +422,8 @@ class NavigationSceneManager {
                     scene.dispatchResume();
                     moveState(navigationScene, scene, to, bundle, causedByActivityLifeCycle, endAction);
                     break;
+                default:
+                    throw new SceneInternalException("unreachable state case " + currentState.getName());
             }
         } else {
             switch (currentState) {
@@ -452,6 +454,8 @@ class NavigationSceneManager {
                     scene.dispatchDetachActivity();
                     moveState(navigationScene, scene, to, bundle, causedByActivityLifeCycle, endAction);
                     break;
+                default:
+                    throw new SceneInternalException("unreachable state case " + currentState.getName());
             }
         }
     }

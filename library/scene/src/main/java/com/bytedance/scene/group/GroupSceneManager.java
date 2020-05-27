@@ -952,6 +952,8 @@ class GroupSceneManager {
                     scene.dispatchResume();
                     moveState(groupScene, scene, to, forceRemove, endAction);
                     break;
+                default:
+                    throw new SceneInternalException("unreachable state case " + currentState.getName());
             }
         } else {
             switch (currentState) {
@@ -984,6 +986,8 @@ class GroupSceneManager {
                     scene.dispatchDetachActivity();
                     moveState(groupScene, scene, to, forceRemove, endAction);
                     break;
+                default:
+                    throw new SceneInternalException("unreachable state case " + currentState.getName());
             }
         }
     }
