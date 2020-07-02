@@ -21,7 +21,6 @@ import android.support.annotation.MenuRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomNavigationView;
-import android.support.v4.util.SparseArrayCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,6 +30,8 @@ import com.bytedance.scene.group.GroupScene;
 import com.bytedance.scene.ui.GroupSceneUIUtility;
 import com.bytedance.scene.utlity.DispatchWindowInsetsListener;
 import com.bytedance.scene.ui.R;
+
+import java.util.LinkedHashMap;
 
 /**
  * Created by JiangQi on 8/24/18.
@@ -64,7 +65,7 @@ public abstract class BottomNavigationViewScene extends GroupScene {
     protected abstract int getMenuResId();
 
     @NonNull
-    protected abstract SparseArrayCompat<Scene> getSceneMap();
+    protected abstract LinkedHashMap<Integer, Scene> getSceneMap();
 
     public BottomNavigationView getBottomNavigationView() {
         return mBottomNavigationView;

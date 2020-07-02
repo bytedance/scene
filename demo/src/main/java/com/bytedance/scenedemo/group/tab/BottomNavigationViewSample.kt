@@ -18,12 +18,12 @@ class BottomNavigationViewSample : BottomNavigationViewScene() {
         return R.menu.bottom_nav_items
     }
 
-    override fun getSceneMap(): SparseArrayCompat<Scene> {
-        val sparseArrayCompat = SparseArrayCompat<Scene>()
-        sparseArrayCompat.put(R.id.menu_home, TabChildScene.newInstance(0))
-        sparseArrayCompat.put(R.id.menu_search, TabChildScene.newInstance(1))
-        sparseArrayCompat.put(R.id.menu_notifications, TabChildScene.newInstance(2))
-        return sparseArrayCompat
+    override fun getSceneMap(): LinkedHashMap<Int, Scene> {
+        val linkedHashMap = LinkedHashMap<Int, Scene>()
+        linkedHashMap.put(R.id.menu_home, TabChildScene.newInstance(0))
+        linkedHashMap.put(R.id.menu_search, TabChildScene.newInstance(1))
+        linkedHashMap.put(R.id.menu_notifications, TabChildScene.newInstance(2))
+        return linkedHashMap
     }
 }
 

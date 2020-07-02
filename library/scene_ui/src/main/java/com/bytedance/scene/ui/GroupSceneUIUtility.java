@@ -20,7 +20,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.NavigationView;
-import android.support.v4.util.SparseArrayCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.view.Menu;
@@ -43,7 +42,7 @@ public class GroupSceneUIUtility {
     public static void setupWithBottomNavigationView(@NonNull final BottomNavigationView bottomNavigationView,
                                                      @NonNull final GroupScene groupScene,
                                                      @IdRes final int containerId,
-                                                     @NonNull final SparseArrayCompat<Scene> children) {
+                                                     @NonNull final LinkedHashMap<Integer, Scene> children) {
         if (children.size() == 0) {
             throw new IllegalArgumentException("children can't be empty");
         }
@@ -84,10 +83,11 @@ public class GroupSceneUIUtility {
                     }
                 });
 
-        String tag = "" + children.keyAt(0);
+        Map.Entry<Integer, Scene> firstItem = children.entrySet().iterator().next();
+        String tag = "" + firstItem.getKey();
         Scene scene = groupScene.findSceneByTag(tag);
         if (scene == null) {
-            scene = children.valueAt(0);
+            scene = firstItem.getValue();
         }
 
         if (!groupScene.isAdded(scene)) {
@@ -96,7 +96,7 @@ public class GroupSceneUIUtility {
             groupScene.show(scene);
         }
 
-        bottomNavigationView.getMenu().findItem(children.keyAt(0)).setChecked(true);
+        bottomNavigationView.getMenu().findItem(firstItem.getKey()).setChecked(true);
     }
 
     public static void setupWithNavigationView(@NonNull final DrawerLayout drawerLayout,

@@ -3,7 +3,6 @@ package com.bytedance.scenedemo.multi_stack;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.util.SparseArrayCompat;
 
 import com.bytedance.scene.Scene;
 import com.bytedance.scene.navigation.NavigationScene;
@@ -11,6 +10,8 @@ import com.bytedance.scene.navigation.NavigationSceneOptions;
 import com.bytedance.scene.ui.template.BottomNavigationViewScene;
 import com.bytedance.scene.utlity.SceneInstanceUtility;
 import com.bytedance.scenedemo.R;
+
+import java.util.LinkedHashMap;
 
 public class MultiStackTabGroupScene extends BottomNavigationViewScene {
     @Override
@@ -26,8 +27,8 @@ public class MultiStackTabGroupScene extends BottomNavigationViewScene {
 
     @NonNull
     @Override
-    protected SparseArrayCompat<Scene> getSceneMap() {
-        SparseArrayCompat<Scene> sparseArrayCompat = new SparseArrayCompat<>();
+    protected LinkedHashMap<Integer, Scene> getSceneMap() {
+        LinkedHashMap<Integer, Scene> linkedHashMap = new LinkedHashMap<>();
 
         Bundle bundle = new Bundle();
         bundle.putInt("index", 0);
@@ -35,18 +36,18 @@ public class MultiStackTabGroupScene extends BottomNavigationViewScene {
         NavigationScene navigationScene = (NavigationScene) SceneInstanceUtility.getInstanceFromClass(NavigationScene.class,
                 new NavigationSceneOptions(MultiStackTabChildScene.class, getBundle(0)).toBundle());
 
-        sparseArrayCompat.put(R.id.menu_home, navigationScene);
+        linkedHashMap.put(R.id.menu_home, navigationScene);
 
         navigationScene = (NavigationScene) SceneInstanceUtility.getInstanceFromClass(NavigationScene.class,
                 new NavigationSceneOptions(MultiStackTabChildScene.class, getBundle(1)).toBundle());
 
-        sparseArrayCompat.put(R.id.menu_search, navigationScene);
+        linkedHashMap.put(R.id.menu_search, navigationScene);
 
         navigationScene = (NavigationScene) SceneInstanceUtility.getInstanceFromClass(NavigationScene.class,
                 new NavigationSceneOptions(MultiStackTabChildScene.class, getBundle(2)).toBundle());
 
-        sparseArrayCompat.put(R.id.menu_notifications, navigationScene);
-        return sparseArrayCompat;
+        linkedHashMap.put(R.id.menu_notifications, navigationScene);
+        return linkedHashMap;
     }
 
     @Override
