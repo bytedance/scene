@@ -35,6 +35,11 @@ public class ChildSceneLifecycleAdapterCallbacks implements ChildSceneLifecycleC
     }
 
     @Override
+    public void onSceneViewCreated(@NonNull Scene scene, @Nullable Bundle savedInstanceState) {
+
+    }
+
+    @Override
     public void onSceneActivityCreated(@NonNull Scene scene, @Nullable Bundle savedInstanceState) {
 
     }

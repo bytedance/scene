@@ -115,6 +115,11 @@ public class ChildSceneLifecycleCallbacksDemoScene extends GroupScene {
         }
 
         @Override
+        public void onSceneViewCreated(@NonNull Scene scene, @Nullable Bundle savedInstanceState) {
+            log("Scene", scene.toString() + " onSceneViewCreated");
+        }
+
+        @Override
         public void onSceneActivityCreated(@NonNull Scene scene, @Nullable Bundle savedInstanceState) {
             log("Scene", scene.toString() + " onSceneActivityCreated");
         }
