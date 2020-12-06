@@ -19,20 +19,20 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.annotation.StyleRes;
-import android.support.design.widget.BottomSheetBehavior;
-import android.support.design.widget.CoordinatorLayout;
-import android.support.v4.view.AccessibilityDelegateCompat;
-import android.support.v4.view.ViewCompat;
-import android.support.v4.view.accessibility.AccessibilityNodeInfoCompat;
 import android.util.TypedValue;
 import android.view.*;
 import android.widget.FrameLayout;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.StyleRes;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import androidx.core.view.AccessibilityDelegateCompat;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.accessibility.AccessibilityNodeInfoCompat;
 import com.bytedance.scene.navigation.NavigationScene;
 import com.bytedance.scene.navigation.OnBackPressedListener;
 import com.bytedance.scene.utlity.Experimental;
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
 
 
 /**
@@ -197,11 +197,11 @@ public abstract class BottomSheetDialogScene extends DialogScene {
             // If the provided theme is 0, then retrieve the dialogTheme from our theme
             TypedValue outValue = new TypedValue();
             if (context.getTheme().resolveAttribute(
-                    android.support.design.R.attr.bottomSheetDialogTheme, outValue, true)) {
+                    com.google.android.material.R.attr.bottomSheetDialogTheme, outValue, true)) {
                 themeId = outValue.resourceId;
             } else {
                 // bottomSheetDialogTheme is not provided; we default to our light theme
-                themeId = android.support.design.R.style.Theme_Design_Light_BottomSheetDialog;
+                themeId = com.google.android.material.R.style.Theme_Design_Light_BottomSheetDialog;
             }
         }
         return themeId;

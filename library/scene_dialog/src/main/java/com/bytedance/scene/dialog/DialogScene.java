@@ -16,9 +16,9 @@
 package com.bytedance.scene.dialog;
 
 import android.app.Activity;
-import android.arch.lifecycle.Lifecycle;
 import android.os.Build;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
+import androidx.lifecycle.Lifecycle;
 import com.bytedance.scene.Scene;
 import com.bytedance.scene.animation.animatorexecutor.DialogSceneAnimatorExecutor;
 import com.bytedance.scene.interfaces.PushOptions;
