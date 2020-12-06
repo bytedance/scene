@@ -382,6 +382,7 @@ public abstract class Scene implements LifecycleOwner, ViewModelStoreOwner {
             throw new SuperNotCalledException("Scene " + this
                     + " did not call through to super.onViewCreated()");
         }
+        dispatchOnSceneViewCreated(this, savedInstanceState, false);
         setState(State.VIEW_CREATED);
     }
 
@@ -1140,6 +1141,15 @@ public abstract class Scene implements LifecycleOwner, ViewModelStoreOwner {
         Scene parentScene = getParentScene();
         if (parentScene != null) {
             parentScene.dispatchOnSceneCreated(scene, savedInstanceState, scene == this);
+        }
+    }
+
+    /** @hide */
+    @RestrictTo(LIBRARY_GROUP)
+    public void dispatchOnSceneViewCreated(@NonNull Scene scene, @Nullable Bundle savedInstanceState, boolean directChild) {
+        Scene parentScene = getParentScene();
+        if (parentScene != null) {
+            parentScene.dispatchOnSceneViewCreated(scene, savedInstanceState, scene == this);
         }
     }
 

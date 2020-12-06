@@ -50,6 +50,9 @@ public class ViewRefUtility {
 
         if (sReflectedMethodInitialized == INIT_SUCCESS) {
             ViewGroup viewGroup = (ViewGroup) view.getParent();
+            if (viewGroup == null) {
+                return;
+            }
             try {
                 sCancelTouchTargetMethod.invoke(viewGroup, view);
             } catch (IllegalAccessException e) {

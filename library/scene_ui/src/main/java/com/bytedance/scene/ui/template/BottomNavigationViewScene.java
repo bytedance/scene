@@ -33,6 +33,8 @@ import com.bytedance.scene.utlity.DispatchWindowInsetsListener;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.bytedance.scene.ui.R;
 
+import java.util.LinkedHashMap;
+
 /**
  * Created by JiangQi on 8/24/18.
  */
@@ -65,7 +67,7 @@ public abstract class BottomNavigationViewScene extends GroupScene {
     protected abstract int getMenuResId();
 
     @NonNull
-    protected abstract SparseArrayCompat<Scene> getSceneMap();
+    protected abstract LinkedHashMap<Integer, Scene> getSceneMap();
 
     public BottomNavigationView getBottomNavigationView() {
         return mBottomNavigationView;

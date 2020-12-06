@@ -68,8 +68,16 @@ public abstract class ScenePageAdapter extends PagerAdapter {
         }
 
         boolean visible = scene == mCurrentScene;
-        if (scene.getUserVisibleHint() != visible) {
-            scene.setUserVisibleHint(visible);
+        if (visible) {
+            if (scene.getUserVisibleHint()) {
+                //to ensure that the behavior will be consistent with FragmentPagerAdapter
+                scene.setUserVisibleHint(false);
+            }
+            scene.setUserVisibleHint(true);
+        } else {
+            if (scene.getUserVisibleHint()) {
+                scene.setUserVisibleHint(false);
+            }
         }
     }
 

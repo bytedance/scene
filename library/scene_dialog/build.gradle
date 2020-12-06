@@ -1,0 +1,57 @@
+apply plugin: 'com.android.library'
+
+android {
+    compileSdkVersion rootProject.ext.compileSdkVersion
+
+    defaultConfig {
+        minSdkVersion rootProject.ext.miniSdkVersion
+    }
+    resourcePrefix 'scene_'
+
+    testOptions {
+        unitTests {
+            includeAndroidResources = true
+        }
+    }
+}
+
+dependencies {
+    implementation APPCOMPAT_LIB
+    implementation DESIGN_LIB
+    api project(path: ':library:scene')
+
+    testImplementation ROBOLECTRIC
+    testImplementation JUNIT
+    testAnnotationProcessor AUTO_SERVICE
+    testCompileOnly AUTO_SERVICE
+}
+
+tasks.withType(Test) {
+    testLogging {
+        events "failed"
+    }
+
+    afterSuite { desc, result ->
+        if (!desc.parent)
+            println("${result.resultType} " +
+                    "(${result.testCount} tests, " +
+                    "${result.successfulTestCount} successes, " +
+                    "${result.failedTestCount} failures, " +
+                    "${result.skippedTestCount} skipped)")
+    }
+}
+
+task javadoc(type: Javadoc) {
+    source = android.sourceSets.main.java.srcDirs
+    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+    destinationDir = file("../javadoc/scene_dialog/")
+    failOnError false
+    title = null
+
+    options {
+        doclet = "com.google.doclava.Doclava"
+        docletpath(new File(project.rootDir, "tools/doclava-1.0.6.jar"))
+        locale "en_US"
+        encoding "UTF-8"
+    }
+}

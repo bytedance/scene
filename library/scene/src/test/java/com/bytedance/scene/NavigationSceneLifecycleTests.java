@@ -520,6 +520,137 @@ public class NavigationSceneLifecycleTests {
         }
     }
 
+    /**
+     * stop order, FILO
+     */
+    @Test
+    public void testTranslucentStopOrder() {
+        final TestScene groupScene = new TestScene();
+
+        Pair<SceneLifecycleManager<NavigationScene>, NavigationScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(groupScene);
+
+        SceneLifecycleManager sceneLifecycleManager = pair.first;
+        NavigationScene navigationScene = pair.second;
+        navigationScene.setDefaultNavigationAnimationExecutor(null);
+
+        final StringBuilder closeLog = new StringBuilder();
+
+        navigationScene.push(new Scene() {
+            @NonNull
+            @Override
+            public View onCreateView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container, @Nullable Bundle savedInstanceState) {
+                return new View(requireActivity());
+            }
+
+            @Override
+            public void onStop() {
+                super.onStop();
+                closeLog.append("0");
+            }
+        });
+
+        navigationScene.push(new Scene() {
+            @NonNull
+            @Override
+            public View onCreateView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container, @Nullable Bundle savedInstanceState) {
+                return new View(requireActivity());
+            }
+
+            @Override
+            public void onStop() {
+                super.onStop();
+                closeLog.append("1");
+            }
+        },new PushOptions.Builder().setTranslucent(true).build());
+
+        navigationScene.push(new Scene() {
+            @NonNull
+            @Override
+            public View onCreateView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container, @Nullable Bundle savedInstanceState) {
+                return new View(requireActivity());
+            }
+
+            @Override
+            public void onStop() {
+                super.onStop();
+                closeLog.append("2");
+            }
+        },new PushOptions.Builder().setTranslucent(true).build());
+
+        sceneLifecycleManager.onStart();
+        sceneLifecycleManager.onResume();
+        sceneLifecycleManager.onPause();
+        sceneLifecycleManager.onStop();
+
+        assertEquals("210", closeLog.toString());
+    }
+
+    /**
+     * destroy order, FILO
+     */
+    @Test
+    public void testDestroyOrder() {
+        final TestScene groupScene = new TestScene();
+
+        Pair<SceneLifecycleManager<NavigationScene>, NavigationScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(groupScene);
+
+        SceneLifecycleManager sceneLifecycleManager = pair.first;
+        NavigationScene navigationScene = pair.second;
+        navigationScene.setDefaultNavigationAnimationExecutor(null);
+
+        final StringBuilder closeLog = new StringBuilder();
+
+        navigationScene.push(new Scene() {
+            @NonNull
+            @Override
+            public View onCreateView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container, @Nullable Bundle savedInstanceState) {
+                return new View(requireActivity());
+            }
+
+            @Override
+            public void onDestroyView() {
+                super.onDestroyView();
+                closeLog.append("0");
+            }
+        });
+
+        navigationScene.push(new Scene() {
+            @NonNull
+            @Override
+            public View onCreateView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container, @Nullable Bundle savedInstanceState) {
+                return new View(requireActivity());
+            }
+
+            @Override
+            public void onDestroyView() {
+                super.onDestroyView();
+                closeLog.append("1");
+            }
+        });
+
+        navigationScene.push(new Scene() {
+            @NonNull
+            @Override
+            public View onCreateView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container, @Nullable Bundle savedInstanceState) {
+                return new View(requireActivity());
+            }
+
+            @Override
+            public void onDestroyView() {
+                super.onDestroyView();
+                closeLog.append("2");
+            }
+        });
+
+        sceneLifecycleManager.onStart();
+        sceneLifecycleManager.onResume();
+        sceneLifecycleManager.onPause();
+        sceneLifecycleManager.onStop();
+        sceneLifecycleManager.onDestroyView();
+
+        assertEquals("210", closeLog.toString());
+    }
+
     public static class TestChildScene extends Scene {
         @NonNull
         @Override

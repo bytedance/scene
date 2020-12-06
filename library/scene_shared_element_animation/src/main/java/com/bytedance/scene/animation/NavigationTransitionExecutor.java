@@ -33,9 +33,12 @@ import com.bytedance.scene.utlity.Utility;
 
 /**
  * Created by JiangQi on 8/15/18.
- *
+ * <p>
  * TODO: Translucent is not supported now.
+ * <p>
+ * use SharedElementSceneTransitionExecutor or ActivityToSceneSharedElementSceneTransitionExecutor instead
  */
+@Deprecated
 public abstract class NavigationTransitionExecutor extends NavigationAnimationExecutor {
     @Override
     public boolean isSupport(@NonNull Class<? extends Scene> from, @NonNull Class<? extends Scene> to) {

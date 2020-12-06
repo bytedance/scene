@@ -633,7 +633,7 @@ public final class NavigationScene extends Scene implements NavigationListener, 
 
     @Override
     public void onDestroyView() {
-        dispatchChildrenState(State.NONE);
+        dispatchChildrenState(State.NONE, true);
         super.onDestroyView();
     }
 
@@ -647,8 +647,8 @@ public final class NavigationScene extends Scene implements NavigationListener, 
     /**
      * Destroy operation needs to synchronize all children
      */
-    private void dispatchChildrenState(@NonNull State state) {
-        mNavigationSceneManager.dispatchChildrenState(state);
+    private void dispatchChildrenState(@NonNull State state, boolean reverseOrder) {
+        mNavigationSceneManager.dispatchChildrenState(state, reverseOrder);
     }
 
     Record findRecordByScene(Scene scene) {
@@ -785,6 +785,24 @@ public final class NavigationScene extends Scene implements NavigationListener, 
         }
 
         super.dispatchOnSceneCreated(scene, savedInstanceState, directChild);
+    }
+
+    /**
+     * @hide
+     */
+    @RestrictTo(LIBRARY_GROUP)
+    @Override
+    public final void dispatchOnSceneViewCreated(@NonNull Scene scene, @Nullable Bundle savedInstanceState, boolean directChild) {
+        if (scene != this) {
+            List<NonNullPair<ChildSceneLifecycleCallbacks, Boolean>> list = new ArrayList<>(mLifecycleCallbacks);
+            for (NonNullPair<ChildSceneLifecycleCallbacks, Boolean> pair : list) {
+                if (directChild || pair.second) {
+                    pair.first.onSceneViewCreated(scene, savedInstanceState);
+                }
+            }
+        }
+
+        super.dispatchOnSceneViewCreated(scene, savedInstanceState, directChild);
     }
 
     /**

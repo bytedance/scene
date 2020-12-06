@@ -19,6 +19,7 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import android.view.View;
 import com.bytedance.scene.Scene;
 
 /**
@@ -39,8 +40,17 @@ public interface ChildSceneLifecycleCallbacks {
     void onSceneCreated(@NonNull Scene scene, @Nullable Bundle savedInstanceState);
 
     /**
+     * Called after the Scene has returned from {@link Scene#onViewCreated(View, Bundle)}.
+     * View is already created at this moment, but child Scene' view is not created.
+     *
+     * @param scene              Scene changing state
+     * @param savedInstanceState Saved instance bundle from a previous instance
+     */
+    void onSceneViewCreated(@NonNull Scene scene, @Nullable Bundle savedInstanceState);
+
+    /**
      * Called after the Scene has returned from {@link Scene#onActivityCreated(Bundle)}.
-     * View is already created at this moment.
+     * View is already created at this moment, and child Scene' view is created too.
      *
      * @param scene              Scene changing state
      * @param savedInstanceState Saved instance bundle from a previous instance

@@ -21,6 +21,7 @@ import com.bytedance.scenedemo.R
 import com.bytedance.scenedemo.utility.ColorUtil
 import com.google.android.material.tabs.TabLayout
 import java.util.*
+import kotlin.collections.LinkedHashMap
 
 
 class HybridSample : NavigationViewScene() {
@@ -62,13 +63,13 @@ class HybridNavigationViewScene : BottomNavigationViewScene() {
         return R.menu.bottom_nav_items
     }
 
-    override fun getSceneMap(): SparseArrayCompat<Scene> {
+    override fun getSceneMap(): LinkedHashMap<Int, Scene> {
         val index = arguments!!["index"] as Int
-        val sparseArrayCompat = SparseArrayCompat<Scene>()
-        sparseArrayCompat.put(R.id.menu_home, HybridViewPagerSample.newInstance(index * 10 + 0))
-        sparseArrayCompat.put(R.id.menu_search, HybridViewPagerSample.newInstance(index * 10 + 1))
-        sparseArrayCompat.put(R.id.menu_notifications, HybridViewPagerSample.newInstance(index * 10 + 2))
-        return sparseArrayCompat
+        val linkedHashMap = LinkedHashMap<Int, Scene>()
+        linkedHashMap.put(R.id.menu_home, HybridViewPagerSample.newInstance(index * 10 + 0))
+        linkedHashMap.put(R.id.menu_search, HybridViewPagerSample.newInstance(index * 10 + 1))
+        linkedHashMap.put(R.id.menu_notifications, HybridViewPagerSample.newInstance(index * 10 + 2))
+        return linkedHashMap
     }
 }
 
