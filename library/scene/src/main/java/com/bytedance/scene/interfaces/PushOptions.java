@@ -115,7 +115,7 @@ public class PushOptions {
     }
 
     /**
-     * For example, after choose pictures and return to the WeChat Timeline page,
+     * For example, after choose pictures and return to the timeline page,
      * the original pages should be killed.
      */
     public static class CountPredicate implements Predicate<Scene> {
