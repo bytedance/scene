@@ -7,7 +7,14 @@
     <FrameLayout
         android:id="@+id/classic_fragment_container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent">
+
+        <Button
+            android:id="@+id/btn"
+            android:text="previous button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </FrameLayout>
 
     <FrameLayout
         android:id="@+id/scene_container"
