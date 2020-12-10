@@ -41,6 +41,11 @@ public abstract class ScenePageAdapter extends PagerAdapter {
     @NonNull
     @Override
     public Object instantiateItem(@NonNull ViewGroup container, int position) {
+        int id = container.getId();
+        if (id == View.NO_ID) {
+            throw new IllegalArgumentException("ViewPager should have view id before use ScenePageAdapter");
+        }
+
         long itemId = getItemId(position);
         String name = makeFragmentName(itemId);
 
@@ -53,7 +58,7 @@ public abstract class ScenePageAdapter extends PagerAdapter {
         } else {
             scene = getItem(position);
             configSceneUserVisibleHint(viewPager, scene, position);
-            mGroupScene.add(container.getId(), scene, name);
+            mGroupScene.add(id, scene, name);
         }
         return scene;
     }
