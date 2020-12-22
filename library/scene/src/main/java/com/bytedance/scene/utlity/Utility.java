@@ -36,8 +36,7 @@ import android.view.ViewParent;
 import android.view.ViewTreeObserver;
 import androidx.lifecycle.Lifecycle;
 import com.bytedance.scene.Scene;
-import com.bytedance.scene.group.GroupScene;
-import com.bytedance.scene.navigation.NavigationScene;
+import com.bytedance.scene.SceneParent;
 
 import java.util.List;
 
@@ -232,17 +231,10 @@ public class Utility {
 
     private static void getViewHierarchy(Scene scene, StringBuilder desc, int margin) {
         desc.append(getViewMessage(scene, margin));
-        if (scene instanceof NavigationScene) {
+        if (scene instanceof SceneParent) {
             margin++;
-            NavigationScene navigationScene = (NavigationScene) scene;
-            List<Scene> list = navigationScene.getSceneList();
-            for (int i = 0; i < list.size(); i++) {
-                getViewHierarchy(list.get(i), desc, margin);
-            }
-        } else if (scene instanceof GroupScene) {
-            margin++;
-            GroupScene groupScene = (GroupScene) scene;
-            List<Scene> list = groupScene.getSceneList();
+            SceneParent sceneParent = (SceneParent) scene;
+            List<Scene> list = sceneParent.getSceneList();
             for (int i = 0; i < list.size(); i++) {
                 getViewHierarchy(list.get(i), desc, margin);
             }
@@ -250,37 +242,13 @@ public class Utility {
     }
 
     private static String getViewMessage(Scene scene, int marginOffset) {
-        String tag = null;
-        boolean isHidden = false;
-        String status = null;
-        if (scene.getParentScene() instanceof GroupScene) {
-            GroupScene groupScene = (GroupScene) scene.getParentScene();
-            tag = groupScene.findTagByScene(scene);
-            isHidden = !groupScene.isShow(scene);
-        } else if (scene.getParentScene() instanceof NavigationScene) {
-            Lifecycle.State state = scene.getLifecycle().getCurrentState();
-            if (state == Lifecycle.State.RESUMED) {
-                status = "resumed";
-            } else if (state == Lifecycle.State.STARTED) {
-                status = "paused";
-            } else if (state == Lifecycle.State.CREATED) {
-                status = "stopped";
-            }
-        }
-
+        Scene parentScene = scene.getParentScene();
         String repeated = new String(new char[marginOffset]).replace("\0", "    ");
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append(repeated + "[" + scene.getClass().getSimpleName() + "] ");
 
-        if (tag != null) {
-            stringBuilder.append("tag: " + tag + " ");
-            if (isHidden) {
-                stringBuilder.append("hidden ");
-            }
-        }
-
-        if (status != null) {
-            stringBuilder.append("status: " + status + " ");
+        if (parentScene != null) {
+            stringBuilder.append(((SceneParent) parentScene).getSceneDebugInfo(scene));
         }
 
         String resourceId = null;
@@ -292,5 +260,11 @@ public class Utility {
         }
         stringBuilder.append("\n");
         return stringBuilder.toString();
+    }
+
+    public static int getColorWithAlpha(float alpha, int baseColor) {
+        int a = Math.min(255, Math.max(0, (int) (alpha * 255))) << 24;
+        int rgb = 0x00ffffff & baseColor;
+        return a + rgb;
     }
 }

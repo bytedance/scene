@@ -1,4 +1,4 @@
-package com.bytedance.scene;
+package com.bytedance.scene.navigation;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -9,6 +9,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import androidx.core.util.Pair;
+import com.bytedance.scene.SceneLifecycleManager;
+import com.bytedance.scene.State;
 import com.bytedance.scene.group.GroupScene;
 import com.bytedance.scene.interfaces.PopOptions;
 import com.bytedance.scene.interfaces.PushOptions;
@@ -18,6 +20,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
+import com.bytedance.scene.Scene;
+import com.bytedance.scene.SceneLifecycleManager;
+import com.bytedance.scene.State;
 
 import static org.junit.Assert.assertEquals;
 

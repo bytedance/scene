@@ -134,6 +134,7 @@
     <string name="part_dialog_btn_1">Dialog without Background Dim</string>
     <string name="part_dialog_btn_2">Dialog with Background Dim</string>
     <string name="part_dialog_btn_3">Bottom sheet Dialog</string>
+    <string name="part_dialog_btn_4">Alert Dialog</string>
     <string name="part_child_btn_1">Show/Hide Child Scene0</string>
     <string name="part_child_btn_2">Add/Remove Child Scene0</string>
     <string name="part_child_btn_3">Show/Hide Child Scene0 with Animation</string>

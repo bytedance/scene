@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.bytedance.scene.NavigationSceneUtility
@@ -43,6 +44,14 @@ class MigrateFromClassicAndroidActivitySamplesActivity : AppCompatActivity(), Sc
         mRootFragment = ClassicFragment()
         supportFragmentManager.beginTransaction().add(R.id.classic_fragment_container, mRootFragment).commitNowAllowingStateLoss()
 
+
+        findViewById<View>(R.id.btn)?.setOnClickListener {
+            Toast.makeText(this, "open detail", Toast.LENGTH_SHORT).show()
+            mSceneActivityDelegate.navigationScene?.push(DetailScene::class.java)
+        }
+
+        val sceneContainer = findViewById<View>(R.id.scene_container)
+
         mSceneActivityDelegate = NavigationSceneUtility.setupWithActivity(this, EmptyHolderScene::class.java)
                 .toView(com.bytedance.scenedemo.R.id.scene_container).drawWindowBackground(false)
                 .fixSceneWindowBackgroundEnabled(true)
@@ -57,6 +66,8 @@ class MigrateFromClassicAndroidActivitySamplesActivity : AppCompatActivity(), Sc
                 count++
                 if (count > 1 && mRootFragment.userVisibleHint) {
                     mRootFragment.userVisibleHint = false
+                    //forbidden previous button to be clicked second time
+                    sceneContainer.isClickable = true
                 }
             }
 
@@ -65,6 +76,7 @@ class MigrateFromClassicAndroidActivitySamplesActivity : AppCompatActivity(), Sc
                 count--
                 if (count == 1 && !mRootFragment.userVisibleHint) {
                     mRootFragment.userVisibleHint = true
+                    sceneContainer.isClickable = false
                 }
             }
         }, false)
