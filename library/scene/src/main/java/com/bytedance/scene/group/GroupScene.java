@@ -16,6 +16,7 @@
 package com.bytedance.scene.group;
 
 import android.app.Activity;
+import android.arch.lifecycle.Lifecycle;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.annotation.*;
@@ -653,6 +654,26 @@ public abstract class GroupScene extends Scene implements SceneParent {
         if (target != null) {
             this.mLifecycleCallbacks.remove(target);
         }
+    }
+
+    @Override
+    @Nullable
+    public String getSceneDebugInfo(@NonNull Scene scene) {
+        if (scene.getParentScene() == null) {
+            return null;
+        }
+        if (scene.getParentScene() != this) {
+            throw new IllegalArgumentException("Scene parent is incorrect");
+        }
+        String tag = findTagByScene(scene);
+        boolean isHidden = !isShow(scene);
+
+        StringBuilder stringBuilder = new StringBuilder("tag: " + tag + " ");
+        if (isHidden) {
+            stringBuilder.append("hidden ");
+        }
+
+        return stringBuilder.toString();
     }
 
     /**

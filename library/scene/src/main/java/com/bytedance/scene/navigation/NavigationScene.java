@@ -766,6 +766,27 @@ public final class NavigationScene extends Scene implements NavigationListener, 
         }
     }
 
+    @Override
+    @Nullable
+    public String getSceneDebugInfo(@NonNull Scene scene) {
+        if (scene.getParentScene() == null) {
+            return null;
+        }
+        if (scene.getParentScene() != this) {
+            throw new IllegalArgumentException("Scene parent is incorrect");
+        }
+        Lifecycle.State state = scene.getLifecycle().getCurrentState();
+        String status = null;
+        if (state == Lifecycle.State.RESUMED) {
+            status = "resumed";
+        } else if (state == Lifecycle.State.STARTED) {
+            status = "paused";
+        } else if (state == Lifecycle.State.CREATED) {
+            status = "stopped";
+        }
+        return "status: " + status + " ";
+    }
+
     /**
      * @hide
      */
