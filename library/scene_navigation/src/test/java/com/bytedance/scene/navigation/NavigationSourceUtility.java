@@ -2,9 +2,9 @@ package com.bytedance.scene.navigation;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v4.util.Pair;
 import android.widget.FrameLayout;
+import androidx.annotation.Nullable;
+import androidx.core.util.Pair;
 import com.bytedance.scene.*;
 import com.bytedance.scene.animation.animatorexecutor.NoAnimationExecutor;
 import org.robolectric.Robolectric;

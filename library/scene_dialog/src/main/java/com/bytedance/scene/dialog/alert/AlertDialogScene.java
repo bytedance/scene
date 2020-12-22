@@ -15,7 +15,6 @@
  */
 package com.bytedance.scene.dialog.alert;
 
-import android.arch.lifecycle.Lifecycle;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.res.TypedArray;
@@ -25,15 +24,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
-import android.support.annotation.ArrayRes;
-import android.support.annotation.AttrRes;
-import android.support.annotation.DrawableRes;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.annotation.RestrictTo;
-import android.support.annotation.StringRes;
-import android.support.annotation.StyleRes;
-import android.support.v4.content.ContextCompat;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -44,8 +34,12 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import androidx.annotation.*;
+import androidx.core.content.ContextCompat;
+import androidx.lifecycle.Lifecycle;
 import com.bytedance.scene.Scene;
 import com.bytedance.scene.dialog.DialogScene;
+import com.bytedance.scene.dialog.R;
 import com.bytedance.scene.navigation.NavigationScene;
 import com.bytedance.scene.navigation.OnBackPressedListener;
 import com.bytedance.scene.utlity.Experimental;
@@ -119,7 +113,7 @@ public final class AlertDialogScene extends DialogScene implements DialogInterfa
         } else {
             TypedValue outValue = new TypedValue();
             context.getTheme()
-                .resolveAttribute(android.support.design.R.attr.alertDialogTheme, outValue, true);
+                .resolveAttribute(com.google.android.material.R.attr.alertDialogTheme, outValue, true);
             return outValue.resourceId;
         }
     }

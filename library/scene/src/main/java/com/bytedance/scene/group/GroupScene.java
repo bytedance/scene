@@ -16,7 +16,6 @@
 package com.bytedance.scene.group;
 
 import android.app.Activity;
-import android.arch.lifecycle.Lifecycle;
 import android.content.res.Resources;
 import android.os.Bundle;
 import androidx.annotation.*;
