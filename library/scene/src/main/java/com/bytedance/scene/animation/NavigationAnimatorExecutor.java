@@ -37,7 +37,7 @@ public abstract class NavigationAnimatorExecutor extends NavigationAnimationExec
     }
 
     protected boolean enableViewLayer() {
-        return true;
+        return false;
     }
 
     @Override
