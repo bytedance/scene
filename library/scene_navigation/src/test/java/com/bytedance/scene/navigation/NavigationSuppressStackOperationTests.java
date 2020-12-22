@@ -1,4 +1,4 @@
-package com.bytedance.scene;
+package com.bytedance.scene.navigation;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -7,7 +7,11 @@ import android.support.v4.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import com.bytedance.scene.Scene;
+import com.bytedance.scene.SceneLifecycleManager;
+import com.bytedance.scene.State;
 import com.bytedance.scene.navigation.NavigationScene;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
