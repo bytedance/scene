@@ -9,7 +9,7 @@ android {
     buildToolsVersion "30.0.2"
 
     defaultConfig {
-        applicationId "com.bytedance.scene.deeplinks"
+        applicationId "com.bytedance.scene.deeplink"
         minSdkVersion 23
         targetSdkVersion 30
         versionCode 1
@@ -21,8 +21,6 @@ android {
                              SCENE_ROUTER_DEBUG      : "true"]
             }
         }
-
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
     buildTypes {

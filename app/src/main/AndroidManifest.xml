@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.bytedance.scene.deeplinks">
+    package="com.bytedance.scene.deeplink">
 
     <application
         android:allowBackup="true"
@@ -10,7 +10,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".MainActivity"
+            android:name="com.bytedance.scene.deeplink.MainActivity"
             android:label="@string/title_gizmos"
             android:launchMode="singleTask">
 
