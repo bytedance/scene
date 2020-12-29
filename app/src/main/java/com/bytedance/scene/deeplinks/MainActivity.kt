@@ -1,4 +1,4 @@
-package com.bytedance.scene.deeplink
+package com.bytedance.scene.deeplinks
 
 import android.content.Intent
 import android.graphics.Color
