@@ -10,7 +10,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
-import android.widget.Toast
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.OnLifecycleEvent
@@ -19,9 +18,6 @@ import com.bytedance.scene.Scene
 import com.bytedance.scene.SceneDelegate
 import com.bytedance.scene.group.GroupScene
 import com.bytedance.scenerouter.annotation.SceneUrl
-import com.bytedance.scenerouter.core.OpenCallback
-import com.bytedance.scenerouter.core.SceneNotFoundException
-import com.bytedance.scenerouter.core.SceneRouter
 import com.bytedance.scenerouter.core.SceneRouters
 
 //TODO support url query argument
@@ -39,7 +35,7 @@ class MainActivity : AppCompatActivity() {
 
         val action: String? = intent?.action
         val data: Uri? = intent?.data
-        handleSchema(action, data)
+        handleDeepLink(action, data)
     }
 
     private fun getHomeSceneClass(): Class<out Scene> {
@@ -57,11 +53,11 @@ class MainActivity : AppCompatActivity() {
 
         val action: String? = intent?.action
         val data: Uri? = intent?.data
-        handleSchema(action, data)
+        handleDeepLink(action, data)
     }
 
-    private fun handleSchema(action: String?, data: Uri?) {
-        if (data == null) {
+    private fun handleDeepLink(action: String?, data: Uri?) {
+        if (data == null || data.path.isNullOrBlank()) {
             return
         }
         val navigationScene = this.mDelegate.navigationScene ?: return
