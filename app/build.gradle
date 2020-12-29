@@ -9,7 +9,7 @@ android {
     buildToolsVersion "30.0.2"
 
     defaultConfig {
-        applicationId "com.bytedance.scene.deeplink"
+        applicationId "com.bytedance.scene.deeplinks"
         minSdkVersion 23
         targetSdkVersion 30
         versionCode 1
