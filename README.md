@@ -5,11 +5,11 @@ AndroidManifest define scheme
 
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                <!-- Accepts URIs that begin with "http://www.example.com/gizmos” -->
+                <!-- Accepts URIs that begin with "http://www.example.com/demo” -->
                 <data
                     android:scheme="http"
                     android:host="www.example.com"
-                    android:pathPrefix="/gizmos" />
+                    android:pathPrefix="/demo" />
                 <!-- note that the leading "/" is required for pathPrefix-->
             </intent-filter>
             <intent-filter android:label="@string/filter_view_example_gizmos">
@@ -17,7 +17,7 @@ AndroidManifest define scheme
 
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                <!-- Accepts URIs that begin with "example://gizmos” -->
+                <!-- Accepts URIs that begin with "example://demo” -->
                 <data
                     android:scheme="example"
                     android:host="gizmos" />
@@ -40,4 +40,4 @@ class BScene : GroupScene() {
 }
 ```
 
-adb shell am start -W -a android.intent.action.VIEW -d http://www.example.com/gizmos/test2 com.bytedance.scene.deeplinks
+adb shell am start -W -a android.intent.action.VIEW -d http://www.example.com/demo/test2 com.bytedance.scene.deeplinks

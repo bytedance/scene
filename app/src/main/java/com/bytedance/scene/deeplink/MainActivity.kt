@@ -61,7 +61,7 @@ class MainActivity : AppCompatActivity() {
             return
         }
         val navigationScene = this.mDelegate.navigationScene ?: return
-        val uri = data.path!!.removePrefix("/gizmos")
+        val uri = data.path!!.removePrefix("/demo")
 
         if (navigationScene.lifecycle.currentState.isAtLeast(Lifecycle.State.CREATED)) {
             SceneRouters.of(navigationScene).url(uri).argument("uri", uri).open()
