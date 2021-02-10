@@ -30,8 +30,12 @@ import com.bytedance.scene.utlity.SceneInstanceUtility;
 import com.bytedance.scene.utlity.ThreadUtility;
 import com.bytedance.scene.utlity.Utility;
 
+import java.util.HashSet;
+import java.util.WeakHashMap;
+
 public final class GroupSceneUtility {
-    private static final String LIFE_CYCLE_FRAGMENT_TAG = NavigationSceneUtility.LIFE_CYCLE_FRAGMENT_TAG;
+    static final String LIFE_CYCLE_FRAGMENT_TAG = "LifeCycleFragment";
+    private static final WeakHashMap<Activity, HashSet<String>> CHECK_DUPLICATE_TAG_MAP = new WeakHashMap<>();
 
     private GroupSceneUtility() {
     }
@@ -118,7 +122,7 @@ public final class GroupSceneUtility {
         if (tag == null) {
             throw new IllegalArgumentException("tag cant be null");
         }
-        NavigationSceneUtility.checkDuplicateTag(activity, tag);
+        checkDuplicateTag(activity, tag);
 
         GroupScene groupScene = null;
         if (rootSceneComponentFactory != null) {
@@ -190,7 +194,7 @@ public final class GroupSceneUtility {
                     finalLifeCycleFragment.setLifecycleFragmentDetachCallback(new LifeCycleFragment.LifecycleFragmentDetachCallback() {
                         @Override
                         public void onDetach() {
-                            NavigationSceneUtility.removeTag(activity, finalLifeCycleFragment.getTag());
+                            removeTag(activity, finalLifeCycleFragment.getTag());
                             if (view != null) {
                                 Utility.removeFromParentView(view);
                             }
@@ -199,12 +203,29 @@ public final class GroupSceneUtility {
                     Utility.commitFragment(fragmentManager, fragmentTransaction, true);
                 } else {
                     Utility.commitFragment(fragmentManager, fragmentTransaction, false);
-                    NavigationSceneUtility.removeTag(activity, finalLifeCycleFragment.getTag());
+                    removeTag(activity, finalLifeCycleFragment.getTag());
                     if (view != null) {
                         Utility.removeFromParentView(view);
                     }
                 }
             }
         };
+    }
+
+    static void checkDuplicateTag(@NonNull Activity activity, @NonNull String tag) {
+        if (CHECK_DUPLICATE_TAG_MAP.get(activity) != null && CHECK_DUPLICATE_TAG_MAP.get(activity).contains(tag)) {
+            throw new IllegalArgumentException("tag duplicate, use another tag when invoke setupWithActivity for the second time in same Activity");
+        } else {
+            HashSet<String> set = CHECK_DUPLICATE_TAG_MAP.get(activity);
+            if (set == null) {
+                set = new HashSet<>();
+                CHECK_DUPLICATE_TAG_MAP.put(activity, set);
+            }
+            set.add(tag);
+        }
+    }
+
+    static void removeTag(@NonNull Activity activity, @NonNull String tag) {
+        CHECK_DUPLICATE_TAG_MAP.get(activity).remove(tag);
     }
 }
