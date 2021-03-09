@@ -36,6 +36,7 @@ import com.bytedance.scene.SceneTrace;
 import com.bytedance.scene.State;
 import com.bytedance.scene.animation.AnimationOrAnimator;
 import com.bytedance.scene.animation.AnimationOrAnimatorFactory;
+import com.bytedance.scene.exceptions.IllegalLifecycleException;
 import com.bytedance.scene.navigation.NavigationScene;
 import com.bytedance.scene.parcel.ParcelConstants;
 import com.bytedance.scene.utlity.CancellationSignal;
@@ -327,7 +328,7 @@ class GroupSceneManager {
     private void checkStateChange(@NonNull Scene scene) {
         for (Pair<Scene, String> pair : this.mCurrentTrackMoveStateSceneSet) {
             if (pair.first == scene) {
-                throw new IllegalStateException("Cant add/remove/show/hide " + scene.getClass().getCanonicalName() + " before it finish previous add/remove/show/hide operation or in its lifecycle method");
+                throw new IllegalLifecycleException("Cant add/remove/show/hide " + scene.getClass().getCanonicalName() + " before it finish previous add/remove/show/hide operation or in its lifecycle method");
             }
         }
     }
