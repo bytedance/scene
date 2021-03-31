@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import androidx.annotation.Nullable;
+import com.bytedance.scene.exceptions.IllegalLifecycleException;
 import com.bytedance.scene.group.GroupScene;
 import com.bytedance.scene.navigation.NavigationScene;
 import com.bytedance.scene.utlity.ViewIdGenerator;
@@ -120,7 +121,7 @@ public class TrackSceneStateChangeTests {
         assertTrue(navigationScene.getCurrentScene() instanceof PushChildScene2);
     }
 
-    @Test(expected = IllegalStateException.class)
+    @Test(expected = IllegalLifecycleException.class)
     public void testThrowExceptionWhenInvokeParentHideInChildSceneOnActivityCreated() {
         TestEmptyScene testScene = new TestEmptyScene();
         NavigationScene navigationScene = NavigationSourceUtility.createFromSceneLifecycleManager(testScene);
