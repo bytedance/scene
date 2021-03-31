@@ -34,10 +34,10 @@ import androidx.core.util.Pair;
 import com.bytedance.scene.Scene;
 import com.bytedance.scene.SceneTrace;
 import com.bytedance.scene.State;
+import com.bytedance.scene.SuppressOperationAware;
 import com.bytedance.scene.animation.AnimationOrAnimator;
 import com.bytedance.scene.animation.AnimationOrAnimatorFactory;
 import com.bytedance.scene.exceptions.IllegalLifecycleException;
-import com.bytedance.scene.navigation.NavigationScene;
 import com.bytedance.scene.parcel.ParcelConstants;
 import com.bytedance.scene.utlity.CancellationSignal;
 import com.bytedance.scene.utlity.SceneInstanceUtility;
@@ -341,10 +341,10 @@ class GroupSceneManager {
         }
         //forbid NavigationScene execute navigation stack operation immediately, otherwise GroupScene may sync lifecycle to child,
         //then throw SceneInternalException("Target scene is already tracked")
-        NavigationScene navigationScene = mGroupScene.getNavigationScene();
+        SuppressOperationAware suppressOperationAware = findSuppressOperationAware(mGroupScene.getParentScene());
         String suppressTag = null;
-        if (navigationScene != null) {
-            suppressTag = navigationScene.beginSuppressStackOperation(scene.toString());
+        if (suppressOperationAware != null) {
+            suppressTag = suppressOperationAware.beginSuppressStackOperation(scene.toString());
         } else {
             //execute GroupScene operations before GroupScene attached or after detached
             suppressTag = null;
@@ -365,9 +365,25 @@ class GroupSceneManager {
         }
         String suppressTag = target.second;
         if (suppressTag != null) {
-            mGroupScene.getNavigationScene().endSuppressStackOperation(target.second);
+            SuppressOperationAware suppressOperationAware = findSuppressOperationAware(mGroupScene.getParentScene());
+            suppressOperationAware.endSuppressStackOperation(target.second);
         }
         this.mCurrentTrackMoveStateSceneSet.remove(target);
+    }
+
+    private static SuppressOperationAware findSuppressOperationAware(Scene scene) {
+        if (scene == null) {
+            return null;
+        }
+        if (scene instanceof SuppressOperationAware) {
+            return (SuppressOperationAware) scene;
+        }
+        Scene sceneParent = scene.getParentScene();
+        if (sceneParent != null) {
+            return findSuppressOperationAware(sceneParent);
+        } else {
+            return null;
+        }
     }
 
     public void add(int viewId, Scene scene, String tag, AnimationOrAnimatorFactory animationOrAnimatorFactory) {

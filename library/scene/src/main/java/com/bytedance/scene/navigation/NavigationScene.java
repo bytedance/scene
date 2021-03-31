@@ -27,7 +27,6 @@ import android.widget.FrameLayout;
 
 import androidx.annotation.*;
 import androidx.collection.LruCache;
-import androidx.collection.SparseArrayCompat;
 import androidx.core.view.ViewCompat;
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleObserver;
@@ -41,7 +40,6 @@ import com.bytedance.scene.animation.interaction.InteractionNavigationPopAnimati
 import com.bytedance.scene.interfaces.ChildSceneLifecycleCallbacks;
 import com.bytedance.scene.group.ReuseGroupScene;
 import com.bytedance.scene.interfaces.ActivityResultCallback;
-import com.bytedance.scene.interfaces.ChildSceneLifecycleCallbacks;
 import com.bytedance.scene.interfaces.PermissionResultCallback;
 import com.bytedance.scene.interfaces.PopOptions;
 import com.bytedance.scene.interfaces.PushOptions;
@@ -79,7 +77,7 @@ import static androidx.lifecycle.Lifecycle.State.DESTROYED;
  * 5.Child: onDestroyView -> onDestroy -> onDetach
  * 6.Parent: onDestroyView -> onDestroy -> onDetach
  */
-public final class NavigationScene extends Scene implements NavigationListener, SceneParent {
+public final class NavigationScene extends Scene implements NavigationListener, SceneParent, SuppressOperationAware {
     private static final String KEY_NAVIGATION_SCENE_SUPPORT_RESTORE_ARGUMENT = "bd-scene-navigation:support_restore";
 
     private boolean mSupportRestore = true;//default support restore
@@ -334,6 +332,8 @@ public final class NavigationScene extends Scene implements NavigationListener, 
      * @hide
      */
     @RestrictTo(LIBRARY)
+    @Override
+    @NonNull
     public String beginSuppressStackOperation(@NonNull String tagPrefix) {
         return mNavigationSceneManager.beginSuppressStackOperation(tagPrefix);
     }
@@ -342,6 +342,7 @@ public final class NavigationScene extends Scene implements NavigationListener, 
      * @hide
      */
     @RestrictTo(LIBRARY)
+    @Override
     public void endSuppressStackOperation(@NonNull String suppressTag) {
         mNavigationSceneManager.endSuppressStackOperation(suppressTag);
     }
