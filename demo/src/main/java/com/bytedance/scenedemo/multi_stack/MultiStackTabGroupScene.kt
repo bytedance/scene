@@ -1,59 +1,49 @@
-package com.bytedance.scenedemo.multi_stack;
+package com.bytedance.scenedemo.multi_stack
 
-import android.os.Bundle;
+import com.bytedance.scene.ui.template.BottomNavigationViewScene
+import com.bytedance.scenedemo.R
+import android.os.Bundle
+import com.bytedance.scene.Scene
+import com.bytedance.scene.navigation.NavigationScene
+import com.bytedance.scene.utlity.SceneInstanceUtility
+import com.bytedance.scene.navigation.NavigationSceneOptions
+import com.bytedance.scenedemo.multi_stack.MultiStackTabChildScene
+import java.util.LinkedHashMap
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.collection.SparseArrayCompat;
-
-import com.bytedance.scene.Scene;
-import com.bytedance.scene.navigation.NavigationScene;
-import com.bytedance.scene.navigation.NavigationSceneOptions;
-import com.bytedance.scene.ui.template.BottomNavigationViewScene;
-import com.bytedance.scene.utlity.SceneInstanceUtility;
-import com.bytedance.scenedemo.R;
-
-import java.util.LinkedHashMap;
-
-public class MultiStackTabGroupScene extends BottomNavigationViewScene {
-    @Override
-    protected int getMenuResId() {
-        return R.menu.bottom_nav_items;
+class MultiStackTabGroupScene : BottomNavigationViewScene() {
+    override fun getMenuResId(): Int {
+        return R.menu.bottom_nav_items
     }
 
-    private Bundle getBundle(int index) {
-        Bundle bundle = new Bundle();
-        bundle.putInt("index", index);
-        return bundle;
+    private fun getBundle(index: Int): Bundle {
+        val bundle = Bundle()
+        bundle.putInt("index", index)
+        return bundle
     }
 
-    @NonNull
-    @Override
-    protected LinkedHashMap<Integer, Scene> getSceneMap() {
-        LinkedHashMap<Integer, Scene> linkedHashMap = new LinkedHashMap<>();
-
-        Bundle bundle = new Bundle();
-        bundle.putInt("index", 0);
-
-        NavigationScene navigationScene = (NavigationScene) SceneInstanceUtility.getInstanceFromClass(NavigationScene.class,
-                new NavigationSceneOptions(MultiStackTabChildScene.class, getBundle(0)).toBundle());
-
-        linkedHashMap.put(R.id.menu_home, navigationScene);
-
-        navigationScene = (NavigationScene) SceneInstanceUtility.getInstanceFromClass(NavigationScene.class,
-                new NavigationSceneOptions(MultiStackTabChildScene.class, getBundle(1)).toBundle());
-
-        linkedHashMap.put(R.id.menu_search, navigationScene);
-
-        navigationScene = (NavigationScene) SceneInstanceUtility.getInstanceFromClass(NavigationScene.class,
-                new NavigationSceneOptions(MultiStackTabChildScene.class, getBundle(2)).toBundle());
-
-        linkedHashMap.put(R.id.menu_notifications, navigationScene);
-        return linkedHashMap;
+    override fun getSceneMap(): LinkedHashMap<Int, Scene> {
+        val linkedHashMap = LinkedHashMap<Int, Scene>()
+        val bundle = Bundle()
+        bundle.putInt("index", 0)
+        var navigationScene = SceneInstanceUtility.getInstanceFromClass(
+            NavigationScene::class.java,
+            NavigationSceneOptions(MultiStackTabChildScene::class.java, getBundle(0)).toBundle()
+        ) as NavigationScene
+        linkedHashMap[R.id.menu_home] = navigationScene
+        navigationScene = SceneInstanceUtility.getInstanceFromClass(
+            NavigationScene::class.java,
+            NavigationSceneOptions(MultiStackTabChildScene::class.java, getBundle(1)).toBundle()
+        ) as NavigationScene
+        linkedHashMap[R.id.menu_search] = navigationScene
+        navigationScene = SceneInstanceUtility.getInstanceFromClass(
+            NavigationScene::class.java,
+            NavigationSceneOptions(MultiStackTabChildScene::class.java, getBundle(2)).toBundle()
+        ) as NavigationScene
+        linkedHashMap[R.id.menu_notifications] = navigationScene
+        return linkedHashMap
     }
 
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
     }
 }

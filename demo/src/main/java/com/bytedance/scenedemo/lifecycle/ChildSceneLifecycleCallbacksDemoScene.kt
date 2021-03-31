@@ -1,166 +1,118 @@
-package com.bytedance.scenedemo.lifecycle;
+package com.bytedance.scenedemo.lifecycle
 
-import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.LinearLayout;
-import android.widget.TextView;
-
-import com.bytedance.scene.Scene;
-import com.bytedance.scene.interfaces.ChildSceneLifecycleCallbacks;
-import com.bytedance.scene.group.GroupScene;
-import com.bytedance.scenedemo.R;
-import com.bytedance.scenedemo.utility.ColorUtil;
+import com.bytedance.scene.group.GroupScene
+import android.view.LayoutInflater
+import android.view.ViewGroup
+import android.os.Bundle
+import android.util.Log
+import android.view.View
+import android.widget.LinearLayout
+import android.widget.TextView
+import com.bytedance.scene.Scene
+import com.bytedance.scenedemo.R
+import com.bytedance.scene.interfaces.ChildSceneLifecycleCallbacks
+import com.bytedance.scenedemo.lifecycle.ChildSceneLifecycleCallbacksDemoScene
+import com.bytedance.scenedemo.utility.ColorUtil
 
 /**
  * Created by JiangQi on 9/6/18.
  */
-public class ChildSceneLifecycleCallbacksDemoScene extends GroupScene {
-    @NonNull
-    @Override
-    public ViewGroup onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        LinearLayout layout = new LinearLayout(getActivity());
-        layout.setOrientation(LinearLayout.VERTICAL);
-
-        TextView textView = new TextView(getActivity());
-        textView.setText(R.string.lifecycle_callback_tip);
-        layout.addView(textView);
-
-        textView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                getNavigationScene().push(EmptyScene0.class);
-            }
-        });
-
-        layout.setBackgroundColor(ColorUtil.getMaterialColor(getResources(), 1));
-
-        layout.setFitsSystemWindows(true);
-
-        return layout;
+class ChildSceneLifecycleCallbacksDemoScene : GroupScene() {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup, savedInstanceState: Bundle?): ViewGroup {
+        val layout = LinearLayout(activity)
+        layout.orientation = LinearLayout.VERTICAL
+        val textView = TextView(activity)
+        textView.setText(R.string.lifecycle_callback_tip)
+        layout.addView(textView)
+        textView.setOnClickListener { navigationScene!!.push(EmptyScene0::class.java) }
+        layout.setBackgroundColor(ColorUtil.getMaterialColor(resources, 1))
+        layout.fitsSystemWindows = true
+        return layout
     }
 
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        getNavigationScene().registerChildSceneLifecycleCallbacks(mChildSceneLifecycleCallbacks, true);
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        navigationScene!!.registerChildSceneLifecycleCallbacks(mChildSceneLifecycleCallbacks, true)
     }
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        getNavigationScene().unregisterChildSceneLifecycleCallbacks(mChildSceneLifecycleCallbacks);
+    override fun onDestroy() {
+        super.onDestroy()
+        navigationScene!!.unregisterChildSceneLifecycleCallbacks(mChildSceneLifecycleCallbacks)
     }
 
-    public static class EmptyScene0 extends Scene {
-        @NonNull
-        @Override
-        public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-            LinearLayout layout = new LinearLayout(getActivity());
-            layout.setOrientation(LinearLayout.VERTICAL);
-
-            TextView textView = new TextView(getActivity());
-            textView.setText(getNavigationScene().getStackHistory());
-            layout.addView(textView);
-
-            textView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    getNavigationScene().push(EmptyScene1.class);
-                }
-            });
-
-            layout.setBackgroundColor(ColorUtil.getMaterialColor(getResources(), 1));
-
-            layout.setFitsSystemWindows(true);
-
-            return layout;
+    class EmptyScene0 : Scene() {
+        override fun onCreateView(inflater: LayoutInflater, container: ViewGroup, savedInstanceState: Bundle?): View {
+            val layout = LinearLayout(activity)
+            layout.orientation = LinearLayout.VERTICAL
+            val textView = TextView(activity)
+            textView.text = navigationScene!!.stackHistory
+            layout.addView(textView)
+            textView.setOnClickListener { navigationScene!!.push(EmptyScene1::class.java) }
+            layout.setBackgroundColor(ColorUtil.getMaterialColor(resources, 1))
+            layout.fitsSystemWindows = true
+            return layout
         }
     }
 
-    public static class EmptyScene1 extends Scene {
-        @NonNull
-        @Override
-        public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-            LinearLayout layout = new LinearLayout(getActivity());
-            layout.setOrientation(LinearLayout.VERTICAL);
-
-            TextView textView = new TextView(getActivity());
-            textView.setText(getNavigationScene().getStackHistory());
-            layout.addView(textView);
-
-            textView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-
-                }
-            });
-
-            layout.setBackgroundColor(ColorUtil.getMaterialColor(getResources(), 1));
-
-            layout.setFitsSystemWindows(true);
-
-            return layout;
+    class EmptyScene1 : Scene() {
+        override fun onCreateView(inflater: LayoutInflater, container: ViewGroup, savedInstanceState: Bundle?): View {
+            val layout = LinearLayout(activity)
+            layout.orientation = LinearLayout.VERTICAL
+            val textView = TextView(activity)
+            textView.text = navigationScene!!.stackHistory
+            layout.addView(textView)
+            textView.setOnClickListener { }
+            layout.setBackgroundColor(ColorUtil.getMaterialColor(resources, 1))
+            layout.fitsSystemWindows = true
+            return layout
         }
     }
 
-    private ChildSceneLifecycleCallbacks mChildSceneLifecycleCallbacks = new ChildSceneLifecycleCallbacks() {
-        @Override
-        public void onSceneCreated(Scene scene, Bundle savedInstanceState) {
-            log("Scene", scene.toString() + " onSceneCreated");
+    private val mChildSceneLifecycleCallbacks: ChildSceneLifecycleCallbacks = object : ChildSceneLifecycleCallbacks {
+        override fun onSceneCreated(scene: Scene, savedInstanceState: Bundle?) {
+            log("Scene", "$scene onSceneCreated")
         }
 
-        @Override
-        public void onSceneViewCreated(@NonNull Scene scene, @Nullable Bundle savedInstanceState) {
-            log("Scene", scene.toString() + " onSceneViewCreated");
+        override fun onSceneViewCreated(scene: Scene, savedInstanceState: Bundle?) {
+            log("Scene", "$scene onSceneViewCreated")
         }
 
-        @Override
-        public void onSceneActivityCreated(@NonNull Scene scene, @Nullable Bundle savedInstanceState) {
-            log("Scene", scene.toString() + " onSceneActivityCreated");
+        override fun onSceneActivityCreated(scene: Scene, savedInstanceState: Bundle?) {
+            log("Scene", "$scene onSceneActivityCreated")
         }
 
-        @Override
-        public void onSceneStarted(Scene scene) {
-            log("Scene", scene.toString() + " onSceneStarted");
+        override fun onSceneStarted(scene: Scene) {
+            log("Scene", "$scene onSceneStarted")
         }
 
-        @Override
-        public void onSceneResumed(Scene scene) {
-            log("Scene", scene.toString() + " onSceneResumed");
+        override fun onSceneResumed(scene: Scene) {
+            log("Scene", "$scene onSceneResumed")
         }
 
-        @Override
-        public void onSceneSaveInstanceState(Scene scene, Bundle outState) {
-            log("Scene", scene.toString() + " onSceneSaveInstanceState");
+        override fun onSceneSaveInstanceState(scene: Scene, outState: Bundle) {
+            log("Scene", "$scene onSceneSaveInstanceState")
         }
 
-        @Override
-        public void onScenePaused(Scene scene) {
-            log("Scene", scene.toString() + " onScenePaused");
+        override fun onScenePaused(scene: Scene) {
+            log("Scene", "$scene onScenePaused")
         }
 
-        @Override
-        public void onSceneStopped(Scene scene) {
-            log("Scene", scene.toString() + " onSceneStopped");
+        override fun onSceneStopped(scene: Scene) {
+            log("Scene", "$scene onSceneStopped")
         }
 
-        @Override
-        public void onSceneViewDestroyed(Scene scene) {
-            log("Scene", scene.toString() + " onSceneViewDestroyed");
+        override fun onSceneViewDestroyed(scene: Scene) {
+            log("Scene", "$scene onSceneViewDestroyed")
         }
 
-        @Override
-        public void onSceneDestroyed(@NonNull Scene scene) {
-            log("Scene", scene.toString() + " onSceneDestroyed");
+        override fun onSceneDestroyed(scene: Scene) {
+            log("Scene", "$scene onSceneDestroyed")
         }
-    };
+    }
 
-    private static void log(String name, String tag) {
-        Log.e(name, tag);
+    companion object {
+        private fun log(name: String, tag: String) {
+            Log.e(name, tag)
+        }
     }
 }

@@ -1,75 +1,61 @@
-package com.bytedance.scenedemo.activity_compatibility.activity_result;
+package com.bytedance.scenedemo.activity_compatibility.activity_result
 
-import android.app.Activity;
-import android.content.Intent;
-import android.net.Uri;
-import android.os.Bundle;
-import android.provider.MediaStore;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.Toast;
-
-import com.bytedance.scene.interfaces.ActivityResultCallback;
-import com.bytedance.scene.ui.template.AppCompatScene;
-import com.bytedance.scenedemo.R;
-import com.bytedance.scenedemo.navigation.forresult.TestActivityResultActivity;
+import com.bytedance.scene.ui.template.AppCompatScene
+import android.view.LayoutInflater
+import android.view.ViewGroup
+import android.os.Bundle
+import com.bytedance.scenedemo.R
+import android.content.Intent
+import android.provider.MediaStore
+import com.bytedance.scene.interfaces.ActivityResultCallback
+import android.app.Activity
+import android.view.View
+import android.widget.Button
+import android.widget.ImageView
+import com.bytedance.scenedemo.navigation.forresult.TestActivityResultActivity
+import android.widget.Toast
 
 /**
  * Created by JiangQi on 8/3/18.
  */
-public class SceneGetActivityResultSample extends AppCompatScene {
-    @Nullable
-    @Override
-    protected View onCreateContentView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return (ViewGroup) inflater.inflate(R.layout.nav_scene_result_layout, container, false);
+class SceneGetActivityResultSample : AppCompatScene() {
+    override fun onCreateContentView(
+        inflater: LayoutInflater,
+        container: ViewGroup,
+        savedInstanceState: Bundle?
+    ): View? {
+        return inflater.inflate(R.layout.nav_scene_result_layout, container, false) as ViewGroup
     }
 
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        setTitle(R.string.main_activity_btn_scene_get_activity_result);
-
-        final ImageView image = getView().findViewById(R.id.image);
-        Button btn2 = getView().findViewById(R.id.btn2);
-        btn2.setText(getString(R.string.nav_result_scene_to_activity));
-        btn2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(Intent.ACTION_GET_CONTENT, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                intent.setType("image/*");
-                intent.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
-                intent = Intent.createChooser(intent, "Select Image");
-
-                requireNavigationScene().startActivityForResult(intent, 12345, new ActivityResultCallback() {
-                    @Override
-                    public void onResult(int resultCode, @Nullable Intent result) {
-                        if (resultCode == Activity.RESULT_OK) {
-                            Uri uri = result.getData();
-                            image.setImageURI(uri);
-                        }
-                    }
-                });
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        setTitle(R.string.main_activity_btn_scene_get_activity_result)
+        val image = view.findViewById<ImageView>(R.id.image)
+        val btn2 = view.findViewById<Button>(R.id.btn2)
+        btn2.text = getString(R.string.nav_result_scene_to_activity)
+        btn2.setOnClickListener {
+            var intent = Intent(Intent.ACTION_GET_CONTENT, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+            intent.type = "image/*"
+            intent.putExtra(Intent.EXTRA_LOCAL_ONLY, true)
+            intent = Intent.createChooser(intent, "Select Image")
+            requireNavigationScene().startActivityForResult(intent, 12345) { resultCode, result ->
+                if (resultCode == Activity.RESULT_OK) {
+                    val uri = result!!.data
+                    image.setImageURI(uri)
+                }
             }
-        });
-
-        Button btn3 = getView().findViewById(R.id.btn3);
-        btn3.setText(getString(R.string.nav_result_scene_to_activity_without_result));
-        btn3.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(requireActivity(), TestActivityResultActivity.class);
-                requireNavigationScene().startActivityForResult(intent, 5, new ActivityResultCallback() {
-                    @Override
-                    public void onResult(int resultCode, @Nullable Intent result) {
-                        Toast.makeText(requireApplicationContext(), getString(R.string.nav_result_callback_tip), Toast.LENGTH_SHORT).show();
-                    }
-                });
+        }
+        val btn3 = view.findViewById<Button>(R.id.btn3)
+        btn3.text = getString(R.string.nav_result_scene_to_activity_without_result)
+        btn3.setOnClickListener {
+            val intent = Intent(requireActivity(), TestActivityResultActivity::class.java)
+            requireNavigationScene().startActivityForResult(intent, 5) { resultCode, result ->
+                Toast.makeText(
+                    requireApplicationContext(),
+                    getString(R.string.nav_result_callback_tip),
+                    Toast.LENGTH_SHORT
+                ).show()
             }
-        });
+        }
     }
 }

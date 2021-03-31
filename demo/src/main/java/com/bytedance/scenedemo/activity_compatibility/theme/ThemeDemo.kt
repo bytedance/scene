@@ -1,112 +1,95 @@
-package com.bytedance.scenedemo.activity_compatibility.theme;
+package com.bytedance.scenedemo.activity_compatibility.theme
 
-import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.TextView;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.annotation.StyleRes;
-
-import com.bytedance.scene.Scene;
-import com.bytedance.scene.ui.template.AppCompatScene;
-import com.bytedance.scenedemo.R;
+import com.bytedance.scene.ui.template.AppCompatScene
+import android.view.LayoutInflater
+import android.view.ViewGroup
+import android.os.Bundle
+import android.view.View
+import android.widget.Button
+import com.bytedance.scenedemo.R
+import android.widget.TextView
+import com.bytedance.scenedemo.activity_compatibility.theme.ThemeDemo.TestTheme0Scene
+import com.bytedance.scenedemo.activity_compatibility.theme.ThemeDemo.TestTheme1Scene
+import androidx.annotation.StyleRes
+import com.bytedance.scene.Scene
 
 /**
  * Created by JiangQi on 11/9/18.
  */
-public class ThemeDemo extends AppCompatScene {
-    @NonNull
-    @Override
-    protected ViewGroup onCreateContentView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        ViewGroup root = (ViewGroup) inflater.inflate(R.layout.layout_theme, container, false);
-        return root;
+class ThemeDemo : AppCompatScene() {
+    protected override fun onCreateContentView(
+        inflater: LayoutInflater,
+        container: ViewGroup,
+        savedInstanceState: Bundle?
+    ): ViewGroup {
+        return inflater.inflate(R.layout.layout_theme, container, false) as ViewGroup
     }
 
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        setTitle(R.string.main_nav_btn_theme);
-        TextView name = getView().findViewById(R.id.name);
-        name.setVisibility(View.GONE);
-
-        Button btn = getView().findViewById(R.id.btn);
-        btn.setText(R.string.nav_theme_btn_1);
-        btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                TestTheme0Scene scene = TestTheme0Scene.newInstance(R.style.AppTheme_Test1);
-                requireNavigationScene().push(scene);
-            }
-        });
-
-        Button btn2 = getView().findViewById(R.id.btn2);
-        btn2.setVisibility(View.VISIBLE);
-        btn2.setText(R.string.nav_theme_btn_2);
-        btn2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                TestTheme0Scene scene = TestTheme0Scene.newInstance(R.style.AppTheme_Test2);
-                requireNavigationScene().push(scene);
-            }
-        });
-
-        Button btn3 = getView().findViewById(R.id.btn3);
-        btn3.setVisibility(View.VISIBLE);
-        btn3.setText(R.string.nav_theme_btn_3);
-        btn3.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                TestTheme1Scene scene = TestTheme1Scene.newInstance(R.style.AppTheme_Test3);
-                requireNavigationScene().push(scene);
-            }
-        });
-    }
-
-    public static class TestTheme0Scene extends Scene {
-        private int mThemeId;
-
-        public static TestTheme0Scene newInstance(@StyleRes int themeId) {
-            TestTheme0Scene scene = new TestTheme0Scene();
-            Bundle bundle = new Bundle();
-            bundle.putInt("themeId", themeId);
-            scene.setArguments(bundle);
-            scene.setTheme(themeId);
-            return scene;
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        setTitle(R.string.main_nav_btn_theme)
+        val name = view.findViewById<TextView>(R.id.name)
+        name.visibility = View.GONE
+        val btn = view.findViewById<Button>(R.id.btn)
+        btn.setText(R.string.nav_theme_btn_1)
+        btn.setOnClickListener {
+            val scene = TestTheme0Scene.newInstance(R.style.AppTheme_Test1)
+            requireNavigationScene().push(scene)
         }
-
-        @NonNull
-        @Override
-        public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-            return inflater.inflate(R.layout.layout_theme_demo, container, false);
+        val btn2 = view.findViewById<Button>(R.id.btn2)
+        btn2.visibility = View.VISIBLE
+        btn2.setText(R.string.nav_theme_btn_2)
+        btn2.setOnClickListener {
+            val scene = TestTheme0Scene.newInstance(R.style.AppTheme_Test2)
+            requireNavigationScene().push(scene)
+        }
+        val btn3 = view.findViewById<Button>(R.id.btn3)
+        btn3.visibility = View.VISIBLE
+        btn3.setText(R.string.nav_theme_btn_3)
+        btn3.setOnClickListener {
+            val scene = TestTheme1Scene.newInstance(R.style.AppTheme_Test3)
+            requireNavigationScene().push(scene)
         }
     }
 
-    public static class TestTheme1Scene extends Scene {
-        private int mThemeId;
-
-        public static TestTheme1Scene newInstance(@StyleRes int themeId) {
-            TestTheme1Scene scene = new TestTheme1Scene();
-            Bundle bundle = new Bundle();
-            bundle.putInt("themeId", themeId);
-            scene.setArguments(bundle);
-            return scene;
+    class TestTheme0Scene : Scene() {
+        private val mThemeId = 0
+        override fun onCreateView(inflater: LayoutInflater, container: ViewGroup, savedInstanceState: Bundle?): View {
+            return inflater.inflate(R.layout.layout_theme_demo, container, false)
         }
 
-        @Override
-        public void onCreate(@Nullable Bundle savedInstanceState) {
-            super.onCreate(savedInstanceState);
-            this.mThemeId = getArguments().getInt("themeId");
+        companion object {
+            fun newInstance(@StyleRes themeId: Int): TestTheme0Scene {
+                val scene = TestTheme0Scene()
+                val bundle = Bundle()
+                bundle.putInt("themeId", themeId)
+                scene.setArguments(bundle)
+                scene.theme = themeId
+                return scene
+            }
+        }
+    }
+
+    class TestTheme1Scene : Scene() {
+        private var mThemeId = 0
+        override fun onCreate(savedInstanceState: Bundle?) {
+            super.onCreate(savedInstanceState)
+            mThemeId = arguments!!.getInt("themeId")
         }
 
-        @NonNull
-        @Override
-        public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-            setTheme(this.mThemeId);
-            return inflater.inflate(R.layout.layout_theme_demo1, container, false);
+        override fun onCreateView(inflater: LayoutInflater, container: ViewGroup, savedInstanceState: Bundle?): View {
+            theme = mThemeId
+            return inflater.inflate(R.layout.layout_theme_demo1, container, false)
+        }
+
+        companion object {
+            fun newInstance(@StyleRes themeId: Int): TestTheme1Scene {
+                val scene = TestTheme1Scene()
+                val bundle = Bundle()
+                bundle.putInt("themeId", themeId)
+                scene.setArguments(bundle)
+                return scene
+            }
         }
     }
 }

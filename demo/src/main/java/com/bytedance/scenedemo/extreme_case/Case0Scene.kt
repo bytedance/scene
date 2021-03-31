@@ -1,130 +1,100 @@
-package com.bytedance.scenedemo.extreme_case;
+package com.bytedance.scenedemo.extreme_case
 
-import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.LinearLayout;
-import android.widget.TextView;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.interpolator.view.animation.FastOutSlowInInterpolator;
-import androidx.interpolator.view.animation.LinearOutSlowInInterpolator;
-
-import com.bytedance.scene.Scene;
-import com.bytedance.scene.animation.animatorexecutor.HorizontalTransitionAnimatorExecutor;
-import com.bytedance.scene.group.GroupScene;
-import com.bytedance.scene.interfaces.PushOptions;
-import com.bytedance.scenedemo.R;
-import com.bytedance.scenedemo.utility.ColorUtil;
+import com.bytedance.scene.group.GroupScene
+import android.view.LayoutInflater
+import android.view.ViewGroup
+import android.os.Bundle
+import android.view.View
+import android.widget.Button
+import com.bytedance.scenedemo.R
+import android.widget.TextView
+import com.bytedance.scene.interfaces.PushOptions
+import com.bytedance.scene.animation.animatorexecutor.HorizontalTransitionAnimatorExecutor
+import android.widget.LinearLayout
+import com.bytedance.scene.Scene
+import com.bytedance.scenedemo.utility.ColorUtil
 
 /**
  * Created by JiangQi on 9/5/18.
  */
-public class Case0Scene extends GroupScene {
-
-    @NonNull
-    @Override
-    public ViewGroup onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return (ViewGroup) inflater.inflate(R.layout.basic_layout, container, false);
+class Case0Scene : GroupScene() {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup, savedInstanceState: Bundle?): ViewGroup {
+        return inflater.inflate(R.layout.basic_layout, container, false) as ViewGroup
     }
 
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        getView().setBackgroundColor(ColorUtil.getMaterialColor(getResources(), 0));
-
-        TextView name = getView().findViewById(R.id.name);
-        name.setVisibility(View.GONE);
-
-        Button btn = getView().findViewById(R.id.btn);
-        btn.setText(R.string.case_push_pop_btn_1);
-        btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                for (int i = 0; i < 100; i++) {
-                    getNavigationScene().push(EmptyScene.class, null, new PushOptions.Builder()
-                            .setAnimation(new HorizontalTransitionAnimatorExecutor()).build());
-                    getNavigationScene().pop();
-                }
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        view.setBackgroundColor(ColorUtil.getMaterialColor(resources, 0))
+        val name = view.findViewById<TextView>(R.id.name)
+        name.visibility = View.GONE
+        val btn = view.findViewById<Button>(R.id.btn)
+        btn.setText(R.string.case_push_pop_btn_1)
+        btn.setOnClickListener {
+            for (i in 0..99) {
+                navigationScene!!.push(
+                    EmptyScene::class.java, null, PushOptions.Builder()
+                        .setAnimation(HorizontalTransitionAnimatorExecutor()).build()
+                )
+                navigationScene!!.pop()
             }
-        });
-
-        Button btn2 = getView().findViewById(R.id.btn2);
-        btn2.setVisibility(View.VISIBLE);
-        btn2.setText(R.string.case_push_pop_btn_2);
-        btn2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                for (int i = 0; i < 100; i++) {
-                    getNavigationScene().push(EmptyScene.class, null, new PushOptions.Builder()
-                            .setAnimation(new HorizontalTransitionAnimatorExecutor()).build());
-                }
-
-                for (int i = 0; i < 100; i++) {
-                    getNavigationScene().pop();
-                }
+        }
+        val btn2 = view.findViewById<Button>(R.id.btn2)
+        btn2.visibility = View.VISIBLE
+        btn2.setText(R.string.case_push_pop_btn_2)
+        btn2.setOnClickListener {
+            for (i in 0..99) {
+                navigationScene!!.push(
+                    EmptyScene::class.java, null, PushOptions.Builder()
+                        .setAnimation(HorizontalTransitionAnimatorExecutor()).build()
+                )
             }
-        });
-
-        Button btn3 = getView().findViewById(R.id.btn3);
-        btn3.setVisibility(View.VISIBLE);
-        btn3.setText(R.string.case_push_pop_btn_3);
-        btn3.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                getNavigationScene().push(EmptyScene0.class, null, new PushOptions.Builder()
-                        .setAnimation(new HorizontalTransitionAnimatorExecutor()).build());
-
-                for (int i = 0; i < 99; i++) {
-                    getNavigationScene().push(EmptyScene.class, null, new PushOptions.Builder()
-                            .setAnimation(new HorizontalTransitionAnimatorExecutor()).build());
-                }
-
-                for (int i = 0; i < 99; i++) {
-                    getNavigationScene().pop();
-                }
+            for (i in 0..99) {
+                navigationScene!!.pop()
             }
-        });
-    }
-
-    public static class EmptyScene extends Scene {
-        @NonNull
-        @Override
-        public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-            LinearLayout layout = new LinearLayout(getActivity());
-            layout.setOrientation(LinearLayout.VERTICAL);
-
-            TextView textView = new TextView(getActivity());
-            textView.setText(getNavigationScene().getStackHistory());
-            layout.addView(textView);
-
-            layout.setBackgroundColor(ColorUtil.getMaterialColor(getResources(), 1));
-
-            layout.setFitsSystemWindows(true);
-
-            return layout;
+        }
+        val btn3 = view.findViewById<Button>(R.id.btn3)
+        btn3.visibility = View.VISIBLE
+        btn3.setText(R.string.case_push_pop_btn_3)
+        btn3.setOnClickListener {
+            navigationScene!!.push(
+                EmptyScene0::class.java, null, PushOptions.Builder()
+                    .setAnimation(HorizontalTransitionAnimatorExecutor()).build()
+            )
+            for (i in 0..98) {
+                navigationScene!!.push(
+                    EmptyScene::class.java, null, PushOptions.Builder()
+                        .setAnimation(HorizontalTransitionAnimatorExecutor()).build()
+                )
+            }
+            for (i in 0..98) {
+                navigationScene!!.pop()
+            }
         }
     }
 
-    public static class EmptyScene0 extends Scene {
-        @NonNull
-        @Override
-        public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-            LinearLayout layout = new LinearLayout(getActivity());
-            layout.setOrientation(LinearLayout.VERTICAL);
+    class EmptyScene : Scene() {
+        override fun onCreateView(inflater: LayoutInflater, container: ViewGroup, savedInstanceState: Bundle?): View {
+            val layout = LinearLayout(activity)
+            layout.orientation = LinearLayout.VERTICAL
+            val textView = TextView(activity)
+            textView.text = navigationScene!!.stackHistory
+            layout.addView(textView)
+            layout.setBackgroundColor(ColorUtil.getMaterialColor(resources, 1))
+            layout.fitsSystemWindows = true
+            return layout
+        }
+    }
 
-            TextView textView = new TextView(getActivity());
-            textView.setText(getNavigationScene().getStackHistory());
-            layout.addView(textView);
-
-            layout.setBackgroundColor(ColorUtil.getMaterialColor(getResources(), 2));
-
-            layout.setFitsSystemWindows(true);
-
-            return layout;
+    class EmptyScene0 : Scene() {
+        override fun onCreateView(inflater: LayoutInflater, container: ViewGroup, savedInstanceState: Bundle?): View {
+            val layout = LinearLayout(activity)
+            layout.orientation = LinearLayout.VERTICAL
+            val textView = TextView(activity)
+            textView.text = navigationScene!!.stackHistory
+            layout.addView(textView)
+            layout.setBackgroundColor(ColorUtil.getMaterialColor(resources, 2))
+            layout.fitsSystemWindows = true
+            return layout
         }
     }
 }

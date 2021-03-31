@@ -1,53 +1,39 @@
-package com.bytedance.scenedemo.navigation.pushandclear;
+package com.bytedance.scenedemo.navigation.pushandclear
 
-import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.TextView;
-
-import com.bytedance.scene.Scene;
-import com.bytedance.scene.animation.animatorexecutor.HorizontalTransitionAnimatorExecutor;
-import com.bytedance.scene.interfaces.PushOptions;
-import com.bytedance.scenedemo.R;
-import com.bytedance.scenedemo.utility.ColorUtil;
-
-import org.jetbrains.annotations.NotNull;
+import android.view.LayoutInflater
+import android.view.ViewGroup
+import android.os.Bundle
+import android.view.View
+import android.widget.Button
+import com.bytedance.scenedemo.R
+import android.widget.TextView
+import com.bytedance.scene.Scene
+import com.bytedance.scene.interfaces.PushOptions
+import com.bytedance.scene.animation.animatorexecutor.HorizontalTransitionAnimatorExecutor
+import com.bytedance.scenedemo.navigation.pushandclear.PushClearScene_3
+import com.bytedance.scenedemo.utility.ColorUtil
 
 /**
  * Created by JiangQi on 8/2/18.
  */
-public class PushClearScene_2 extends Scene {
-
-    @NonNull
-    @Override
-    public View onCreateView(@NotNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.basic_layout, container, false);
+class PushClearScene_2 : Scene() {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup, savedInstanceState: Bundle?): View {
+        return inflater.inflate(R.layout.basic_layout, container, false)
     }
 
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        getView().setBackgroundColor(ColorUtil.getMaterialColor(getResources(), 3));
-
-        TextView name = getView().findViewById(R.id.name);
-        name.setText(getNavigationScene().getStackHistory());
-
-        Button btn = getView().findViewById(R.id.btn);
-        btn.setText(getString(R.string.nav_clear_task_btn_2));
-        btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                PushOptions options = new PushOptions.Builder()
-                        .clearTask()
-                        .setAnimation(new HorizontalTransitionAnimatorExecutor())
-                        .build();
-                getNavigationScene().push(PushClearScene_3.class, null, options);
-            }
-        });
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        view.setBackgroundColor(ColorUtil.getMaterialColor(resources, 3))
+        val name = view.findViewById<TextView>(R.id.name)
+        name.text = navigationScene!!.stackHistory
+        val btn = view.findViewById<Button>(R.id.btn)
+        btn.text = getString(R.string.nav_clear_task_btn_2)
+        btn.setOnClickListener {
+            val options = PushOptions.Builder()
+                .clearTask()
+                .setAnimation(HorizontalTransitionAnimatorExecutor())
+                .build()
+            navigationScene!!.push(PushClearScene_3::class.java, null, options)
+        }
     }
-
 }

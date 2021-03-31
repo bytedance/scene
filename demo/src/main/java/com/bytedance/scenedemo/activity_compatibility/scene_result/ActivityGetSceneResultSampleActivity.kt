@@ -1,33 +1,28 @@
-package com.bytedance.scenedemo.activity_compatibility.scene_result;
+package com.bytedance.scenedemo.activity_compatibility.scene_result
 
-import android.app.Activity;
-import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.FrameLayout;
-import android.widget.LinearLayout;
-import android.widget.Toast;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import com.bytedance.scene.Scene;
-import com.bytedance.scene.interfaces.PushResultCallback;
-import com.bytedance.scene.ui.SceneNavigator;
-import com.bytedance.scenedemo.R;
+import android.app.Activity
+import android.os.Bundle
+import android.widget.LinearLayout
+import com.bytedance.scenedemo.R
+import com.bytedance.scene.ui.SceneNavigator
+import com.bytedance.scene.interfaces.PushResultCallback
+import android.widget.Toast
+import android.view.LayoutInflater
+import android.view.ViewGroup
+import android.widget.Button
+import android.widget.FrameLayout
+import com.bytedance.scene.Scene
 
 /**
  * Created by JiangQi on 9/18/18.
  */
-public class ActivityGetSceneResultSampleActivity extends Activity {
-    @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        LinearLayout linearLayout = new LinearLayout(this);
-        linearLayout.setOrientation(LinearLayout.VERTICAL);
-        Button button = new Button(this);
-//        button.setText("打开Scene");
+class ActivityGetSceneResultSampleActivity : Activity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        val linearLayout = LinearLayout(this)
+        linearLayout.orientation = LinearLayout.VERTICAL
+        var button = Button(this)
+        //        button.setText("打开Scene");
 //        button.setOnClickListener(new View.OnClickListener() {
 //            @Override
 //            public void onClick(View v) {
@@ -67,48 +62,39 @@ public class ActivityGetSceneResultSampleActivity extends Activity {
 //            }
 //        });
 //        linearLayout.addView(button);
-
-        button = new Button(this);
-        button.setText(R.string.main_activity_btn_activity_get_scene_result);
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                new SceneNavigator(ActivityGetSceneResultSampleActivity.this, R.style.AppTheme)
-                        .startSceneForResult(TestScene2.class, null, new PushResultCallback() {
-                            @Override
-                            public void onResult(@Nullable Object result) {
-                                if (result == null) {
-                                    Toast.makeText(getApplicationContext(), "null", Toast.LENGTH_SHORT).show();
-                                } else {
-                                    Toast.makeText(getApplicationContext(), result.toString(), Toast.LENGTH_SHORT).show();
-                                }
-                            }
-                        });
-            }
-        });
-        linearLayout.addView(button);
-
-        setContentView(linearLayout);
+        button = Button(this)
+        button.setText(R.string.main_activity_btn_activity_get_scene_result)
+        button.setOnClickListener {
+            SceneNavigator(this@ActivityGetSceneResultSampleActivity, R.style.AppTheme)
+                .startSceneForResult(TestScene2::class.java, null) { result ->
+                    if (result == null) {
+                        Toast.makeText(applicationContext, "null", Toast.LENGTH_SHORT).show()
+                    } else {
+                        Toast.makeText(applicationContext, result.toString(), Toast.LENGTH_SHORT).show()
+                    }
+                }
+        }
+        linearLayout.addView(button)
+        setContentView(linearLayout)
     }
 
-    public static class TestScene2 extends Scene {
-        @NonNull
-        @Override
-        public ViewGroup onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-            Button tv = new Button(requireActivity());
-            tv.setText("Click to set result and finish");
-            tv.setFitsSystemWindows(true);
-            tv.setAllCaps(false);
-            tv.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    requireNavigationScene().setResult(TestScene2.this, "Result is one");
-                    requireNavigationScene().pop();
-                }
-            });
-            FrameLayout frameLayout = new FrameLayout(requireActivity());
-            frameLayout.addView(tv);
-            return frameLayout;
+    class TestScene2 : Scene() {
+        override fun onCreateView(
+            inflater: LayoutInflater,
+            container: ViewGroup,
+            savedInstanceState: Bundle?
+        ): ViewGroup {
+            val tv = Button(requireActivity())
+            tv.text = "Click to set result and finish"
+            tv.fitsSystemWindows = true
+            tv.isAllCaps = false
+            tv.setOnClickListener {
+                requireNavigationScene().setResult(this@TestScene2, "Result is one")
+                requireNavigationScene().pop()
+            }
+            val frameLayout = FrameLayout(requireActivity())
+            frameLayout.addView(tv)
+            return frameLayout
         }
     }
 }

@@ -1,53 +1,46 @@
-package com.bytedance.scenedemo.lifecycle;
+package com.bytedance.scenedemo.lifecycle
 
-import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.TextView;
-
-import com.bytedance.scene.group.UserVisibleHintGroupScene;
-import com.bytedance.scenedemo.R;
-import com.bytedance.scenedemo.utility.ColorUtil;
+import com.bytedance.scene.group.UserVisibleHintGroupScene
+import android.widget.TextView
+import android.view.LayoutInflater
+import android.view.ViewGroup
+import android.os.Bundle
+import android.view.View
+import android.widget.Button
+import com.bytedance.scenedemo.R
+import com.bytedance.scenedemo.utility.ColorUtil
 
 /**
  * Created by JiangQi on 8/7/18.
  */
-public class EmptyScene extends UserVisibleHintGroupScene {
-
-    private TextView textView;
-
-    public static EmptyScene newInstance(int index) {
-        EmptyScene scene = new EmptyScene();
-        Bundle bundle = new Bundle();
-        bundle.putInt("index", index);
-        scene.setArguments(bundle);
-        return scene;
+class EmptyScene : UserVisibleHintGroupScene() {
+    private var textView: TextView? = null
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup, savedInstanceState: Bundle?): ViewGroup {
+        return inflater.inflate(R.layout.basic_layout, container, false) as ViewGroup
     }
 
-    @NonNull
-    @Override
-    public ViewGroup onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return (ViewGroup) inflater.inflate(R.layout.basic_layout, container, false);
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        val index = if (arguments == null) 0 else arguments!!.getInt("index")
+        view.setBackgroundColor(ColorUtil.getMaterialColor(resources, index))
+        textView = view.findViewById(R.id.name)
+        val btn = view.findViewById<Button>(R.id.btn)
+        btn.visibility = View.GONE
     }
 
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        int index = getArguments() == null ? 0 : getArguments().getInt("index");
-        getView().setBackgroundColor(ColorUtil.getMaterialColor(getResources(), index));
-
-        textView = getView().findViewById(R.id.name);
-        Button btn = getView().findViewById(R.id.btn);
-        btn.setVisibility(View.GONE);
+    override fun onResume() {
+        super.onResume()
+        textView!!.text = stateHistory
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        textView.setText(getStateHistory());
+    companion object {
+        @JvmStatic
+        fun newInstance(index: Int): EmptyScene {
+            val scene = EmptyScene()
+            val bundle = Bundle()
+            bundle.putInt("index", index)
+            scene.setArguments(bundle)
+            return scene
+        }
     }
 }

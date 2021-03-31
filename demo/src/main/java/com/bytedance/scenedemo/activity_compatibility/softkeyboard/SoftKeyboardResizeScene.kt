@@ -1,76 +1,47 @@
-package com.bytedance.scenedemo.activity_compatibility.softkeyboard;
+package com.bytedance.scenedemo.activity_compatibility.softkeyboard
 
-import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.WindowManager;
-import android.widget.Button;
-import android.widget.EditText;
-
-import com.bytedance.scene.ui.template.AppCompatScene;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import com.bytedance.scene.group.GroupScene;
-import com.bytedance.scenedemo.R;
-import com.bytedance.scenedemo.utility.ColorUtil;
+import com.bytedance.scenedemo.activity_compatibility.softkeyboard.SoftKeyboardDemoScene.Companion.focusAndShowInputMethod
+import com.bytedance.scene.ui.template.AppCompatScene
+import android.widget.EditText
+import android.view.LayoutInflater
+import android.view.ViewGroup
+import android.os.Bundle
+import android.view.View
+import com.bytedance.scenedemo.R
+import android.view.WindowManager
+import android.widget.Button
+import com.bytedance.scenedemo.activity_compatibility.softkeyboard.SoftKeyboardDemoScene
+import com.bytedance.scenedemo.utility.ColorUtil
 
 /**
  * Created by dss886 on 2019-08-06.
  */
-public class SoftKeyboardResizeScene extends AppCompatScene {
-
-    private EditText mEditText;
-
-    @NonNull
-    @Override
-    protected View onCreateContentView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return (ViewGroup) inflater.inflate(R.layout.nav_ime_problems_layout, container, false);
+class SoftKeyboardResizeScene : AppCompatScene() {
+    private var mEditText: EditText? = null
+    override fun onCreateContentView(
+        inflater: LayoutInflater,
+        container: ViewGroup,
+        savedInstanceState: Bundle?
+    ): View {
+        return inflater.inflate(R.layout.nav_ime_problems_layout, container, false) as ViewGroup
     }
 
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        requireActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
-        getView().setBackgroundColor(ColorUtil.getMaterialColor(getResources(), 2));
-
-        mEditText = getView().findViewById(R.id.edit_text);
-
-        requireViewById(R.id.resize).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                requireActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
-            }
-        });
-
-        requireViewById(R.id.pan).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                requireActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
-            }
-        });
-
-        requireViewById(R.id.nothing).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                requireActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING);
-            }
-        });
-
-        Button btn = getView().findViewById(R.id.btn);
-        btn.setText(R.string.nav_ime_btn_top);
-        btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                getNavigationScene().pop();
-            }
-        });
-        setTitle("SOFT_INPUT_ADJUST");
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
+        view.setBackgroundColor(ColorUtil.getMaterialColor(resources, 2))
+        mEditText = view.findViewById(R.id.edit_text)
+        requireViewById<View>(R.id.resize).setOnClickListener { requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE) }
+        requireViewById<View>(R.id.pan).setOnClickListener { requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN) }
+        requireViewById<View>(R.id.nothing).setOnClickListener { requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING) }
+        val btn = view.findViewById<Button>(R.id.btn)
+        btn.setText(R.string.nav_ime_btn_top)
+        btn.setOnClickListener { navigationScene!!.pop() }
+        setTitle("SOFT_INPUT_ADJUST")
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        SoftKeyboardDemoScene.focusAndShowInputMethod(mEditText);
+    override fun onResume() {
+        super.onResume()
+        focusAndShowInputMethod(mEditText)
     }
 }

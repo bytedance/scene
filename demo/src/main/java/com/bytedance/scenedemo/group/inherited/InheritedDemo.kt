@@ -1,107 +1,67 @@
-package com.bytedance.scenedemo.group.inherited;
+package com.bytedance.scenedemo.group.inherited
 
-import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
-
-import com.bytedance.scene.Scene;
-import com.bytedance.scene.group.Creator;
-import com.bytedance.scene.group.InheritedScene;
-import com.bytedance.scenedemo.R;
-import com.bytedance.scenedemo.utility.ColorUtil;
+import com.bytedance.scene.group.InheritedScene
+import android.widget.TextView
+import android.view.LayoutInflater
+import android.view.ViewGroup
+import android.os.Bundle
+import android.view.View
+import com.bytedance.scene.Scene
+import com.bytedance.scenedemo.R
+import com.bytedance.scenedemo.group.inherited.InheritedDemo.Child0Scene
+import com.bytedance.scenedemo.group.inherited.InheritedDemo
+import com.bytedance.scenedemo.utility.ColorUtil
 
 /**
  * Created by JiangQi on 8/21/18.
  */
-public class InheritedDemo extends InheritedScene {
-
-    TextView summary;
-
-    @NonNull
-    @Override
-    public ViewGroup onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return (ViewGroup) inflater.inflate(R.layout.layout_inherited, container, false);
+class InheritedDemo : InheritedScene() {
+    lateinit var summary: TextView
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup, savedInstanceState: Bundle?): ViewGroup {
+        return inflater.inflate(R.layout.layout_inherited, container, false) as ViewGroup
     }
 
-    @Override
-    public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        summary = getView().findViewById(R.id.summary);
-        summary.setText(R.string.part_inherited_tip);
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        summary = getView().findViewById(R.id.summary)
+        summary.setText(R.string.part_inherited_tip)
     }
 
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-
-        Child0Scene scene = createOrReuse("0", new Creator<Child0Scene>() {
-            @Override
-            public Child0Scene call() {
-                return Child0Scene.newInstance(0);
-            }
-        });
-        Child0Scene scene1 = createOrReuse("1", new Creator<Child0Scene>() {
-            @Override
-            public Child0Scene call() {
-                return Child0Scene.newInstance(1);
-            }
-        });
-        Child0Scene scene2 = createOrReuse("2", new Creator<Child0Scene>() {
-            @Override
-            public Child0Scene call() {
-                return Child0Scene.newInstance(2);
-            }
-        });
-        Child0Scene scene3 = createOrReuse("3", new Creator<Child0Scene>() {
-            @Override
-            public Child0Scene call() {
-                return Child0Scene.newInstance(3);
-            }
-        });
-
-        if (!isAdded(scene))
-            add(R.id.block_0, scene, "0");
-        if (!isAdded(scene1))
-            add(R.id.block_1, scene1, "1");
-        if (!isAdded(scene2))
-            add(R.id.block_2, scene2, "2");
-        if (!isAdded(scene3))
-            add(R.id.block_3, scene3, "3");
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        val scene = createOrReuse("0") { Child0Scene.newInstance(0) }
+        val scene1 = createOrReuse("1") { Child0Scene.newInstance(1) }
+        val scene2 = createOrReuse("2") { Child0Scene.newInstance(2) }
+        val scene3 = createOrReuse("3") { Child0Scene.newInstance(3) }
+        if (!isAdded(scene)) add(R.id.block_0, scene, "0")
+        if (!isAdded(scene1)) add(R.id.block_1, scene1, "1")
+        if (!isAdded(scene2)) add(R.id.block_2, scene2, "2")
+        if (!isAdded(scene3)) add(R.id.block_3, scene3, "3")
     }
 
-    public static class Child0Scene extends Scene {
-
-        public static Child0Scene newInstance(int index) {
-            Child0Scene scene = new Child0Scene();
-            Bundle bundle = new Bundle();
-            bundle.putInt("index", index);
-            scene.setArguments(bundle);
-            return scene;
+    class Child0Scene : Scene() {
+        override fun onCreateView(inflater: LayoutInflater, container: ViewGroup, savedInstanceState: Bundle?): View {
+            return View(activity)
         }
 
-        @NonNull
-        @Override
-        public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-            return new View(getActivity());
+        override fun onActivityCreated(savedInstanceState: Bundle?) {
+            super.onActivityCreated(savedInstanceState)
+            val index = arguments!!.getInt("index", 0)
+            view.setBackgroundColor(ColorUtil.getMaterialColor(resources, index))
+            view.setOnClickListener {
+                val inheritedScene: InheritedDemo? = scope.getService(InheritedDemo::class.java)
+                inheritedScene?.summary?.text = "Child Scene$index"
+            }
         }
 
-        @Override
-        public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-            super.onActivityCreated(savedInstanceState);
-            final int index = getArguments().getInt("index", 0);
-            getView().setBackgroundColor(ColorUtil.getMaterialColor(getResources(), index));
-
-            getView().setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    InheritedDemo inheritedScene = getScope().getService(InheritedDemo.class);
-                    inheritedScene.summary.setText("Child Scene" + index);
-                }
-            });
+        companion object {
+            fun newInstance(index: Int): Child0Scene {
+                val scene = Child0Scene()
+                val bundle = Bundle()
+                bundle.putInt("index", index)
+                scene.setArguments(bundle)
+                return scene
+            }
         }
     }
 }
