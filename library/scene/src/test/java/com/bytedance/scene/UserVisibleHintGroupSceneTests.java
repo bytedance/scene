@@ -19,8 +19,7 @@ import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
 import static junit.framework.Assert.assertFalse;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 
 @RunWith(RobolectricTestRunner.class)
@@ -124,6 +123,8 @@ public class UserVisibleHintGroupSceneTests {
         assertEquals(childScene.getState(), State.NONE);
         assertFalse(testScene.isVisible());
         assertTrue(testScene.getUserVisibleHint());
+
+        assertNotNull(testScene.getUserVisibleHintLifecycleOwner());
     }
 
     /**

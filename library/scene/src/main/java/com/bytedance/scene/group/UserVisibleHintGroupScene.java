@@ -137,6 +137,11 @@ public abstract class UserVisibleHintGroupScene extends GroupScene {
         return this.mUserVisibleLifecycleOwner.getLifecycle();
     }
 
+    @NonNull
+    public LifecycleOwner getUserVisibleHintLifecycleOwner() {
+        return this.mUserVisibleLifecycleOwner;
+    }
+
     @Override
     public boolean isVisible() {
         return super.isVisible() && mUserVisibleHint;
