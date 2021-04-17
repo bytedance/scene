@@ -1,100 +1,78 @@
-package com.bytedance.scenedemo;
+package com.bytedance.scenedemo
 
-import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import android.view.Gravity;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.LinearLayout;
-import android.widget.Space;
-import android.widget.TextView;
-
-import com.bytedance.scene.group.UserVisibleHintGroupScene;
-import com.bytedance.scenedemo.animation.AnimationResDemoScene;
-import com.bytedance.scenedemo.animation.SlideBackButtonDemoScene;
-import com.bytedance.scenedemo.animation.SwipeBackDemo;
-import com.bytedance.scenedemo.animation.TransitionDemo;
+import com.bytedance.scene.group.UserVisibleHintGroupScene
+import android.view.LayoutInflater
+import android.view.ViewGroup
+import android.os.Bundle
+import android.view.View
+import android.widget.Button
+import android.widget.LinearLayout
+import android.widget.Space
+import com.bytedance.scenedemo.R
+import com.bytedance.scenedemo.animation.AnimationResDemoScene
+import com.bytedance.scenedemo.animation.SwipeBackDemo
+import com.bytedance.scenedemo.animation.SlideBackButtonDemoScene
+import com.bytedance.scenedemo.animation.TransitionDemo
+import android.widget.TextView
 
 /**
  * Created by JiangQi on 8/9/18.
  */
-public class AnimationListDemoScene extends UserVisibleHintGroupScene {
-
-    public Button mInteractionButton;
-
-    @NonNull
-    @Override
-    public ViewGroup onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        LinearLayout layout = new LinearLayout(getActivity());
-        layout.setOrientation(LinearLayout.VERTICAL);
-
-        addSpace(layout, 12);
-        addTitle(layout, getString(R.string.main_title_basic));
-
-        addButton(layout, getString(R.string.main_anim_btn_res_anim), new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                requireNavigationScene().push(AnimationResDemoScene.class);
-            }
-        });
-
-        addButton(layout, getString(R.string.main_anim_btn_swipe_back), new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                requireNavigationScene().push(SwipeBackDemo.class);
-            }
-        });
-
-        addTitle(layout, getString(R.string.main_title_pro));
-
-        mInteractionButton = addButton(layout, getString(R.string.main_anim_btn_ios_anim), new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                requireNavigationScene().push(SlideBackButtonDemoScene.class);
-            }
-        });
-
-        addButton(layout, getString(R.string.main_anim_btn_share_element), new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                requireNavigationScene().push(TransitionDemo.class);
-            }
-        });
-
-        addSpace(layout, 100);
-
-        return layout;
+class AnimationListDemoScene : UserVisibleHintGroupScene() {
+    @JvmField
+    var mInteractionButton: Button? = null
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup, savedInstanceState: Bundle?): ViewGroup {
+        val layout = LinearLayout(activity)
+        layout.orientation = LinearLayout.VERTICAL
+        addSpace(layout, 12)
+        addTitle(layout, getString(R.string.main_title_basic))
+        addButton(
+            layout,
+            getString(R.string.main_anim_btn_res_anim),
+            View.OnClickListener { requireNavigationScene().push(AnimationResDemoScene::class.java) })
+        addButton(
+            layout,
+            getString(R.string.main_anim_btn_swipe_back),
+            View.OnClickListener { requireNavigationScene().push(SwipeBackDemo::class.java) })
+        addTitle(layout, getString(R.string.main_title_pro))
+        mInteractionButton = addButton(
+            layout,
+            getString(R.string.main_anim_btn_ios_anim),
+            View.OnClickListener { requireNavigationScene().push(SlideBackButtonDemoScene::class.java) })
+        addButton(
+            layout,
+            getString(R.string.main_anim_btn_share_element),
+            View.OnClickListener { requireNavigationScene().push(TransitionDemo::class.java) })
+        addSpace(layout, 100)
+        return layout
     }
 
-    private void addTitle(LinearLayout parent, String text) {
-        TextView textView = new TextView(getActivity());
-        textView.setTextSize(14);
-        textView.setText(text);
-        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        lp.leftMargin = 30;
-        lp.rightMargin = 30;
-        lp.topMargin = 24;
-        lp.bottomMargin = 24;
-        parent.addView(textView, lp);
+    private fun addTitle(parent: LinearLayout, text: String) {
+        val textView = TextView(activity)
+        textView.textSize = 14f
+        textView.text = text
+        val lp = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+        lp.leftMargin = 30
+        lp.rightMargin = 30
+        lp.topMargin = 24
+        lp.bottomMargin = 24
+        parent.addView(textView, lp)
     }
 
-    private Button addButton(LinearLayout parent, String text, View.OnClickListener onClickListener) {
-        Button button = new Button(getActivity());
-        button.setAllCaps(false);
-        button.setText(text);
-        button.setOnClickListener(onClickListener);
-        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 150);
-        lp.leftMargin = 20;
-        lp.rightMargin = 20;
-        parent.addView(button, lp);
-        return button;
+    private fun addButton(parent: LinearLayout, text: String, onClickListener: View.OnClickListener): Button {
+        val button = Button(activity)
+        button.isAllCaps = false
+        button.text = text
+        button.setOnClickListener(onClickListener)
+        val lp = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 150)
+        lp.leftMargin = 20
+        lp.rightMargin = 20
+        parent.addView(button, lp)
+        return button
     }
 
-    private void addSpace(LinearLayout parent, int height) {
-        Space space = new Space(getActivity());
-        parent.addView(space, ViewGroup.LayoutParams.MATCH_PARENT, height);
+    private fun addSpace(parent: LinearLayout, height: Int) {
+        val space = Space(activity)
+        parent.addView(space, ViewGroup.LayoutParams.MATCH_PARENT, height)
     }
 }
