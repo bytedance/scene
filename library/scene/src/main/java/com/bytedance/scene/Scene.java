@@ -39,6 +39,7 @@ import androidx.lifecycle.ViewModelStore;
 import androidx.lifecycle.ViewModelStoreOwner;
 
 import com.bytedance.scene.navigation.NavigationScene;
+import com.bytedance.scene.navigation.NavigationSceneGetter;
 import com.bytedance.scene.parcel.ParcelConstants;
 import com.bytedance.scene.utlity.ViewRefUtility;
 import com.bytedance.scene.utlity.SceneInternalException;
@@ -134,7 +135,11 @@ public abstract class Scene implements LifecycleOwner, ViewModelStoreOwner {
     private Scene mParentScene;
     private Scope.RootScopeFactory mRootScopeFactory = Scope.DEFAULT_ROOT_SCOPE_FACTORY;
     private Scope mScope;
-    private NavigationScene mNavigationScene;
+    /**
+     * use NavigationSceneGetter instead
+     */
+    @Deprecated
+    private Object mNavigationScene;
     private State mState = State.NONE;
     private final StringBuilder mStateHistoryBuilder = new StringBuilder(mState.name);
     private Bundle mArguments;
@@ -280,11 +285,6 @@ public abstract class Scene implements LifecycleOwner, ViewModelStoreOwner {
     public void dispatchAttachScene(@Nullable Scene parentScene) {
         if (parentScene != null) {
             this.mParentScene = parentScene;
-            if (this.mParentScene instanceof NavigationScene) {
-                this.mNavigationScene = (NavigationScene) this.mParentScene;
-            } else {
-                this.mNavigationScene = this.mParentScene.getNavigationScene();
-            }
         }
         mCalled = false;
         onAttach();
@@ -839,23 +839,12 @@ public abstract class Scene implements LifecycleOwner, ViewModelStoreOwner {
 
     @Nullable
     public final NavigationScene getNavigationScene() {
-        return this.mNavigationScene;
+        return NavigationSceneGetter.getNavigationScene(this);
     }
 
     @NonNull
     public final NavigationScene requireNavigationScene() {
-        NavigationScene navigationScene = getNavigationScene();
-        if (navigationScene == null) {
-            Context context = getApplicationContext();
-            if (context == null) {
-                throw new IllegalStateException("Scene " + this + " is not attached to any Scene");
-            } else if (this instanceof NavigationScene) {
-                throw new IllegalStateException("Scene " + this + " is root Scene");
-            } else {
-                throw new IllegalStateException("The root of the Scene hierarchy is not NavigationScene");
-            }
-        }
-        return navigationScene;
+        return NavigationSceneGetter.requireNavigationScene(this);
     }
 
     @MainThread
