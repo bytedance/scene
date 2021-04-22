@@ -60,22 +60,37 @@ import static androidx.lifecycle.Lifecycle.State.DESTROYED;
  * (NavigationScene cannot be inherited)
  *
  * When entering:
- * 1.Parent: onAttach -> onCreate -> onCreateView -> onViewCreated -> onActivityCreated
- *   (All child Scenes start the life cycle process after NavigationAccCreate's onActivityCreated)
- *   (The previously pushed Scene will be cached)
- * 2.Child: onAttach -> onCreate -> onCreateView -> onViewCreated -> onActivityCreated
- * 3.Parent: onStart
- * 4.Child: onStart
- * 5.Parent: onResume
- * 6.Child: onResume
+ *
+ *                                                                                         +-------------------------+
+ *                                                                                         |      Child onStart      |
+ *                                                                                         +-------------------------+
+ *                                                                                           ^
+ *                                                                                           | sync
+ *                                                                                           |
+ * +--------------------------+     +--------------------+     +---------------------+     +-------------------------+     +-----------------+     +----------------+
+ * | Parent onActivityCreated | --> |       sync_1       | --> |   Parent onStart    | --> |         sync_2          | --> | Parent onResume | --> |     sync_3     | ---
+ * +--------------------------+     +--------------------+     +---------------------+     +-------------------------+     +-----------------+     +----------------+
+ *                                    |                                                                                                              |
+ *                                    | sync                                                                                                         | sync
+ *                                    v                                                                                                              v
+ *                                  +--------------------+     +---------------------+     +-------------------------+                             +----------------+
+ *                                  | Child onCreateView | --> | Child onViewCreated | --> | Child onActivityCreated |                             | Child onResume |
+ *                                  +--------------------+     +---------------------+     +-------------------------+                             +----------------+
+ *
+ *
  *
  * When exiting:
- * 1.Child: onPause
- * 2.Parent: onPause
- * 3.Child: onStop
- * 4.Parent: onStop
- * 5.Child: onDestroyView -> onDestroy -> onDetach
- * 6.Parent: onDestroyView -> onDestroy -> onDetach
+ *
+ * +---------------+     +----------------+     +--------------+     +---------------+     +---------------------+     +----------------------+
+ * | Child onPause | --> |     sync_1     | --> | Child onStop | --> |    sync_2     | --> | Child onDestroyView | --> |        sync_3        | ---
+ * +---------------+     +----------------+     +--------------+     +---------------+     +---------------------+     +----------------------+
+ *                         |                                           |                                                 |
+ *                         | sync                                      | sync                                            | sync
+ *                         v                                           v                                                 v
+ *                       +----------------+                          +---------------+                                 +----------------------+
+ *                       | Parent onPause |                          | Parent onStop |                                 | Parent onDestroyView |
+ *                       +----------------+                          +---------------+                                 +----------------------+
+ *
  */
 public final class NavigationScene extends Scene implements NavigationListener, SceneParent, SuppressOperationAware {
     private static final String KEY_NAVIGATION_SCENE_SUPPORT_RESTORE_ARGUMENT = "bd-scene-navigation:support_restore";

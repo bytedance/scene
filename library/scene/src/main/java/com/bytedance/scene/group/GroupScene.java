@@ -48,30 +48,30 @@ import static androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP;
  *
  * When entering:
  *
- * 1. Parent: onAttach -> onCreate -> onCreateView -> onViewCreated
- *    (synchronize the state of child Scene)
- * 2. Child: onAttach -> onCreate -> onCreateView -> onViewCreated
- * 3. Parent: onActivityCreated
- *    (synchronize the state of child Scene)
- * 4. Child: onActivityCreated
- * 5. Parent: onStart
- *    (synchronize the state of child Scene)
- * 6. Child: onStart
- * 7. Parent: onResume
- *    (synchronize the state of child Scene)
- * 8. Child: onResume
+ * +----------------------+     +--------------------+     +--------------------------+     +-------------------------+     +----------------+     +---------------+     +-----------------+     +----------------+
+ * | Parent onViewCreated | --> |       sync_1       | --> | Parent onActivityCreated | --> |         sync_2          | --> | Parent onStart | --> |    sync_3     | --> | Parent onResume | --> |     sync_4     | ---
+ * +----------------------+     +--------------------+     +--------------------------+     +-------------------------+     +----------------+     +---------------+     +-----------------+     +----------------+
+ *                                |                                                           |                                                      |                                             |
+ *                                | sync                                                      | sync                                                 | sync                                        | sync
+ *                                v                                                           v                                                      v                                             v
+ *                              +--------------------+     +--------------------------+     +-------------------------+                            +---------------+                             +----------------+
+ *                              | Child onCreateView | --> |   Child onViewCreated    |     | Child onActivityCreated |                            | Child onStart |                             | Child onResume |
+ *                              +--------------------+     +--------------------------+     +-------------------------+                            +---------------+                             +----------------+
+ *
+ *
  *
  * When exiting:
  *
- *    (Force set state of Scene to State.STARTED)
- * 1. Child: onPause
- * 2. Parent: onPause
- *    (Force set state of Scene to State.ACTIVITY_CREATED)
- * 3. Child: onStop
- * 4. Parent: onStop
- *    (Force set state of Scene to State.NONE)
- * 3. Child: onDestroyView -> onDestroy -> onDetach
- * 4. Parent: onDestroyView -> onDestroy -> onDetach
+ * +---------------+     +----------------+     +--------------+     +---------------+     +---------------------+     +----------------------+
+ * | Child onPause | --> |     sync_1     | --> | Child onStop | --> |    sync_2     | --> | Child onDestroyView | --> |        sync_3        | ---
+ * +---------------+     +----------------+     +--------------+     +---------------+     +---------------------+     +----------------------+
+ *                         |                                           |                                                 |
+ *                         | sync                                      | sync                                            | sync
+ *                         v                                           v                                                 v
+ *                       +----------------+                          +---------------+                                 +----------------------+
+ *                       | Parent onPause |                          | Parent onStop |                                 | Parent onDestroyView |
+ *                       +----------------+                          +---------------+                                 +----------------------+
+ *
  *
  * TODO: Must support transaction, so we can add and hide without trigger onResume().
  *       Otherwise, ViewPager will be difficult to handle.

@@ -55,35 +55,35 @@ import static androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP;
  * Created by JiangQi on 7/30/18.
  * No back stack management
  *
- * onAttach
- * onCreate
- * onCreateView
- * onViewCreated
- * onActivityCreated
- * onViewStateRestored (only when App restore)
- * onStart
- * onResume
- *
- * onPause
- * onSaveInstanceState (only when Activity or Fragment is invisible)
- * onStop
- * onDestroyView
- * onDestroy
- * onDetach
- *
- * Initial state: NONE
- *
  * When entering:
- * 1.onAttach -> onCreate -> onCreateView -> onViewCreated: then set state to VIEW_CREATED
- * 2.onActivityCreated: set state to ACTIVITY_CREATED, and set Lifecycle to Lifecycle.Event.ON_CREATE
- * 3.onStart: set state to STARTED, and set Lifecycle to Lifecycle.Event.ON_START
- * 4.onResume: set state to RESUMED, and set Lifecycle to Lifecycle.Event.ON_RESUME
+ *
+ * +--------------+  getView() !=null   +---------------+  View attached to view tree   +-------------------+  Lifecycle.Event.ON_CREATE   +---------+  Lifecycle.Event.ON_START   +----------+  Lifecycle.Event.ON_RESUME
+ * | onCreateView | ------------------> | onViewCreated | ----------------------------> | onActivityCreated | ---------------------------> | onStart | --------------------------> | onResume | ----------------------------
+ * +--------------+                     +---------------+                               +-------------------+                              +---------+                             +----------+
+ *
  *
  * When exiting:
- * 1.onPause: set state to STARTED, and set Lifecycle to Lifecycle.Event.ON_PAUSE
- * 2.onStop: set state to ACTIVITY_CREATED, and set Lifecycle to Lifecycle.Event.ON_STOP
- * 3.onDestroyView: set state to NONE, and set Lifecycle to Lifecycle.Event.ON_DESTROY
- * 4.onDestroy -> onDetach
+ *
+ *      Lifecycle.Event.ON_PAUSE   +---------+  Lifecycle.Event.ON_STOP   +--------+  Lifecycle.Event.ON_DESTROY   +---------------+  getView() == null
+ *     --------------------------> | onPause | -------------------------> | onStop | ----------------------------> | onDestroyView | --------------------
+ *                                 +---------+                            +--------+                               +---------------+
+ *
+ *
+ * Saving and restoring transient UI state：
+ *
+ * onSaveInstanceState will occur before onDestroyView for applications targeting all platforms.
+ *
+ * onSaveInstanceState will occur after onStop for applications targeting platforms >= Android9/P
+ *
+ * saving:
+ * +---------------------+     +---------------+
+ * | onSaveInstanceState | --> | onDestroyView |
+ * +---------------------+     +---------------+
+ *
+ * restoring:
+ * +-------------------+     +---------------------+     +---------+
+ * | onActivityCreated | --> | onViewStateRestored | --> | onStart |
+ * +-------------------+     +---------------------+     +---------+
  *
  *
  * common usage
