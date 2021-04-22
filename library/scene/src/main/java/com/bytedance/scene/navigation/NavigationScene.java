@@ -552,7 +552,7 @@ public final class NavigationScene extends Scene implements NavigationListener, 
             createRootSceneIfNeeded();
         }
 
-        NavigationScene parentSceneNavigation = getNavigationScene();
+        NavigationScene parentSceneNavigation = NavigationSceneGetter.getNavigationScene(this);
         if (parentSceneNavigation != null) {
             parentSceneNavigation.addOnBackPressedListener(this, new OnBackPressedListener() {
                 @Override

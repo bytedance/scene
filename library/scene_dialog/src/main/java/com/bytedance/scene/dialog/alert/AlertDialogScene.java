@@ -37,6 +37,7 @@ import android.widget.ListView;
 import androidx.annotation.*;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.Lifecycle;
+import com.bytedance.scene.navigation.NavigationSceneGetter;
 import com.bytedance.scene.Scene;
 import com.bytedance.scene.dialog.DialogScene;
 import com.bytedance.scene.dialog.R;
@@ -192,7 +193,7 @@ public final class AlertDialogScene extends DialogScene implements DialogInterfa
             @Override
             public void onClick(View v) {
                 if (mCanceledOnTouchOutside) {
-                    requireNavigationScene().pop();
+                    NavigationSceneGetter.requireNavigationScene(AlertDialogScene.this).pop();
                 }
             }
         });
@@ -213,7 +214,7 @@ public final class AlertDialogScene extends DialogScene implements DialogInterfa
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        requireNavigationScene().addOnBackPressedListener(this, new OnBackPressedListener() {
+        NavigationSceneGetter.requireNavigationScene(this).addOnBackPressedListener(this, new OnBackPressedListener() {
             @Override
             public boolean onBackPressed() {
                 return !mCancelable;
@@ -351,7 +352,7 @@ public final class AlertDialogScene extends DialogScene implements DialogInterfa
         if (getLifecycle().getCurrentState() == Lifecycle.State.DESTROYED) {
             return;
         }
-        NavigationScene navigationScene = getNavigationScene();
+        NavigationScene navigationScene = NavigationSceneGetter.getNavigationScene(this);
         if (navigationScene != null) {
             navigationScene.remove(this);
             sendDismissMessage();

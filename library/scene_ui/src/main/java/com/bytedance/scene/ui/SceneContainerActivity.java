@@ -39,6 +39,7 @@ import com.bytedance.scene.interfaces.PushResultCallback;
 import com.bytedance.scene.navigation.NavigationScene;
 import com.bytedance.scene.navigation.NavigationSceneOptions;
 import com.bytedance.scene.utlity.AnimatorUtility;
+import com.bytedance.scene.navigation.NavigationSceneGetter;
 import com.bytedance.scene.utlity.CancellationSignal;
 import com.bytedance.scene.utlity.NonNullPair;
 
@@ -136,7 +137,7 @@ public class SceneContainerActivity extends AppCompatActivity implements SceneNa
             super.onActivityCreated(savedInstanceState);
             Intent intent = requireActivity().getIntent();
             NonNullPair<? extends Class<? extends Scene>, Bundle> pair = getSceneDataFromIntent(intent);
-            getNavigationScene().push(pair.first,
+            NavigationSceneGetter.requireNavigationScene(this).push(pair.first,
                     pair.second, new PushOptions.Builder().setAnimation(new KeepAnimationExecutor())
                             .setPushResultCallback(new PushResultCallback() {
                                 @Override

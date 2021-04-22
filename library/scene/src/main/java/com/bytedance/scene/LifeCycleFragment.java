@@ -27,7 +27,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
-import com.bytedance.scene.navigation.NavigationScene;
 import com.bytedance.scene.utlity.Utility;
 
 import static androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP;

@@ -29,6 +29,7 @@ import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.widget.Toolbar;
 import androidx.drawerlayout.widget.DrawerLayout;
 
+import com.bytedance.scene.navigation.NavigationSceneGetter;
 import com.bytedance.scene.Scene;
 import com.bytedance.scene.group.GroupScene;
 import com.bytedance.scene.navigation.OnBackPressedListener;
@@ -83,7 +84,7 @@ public abstract class NavigationViewScene extends GroupScene {
                 mDrawerLayout.openDrawer(Gravity.LEFT);
             }
         });
-        requireNavigationScene().addOnBackPressedListener(this, new OnBackPressedListener() {
+        NavigationSceneGetter.requireNavigationScene(this).addOnBackPressedListener(this, new OnBackPressedListener() {
             @Override
             public boolean onBackPressed() {
                 if (mDrawerLayout.isDrawerOpen(mNavigationView)) {

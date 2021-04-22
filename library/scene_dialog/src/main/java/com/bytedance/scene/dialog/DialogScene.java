@@ -17,6 +17,7 @@ package com.bytedance.scene.dialog;
 
 import android.app.Activity;
 import android.os.Build;
+import com.bytedance.scene.navigation.NavigationSceneGetter;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.Lifecycle;
 import com.bytedance.scene.Scene;
@@ -48,7 +49,7 @@ public abstract class DialogScene extends Scene {
             return;
         }
 
-        NavigationScene navigationScene = hostScene.getNavigationScene();
+        NavigationScene navigationScene = NavigationSceneGetter.getNavigationScene(hostScene);
         if (navigationScene == null) {
             return;
         }

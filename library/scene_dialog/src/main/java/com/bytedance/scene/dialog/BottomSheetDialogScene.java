@@ -29,6 +29,7 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.core.view.AccessibilityDelegateCompat;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.accessibility.AccessibilityNodeInfoCompat;
+import com.bytedance.scene.navigation.NavigationSceneGetter;
 import com.bytedance.scene.navigation.NavigationScene;
 import com.bytedance.scene.navigation.OnBackPressedListener;
 import com.bytedance.scene.utlity.Experimental;
@@ -92,7 +93,7 @@ public abstract class BottomSheetDialogScene extends DialogScene {
                     ViewGroup.LayoutParams.MATCH_PARENT);
         }
 
-        requireNavigationScene().addOnBackPressedListener(this, new OnBackPressedListener() {
+        NavigationSceneGetter.requireNavigationScene(this).addOnBackPressedListener(this, new OnBackPressedListener() {
             @Override
             public boolean onBackPressed() {
                 if (mBehavior.getState() != BottomSheetBehavior.STATE_COLLAPSED) {
@@ -223,7 +224,7 @@ public abstract class BottomSheetDialogScene extends DialogScene {
     };
 
     private void cancel() {
-        NavigationScene navigationScene = getNavigationScene();
+        NavigationScene navigationScene = NavigationSceneGetter.getNavigationScene(this);
         if (navigationScene != null) {
             navigationScene.remove(this);
         }

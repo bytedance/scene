@@ -23,6 +23,7 @@ import android.os.Bundle;
 import android.view.*;
 import androidx.annotation.*;
 import androidx.lifecycle.Lifecycle;
+import com.bytedance.scene.navigation.NavigationSceneGetter;
 import com.bytedance.scene.Scene;
 import com.bytedance.scene.animation.animatorexecutor.NoAnimationExecutor;
 import com.bytedance.scene.interfaces.PushOptions;
@@ -133,7 +134,7 @@ public class DialogContainerScene extends Scene implements DialogInterface.OnCan
             return;
         }
 
-        NavigationScene navigationScene = hostScene.getNavigationScene();
+        NavigationScene navigationScene = NavigationSceneGetter.getNavigationScene(hostScene);
         if (navigationScene == null) {
             return;
         }
@@ -160,7 +161,7 @@ public class DialogContainerScene extends Scene implements DialogInterface.OnCan
             mDialog.dismiss();
         }
         mViewDestroyed = true;
-        NavigationScene navigationScene = getNavigationScene();
+        NavigationScene navigationScene = NavigationSceneGetter.getNavigationScene(this);
         if (navigationScene != null) {
             navigationScene.remove(this);
         }

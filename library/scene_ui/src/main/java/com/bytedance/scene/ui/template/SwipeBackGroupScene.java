@@ -26,6 +26,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
+import com.bytedance.scene.navigation.NavigationSceneGetter;
 import com.bytedance.scene.Scene;
 import com.bytedance.scene.animation.animatorexecutor.NoAnimationExecutor;
 import com.bytedance.scene.animation.interaction.InteractionNavigationPopAnimationFactory;
@@ -106,7 +107,7 @@ public abstract class SwipeBackGroupScene extends GroupScene {
             @Override
             public boolean onBackPressed() {
                 interactionNavigationPopAnimationFactory.forceCancel();
-                requireNavigationScene().removeOnBackPressedListener(this);
+                NavigationSceneGetter.requireNavigationScene(SwipeBackGroupScene.this).removeOnBackPressedListener(this);
                 return true;
             }
         };
@@ -114,23 +115,23 @@ public abstract class SwipeBackGroupScene extends GroupScene {
         mSlidePercentFrameLayout.setCallback(new SlidePercentFrameLayout.Callback() {
             @Override
             public boolean isSupport() {
-                return requireNavigationScene().isInteractionNavigationPopSupport(interactionNavigationPopAnimationFactory);
+                return NavigationSceneGetter.requireNavigationScene(SwipeBackGroupScene.this).isInteractionNavigationPopSupport(interactionNavigationPopAnimationFactory);
             }
 
             @Override
             public void onStart() {
-                if (requireNavigationScene().pop(interactionNavigationPopAnimationFactory)) {
+                if (NavigationSceneGetter.requireNavigationScene(SwipeBackGroupScene.this).pop(interactionNavigationPopAnimationFactory)) {
                     Resources r = getResources();
                     float px = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8, r.getDisplayMetrics());
                     ViewCompat.setElevation(swipeContainerView, px);
                     backgroundView.setVisibility(View.VISIBLE);
-                    requireNavigationScene().addOnBackPressedListener(SwipeBackGroupScene.this, onBackPressedListener);
+                    NavigationSceneGetter.requireNavigationScene(SwipeBackGroupScene.this).addOnBackPressedListener(SwipeBackGroupScene.this, onBackPressedListener);
                 }
             }
 
             @Override
             public void onFinish() {
-                NavigationScene navigationScene = getNavigationScene();
+                NavigationScene navigationScene = NavigationSceneGetter.getNavigationScene(SwipeBackGroupScene.this);
                 if (navigationScene != null) {
                     navigationScene.removeOnBackPressedListener(onBackPressedListener);
                     interactionNavigationPopAnimationFactory.finish();
@@ -168,7 +169,7 @@ public abstract class SwipeBackGroupScene extends GroupScene {
     }
 
     protected void onSwipeBackEnd() {
-        getNavigationScene().pop(new PopOptions.Builder().setAnimation(new NoAnimationExecutor()).build());
+        NavigationSceneGetter.getNavigationScene(this).pop(new PopOptions.Builder().setAnimation(new NoAnimationExecutor()).build());
     }
 
     protected void onSwipeBackCancel() {

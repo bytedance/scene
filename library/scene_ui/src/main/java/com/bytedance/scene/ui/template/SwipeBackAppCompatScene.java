@@ -33,6 +33,7 @@ import androidx.annotation.StringRes;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.ViewCompat;
 
+import com.bytedance.scene.navigation.NavigationSceneGetter;
 import com.bytedance.scene.ui.view.NavigationBarView;
 import com.bytedance.scene.ui.view.StatusBarView;
 import com.bytedance.scene.ui.R;
@@ -75,7 +76,7 @@ abstract class SwipeBackAppCompatScene extends SwipeBackGroupScene {
         this.mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getNavigationScene().pop();
+                NavigationSceneGetter.requireNavigationScene(SwipeBackAppCompatScene.this).pop();
             }
         });
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
