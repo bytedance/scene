@@ -12,6 +12,7 @@ import com.bytedance.scene.animation.interaction.scenetransition.*
 import com.bytedance.scene.animation.interaction.scenetransition.visiblity.Slide
 import com.bytedance.scenedemo.animation.fullsharedelement.FullSharedElementAnimationScene1
 import com.bytedance.scene.interfaces.PushOptions
+import com.bytedance.scene.ktx.requireNavigationScene
 
 /**
  * Created by JiangQi on 10/19/18.

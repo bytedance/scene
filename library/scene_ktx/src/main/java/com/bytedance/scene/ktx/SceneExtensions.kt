@@ -27,10 +27,12 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.OnLifecycleEvent
 import com.bytedance.scene.ActivityCompatibilityUtility
+import com.bytedance.scene.navigation.NavigationSceneGetter
 import com.bytedance.scene.Scene
 import com.bytedance.scene.interfaces.ActivityResultCallback
 import com.bytedance.scene.interfaces.PermissionResultCallback
 import com.bytedance.scene.navigation.ConfigurationChangedListener
+import com.bytedance.scene.navigation.NavigationScene
 
 @Suppress("all")
 private val HANDLER by lazy { Handler(Looper.getMainLooper()) }
@@ -131,4 +133,13 @@ fun Scene.addConfigurationChangedListener(configurationChangedListener: (Configu
                     configurationChangedListener(newConfig)
                 })
     }
+}
+
+val Scene.navigationScene: NavigationScene?
+    get() {
+        return NavigationSceneGetter.getNavigationScene(this)
+    }
+
+fun Scene.requireNavigationScene(): NavigationScene {
+    return NavigationSceneGetter.requireNavigationScene(this)
 }

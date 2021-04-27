@@ -12,6 +12,7 @@ import com.bytedance.scenedemo.activity_compatibility.theme.ThemeDemo.TestTheme0
 import com.bytedance.scenedemo.activity_compatibility.theme.ThemeDemo.TestTheme1Scene
 import androidx.annotation.StyleRes
 import com.bytedance.scene.Scene
+import com.bytedance.scene.ktx.requireNavigationScene
 
 /**
  * Created by JiangQi on 11/9/18.

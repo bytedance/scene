@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
 import com.bytedance.scene.group.GroupScene
+import com.bytedance.scene.ktx.navigationScene
 import com.bytedance.scenedemo.R
 import com.bytedance.scenedemo.utility.ColorUtil
 

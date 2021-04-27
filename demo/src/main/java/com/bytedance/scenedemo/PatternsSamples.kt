@@ -8,6 +8,7 @@ import android.widget.LinearLayout
 import android.widget.ScrollView
 import android.widget.Toast
 import com.bytedance.scene.Scene
+import com.bytedance.scene.ktx.requireNavigationScene
 import com.bytedance.scenedemo.architecture_patterns.by_constructor.ByConstructorSample
 import com.bytedance.scenedemo.architecture_patterns.mvvm.ViewModelSceneSamples
 import com.bytedance.scenedemo.architecture_patterns.scope.ScopeSample

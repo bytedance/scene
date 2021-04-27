@@ -15,6 +15,7 @@ dependencies {
     implementation LIFECYCLE_EXTENSIONS_LIB
     implementation LIFECYCLE_RUNTIME_LIB
     api project(path: ':library:scene')
+    api project(path: ':library:scene_navigation')
 }
 
 task javadoc(type: Javadoc) {

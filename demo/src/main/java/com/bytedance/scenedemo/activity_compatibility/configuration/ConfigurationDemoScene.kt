@@ -10,6 +10,7 @@ import com.bytedance.scenedemo.R
 import android.widget.TextView
 import com.bytedance.scene.navigation.ConfigurationChangedListener
 import android.widget.Toast
+import com.bytedance.scene.ktx.requireNavigationScene
 import com.bytedance.scenedemo.utility.ColorUtil
 
 /**

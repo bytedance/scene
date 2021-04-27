@@ -12,6 +12,7 @@ import android.widget.EditText
 import android.text.TextUtils
 import android.view.inputmethod.InputMethodManager
 import android.widget.Button
+import com.bytedance.scene.ktx.navigationScene
 import com.bytedance.scenedemo.utility.ColorUtil
 
 /**

@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.widget.Button
 import com.bytedance.scenedemo.R
 import android.widget.TextView
+import com.bytedance.scene.ktx.requireNavigationScene
 import com.bytedance.scenedemo.navigation.singletask.SingleTaskDemoScene1
 import com.bytedance.scenedemo.utility.ColorUtil
 

@@ -19,6 +19,7 @@ dependencies {
     implementation APPCOMPAT_LIB
     implementation DESIGN_LIB
     api project(path: ':library:scene')
+    api project(path: ':library:scene_navigation')
 
     testImplementation ROBOLECTRIC
     testImplementation JUNIT

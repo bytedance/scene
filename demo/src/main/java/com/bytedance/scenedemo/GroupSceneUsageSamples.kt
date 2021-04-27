@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.ScrollView
 import com.bytedance.scene.group.UserVisibleHintGroupScene
+import com.bytedance.scene.ktx.requireNavigationScene
 import com.bytedance.scenedemo.group.async_inflate.AsyncInflateSceneDemo
 import com.bytedance.scenedemo.group.basic_usage.GroupSceneBasicUsageSample
 import com.bytedance.scenedemo.group.drawer.NavigationViewSample

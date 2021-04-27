@@ -10,6 +10,7 @@ import android.widget.TextView
 import com.bytedance.scene.Scene
 import com.bytedance.scene.interfaces.PushOptions
 import com.bytedance.scene.interfaces.PushOptions.SingleTopPredicate
+import com.bytedance.scene.ktx.navigationScene
 import com.bytedance.scenedemo.navigation.push_singletop.PushSingleTopScene_1
 import com.bytedance.scenedemo.utility.ColorUtil
 

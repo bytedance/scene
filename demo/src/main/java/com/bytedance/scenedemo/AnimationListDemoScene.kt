@@ -14,6 +14,7 @@ import com.bytedance.scenedemo.animation.SwipeBackDemo
 import com.bytedance.scenedemo.animation.SlideBackButtonDemoScene
 import com.bytedance.scenedemo.animation.TransitionDemo
 import android.widget.TextView
+import com.bytedance.scene.ktx.requireNavigationScene
 
 /**
  * Created by JiangQi on 8/9/18.

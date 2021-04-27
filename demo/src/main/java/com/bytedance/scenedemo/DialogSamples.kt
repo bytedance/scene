@@ -13,6 +13,7 @@ import com.bytedance.scene.Scene
 import com.bytedance.scene.animation.animatorexecutor.DialogSceneAnimatorExecutor
 import com.bytedance.scene.dialog.alert.AlertDialogScene
 import com.bytedance.scene.interfaces.PushOptions
+import com.bytedance.scene.ktx.requireNavigationScene
 import com.bytedance.scenedemo.dialog.BottomSheetDialogSample
 import com.bytedance.scenedemo.dialog.DemoDialogScene
 import com.bytedance.scenedemo.dialog.DemoDialogWithDimScene

@@ -14,6 +14,7 @@ import android.widget.Toast
 import android.os.Looper
 import android.view.View
 import android.widget.Button
+import com.bytedance.scene.ktx.navigationScene
 import com.bytedance.scenedemo.lifecycle.EmptyScene
 import com.bytedance.scenedemo.utility.ColorUtil
 

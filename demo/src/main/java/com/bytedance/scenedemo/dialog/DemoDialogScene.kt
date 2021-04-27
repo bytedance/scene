@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.TextView
 import com.bytedance.scene.Scene
+import com.bytedance.scene.ktx.requireNavigationScene
 import com.bytedance.scenedemo.utility.ColorUtil
 
 /**

@@ -8,6 +8,7 @@ import com.bytedance.scenedemo.R
 import android.content.Intent
 import android.view.View
 import android.widget.*
+import com.bytedance.scene.ktx.requireNavigationScene
 import com.bytedance.scenedemo.restore.SupportRestoreActivity
 import com.bytedance.scenedemo.extreme_case.Case0Scene
 import com.bytedance.scenedemo.extreme_case.Case1Scene

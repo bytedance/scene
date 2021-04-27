@@ -18,6 +18,8 @@ android {
 
 dependencies {
     api project(path: ':library:scene')
+    api project(path: ':library:scene_navigation')
+
     implementation ANNOTATION_LIB
     implementation LIFECYCLE_EXTENSIONS_LIB
     implementation KOTLIN_LIB

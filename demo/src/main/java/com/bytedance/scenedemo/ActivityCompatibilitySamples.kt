@@ -13,6 +13,7 @@ import android.widget.ScrollView
 import android.widget.Toast
 import com.bytedance.scene.Scene
 import com.bytedance.scene.ktx.requestPermissions
+import com.bytedance.scene.ktx.requireNavigationScene
 import com.bytedance.scenedemo.activity_compatibility.activity_result.SceneGetActivityResultSample
 import com.bytedance.scenedemo.activity_compatibility.configuration.ConfigurationDemoScene
 import com.bytedance.scenedemo.activity_compatibility.scene_result.ActivityGetSceneResultSampleActivity

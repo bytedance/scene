@@ -10,6 +10,7 @@ import android.view.View
 import com.bytedance.scenedemo.R
 import android.view.WindowManager
 import android.widget.Button
+import com.bytedance.scene.ktx.navigationScene
 import com.bytedance.scenedemo.activity_compatibility.softkeyboard.SoftKeyboardDemoScene
 import com.bytedance.scenedemo.utility.ColorUtil
 

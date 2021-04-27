@@ -12,6 +12,7 @@ import com.bytedance.scenedemo.R
 import android.widget.ScrollView
 import com.bytedance.scene.Scene
 import com.bytedance.scene.interfaces.ChildSceneLifecycleAdapterCallbacks
+import com.bytedance.scene.ktx.navigationScene
 import com.bytedance.scenedemo.utility.ColorUtil
 import java.lang.StringBuilder
 

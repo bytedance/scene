@@ -38,8 +38,6 @@ import androidx.lifecycle.LifecycleRegistry;
 import androidx.lifecycle.ViewModelStore;
 import androidx.lifecycle.ViewModelStoreOwner;
 
-import com.bytedance.scene.navigation.NavigationScene;
-import com.bytedance.scene.navigation.NavigationSceneGetter;
 import com.bytedance.scene.parcel.ParcelConstants;
 import com.bytedance.scene.utlity.ViewRefUtility;
 import com.bytedance.scene.utlity.SceneInternalException;
@@ -135,11 +133,6 @@ public abstract class Scene implements LifecycleOwner, ViewModelStoreOwner {
     private Scene mParentScene;
     private Scope.RootScopeFactory mRootScopeFactory = Scope.DEFAULT_ROOT_SCOPE_FACTORY;
     private Scope mScope;
-    /**
-     * use NavigationSceneGetter instead
-     */
-    @Deprecated
-    private Object mNavigationScene;
     private State mState = State.NONE;
     private final StringBuilder mStateHistoryBuilder = new StringBuilder(mState.name);
     private Bundle mArguments;
@@ -530,7 +523,6 @@ public abstract class Scene implements LifecycleOwner, ViewModelStoreOwner {
     @RestrictTo(LIBRARY_GROUP)
     public void dispatchDetachScene() {
         this.mParentScene = null;
-        this.mNavigationScene = null;
     }
 
     /** @hide */
@@ -835,16 +827,6 @@ public abstract class Scene implements LifecycleOwner, ViewModelStoreOwner {
             }
         }
         return parentScene;
-    }
-
-    @Nullable
-    public final NavigationScene getNavigationScene() {
-        return NavigationSceneGetter.getNavigationScene(this);
-    }
-
-    @NonNull
-    public final NavigationScene requireNavigationScene() {
-        return NavigationSceneGetter.requireNavigationScene(this);
     }
 
     @MainThread

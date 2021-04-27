@@ -14,6 +14,7 @@ import android.widget.Button
 import android.widget.ImageView
 import com.bytedance.scenedemo.navigation.forresult.TestActivityResultActivity
 import android.widget.Toast
+import com.bytedance.scene.ktx.requireNavigationScene
 
 /**
  * Created by JiangQi on 8/3/18.

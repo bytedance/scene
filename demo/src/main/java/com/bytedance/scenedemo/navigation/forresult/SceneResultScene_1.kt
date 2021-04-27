@@ -9,6 +9,8 @@ import android.widget.EditText
 import android.widget.TextView
 
 import com.bytedance.scene.Scene
+import com.bytedance.scene.ktx.navigationScene
+import com.bytedance.scene.ktx.requireNavigationScene
 import com.bytedance.scenedemo.R
 import com.bytedance.scenedemo.utility.ColorUtil
 

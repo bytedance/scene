@@ -12,6 +12,7 @@ import com.bytedance.scene.interfaces.PushOptions
 import com.bytedance.scene.animation.animatorexecutor.HorizontalTransitionAnimatorExecutor
 import android.widget.LinearLayout
 import com.bytedance.scene.Scene
+import com.bytedance.scene.ktx.navigationScene
 import com.bytedance.scenedemo.utility.ColorUtil
 
 /**

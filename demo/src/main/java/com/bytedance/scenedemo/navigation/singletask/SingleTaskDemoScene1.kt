@@ -9,6 +9,7 @@ import com.bytedance.scenedemo.R
 import android.widget.TextView
 import com.bytedance.scene.interfaces.PushOptions
 import com.bytedance.scene.interfaces.PushOptions.SingleTaskPredicate
+import com.bytedance.scene.ktx.requireNavigationScene
 import com.bytedance.scenedemo.navigation.singletask.SingleTaskDemoScene
 import com.bytedance.scenedemo.utility.ColorUtil
 

@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.ScrollView
 import com.bytedance.scene.group.UserVisibleHintGroupScene
+import com.bytedance.scene.ktx.requireNavigationScene
 import com.bytedance.scenedemo.navigation.forresult.SceneResultScene_0
 import com.bytedance.scenedemo.navigation.popinterupt.PopInterruptScene
 import com.bytedance.scenedemo.navigation.popto.PopToScene

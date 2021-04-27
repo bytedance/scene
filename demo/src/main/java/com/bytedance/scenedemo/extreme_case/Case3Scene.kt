@@ -21,6 +21,7 @@ import androidx.interpolator.view.animation.LinearOutSlowInInterpolator
 import com.bytedance.scene.Scene
 import com.bytedance.scene.animation.AnimationInfo
 import com.bytedance.scene.animation.TransitionUtils
+import com.bytedance.scene.ktx.navigationScene
 import com.bytedance.scenedemo.lifecycle.EmptyScene
 import com.bytedance.scenedemo.utility.ColorUtil
 

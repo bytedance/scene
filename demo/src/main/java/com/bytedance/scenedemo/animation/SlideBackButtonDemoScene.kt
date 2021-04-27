@@ -10,7 +10,6 @@ import com.bytedance.scene.animation.interaction.InteractionNavigationPopAnimati
 import com.bytedance.scene.animation.interaction.progressanimation.InteractionAnimation
 import com.bytedance.scenedemo.MainScene
 import com.bytedance.scenedemo.AnimationListDemoScene
-import com.bytedance.scenedemo.animation.SlideBackButtonDemoScene
 import com.bytedance.scene.animation.interaction.progressanimation.InteractionAnimationBuilder
 import com.bytedance.scene.animation.interaction.progressanimation.DrawableAnimationBuilder
 import com.bytedance.scene.interfaces.PopOptions
@@ -21,6 +20,7 @@ import android.view.View
 import android.widget.Button
 import com.bytedance.scene.Scene
 import com.bytedance.scene.group.GroupScene
+import com.bytedance.scene.ktx.requireNavigationScene
 import com.bytedance.scenedemo.utility.ColorUtil
 import java.util.ArrayList
 

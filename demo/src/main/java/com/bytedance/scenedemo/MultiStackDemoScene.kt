@@ -9,6 +9,7 @@ import android.widget.ScrollView
 import com.bytedance.scene.Scene
 import com.bytedance.scene.animation.animatorexecutor.HorizontalTransitionAnimatorExecutor
 import com.bytedance.scene.interfaces.PushOptions
+import com.bytedance.scene.ktx.requireNavigationScene
 import com.bytedance.scene.navigation.NavigationScene
 import com.bytedance.scene.navigation.NavigationSceneOptions
 import com.bytedance.scenedemo.multi_stack.MultiStackTabGroupScene

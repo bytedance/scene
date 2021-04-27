@@ -8,6 +8,7 @@ import android.widget.Button
 import com.bytedance.scenedemo.R
 import android.widget.TextView
 import com.bytedance.scene.Scene
+import com.bytedance.scene.ktx.navigationScene
 import com.bytedance.scenedemo.navigation.pushandclear.PushClearScene_0
 import com.bytedance.scenedemo.utility.ColorUtil
 

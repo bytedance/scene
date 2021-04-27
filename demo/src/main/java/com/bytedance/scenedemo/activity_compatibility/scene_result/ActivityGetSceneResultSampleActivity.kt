@@ -12,6 +12,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.FrameLayout
 import com.bytedance.scene.Scene
+import com.bytedance.scene.ktx.requireNavigationScene
 
 /**
  * Created by JiangQi on 9/18/18.

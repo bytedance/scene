@@ -16,6 +16,7 @@ import androidx.transition.AutoTransition
 import androidx.transition.ChangeTransform
 import androidx.transition.Slide
 import androidx.transition.Transition
+import com.bytedance.scene.ktx.requireNavigationScene
 import com.bytedance.scenedemo.utility.ColorUtil
 
 /**

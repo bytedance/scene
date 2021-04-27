@@ -8,6 +8,7 @@ import android.widget.Button
 import com.bytedance.scenedemo.R
 import android.widget.TextView
 import com.bytedance.scene.interfaces.PushOptions
+import com.bytedance.scene.ktx.navigationScene
 import com.bytedance.scenedemo.utility.ColorUtil
 
 /**
