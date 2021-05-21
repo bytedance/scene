@@ -18,21 +18,17 @@ package com.bytedance.scene.navigation;
 import android.content.Context;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.annotation.RestrictTo;
-import androidx.lifecycle.*;
 import com.bytedance.scene.Scene;
-import com.bytedance.scene.navigation.NavigationScene;
 import com.bytedance.scene.utlity.ThreadUtility;
 
-import java.util.WeakHashMap;
-
-import static androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP;
-
 /**
- * @hide
+ * Traverse the Scene's ancestor until it finds NavigationScene
  */
-@RestrictTo(LIBRARY_GROUP)
-public class NavigationSceneGetter {
+public final class NavigationSceneGetter {
+    private NavigationSceneGetter() {
+        //empty
+    }
+
     @Nullable
     public static NavigationScene getNavigationScene(@NonNull final Scene scene) {
         ThreadUtility.checkUIThread();
