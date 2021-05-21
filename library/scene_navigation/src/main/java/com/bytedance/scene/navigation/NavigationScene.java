@@ -224,16 +224,16 @@ public final class NavigationScene extends Scene implements NavigationListener, 
         mNavigationSceneManager.push(rootScene, new PushOptions.Builder().build());
     }
 
-    public void push(@NonNull Class<? extends Scene> clazz) {
-        push(clazz, null, new PushOptions.Builder().build());
-    }
-
-    public void push(@NonNull Class<? extends Scene> clazz, Bundle argument) {
-        push(clazz, argument, new PushOptions.Builder().build());
-    }
-
     void addToReusePool(@NonNull ReuseGroupScene scene) {
         mLruCache.put(scene.getClass(), scene);
+    }
+
+    public void push(@NonNull Class<? extends Scene> clazz) {
+        push(clazz, null);
+    }
+
+    public void push(@NonNull Class<? extends Scene> clazz, @Nullable Bundle argument) {
+        push(clazz, argument, null);
     }
 
     /**
@@ -242,10 +242,6 @@ public final class NavigationScene extends Scene implements NavigationListener, 
      * @see #pop()
      */
     public void push(@NonNull Class<? extends Scene> clazz, @Nullable Bundle argument, @Nullable PushOptions pushOptions) {
-        if (!Utility.isActivityStatusValid(getActivity())) {
-            return;
-        }
-
         Scene scene = null;
         if (ReuseGroupScene.class.isAssignableFrom(clazz)) {
             scene = mLruCache.get(clazz);
@@ -259,14 +255,18 @@ public final class NavigationScene extends Scene implements NavigationListener, 
             }
         }
 
-        push(scene, pushOptions);
+        pushInstance(scene, pushOptions);
     }
 
     public void push(@NonNull Scene scene) {
-        push(scene, new PushOptions.Builder().build());
+        pushInstance(scene, null);
     }
 
     public void push(@NonNull Scene scene, @Nullable PushOptions pushOptions) {
+        pushInstance(scene, pushOptions);
+    }
+
+    private void pushInstance(@NonNull Scene scene, @Nullable PushOptions pushOptions) {
         ThreadUtility.checkUIThread();
 
         if (!Utility.isActivityStatusValid(getActivity())) {
@@ -283,6 +283,10 @@ public final class NavigationScene extends Scene implements NavigationListener, 
         if (isSupportRestore() && !SceneInstanceUtility.isSupportRestore(scene)) {
             throw new IllegalArgumentException("Scene " + scene.getClass().getName() + " must be a public class or public static class, " +
                     "and have only one parameterless constructor to be properly recreated from instance state.");
+        }
+
+        if (pushOptions == null) {
+            pushOptions = new PushOptions.Builder().build();
         }
 
         hideSoftInputIfNeeded();
