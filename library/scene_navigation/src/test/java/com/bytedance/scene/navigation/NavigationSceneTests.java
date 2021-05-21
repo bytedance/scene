@@ -21,6 +21,7 @@ import org.robolectric.annotation.Config;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
+import static com.bytedance.scene.navigation.NavigationSceneGetter.requireNavigationScene;
 import static org.junit.Assert.*;
 
 @RunWith(RobolectricTestRunner.class)
@@ -85,7 +86,7 @@ public class NavigationSceneTests {
             @Override
             public void onActivityCreated(@Nullable Bundle savedInstanceState) {
                 super.onActivityCreated(savedInstanceState);
-                requireNavigationScene().setResult(this, "VALUE");
+                requireNavigationScene(this).setResult(this, "VALUE");
             }
         }, new PushOptions.Builder().setPushResultCallback(new PushResultCallback() {
             @Override

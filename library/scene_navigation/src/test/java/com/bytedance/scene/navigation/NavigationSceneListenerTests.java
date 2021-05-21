@@ -26,6 +26,7 @@ import org.robolectric.annotation.Config;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import static com.bytedance.scene.navigation.NavigationSceneGetter.requireNavigationScene;
 import static org.junit.Assert.*;
 
 @RunWith(RobolectricTestRunner.class)
@@ -87,7 +88,7 @@ public class NavigationSceneListenerTests {
             @Override
             public void onActivityCreated(@Nullable Bundle savedInstanceState) {
                 super.onActivityCreated(savedInstanceState);
-                requireNavigationScene().addOnBackPressedListener(this, new OnBackPressedListener() {
+                requireNavigationScene(this).addOnBackPressedListener(this, new OnBackPressedListener() {
                     @Override
                     public boolean onBackPressed() {
                         value[0] = true;
@@ -121,7 +122,7 @@ public class NavigationSceneListenerTests {
             @Override
             public void onActivityCreated(@Nullable Bundle savedInstanceState) {
                 super.onActivityCreated(savedInstanceState);
-                requireNavigationScene().addOnBackPressedListener(this, new OnBackPressedListener() {
+                requireNavigationScene(this).addOnBackPressedListener(this, new OnBackPressedListener() {
                     @Override
                     public boolean onBackPressed() {
                         value[0] = true;
@@ -163,7 +164,7 @@ public class NavigationSceneListenerTests {
             @Override
             public void onActivityCreated(@Nullable Bundle savedInstanceState) {
                 super.onActivityCreated(savedInstanceState);
-                requireNavigationScene().addOnBackPressedListener(this, new OnBackPressedListener() {
+                requireNavigationScene(this).addOnBackPressedListener(this, new OnBackPressedListener() {
                     @Override
                     public boolean onBackPressed() {
                         value[0] = true;

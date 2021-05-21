@@ -21,6 +21,7 @@ import org.robolectric.annotation.LooperMode;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static android.os.Looper.getMainLooper;
+import static com.bytedance.scene.navigation.NavigationSceneGetter.requireNavigationScene;
 import static org.junit.Assert.*;
 import static org.robolectric.Shadows.shadowOf;
 import static org.robolectric.annotation.LooperMode.Mode.PAUSED;
@@ -80,15 +81,15 @@ public class NavigationSuppressStackOperationTests {
                         return new View(requireSceneContext());
                     }
                 };
-                requireNavigationScene().push(second);
-                assertEquals(this, requireNavigationScene().getCurrentScene());
-                assertNotEquals(second, requireNavigationScene().getCurrentScene());
+                requireNavigationScene(this).push(second);
+                assertEquals(this, requireNavigationScene(this).getCurrentScene());
+                assertNotEquals(second, requireNavigationScene(this).getCurrentScene());
                 called.set(true);
             }
         };
         NavigationSourceUtility.createFromSceneLifecycleManager(rootScene);
         shadowOf(getMainLooper()).idle();//execute Handler posted task
-        assertNotEquals(rootScene, rootScene.requireNavigationScene().getCurrentScene());
+        assertNotEquals(rootScene, requireNavigationScene(rootScene).getCurrentScene());
         assertTrue(called.get());
     }
 
@@ -113,8 +114,8 @@ public class NavigationSuppressStackOperationTests {
             @Override
             public void onActivityCreated(@Nullable Bundle savedInstanceState) {
                 super.onActivityCreated(savedInstanceState);
-                requireNavigationScene().pop();
-                assertEquals(this, requireNavigationScene().getCurrentScene());
+                requireNavigationScene(this).pop();
+                assertEquals(this, requireNavigationScene(this).getCurrentScene());
                 called.set(true);
             }
         };
@@ -145,8 +146,8 @@ public class NavigationSuppressStackOperationTests {
             @Override
             public void onActivityCreated(@Nullable Bundle savedInstanceState) {
                 super.onActivityCreated(savedInstanceState);
-                requireNavigationScene().remove(this);
-                assertEquals(this, requireNavigationScene().getCurrentScene());
+                requireNavigationScene(this).remove(this);
+                assertEquals(this, requireNavigationScene(this).getCurrentScene());
                 called.set(true);
             }
         };
@@ -176,9 +177,9 @@ public class NavigationSuppressStackOperationTests {
                         return new View(requireSceneContext());
                     }
                 };
-                requireNavigationScene().push(second);
-                assertEquals(this, requireNavigationScene().getCurrentScene());
-                assertNotEquals(second, requireNavigationScene().getCurrentScene());
+                requireNavigationScene(this).push(second);
+                assertEquals(this, requireNavigationScene(this).getCurrentScene());
+                assertNotEquals(second, requireNavigationScene(this).getCurrentScene());
                 called.set(true);
             }
         };
@@ -189,7 +190,7 @@ public class NavigationSuppressStackOperationTests {
         lifecycleManager.onResume();
         lifecycleManager.onPause();
         shadowOf(getMainLooper()).idle();//execute Handler posted task
-        assertNotEquals(rootScene, rootScene.requireNavigationScene().getCurrentScene());
+        assertNotEquals(rootScene, requireNavigationScene(rootScene).getCurrentScene());
         assertTrue(called.get());
     }
 
@@ -221,8 +222,8 @@ public class NavigationSuppressStackOperationTests {
             @Override
             public void onPause() {
                 super.onPause();
-                requireNavigationScene().pop();
-                assertEquals(this, requireNavigationScene().getCurrentScene());
+                requireNavigationScene(this).pop();
+                assertEquals(this, requireNavigationScene(this).getCurrentScene());
                 called.set(true);
             }
         };
@@ -262,8 +263,8 @@ public class NavigationSuppressStackOperationTests {
             @Override
             public void onPause() {
                 super.onPause();
-                requireNavigationScene().remove(this);
-                assertEquals(this, requireNavigationScene().getCurrentScene());
+                requireNavigationScene(this).remove(this);
+                assertEquals(this, requireNavigationScene(this).getCurrentScene());
                 called.set(true);
             }
         };
