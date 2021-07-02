@@ -24,7 +24,7 @@ public final class SceneTrace {
 
     }
 
-    public static final boolean VERBOSE_TRACING = true;
+    public static final boolean VERBOSE_TRACING = false;
 
     public static void beginSection(@NonNull String sectionName) {
         if (VERBOSE_TRACING && Build.VERSION.SDK_INT >= 18) {
