@@ -173,7 +173,10 @@ public final class NavigationScene extends Scene implements NavigationListener, 
 
     @Nullable
     public Scene getCurrentScene() {
-        return mNavigationSceneManager.getCurrentScene();
+        if (this.mNavigationSceneManager == null) {
+            return null;
+        }
+        return this.mNavigationSceneManager.getCurrentScene();
     }
 
     @NonNull
