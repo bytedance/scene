@@ -15,9 +15,12 @@
  */
 package com.bytedance.scene.ktx
 
+import android.os.Bundle
 import com.bytedance.scene.Scene
+import com.bytedance.scene.interfaces.PushOptions
 import com.bytedance.scene.navigation.NavigationScene
 import com.bytedance.scene.navigation.NavigationSceneGetter
+import kotlin.reflect.KClass
 
 val Scene.navigationScene: NavigationScene?
     get() {
@@ -28,3 +31,6 @@ fun Scene.requireNavigationScene(): NavigationScene {
     return NavigationSceneGetter.requireNavigationScene(this)
 }
 
+fun NavigationScene.push(clazz: KClass<out Scene>, argument: Bundle? = null, pushOptions: PushOptions? = null) {
+    this.push(clazz.java, argument, pushOptions)
+}
