@@ -9,13 +9,14 @@ import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.TextView
 import com.bytedance.scene.Scene
+import com.bytedance.scene.navigation.SceneTranslucent
 import com.bytedance.scene.ktx.requireNavigationScene
 import com.bytedance.scenedemo.utility.ColorUtil
 
 /**
  * Created by JiangQi on 8/9/18.
  */
-class DemoDialogWithDimScene : Scene() {
+class DemoDialogWithDimScene : Scene(), SceneTranslucent {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup, savedInstanceState: Bundle?): View {
         val layout = FrameLayout(requireSceneContext())
         layout.setBackgroundColor(Color.parseColor("#99000000"))

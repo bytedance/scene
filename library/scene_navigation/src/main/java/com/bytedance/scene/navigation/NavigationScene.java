@@ -679,10 +679,11 @@ public final class NavigationScene extends Scene implements NavigationListener, 
     }
 
     public void convertFromTranslucent(Scene scene) {
-
+        //todo
     }
 
     public boolean convertToTranslucent(Scene scene) {
+        //todo
         return false;
     }
 

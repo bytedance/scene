@@ -9,12 +9,13 @@ import android.widget.FrameLayout
 import android.widget.TextView
 import com.bytedance.scene.Scene
 import com.bytedance.scene.ktx.requireNavigationScene
+import com.bytedance.scene.navigation.SceneTranslucent
 import com.bytedance.scenedemo.utility.ColorUtil
 
 /**
  * Created by JiangQi on 8/8/18.
  */
-class DemoDialogScene : Scene() {
+class DemoDialogScene : Scene(), SceneTranslucent {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup, savedInstanceState: Bundle?): View {
         val layout = FrameLayout(requireSceneContext())
         val textView = TextView(activity)

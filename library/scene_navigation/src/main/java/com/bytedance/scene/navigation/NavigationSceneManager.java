@@ -806,10 +806,12 @@ class NavigationSceneManager {
     private class PushOptionOperation implements Operation {
         private final Scene scene;
         private final PushOptions pushOptions;
+        private final boolean isSceneTranslucent;
 
         private PushOptionOperation(Scene scene, PushOptions pushOptions) {
             this.scene = scene;
             this.pushOptions = pushOptions;
+            this.isSceneTranslucent = pushOptions.isIsTranslucent() || scene instanceof SceneTranslucent;
         }
 
         @Override
@@ -864,7 +866,7 @@ class NavigationSceneManager {
             if (currentRecord != null && mBackStackList.getCurrentRecordList().contains(currentRecord)) {
                 currentRecord.saveActivityStatus();
                 Scene currentScene = currentRecord.mScene;
-                State dstState = pushOptions.isIsTranslucent() ? State.STARTED : State.ACTIVITY_CREATED;
+                State dstState = isSceneTranslucent ? State.STARTED : State.ACTIVITY_CREATED;
                 dstState = findMinState(dstState, mNavigationScene.getState());
                 moveState(mNavigationScene, currentScene, dstState, null, false, null);
 
@@ -873,7 +875,7 @@ class NavigationSceneManager {
                  * it is necessary to set the previous translucent Scene to ACTIVITY_CREATED
                  */
                 final List<Record> currentRecordList = mBackStackList.getCurrentRecordList();
-                if (currentRecordList.size() > 1 && !pushOptions.isIsTranslucent() && currentRecord.mIsTranslucent) {
+                if (currentRecordList.size() > 1 && !isSceneTranslucent && currentRecord.mIsTranslucent) {
                     for (int i = currentRecordList.size() - 2; i >= 0; i--) {
                         Record record = currentRecordList.get(i);
                         moveState(mNavigationScene, record.mScene, findMinState(State.ACTIVITY_CREATED, mNavigationScene.getState()), null, false, null);
@@ -885,7 +887,7 @@ class NavigationSceneManager {
             }
 
             final NavigationAnimationExecutor animationFactory = pushOptions.getNavigationAnimationFactory();
-            final Record record = Record.newInstance(scene, pushOptions.isIsTranslucent(), animationFactory);
+            final Record record = Record.newInstance(scene, isSceneTranslucent, animationFactory);
             record.mPushResultCallback = pushOptions.getPushResultCallback();
             mBackStackList.push(record);
 

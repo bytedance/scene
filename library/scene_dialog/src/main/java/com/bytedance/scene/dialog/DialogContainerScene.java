@@ -28,6 +28,7 @@ import com.bytedance.scene.Scene;
 import com.bytedance.scene.animation.animatorexecutor.NoAnimationExecutor;
 import com.bytedance.scene.interfaces.PushOptions;
 import com.bytedance.scene.navigation.NavigationScene;
+import com.bytedance.scene.navigation.SceneTranslucent;
 import com.bytedance.scene.utlity.Experimental;
 
 import java.lang.annotation.Retention;
@@ -39,7 +40,8 @@ import static androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP;
  * replacement for DialogFragment
  */
 @Experimental
-public class DialogContainerScene extends Scene implements DialogInterface.OnCancelListener, DialogInterface.OnDismissListener {
+public class DialogContainerScene extends Scene implements DialogInterface.OnCancelListener, DialogInterface.OnDismissListener
+        , SceneTranslucent {
 
     /**
      * @hide
@@ -140,7 +142,7 @@ public class DialogContainerScene extends Scene implements DialogInterface.OnCan
         }
         mDismissed = false;
         mShownByMe = true;
-        navigationScene.push(this, new PushOptions.Builder().setTranslucent(true)
+        navigationScene.push(this, new PushOptions.Builder()
                 .setAnimation(new NoAnimationExecutor()).build());
     }
 

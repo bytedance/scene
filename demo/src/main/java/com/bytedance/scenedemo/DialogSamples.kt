@@ -38,11 +38,11 @@ class DialogSamples : Scene() {
 
         addButton(layout, getString(R.string.part_dialog_btn_1), View.OnClickListener {
             requireNavigationScene().push(DemoDialogScene::class.java, null, PushOptions.Builder()
-                    .setTranslucent(true).setAnimation(DialogSceneAnimatorExecutor()).build())
+                    .setAnimation(DialogSceneAnimatorExecutor()).build())
         })
         addButton(layout, getString(R.string.part_dialog_btn_2), View.OnClickListener {
             requireNavigationScene().push(DemoDialogWithDimScene::class.java, null, PushOptions.Builder()
-                    .setTranslucent(true).setAnimation(DialogSceneAnimatorExecutor()).build())
+                    .setAnimation(DialogSceneAnimatorExecutor()).build())
         })
         addButton(layout, getString(R.string.part_dialog_btn_3), View.OnClickListener {
             BottomSheetDialogSample().show(this)
