@@ -37,6 +37,9 @@ class Record implements Parcelable {
     NavigationAnimationExecutor mNavigationAnimationExecutor;
     @Nullable
     Object mPushResult;
+    @Nullable
+    boolean mSceneBackgroundSet = false; //ignore restore
+
     /**
      * In case of A starts B,
      * the attached callback will be placed in B's Record's mPushResultCallback

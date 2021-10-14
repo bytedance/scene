@@ -83,7 +83,6 @@ class SlideBackButtonDemoScene : Scene() {
 
             override fun onStart() {
                 requireNavigationScene().pop(interactionNavigationPopAnimationFactory)
-                requireNavigationScene().convertBackgroundToBlack()
             }
 
             override fun onFinish() {

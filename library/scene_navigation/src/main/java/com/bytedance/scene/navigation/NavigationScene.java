@@ -17,7 +17,6 @@ package com.bytedance.scene.navigation;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -678,17 +677,36 @@ public final class NavigationScene extends Scene implements NavigationListener, 
         return mNavigationSceneManager.findRecordByScene(scene);
     }
 
-    public void convertFromTranslucent(Scene scene) {
-        //todo
+    public enum TranslucentOption {
+        /**
+         * Scene will be translucent
+         */
+        TO_TRANSLUCENT,
+        /**
+         * Scene will be not translucent
+         */
+        FROM_TRANSLUCENT
     }
 
-    public boolean convertToTranslucent(Scene scene) {
-        //todo
-        return false;
+    /**
+     * If a visible Scene is translucent, the Scene who under it will be visible too
+     * @param scene
+     * @param option
+     */
+    public void changeSceneTranslucent(@NonNull Scene scene, @NonNull TranslucentOption option) {
+        Record record = mNavigationSceneManager.findRecordByScene(scene);
+        if (record == null) {
+            throw new IllegalArgumentException("Scene not found");
+        }
+        mNavigationSceneManager.changeTranslucent(scene, option == TranslucentOption.TO_TRANSLUCENT);
     }
 
-    public void convertBackgroundToBlack() {
-        getView().setBackgroundColor(Color.BLACK);
+    public boolean isTranslucent(@NonNull Scene scene) {
+        Record record = mNavigationSceneManager.findRecordByScene(scene);
+        if (record == null) {
+            throw new IllegalArgumentException("Scene not found");
+        }
+        return record.mIsTranslucent;
     }
 
     public void convertBackgroundToDefault() {

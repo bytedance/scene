@@ -18,6 +18,7 @@ package com.bytedance.scene.navigation;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -278,6 +279,13 @@ class NavigationSceneManager {
         scheduleToNextUIThreadLoop(new PushOptionOperation(scene, pushOptions));
     }
 
+    public void changeTranslucent(@NonNull final Scene scene, boolean translucent) {
+        if (scene == null) {
+            throw new NullPointerException("scene can't be null");
+        }
+        scheduleToNextUIThreadLoop(new TranslucentOperation(scene, translucent));
+    }
+
     private boolean mDisableNavigationAnimation = false;
 
     public void executePendingOperation() {
@@ -404,6 +412,7 @@ class NavigationSceneManager {
                                 } else {
                                     scene.getView().setBackgroundDrawable(Utility.getWindowBackground(scene.requireSceneContext()));
                                 }
+                                record.mSceneBackgroundSet = true;
                             }
                         }
                         /*
@@ -643,6 +652,85 @@ class NavigationSceneManager {
                 }
                 operationEndAction.run();
             }
+        }
+    }
+
+    private Drawable getDefaultSceneBackgroundDrawable(Scene scene) {
+        int resId = mNavigationScene.mNavigationSceneOptions.getSceneBackgroundResId();
+        if (resId > 0) {
+            return scene.requireSceneContext().getResources().getDrawable(resId);
+        } else {
+            return Utility.getWindowBackground(scene.requireSceneContext());
+        }
+    }
+
+    private class TranslucentOperation implements Operation {
+        private final Scene scene;
+        private final boolean translucent;
+
+        private TranslucentOperation(Scene scene, boolean translucent) {
+            this.scene = scene;
+            this.translucent = translucent;
+        }
+
+        @Override
+        public void execute(Runnable operationEndAction) {
+            cancelCurrentRunningAnimation();
+
+            if (!canExecuteNavigationStackOperation()) {
+                throw new IllegalArgumentException("Can't change translucent, current NavigationScene state " + mNavigationScene.getState().name);
+            }
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                mNavigationScene.getView().cancelPendingInputEvents();
+            }
+
+            Record curRecord = findRecordByScene(scene);
+            if (curRecord.mIsTranslucent == translucent) {
+                operationEndAction.run();
+                return;
+            }
+            curRecord.mIsTranslucent = translucent;
+            //Because Scene's background is changed by ours, so we should restore it to default null
+            if (curRecord.mSceneBackgroundSet) {
+                scene.getView().setBackgroundDrawable(translucent ? null : getDefaultSceneBackgroundDrawable(scene));
+            }
+
+            final List<Record> currentRecordList = mBackStackList.getCurrentRecordList();
+            if (currentRecordList.size() == 1) {
+                //nothing need change
+                operationEndAction.run();
+                return;
+            }
+
+            List<Record> needChangeStateSceneRecordList = new ArrayList<>();
+            boolean findCurrentScene = false;
+            for (int i = currentRecordList.size() - 1; i >= 0; i--) {
+                Record tmpRecord = currentRecordList.get(i);
+                if (!findCurrentScene) {
+                    if (tmpRecord == curRecord) {
+                        findCurrentScene = true;
+                    }
+                } else {
+                    needChangeStateSceneRecordList.add(tmpRecord);
+                    if (!tmpRecord.mIsTranslucent) {
+                        break;
+                    }
+                }
+            }
+
+            if (needChangeStateSceneRecordList.size() > 1) {
+                Collections.reverse(needChangeStateSceneRecordList);
+            }
+            State state = curRecord.mScene.getState();
+            State dstState = findMinState(state, translucent ? State.STARTED : State.ACTIVITY_CREATED);
+
+            for (int i = 0; i < needChangeStateSceneRecordList.size(); i++) {
+                Record tmpRecord = needChangeStateSceneRecordList.get(i);
+                moveState(mNavigationScene, tmpRecord.mScene, dstState, null, false, null);
+            }
+
+            operationEndAction.run();
         }
     }
 
