@@ -1,4 +1,4 @@
-package com.bytedance.scene;
+package com.bytedance.scene.navigation;
 
 
 import android.content.Intent;
@@ -8,6 +8,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
+import com.bytedance.scene.Scene;
+import com.bytedance.scene.SceneComponentFactory;
+import com.bytedance.scene.SceneLifecycleManager;
+import com.bytedance.scene.Scope;
 import com.bytedance.scene.animation.AnimationInfo;
 import com.bytedance.scene.animation.NavigationAnimationExecutor;
 import com.bytedance.scene.animation.animatorexecutor.AlphaNavigationSceneAnimatorExecutor;
@@ -23,6 +28,9 @@ import org.robolectric.RobolectricTestRunner;
 import org.robolectric.android.controller.ActivityController;
 import org.robolectric.annotation.Config;
 
+import com.bytedance.scene.navigation.NavigationSourceUtility.TestActivity;
+
+import static com.bytedance.scene.navigation.NavigationSourceUtility.createFromSceneLifecycleManager;
 import static org.junit.Assert.*;
 
 @RunWith(RobolectricTestRunner.class)
@@ -109,7 +117,7 @@ public class AnimationExecutorTests {
             @Override
             public void onActivityCreated(@Nullable Bundle savedInstanceState) {
                 super.onActivityCreated(savedInstanceState);
-                assertNull(requireNavigationScene().getNavigationAnimationExecutor(this));
+                assertNull(NavigationSceneGetter.requireNavigationScene(this).getNavigationAnimationExecutor(this));
             }
         });
     }
@@ -137,8 +145,8 @@ public class AnimationExecutorTests {
             public void onActivityCreated(@Nullable Bundle savedInstanceState) {
                 super.onActivityCreated(savedInstanceState);
                 final NavigationAnimationExecutor overrideNavigationAnimationExecutor = new HorizontalTransitionAnimatorExecutor();
-                requireNavigationScene().overrideNavigationAnimationExecutor(this, overrideNavigationAnimationExecutor);
-                assertSame(overrideNavigationAnimationExecutor, requireNavigationScene().getNavigationAnimationExecutor(this));
+                NavigationSceneGetter.requireNavigationScene(this).overrideNavigationAnimationExecutor(this, overrideNavigationAnimationExecutor);
+                assertSame(overrideNavigationAnimationExecutor, NavigationSceneGetter.requireNavigationScene(this).getNavigationAnimationExecutor(this));
             }
         });
     }
@@ -165,7 +173,7 @@ public class AnimationExecutorTests {
             @Override
             public void onActivityCreated(@Nullable Bundle savedInstanceState) {
                 super.onActivityCreated(savedInstanceState);
-                assertSame(navigationAnimationExecutor, requireNavigationScene().getNavigationAnimationExecutor(this));
+                assertSame(navigationAnimationExecutor, NavigationSceneGetter.requireNavigationScene(this).getNavigationAnimationExecutor(this));
             }
         }, new PushOptions.Builder().setAnimation(navigationAnimationExecutor).build());
     }

@@ -1,4 +1,4 @@
-package com.bytedance.scene;
+package com.bytedance.scene.navigation;
 
 
 import android.content.Intent;
@@ -8,9 +8,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
+import com.bytedance.scene.LifeCycleFrameLayout;
+import com.bytedance.scene.Scene;
+import com.bytedance.scene.SceneComponentFactory;
+import com.bytedance.scene.Scope;
+import com.bytedance.scene.State;
 import com.bytedance.scene.navigation.NavigationScene;
 import com.bytedance.scene.navigation.NavigationSceneOptions;
-import com.bytedance.scene.utility.TestActivity;
+import com.bytedance.scene.navigation.utility.TestActivity;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;

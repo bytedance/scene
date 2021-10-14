@@ -1,4 +1,4 @@
-package com.bytedance.scene;
+package com.bytedance.scene.navigation;
 
 import android.os.Bundle;
 import android.os.Parcelable;
@@ -12,10 +12,14 @@ import android.widget.FrameLayout;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.bytedance.scene.navigation.NavigationSourceUtility;
+import com.bytedance.scene.navigation.PublicClassScene;
+import com.bytedance.scene.Scene;
+import com.bytedance.scene.SceneComponentFactory;
+import com.bytedance.scene.SceneLifecycleManager;
+import com.bytedance.scene.Scope;
 import com.bytedance.scene.animation.animatorexecutor.NoAnimationExecutor;
 import com.bytedance.scene.group.GroupScene;
-import com.bytedance.scene.navigation.NavigationScene;
-import com.bytedance.scene.navigation.NavigationSceneOptions;
 import com.bytedance.scene.parcel.ParcelConstants;
 import com.bytedance.scene.utlity.ViewIdGenerator;
 

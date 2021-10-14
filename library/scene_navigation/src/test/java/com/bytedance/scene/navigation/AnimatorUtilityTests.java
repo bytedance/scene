@@ -1,4 +1,4 @@
-package com.bytedance.scene;
+package com.bytedance.scene.navigation;
 
 import android.view.View;
 import android.view.animation.AlphaAnimation;

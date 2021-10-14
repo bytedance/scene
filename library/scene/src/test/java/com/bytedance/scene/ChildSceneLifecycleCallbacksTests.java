@@ -14,8 +14,6 @@ import androidx.core.util.Pair;
 import com.bytedance.scene.group.GroupScene;
 import com.bytedance.scene.interfaces.ChildSceneLifecycleAdapterCallbacks;
 import com.bytedance.scene.interfaces.ChildSceneLifecycleCallbacks;
-import com.bytedance.scene.navigation.NavigationScene;
-import com.bytedance.scene.navigation.NavigationSceneOptions;
 import com.bytedance.scene.utlity.ViewIdGenerator;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -31,157 +29,6 @@ import static org.junit.Assert.*;
 @RunWith(RobolectricTestRunner.class)
 @Config(manifest = Config.NONE)
 public class ChildSceneLifecycleCallbacksTests {
-    @Test
-    public void testNavigationSceneNotRecursiveExcludingOnSceneSaveInstanceState() {
-        final AtomicBoolean isCreatedCalled = new AtomicBoolean(false);
-        final AtomicBoolean isViewCreatedCalled = new AtomicBoolean(false);
-        final AtomicBoolean isActivityCreatedCalled = new AtomicBoolean(false);
-        final AtomicBoolean isStartedCalled = new AtomicBoolean(false);
-        final AtomicBoolean isResumedCalled = new AtomicBoolean(false);
-        final AtomicBoolean isPausedCalled = new AtomicBoolean(false);
-        final AtomicBoolean isStoppedCalled = new AtomicBoolean(false);
-        final AtomicBoolean isViewDestroyedCalled = new AtomicBoolean(false);
-        final AtomicBoolean isDestroyedCalled = new AtomicBoolean(false);
-
-        ChildSceneLifecycleCallbacks callbacks = new ChildSceneLifecycleCallbacks() {
-            @Override
-            public void onSceneCreated(@NonNull Scene scene, @Nullable Bundle savedInstanceState) {
-                if (!isCreatedCalled.compareAndSet(false, true)) {
-                    throw new IllegalStateException("crash");
-                }
-                assertNull(scene.getView());
-                assertSame(State.NONE, scene.getState());
-            }
-
-            @Override
-            public void onSceneViewCreated(@NonNull Scene scene, @Nullable Bundle savedInstanceState) {
-                if (!isViewCreatedCalled.compareAndSet(false, true)) {
-                    throw new IllegalStateException("crash");
-                }
-                assertNotNull(scene.getView());
-                assertSame(State.NONE, scene.getState());
-            }
-
-            @Override
-            public void onSceneActivityCreated(@NonNull Scene scene, @Nullable Bundle savedInstanceState) {
-                if (!isActivityCreatedCalled.compareAndSet(false, true)) {
-                    throw new IllegalStateException("crash");
-                }
-                assertNotNull(scene.getView());
-                assertSame(State.VIEW_CREATED, scene.getState());//Scene state is set to State.Activity_CREATED after onActivityCreated() and onSceneActivityCreated()
-            }
-
-            @Override
-            public void onSceneStarted(@NonNull Scene scene) {
-                if (!isStartedCalled.compareAndSet(false, true)) {
-                    throw new IllegalStateException("crash");
-                }
-                assertSame(State.ACTIVITY_CREATED, scene.getState());
-            }
-
-            @Override
-            public void onSceneResumed(@NonNull Scene scene) {
-                if (!isResumedCalled.compareAndSet(false, true)) {
-                    throw new IllegalStateException("crash");
-                }
-                assertSame(State.STARTED, scene.getState());
-            }
-
-            @Override
-            public void onSceneSaveInstanceState(@NonNull Scene scene, @NonNull Bundle outState) {
-                //ignored
-            }
-
-            @Override
-            public void onScenePaused(@NonNull Scene scene) {
-                if (!isPausedCalled.compareAndSet(false, true)) {
-                    throw new IllegalStateException("crash");
-                }
-                assertSame(State.STARTED, scene.getState());
-            }
-
-            @Override
-            public void onSceneStopped(@NonNull Scene scene) {
-                if (!isStoppedCalled.compareAndSet(false, true)) {
-                    throw new IllegalStateException("crash");
-                }
-                assertSame(State.ACTIVITY_CREATED, scene.getState());
-            }
-
-            @Override
-            public void onSceneViewDestroyed(@NonNull Scene scene) {
-                if (!isViewDestroyedCalled.compareAndSet(false, true)) {
-                    throw new IllegalStateException("crash");
-                }
-                assertNotNull(scene.getView());
-                assertSame(State.NONE, scene.getState());
-            }
-
-            @Override
-            public void onSceneDestroyed(@NonNull Scene scene) {
-                if (!isDestroyedCalled.compareAndSet(false, true)) {
-                    throw new IllegalStateException("crash");
-                }
-                assertNull(scene.getView());
-            }
-        };
-
-        final Scene rootScene = new Scene() {
-            @NonNull
-            @Override
-            public View onCreateView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container, @Nullable Bundle savedInstanceState) {
-                return new View(requireSceneContext());
-            }
-        };
-
-        ActivityController<TestActivity> controller = Robolectric.buildActivity(TestActivity.class).create().start().resume();
-        TestActivity testActivity = controller.get();
-        NavigationScene navigationScene = new NavigationScene();
-        NavigationSceneOptions options = new NavigationSceneOptions(rootScene.getClass());
-        navigationScene.setArguments(options.toBundle());
-        navigationScene.registerChildSceneLifecycleCallbacks(callbacks, false);
-
-        Scope.RootScopeFactory rootScopeFactory = new Scope.RootScopeFactory() {
-            @Override
-            public Scope getRootScope() {
-                return Scope.DEFAULT_ROOT_SCOPE_FACTORY.getRootScope();
-            }
-        };
-
-        SceneComponentFactory sceneComponentFactory = new SceneComponentFactory() {
-            @Override
-            public Scene instantiateScene(ClassLoader cl, String className, Bundle bundle) {
-                if (className.equals(rootScene.getClass().getName())) {
-                    return rootScene;
-                }
-                return null;
-            }
-        };
-
-        navigationScene.setDefaultNavigationAnimationExecutor(null);
-        navigationScene.setRootSceneComponentFactory(sceneComponentFactory);
-
-        SceneLifecycleManager<NavigationScene> lifecycleManager = new SceneLifecycleManager<>();
-        lifecycleManager.onActivityCreated(testActivity, testActivity.mFrameLayout,
-                navigationScene, rootScopeFactory,
-                false, null);
-        lifecycleManager.onStart();
-        lifecycleManager.onResume();
-        lifecycleManager.onPause();
-        lifecycleManager.onStop();
-        lifecycleManager.onDestroyView();
-
-        assertTrue(isCreatedCalled.get());
-        assertTrue(isViewCreatedCalled.get());
-        assertTrue(isActivityCreatedCalled.get());
-        assertTrue(isStartedCalled.get());
-        assertTrue(isResumedCalled.get());
-        assertTrue(isPausedCalled.get());
-        assertTrue(isStoppedCalled.get());
-        assertTrue(isViewDestroyedCalled.get());
-        assertTrue(isDestroyedCalled.get());
-    }
-
     @Test
     public void testGroupSceneNotRecursiveExcludingOnSceneSaveInstanceState() {
         final AtomicBoolean isCreatedCalled = new AtomicBoolean(false);
@@ -515,20 +362,6 @@ public class ChildSceneLifecycleCallbacksTests {
         };
         groupScene.registerChildSceneLifecycleCallbacks(callbacks, false);
         groupScene.unregisterChildSceneLifecycleCallbacks(callbacks);
-    }
-
-    @Test
-    public void testNavigationSceneUnregisterChildSceneLifecycleCallbacks() {
-        NavigationScene navigationScene = NavigationSourceUtility.createFromSceneLifecycleManager(new Scene() {
-            @NonNull
-            @Override
-            public View onCreateView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container, @Nullable Bundle savedInstanceState) {
-                return new View(requireSceneContext());
-            }
-        });
-        ChildSceneLifecycleCallbacks callbacks = new ChildSceneLifecycleAdapterCallbacks();
-        navigationScene.registerChildSceneLifecycleCallbacks(callbacks, false);
-        navigationScene.unregisterChildSceneLifecycleCallbacks(callbacks);
     }
 
     public static class TestActivity extends Activity {

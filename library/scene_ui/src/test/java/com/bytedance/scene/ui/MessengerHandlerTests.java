@@ -1,8 +1,11 @@
-package com.bytedance.scene;
+package com.bytedance.scene.ui;
 
 
 import android.content.Intent;
 import android.os.Bundle;
+
+import com.bytedance.scene.MessengerHandler;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
