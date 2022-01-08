@@ -121,7 +121,7 @@ public abstract class UserVisibleHintGroupScene extends GroupScene {
                 }
             }
 
-            @OnLifecycleEvent(Lifecycle.Event.ON_START)
+            @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
             void onDestroy() {
                 mUserVisibleLifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_DESTROY);
             }
