@@ -26,6 +26,7 @@ class MainScene : NavigationViewScene() {
         map[R.id.architecture_patterns] = PatternsSamples()
         map[R.id.activity_compatibility] = ActivityCompatibilitySamples()
         map[R.id.migrate] = MigrateSamples()
+        map[R.id.compose] = ComposeSamples()
         map[R.id.benchmark] = BenchmarkSamples()
         map[R.id.extreme_case] = CaseListDemo()
         return map

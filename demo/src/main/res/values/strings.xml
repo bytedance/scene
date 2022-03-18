@@ -13,6 +13,7 @@
     <string name="main_scene_title_architecture_patterns">Architecture Patterns</string>
     <string name="main_scene_title_activity_compatibility">Activity Compatibility</string>
     <string name="main_scene_title_migrate">Migrate Guide</string>
+    <string name="main_scene_title_compose">Compose</string>
     <string name="main_scene_title_benchmark">Benchmark</string>
     <string name="main_scene_title_lifecycle">LifeCycle</string>
     <string name="main_scene_title_extreme_case">Case</string>

@@ -18,7 +18,7 @@ class ReuseScene1 : ReuseGroupScene() {
         savedInstanceState: Bundle?
     ): ViewGroup {
         SystemClock.sleep(1000)
-        val view: ViewGroup = FrameLayout(activity)
+        val view: ViewGroup = FrameLayout(requireActivity())
         view.setBackgroundColor(Color.YELLOW)
         return view
     }

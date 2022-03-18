@@ -28,6 +28,9 @@
         android:id="@+id/migrate"
         android:title="@string/main_scene_title_migrate" />
     <item
+        android:id="@+id/compose"
+        android:title="@string/main_scene_title_compose" />
+    <item
         android:id="@+id/benchmark"
         android:title="@string/main_scene_title_benchmark" />
     <item
