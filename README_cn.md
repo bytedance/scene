@@ -66,6 +66,7 @@ dependencies {
 	implementation 'com.github.bytedance.scene:scene:$latest_version'
 	implementation 'com.github.bytedance.scene:scene_navigation:$latest_version'
 	implementation 'com.github.bytedance.scene:scene_ui:$latest_version'
+	implementation 'com.github.bytedance.scene:scene_dialog:$latest_version'
 	implementation 'com.github.bytedance.scene:scene_shared_element_animation:$latest_version'
 	implementation 'com.github.bytedance.scene:scene_ktx:$latest_version'
 }
