@@ -3,7 +3,7 @@
 [简体中文版说明 >>>](/README_cn.md)
 
 [![GitHub license](https://img.shields.io/github/license/bytedance/scene)](https://github.com/bytedance/scene/blob/master/LICENSE) 
-![Maven metadata URL](https://img.shields.io/maven-metadata/v?color=green&label=version&metadataUrl=http%3A%2F%2Fjcenter.bintray.com%2Fcom%2Fbytedance%2Fscene%2Fscene%2Fmaven-metadata.xml)
+[![](https://jitpack.io/v/bytedance/scene.svg)](https://jitpack.io/#bytedance/scene)
 [![API](https://img.shields.io/badge/api-14%2B-green)](https://developer.android.com/about/dashboards)
 
 Scene is a lightweight library of navigation and ui composition based on view.
@@ -67,6 +67,7 @@ Add it to your build.gradle:
 ```gradle
 dependencies {
 	implementation 'com.github.bytedance.scene:scene:$latest_version'
+	implementation 'com.github.bytedance.scene:scene_navigation:$latest_version'
 	implementation 'com.github.bytedance.scene:scene_ui:$latest_version'
 	implementation 'com.github.bytedance.scene:scene_shared_element_animation:$latest_version'
 	implementation 'com.github.bytedance.scene:scene_ktx:$latest_version'
