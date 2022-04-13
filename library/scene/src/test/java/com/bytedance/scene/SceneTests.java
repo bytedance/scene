@@ -14,6 +14,8 @@ import androidx.lifecycle.LifecycleObserver;
 import com.bytedance.scene.group.GroupScene;
 import com.bytedance.scene.utlity.ViewIdGenerator;
 import com.bytedance.scene.view.SceneContextThemeWrapper;
+import com.google.common.truth.Truth;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
@@ -531,5 +533,18 @@ public class SceneTests {
             }
         };
         NavigationSourceUtility.createFromSceneLifecycleManager(scene);
+    }
+
+    @Test
+    public void testGetDebugSceneHierarchy() {
+        Scene scene = new Scene() {
+            @NonNull
+            @Override
+            public View onCreateView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container, @Nullable Bundle savedInstanceState) {
+                return new View(requireSceneContext());
+            }
+        };
+        GroupScene rootGroupScene = NavigationSourceUtility.createFromSceneLifecycleManager(scene);
+        Truth.assertThat(rootGroupScene.getDebugSceneHierarchy()).contains(scene.getClass().getSimpleName());
     }
 }

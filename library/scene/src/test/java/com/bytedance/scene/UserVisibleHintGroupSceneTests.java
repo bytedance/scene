@@ -37,21 +37,66 @@ public class UserVisibleHintGroupSceneTests {
         SceneLifecycleManager<GroupScene> sceneLifecycleManager = pair.first;
 
         Truth.assertThat(testScene.getUserVisibleHintLifecycle().getCurrentState()).isEqualTo(Lifecycle.State.CREATED);
+        Truth.assertThat(testScene.isVisible()).isFalse();
 
         sceneLifecycleManager.onStart();
         Truth.assertThat(testScene.getUserVisibleHintLifecycle().getCurrentState()).isEqualTo(Lifecycle.State.STARTED);
+        Truth.assertThat(testScene.isVisible()).isTrue();
 
         sceneLifecycleManager.onResume();
         Truth.assertThat(testScene.getUserVisibleHintLifecycle().getCurrentState()).isEqualTo(Lifecycle.State.RESUMED);
+        Truth.assertThat(testScene.isVisible()).isTrue();
 
         sceneLifecycleManager.onPause();
         Truth.assertThat(testScene.getUserVisibleHintLifecycle().getCurrentState()).isEqualTo(Lifecycle.State.STARTED);
+        Truth.assertThat(testScene.isVisible()).isTrue();
 
         sceneLifecycleManager.onStop();
         Truth.assertThat(testScene.getUserVisibleHintLifecycle().getCurrentState()).isEqualTo(Lifecycle.State.CREATED);
+        Truth.assertThat(testScene.isVisible()).isFalse();
 
         sceneLifecycleManager.onDestroyView();
         Truth.assertThat(testScene.getUserVisibleHintLifecycle().getCurrentState()).isEqualTo(Lifecycle.State.DESTROYED);
+        Truth.assertThat(testScene.isVisible()).isFalse();
+    }
+
+    @Test
+    public void testSetUserVisibleHint() {
+        TestScene testScene = new TestScene();
+        Pair<SceneLifecycleManager<GroupScene>, GroupScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(testScene);
+
+        SceneLifecycleManager<GroupScene> sceneLifecycleManager = pair.first;
+        Truth.assertThat(testScene.getUserVisibleHint()).isTrue();
+
+        sceneLifecycleManager.onStart();
+        Truth.assertThat(testScene.getUserVisibleHint()).isTrue();
+        Truth.assertThat(testScene.isVisible()).isTrue();
+
+        testScene.setUserVisibleHint(false);
+        Truth.assertThat(testScene.getUserVisibleHint()).isFalse();
+        Truth.assertThat(testScene.isVisible()).isFalse();
+
+        testScene.setUserVisibleHint(true);
+        Truth.assertThat(testScene.getUserVisibleHint()).isTrue();
+        Truth.assertThat(testScene.isVisible()).isTrue();
+
+        testScene.setUserVisibleHint(false);
+
+        sceneLifecycleManager.onResume();
+        Truth.assertThat(testScene.getUserVisibleHint()).isFalse();
+        Truth.assertThat(testScene.isVisible()).isFalse();
+
+        sceneLifecycleManager.onPause();
+        Truth.assertThat(testScene.getUserVisibleHint()).isFalse();
+        Truth.assertThat(testScene.isVisible()).isFalse();
+
+        sceneLifecycleManager.onStop();
+        Truth.assertThat(testScene.getUserVisibleHint()).isFalse();
+        Truth.assertThat(testScene.isVisible()).isFalse();
+
+        sceneLifecycleManager.onDestroyView();
+        Truth.assertThat(testScene.getUserVisibleHint()).isFalse();
+        Truth.assertThat(testScene.isVisible()).isFalse();
     }
 
     @Test
