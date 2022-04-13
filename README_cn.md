@@ -16,9 +16,9 @@ Scene是一个基于View的轻量级导航和页面切分组件库，主要特�
 
 ## Apps using Scene
 
-| <img src="misc/xigua.png" alt="xigua" width="100"/> | <img src="misc/douyin.png" alt="douyin" width="100"/> | <img src="http://p3.pstatp.com/origin/2e95100098d5890c5c1c3" alt="lv" width="100"/> | <img src="misc/toutiao.png" alt="toutiao" width="100"/> | 
-|:-----------:|:-------:|:-------:|:-------:|
-| 西瓜视频 | 抖音 | 剪映 | 今日头条 |
+| <img src="misc/xigua.png" alt="xigua" width="100"/> | <img src="misc/douyin.png" alt="douyin" width="100"/> |  <img src="misc/toutiao.png" alt="toutiao" width="100"/> |
+|:-----------:|:-------:|:-------:|
+| 西瓜视频 | 抖音 |  今日头条 |
 
 ## Introduction
 

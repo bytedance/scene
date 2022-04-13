@@ -19,9 +19,9 @@ Scene is a lightweight library of navigation and ui composition based on view.
 
 ## Apps using Scene
 
-| <img src="misc/xigua.png" alt="xigua" width="100"/> | <img src="misc/douyin.png" alt="douyin" width="100"/> | <img src="http://p3.pstatp.com/origin/2e94f00098d334c3c3fe1" alt="lv" width="100"/> | <img src="misc/toutiao.png" alt="toutiao" width="100"/> | 
-|:-----------:|:-------:|:-------:|:-------:|
-| Xigua Video | Tik Tok | CapCut | Toutiao | 
+| <img src="misc/xigua.png" alt="xigua" width="100"/> | <img src="misc/douyin.png" alt="douyin" width="100"/> | <img src="misc/toutiao.png" alt="toutiao" width="100"/> |
+|:-----------:|:-------:|:-------:|
+| Xigua Video | Tik Tok |  Toutiao |
 
 ## Introduction
 
