@@ -50,13 +50,24 @@ Scene框架尝试去解决上面提到的Activity和Fragment存在的问题
 
 ## Get Started
 
-在依赖中添加：
-
+添加仓库源：
 ```gradle
-implementation 'com.github.bytedance.scene:scene:$latest_version'
-implementation 'com.github.bytedance.scene:scene_ui:$latest_version'
-implementation 'com.github.bytedance.scene:scene_shared_element_animation:$latest_version'
-implementation 'com.github.bytedance.scene:scene_ktx:$latest_version'
+allprojects {
+	repositories {
+		...
+		maven { url 'https://jitpack.io' }
+	}
+}
+```
+
+添加依赖：
+```gradle
+dependencies {
+	implementation 'com.github.bytedance.scene:scene:$latest_version'
+	implementation 'com.github.bytedance.scene:scene_ui:$latest_version'
+	implementation 'com.github.bytedance.scene:scene_shared_element_animation:$latest_version'
+	implementation 'com.github.bytedance.scene:scene_ktx:$latest_version'
+}
 ```
 
 Scene有2个子类：NavigationScene和GroupScene，其中：
