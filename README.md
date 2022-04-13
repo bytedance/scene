@@ -56,10 +56,10 @@ At the same time, we provide a series of migration solutions to help developers 
 Add to your build.gradle:
 
 ```gradle
-implementation 'com.bytedance.scene:scene:$latest_version'
-implementation 'com.bytedance.scene:scene-ui:$latest_version'
-implementation 'com.bytedance.scene:scene-shared-element-animation:$latest_version'
-implementation 'com.bytedance.scene:scene-ktx:$latest_version'
+implementation 'com.github.bytedance.scene:scene:$latest_version'
+implementation 'com.github.bytedance.scene:scene_ui:$latest_version'
+implementation 'com.github.bytedance.scene:scene_shared_element_animation:$latest_version'
+implementation 'com.github.bytedance.scene:scene_ktx:$latest_version'
 ```
 
 Scene has 2 subclasses: NavigationScene and GroupScene:
