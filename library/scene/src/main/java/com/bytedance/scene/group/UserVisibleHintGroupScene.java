@@ -87,45 +87,13 @@ public abstract class UserVisibleHintGroupScene extends GroupScene {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         mUserVisibleLifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_CREATE);
+        getLifecycle().addObserver(mUserVisibleLifecycleObserver);
+    }
 
-        getLifecycle().addObserver(new LifecycleObserver() {
-            @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
-            void onPause() {
-                mResume = false;
-                if (mUserVisibleHint) {
-                    mUserVisibleLifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_PAUSE);
-                }
-            }
-
-            @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
-            void onResume() {
-                mResume = true;
-                if (mUserVisibleHint) {
-                    mUserVisibleLifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_RESUME);
-                }
-            }
-
-            @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
-            void onStop() {
-                mStart = false;
-                if (mUserVisibleHint) {
-                    mUserVisibleLifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_STOP);
-                }
-            }
-
-            @OnLifecycleEvent(Lifecycle.Event.ON_START)
-            void onStart() {
-                mStart = true;
-                if (mUserVisibleHint) {
-                    mUserVisibleLifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_START);
-                }
-            }
-
-            @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
-            void onDestroy() {
-                mUserVisibleLifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_DESTROY);
-            }
-        });
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        getLifecycle().removeObserver(mUserVisibleLifecycleObserver);
     }
 
     public boolean getUserVisibleHint() {
@@ -146,4 +114,43 @@ public abstract class UserVisibleHintGroupScene extends GroupScene {
     public boolean isVisible() {
         return super.isVisible() && mUserVisibleHint;
     }
+
+    private final LifecycleObserver mUserVisibleLifecycleObserver = new LifecycleObserver() {
+        @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
+        void onPause() {
+            mResume = false;
+            if (mUserVisibleHint) {
+                mUserVisibleLifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_PAUSE);
+            }
+        }
+
+        @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
+        void onResume() {
+            mResume = true;
+            if (mUserVisibleHint) {
+                mUserVisibleLifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_RESUME);
+            }
+        }
+
+        @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
+        void onStop() {
+            mStart = false;
+            if (mUserVisibleHint) {
+                mUserVisibleLifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_STOP);
+            }
+        }
+
+        @OnLifecycleEvent(Lifecycle.Event.ON_START)
+        void onStart() {
+            mStart = true;
+            if (mUserVisibleHint) {
+                mUserVisibleLifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_START);
+            }
+        }
+
+        @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
+        void onDestroy() {
+            mUserVisibleLifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_DESTROY);
+        }
+    };
 }
