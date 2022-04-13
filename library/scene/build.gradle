@@ -23,6 +23,7 @@ dependencies {
     testImplementation JUNIT
     testAnnotationProcessor AUTO_SERVICE
     testCompileOnly AUTO_SERVICE
+    testImplementation TRUCH
 }
 
 tasks.withType(Test) {

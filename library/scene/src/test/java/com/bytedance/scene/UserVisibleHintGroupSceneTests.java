@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.util.Pair;
@@ -14,6 +15,8 @@ import com.bytedance.scene.group.GroupScene;
 import com.bytedance.scene.group.UserVisibleHintGroupScene;
 import com.bytedance.scene.utility.TestUtility;
 import com.bytedance.scene.utlity.ViewIdGenerator;
+import com.google.common.truth.Truth;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
@@ -26,6 +29,30 @@ import static org.junit.Assert.*;
 @RunWith(RobolectricTestRunner.class)
 @Config(manifest = Config.NONE)
 public class UserVisibleHintGroupSceneTests {
+    @Test
+    public void testUserVisibleHintLifecycleSyncWithSceneLifecycle() {
+        TestScene testScene = new TestScene();
+        Pair<SceneLifecycleManager<GroupScene>, GroupScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(testScene);
+
+        SceneLifecycleManager<GroupScene> sceneLifecycleManager = pair.first;
+
+        Truth.assertThat(testScene.getUserVisibleHintLifecycle().getCurrentState()).isEqualTo(Lifecycle.State.CREATED);
+
+        sceneLifecycleManager.onStart();
+        Truth.assertThat(testScene.getUserVisibleHintLifecycle().getCurrentState()).isEqualTo(Lifecycle.State.STARTED);
+
+        sceneLifecycleManager.onResume();
+        Truth.assertThat(testScene.getUserVisibleHintLifecycle().getCurrentState()).isEqualTo(Lifecycle.State.RESUMED);
+
+        sceneLifecycleManager.onPause();
+        Truth.assertThat(testScene.getUserVisibleHintLifecycle().getCurrentState()).isEqualTo(Lifecycle.State.STARTED);
+
+        sceneLifecycleManager.onStop();
+        Truth.assertThat(testScene.getUserVisibleHintLifecycle().getCurrentState()).isEqualTo(Lifecycle.State.CREATED);
+
+        sceneLifecycleManager.onDestroyView();
+        Truth.assertThat(testScene.getUserVisibleHintLifecycle().getCurrentState()).isEqualTo(Lifecycle.State.DESTROYED);
+    }
 
     @Test
     public void test() {
