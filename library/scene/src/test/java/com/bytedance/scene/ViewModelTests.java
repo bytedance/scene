@@ -9,7 +9,8 @@ import androidx.annotation.Nullable;
 import androidx.core.util.Pair;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
-import com.bytedance.scene.navigation.NavigationScene;
+
+import com.bytedance.scene.group.GroupScene;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
@@ -38,7 +39,7 @@ public class ViewModelTests {
                 assertNotNull(testViewModel);
             }
         };
-        Pair<SceneLifecycleManager<NavigationScene>, NavigationScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(scene);
+        Pair<SceneLifecycleManager<GroupScene>, GroupScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(scene);
     }
 
     @Test
@@ -57,7 +58,7 @@ public class ViewModelTests {
                 assertNotNull(testViewModel);
             }
         };
-        Pair<SceneLifecycleManager<NavigationScene>, NavigationScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(scene);
+        Pair<SceneLifecycleManager<GroupScene>, GroupScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(scene);
     }
 
     @Test
@@ -82,7 +83,7 @@ public class ViewModelTests {
                 }).get(testViewModel.getClass());
             }
         };
-        Pair<SceneLifecycleManager<NavigationScene>, NavigationScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(scene);
+        Pair<SceneLifecycleManager<GroupScene>, GroupScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(scene);
         SceneLifecycleManager lifecycleManager = pair.first;
         lifecycleManager.onStart();
         lifecycleManager.onResume();

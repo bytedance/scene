@@ -22,7 +22,7 @@ public class SceneViewContextTests {
             @NonNull
             @Override
             public ViewGroup onCreateView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container, @Nullable Bundle savedInstanceState) {
-                return (ViewGroup) inflater.inflate(TestResources.getLayout(this, "layout_place_holder_view"), container, false);
+                return (ViewGroup) inflater.inflate(TestResources.getLayout(this, "layout_simple_view"), container, false);
             }
         };
         NavigationSourceUtility.createFromInitSceneLifecycleManager(activityContextScene);
@@ -36,7 +36,7 @@ public class SceneViewContextTests {
             @Override
             public ViewGroup onCreateView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container, @Nullable Bundle savedInstanceState) {
                 setTheme(android.R.style.DeviceDefault_ButtonBar);
-                return (ViewGroup) inflater.inflate(TestResources.getLayout(this, "layout_place_holder_view"), container, false);
+                return (ViewGroup) inflater.inflate(TestResources.getLayout(this, "layout_simple_view"), container, false);
             }
         };
         NavigationSourceUtility.createFromInitSceneLifecycleManager(sceneContextScene);
@@ -55,7 +55,7 @@ public class SceneViewContextTests {
             @NonNull
             @Override
             public ViewGroup onCreateView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container, @Nullable Bundle savedInstanceState) {
-                return (ViewGroup) inflater.inflate(TestResources.getLayout(this, "layout_place_holder_view"), container, false);
+                return (ViewGroup) inflater.inflate(TestResources.getLayout(this, "layout_simple_view"), container, false);
             }
         };
         NavigationSourceUtility.createFromInitSceneLifecycleManager(sceneContextScene);

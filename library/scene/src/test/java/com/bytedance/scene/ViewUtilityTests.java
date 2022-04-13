@@ -9,7 +9,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.util.Pair;
 import com.bytedance.scene.group.GroupScene;
-import com.bytedance.scene.navigation.NavigationScene;
 import com.bytedance.scene.utlity.ViewUtility;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -26,7 +25,7 @@ public class ViewUtilityTests {
     public void testSceneContext() {
         final TestScene testScene = new TestScene();
 
-        Pair<SceneLifecycleManager<NavigationScene>, NavigationScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(testScene);
+        Pair<SceneLifecycleManager<GroupScene>, GroupScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(testScene);
         View view = testScene.requireView();
         assertEquals(ViewUtility.findSceneByView(view), testScene);
 
@@ -40,7 +39,7 @@ public class ViewUtilityTests {
     public void testActivityContext() {
         final TestScene2 testScene = new TestScene2();
 
-        Pair<SceneLifecycleManager<NavigationScene>, NavigationScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(testScene);
+        Pair<SceneLifecycleManager<GroupScene>, GroupScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(testScene);
         View view = testScene.requireView();
         assertEquals(ViewUtility.findSceneByView(view), testScene);
 

@@ -9,8 +9,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.util.Pair;
 import androidx.lifecycle.Lifecycle;
+
+import com.bytedance.scene.group.GroupScene;
 import com.bytedance.scene.group.UserVisibleHintGroupScene;
-import com.bytedance.scene.navigation.NavigationScene;
 import com.bytedance.scene.utility.TestUtility;
 import com.bytedance.scene.utlity.ViewIdGenerator;
 import org.junit.Test;
@@ -29,10 +30,9 @@ public class UserVisibleHintGroupSceneTests {
     @Test
     public void test() {
         TestScene testScene = new TestScene();
-        Pair<SceneLifecycleManager<NavigationScene>, NavigationScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(testScene);
+        Pair<SceneLifecycleManager<GroupScene>, GroupScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(testScene);
 
         SceneLifecycleManager sceneLifecycleManager = pair.first;
-        NavigationScene navigationScene = pair.second;
 
         GroupSceneLifecycleTests.TestChildScene childScene = new GroupSceneLifecycleTests.TestChildScene();
         assertEquals(childScene.getState(), State.NONE);
@@ -140,7 +140,7 @@ public class UserVisibleHintGroupSceneTests {
     @Test
     public void testUserVisibleHintLifecycleGC() {
         TestScene testScene = new TestScene();
-        Pair<SceneLifecycleManager<NavigationScene>, NavigationScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(testScene);
+        Pair<SceneLifecycleManager<GroupScene>, GroupScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(testScene);
         SceneLifecycleManager sceneLifecycleManager = pair.first;
 
         sceneLifecycleManager.onStart();

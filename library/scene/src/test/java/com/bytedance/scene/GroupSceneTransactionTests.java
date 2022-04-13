@@ -2,7 +2,8 @@ package com.bytedance.scene;
 
 import android.view.View;
 import androidx.core.util.Pair;
-import com.bytedance.scene.navigation.NavigationScene;
+
+import com.bytedance.scene.group.GroupScene;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
@@ -19,7 +20,7 @@ public class GroupSceneTransactionTests {
         GroupSceneLifecycleTests.TestEmptyScene testScene = new GroupSceneLifecycleTests.TestEmptyScene();
         GroupSceneLifecycleTests.TestChildScene childScene = new GroupSceneLifecycleTests.TestChildScene();
 
-        Pair<SceneLifecycleManager<NavigationScene>, NavigationScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(testScene);
+        Pair<SceneLifecycleManager<GroupScene>, GroupScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(testScene);
 
         testScene.beginTransaction();
         testScene.add(testScene.mId, childScene, "childScene");
@@ -36,7 +37,7 @@ public class GroupSceneTransactionTests {
         GroupSceneLifecycleTests.TestEmptyScene testScene = new GroupSceneLifecycleTests.TestEmptyScene();
         GroupSceneLifecycleTests.TestChildScene childScene = new GroupSceneLifecycleTests.TestChildScene();
 
-        Pair<SceneLifecycleManager<NavigationScene>, NavigationScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(testScene);
+        Pair<SceneLifecycleManager<GroupScene>, GroupScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(testScene);
 
         testScene.add(testScene.mId, childScene, "childScene");
         assertEquals(View.VISIBLE, childScene.getView().getVisibility());
@@ -55,7 +56,7 @@ public class GroupSceneTransactionTests {
         GroupSceneLifecycleTests.TestEmptyScene testScene = new GroupSceneLifecycleTests.TestEmptyScene();
         GroupSceneLifecycleTests.TestChildScene childScene = new GroupSceneLifecycleTests.TestChildScene();
 
-        Pair<SceneLifecycleManager<NavigationScene>, NavigationScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(testScene);
+        Pair<SceneLifecycleManager<GroupScene>, GroupScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(testScene);
 
         testScene.add(testScene.mId, childScene, "childScene");
         assertEquals(View.VISIBLE, childScene.getView().getVisibility());

@@ -5,7 +5,7 @@ import android.view.View;
 import androidx.annotation.Nullable;
 import androidx.core.util.Pair;
 import com.bytedance.scene.group.AsyncLayoutGroupScene;
-import com.bytedance.scene.navigation.NavigationScene;
+import com.bytedance.scene.group.GroupScene;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
@@ -89,9 +89,8 @@ public class AsyncLayoutGroupSceneTests {
             }
         };
         groupScene.setAsyncLayoutEnabled(true);
-        Pair<SceneLifecycleManager<NavigationScene>, NavigationScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(groupScene);
+        Pair<SceneLifecycleManager<GroupScene>, GroupScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(groupScene);
         SceneLifecycleManager sceneLifecycleManager = pair.first;
-        NavigationScene navigationScene = pair.second;
 
         try {
             Thread.sleep(1000);

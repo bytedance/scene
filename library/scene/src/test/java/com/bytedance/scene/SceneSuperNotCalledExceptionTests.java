@@ -1,15 +1,17 @@
 package com.bytedance.scene;
 
 
-import android.content.Intent;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import com.bytedance.scene.navigation.NavigationScene;
-import com.bytedance.scene.navigation.NavigationSceneOptions;
+import android.widget.FrameLayout;
+
+import com.bytedance.scene.group.GroupScene;
+import com.bytedance.scene.utlity.ViewIdGenerator;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
@@ -223,23 +225,12 @@ public class SceneSuperNotCalledExceptionTests {
 
     @Test(expected = SuperNotCalledException.class)
     public void testSuperNotCalledException_SaveInstanceState() {
-        final Scene scene = new Scene() {
-            @Override
-            public void onSaveInstanceState(@NonNull Bundle outState) {
-                //throw exception
-            }
-
-            @NonNull
-            @Override
-            public View onCreateView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container, @Nullable Bundle savedInstanceState) {
-                return new View(requireSceneContext());
-            }
-        };
+        final Scene scene = new NotCallSuperScene();
         ActivityController<NavigationSourceUtility.TestActivity> controller = Robolectric.buildActivity(NavigationSourceUtility.TestActivity.class).create().start().resume();
         NavigationSourceUtility.TestActivity testActivity = controller.get();
-        NavigationScene navigationScene = new NavigationScene();
-        NavigationSceneOptions options = new NavigationSceneOptions(scene.getClass());
-        navigationScene.setArguments(options.toBundle());
+
+        TestGroupScene testGroupScene = new TestGroupScene();
+        testGroupScene.add(testGroupScene.mId, scene, "tag");
 
         Scope.RootScopeFactory rootScopeFactory = new Scope.RootScopeFactory() {
             @Override
@@ -247,20 +238,25 @@ public class SceneSuperNotCalledExceptionTests {
                 return Scope.DEFAULT_ROOT_SCOPE_FACTORY.getRootScope();
             }
         };
-        navigationScene.setDefaultNavigationAnimationExecutor(null);
-        navigationScene.setRootSceneComponentFactory(new SceneComponentFactory() {
-            @Nullable
-            @Override
-            public Scene instantiateScene(@NonNull ClassLoader cl, @NonNull String className, @Nullable Bundle bundle) {
-                return scene;
-            }
-        });
-        SceneLifecycleManager<NavigationScene> manager = new SceneLifecycleManager<>();
+        SceneLifecycleManager<GroupScene> manager = new SceneLifecycleManager<>();
         manager.onActivityCreated(testActivity, testActivity.mFrameLayout,
-                navigationScene, rootScopeFactory, true, null);
+                testGroupScene, rootScopeFactory, true, null);
         manager.onStart();
         manager.onResume();
         manager.onSaveInstanceState(new Bundle());
+    }
+
+    public static class NotCallSuperScene extends Scene{
+        @Override
+        public void onSaveInstanceState(@NonNull Bundle outState) {
+            //throw exception
+        }
+
+        @NonNull
+        @Override
+        public View onCreateView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container, @Nullable Bundle savedInstanceState) {
+            return new View(requireSceneContext());
+        }
     }
 
     public static class TestChildScene extends Scene {
@@ -268,6 +264,22 @@ public class SceneSuperNotCalledExceptionTests {
         @Override
         public View onCreateView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container, @Nullable Bundle savedInstanceState) {
             return new View(requireSceneContext());
+        }
+    }
+
+    public static class TestGroupScene extends GroupScene {
+        public final int mId;
+
+        public TestGroupScene() {
+            mId = ViewIdGenerator.generateViewId();
+        }
+
+        @NonNull
+        @Override
+        public ViewGroup onCreateView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container, @Nullable Bundle savedInstanceState) {
+            FrameLayout layout = new FrameLayout(requireSceneContext());
+            layout.setId(mId);
+            return layout;
         }
     }
 }

@@ -10,8 +10,8 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import com.bytedance.scene.navigation.NavigationScene;
-import com.bytedance.scene.navigation.NavigationSceneOptions;
+
+import com.bytedance.scene.group.GroupScene;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
@@ -28,18 +28,16 @@ import static org.robolectric.annotation.LooperMode.Mode.PAUSED;
 public class SceneLifecycleManagerExceptionTests {
     @Test
     public void testTranslucentActivity() {
-        final Scene scene = new Scene() {
-            @NonNull
-            @Override
-            public View onCreateView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container, @Nullable Bundle savedInstanceState) {
-                return new View(requireSceneContext());
-            }
-        };
         ActivityController<NavigationSourceUtility.TestActivity> controller = Robolectric.buildActivity(NavigationSourceUtility.TestActivity.class).create().start().resume();
         NavigationSourceUtility.TestActivity testActivity = controller.get();
-        NavigationScene navigationScene = new NavigationScene();
-        NavigationSceneOptions options = new NavigationSceneOptions(scene.getClass());
-        navigationScene.setArguments(options.toBundle());
+
+        GroupScene groupScene = new GroupScene() {
+            @NonNull
+            @Override
+            public ViewGroup onCreateView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container, @Nullable Bundle savedInstanceState) {
+                return new FrameLayout(requireSceneContext());
+            }
+        };
 
         Scope.RootScopeFactory rootScopeFactory = new Scope.RootScopeFactory() {
             @Override
@@ -48,21 +46,9 @@ public class SceneLifecycleManagerExceptionTests {
             }
         };
 
-        SceneComponentFactory sceneComponentFactory = new SceneComponentFactory() {
-            @Override
-            public Scene instantiateScene(ClassLoader cl, String className, Bundle bundle) {
-                if (className.equals(scene.getClass().getName())) {
-                    return scene;
-                }
-                return null;
-            }
-        };
-
-        navigationScene.setDefaultNavigationAnimationExecutor(null);
-        navigationScene.setRootSceneComponentFactory(sceneComponentFactory);
-        SceneLifecycleManager<NavigationScene> sceneLifecycleManager = new SceneLifecycleManager<>();
+        SceneLifecycleManager<GroupScene> sceneLifecycleManager = new SceneLifecycleManager<>();
         sceneLifecycleManager.onActivityCreated(testActivity, testActivity.mFrameLayout,
-                navigationScene, rootScopeFactory, false, null);
+                groupScene, rootScopeFactory, false, null);
         sceneLifecycleManager.onStart();
         sceneLifecycleManager.onResume();
         sceneLifecycleManager.onPause();
@@ -74,18 +60,16 @@ public class SceneLifecycleManagerExceptionTests {
 
     @Test
     public void testSkipOnStartOnResumeOnPauseOnStop() {
-        final Scene scene = new Scene() {
-            @NonNull
-            @Override
-            public View onCreateView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container, @Nullable Bundle savedInstanceState) {
-                return new View(requireSceneContext());
-            }
-        };
         ActivityController<NavigationSourceUtility.TestActivity> controller = Robolectric.buildActivity(NavigationSourceUtility.TestActivity.class).create().start().resume();
         NavigationSourceUtility.TestActivity testActivity = controller.get();
-        NavigationScene navigationScene = new NavigationScene();
-        NavigationSceneOptions options = new NavigationSceneOptions(scene.getClass());
-        navigationScene.setArguments(options.toBundle());
+
+        GroupScene groupScene=new GroupScene() {
+            @NonNull
+            @Override
+            public ViewGroup onCreateView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container, @Nullable Bundle savedInstanceState) {
+                return new FrameLayout(requireSceneContext());
+            }
+        };
 
         Scope.RootScopeFactory rootScopeFactory = new Scope.RootScopeFactory() {
             @Override
@@ -94,27 +78,15 @@ public class SceneLifecycleManagerExceptionTests {
             }
         };
 
-        SceneComponentFactory sceneComponentFactory = new SceneComponentFactory() {
-            @Override
-            public Scene instantiateScene(ClassLoader cl, String className, Bundle bundle) {
-                if (className.equals(scene.getClass().getName())) {
-                    return scene;
-                }
-                return null;
-            }
-        };
-
-        navigationScene.setDefaultNavigationAnimationExecutor(null);
-        navigationScene.setRootSceneComponentFactory(sceneComponentFactory);
-        SceneLifecycleManager<NavigationScene> sceneLifecycleManager = new SceneLifecycleManager<>();
+        SceneLifecycleManager<GroupScene> sceneLifecycleManager = new SceneLifecycleManager<>();
         sceneLifecycleManager.onActivityCreated(testActivity, testActivity.mFrameLayout,
-                navigationScene, rootScopeFactory, false, null);
+                groupScene, rootScopeFactory, false, null);
         sceneLifecycleManager.onDestroyView();
     }
 
     @Test(expected = NullPointerException.class)
     public void testNPE() {
-        SceneLifecycleManager<NavigationScene> sceneLifecycleManager = new SceneLifecycleManager<>();
+        SceneLifecycleManager<GroupScene> sceneLifecycleManager = new SceneLifecycleManager<>();
         sceneLifecycleManager.onActivityCreated(null, null,
                 null, null,
                 false, null);
@@ -124,7 +96,7 @@ public class SceneLifecycleManagerExceptionTests {
     public void testNPE1() {
         ActivityController<TestActivity> controller = Robolectric.buildActivity(TestActivity.class).create().start().resume();
         TestActivity testActivity = controller.get();
-        SceneLifecycleManager<NavigationScene> sceneLifecycleManager = new SceneLifecycleManager<>();
+        SceneLifecycleManager<GroupScene> sceneLifecycleManager = new SceneLifecycleManager<>();
         sceneLifecycleManager.onActivityCreated(testActivity, null,
                 null, null,
                 false, null);
@@ -134,7 +106,7 @@ public class SceneLifecycleManagerExceptionTests {
     public void testNPE2() {
         ActivityController<TestActivity> controller = Robolectric.buildActivity(TestActivity.class).create().start().resume();
         TestActivity testActivity = controller.get();
-        SceneLifecycleManager<NavigationScene> sceneLifecycleManager = new SceneLifecycleManager<>();
+        SceneLifecycleManager<GroupScene> sceneLifecycleManager = new SceneLifecycleManager<>();
         sceneLifecycleManager.onActivityCreated(testActivity, testActivity.mFrameLayout,
                 null, null,
                 false, null);
@@ -145,28 +117,36 @@ public class SceneLifecycleManagerExceptionTests {
     public void testNPE3() {
         ActivityController<TestActivity> controller = Robolectric.buildActivity(TestActivity.class).create().start().resume();
         TestActivity testActivity = controller.get();
-        SceneLifecycleManager<NavigationScene> sceneLifecycleManager = new SceneLifecycleManager<>();
+        SceneLifecycleManager<GroupScene> sceneLifecycleManager = new SceneLifecycleManager<>();
 
-        NavigationScene navigationScene = new NavigationScene();
-        NavigationSceneOptions options = new NavigationSceneOptions(ChildScene.class);
-        navigationScene.setArguments(options.toBundle());
+        GroupScene groupScene=new GroupScene() {
+            @NonNull
+            @Override
+            public ViewGroup onCreateView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container, @Nullable Bundle savedInstanceState) {
+                return new FrameLayout(requireSceneContext());
+            }
+        };
 
         sceneLifecycleManager.onActivityCreated(testActivity, testActivity.mFrameLayout,
-                navigationScene, null, false, null);
+                groupScene, null, false, null);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testOnSaveInstanceStateException() {
         ActivityController<TestActivity> controller = Robolectric.buildActivity(TestActivity.class).create().start().resume();
         TestActivity testActivity = controller.get();
-        SceneLifecycleManager<NavigationScene> sceneLifecycleManager = new SceneLifecycleManager<>();
+        SceneLifecycleManager<GroupScene> sceneLifecycleManager = new SceneLifecycleManager<>();
 
-        NavigationScene navigationScene = new NavigationScene();
-        NavigationSceneOptions options = new NavigationSceneOptions(ChildScene.class);
-        navigationScene.setArguments(options.toBundle());
+        GroupScene groupScene=new GroupScene() {
+            @NonNull
+            @Override
+            public ViewGroup onCreateView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container, @Nullable Bundle savedInstanceState) {
+                return new FrameLayout(requireSceneContext());
+            }
+        };
 
         sceneLifecycleManager.onActivityCreated(testActivity, testActivity.mFrameLayout,
-                navigationScene, new Scope.RootScopeFactory() {
+                groupScene, new Scope.RootScopeFactory() {
                     @NonNull
                     @Override
                     public Scope getRootScope() {
@@ -179,14 +159,18 @@ public class SceneLifecycleManagerExceptionTests {
     public void testOnSaveInstanceStateException1() {
         ActivityController<TestActivity> controller = Robolectric.buildActivity(TestActivity.class).create().start().resume();
         TestActivity testActivity = controller.get();
-        SceneLifecycleManager<NavigationScene> sceneLifecycleManager = new SceneLifecycleManager<>();
+        SceneLifecycleManager<GroupScene> sceneLifecycleManager = new SceneLifecycleManager<>();
 
-        NavigationScene navigationScene = new NavigationScene();
-        NavigationSceneOptions options = new NavigationSceneOptions(ChildScene.class);
-        navigationScene.setArguments(options.toBundle());
+        GroupScene groupScene=new GroupScene() {
+            @NonNull
+            @Override
+            public ViewGroup onCreateView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container, @Nullable Bundle savedInstanceState) {
+                return new FrameLayout(requireSceneContext());
+            }
+        };
 
         sceneLifecycleManager.onActivityCreated(testActivity, testActivity.mFrameLayout,
-                navigationScene, new Scope.RootScopeFactory() {
+                groupScene, new Scope.RootScopeFactory() {
                     @NonNull
                     @Override
                     public Scope getRootScope() {
@@ -200,14 +184,18 @@ public class SceneLifecycleManagerExceptionTests {
     public void testOnSaveInstanceStateExceptionNPE() {
         ActivityController<TestActivity> controller = Robolectric.buildActivity(TestActivity.class).create().start().resume();
         TestActivity testActivity = controller.get();
-        SceneLifecycleManager<NavigationScene> sceneLifecycleManager = new SceneLifecycleManager<>();
+        SceneLifecycleManager<GroupScene> sceneLifecycleManager = new SceneLifecycleManager<>();
 
-        NavigationScene navigationScene = new NavigationScene();
-        NavigationSceneOptions options = new NavigationSceneOptions(ChildScene.class);
-        navigationScene.setArguments(options.toBundle());
+        GroupScene groupScene=new GroupScene() {
+            @NonNull
+            @Override
+            public ViewGroup onCreateView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container, @Nullable Bundle savedInstanceState) {
+                return new FrameLayout(requireSceneContext());
+            }
+        };
 
         sceneLifecycleManager.onActivityCreated(testActivity, testActivity.mFrameLayout,
-                navigationScene, new Scope.RootScopeFactory() {
+                groupScene, new Scope.RootScopeFactory() {
                     @NonNull
                     @Override
                     public Scope getRootScope() {
@@ -221,19 +209,23 @@ public class SceneLifecycleManagerExceptionTests {
     public void testNavigationSceneStateIncorrectExceptionNPE() {
         ActivityController<TestActivity> controller = Robolectric.buildActivity(TestActivity.class).create().start().resume();
         TestActivity testActivity = controller.get();
-        SceneLifecycleManager<NavigationScene> sceneLifecycleManager = new SceneLifecycleManager<>();
+        SceneLifecycleManager<GroupScene> sceneLifecycleManager = new SceneLifecycleManager<>();
 
-        NavigationScene navigationScene = new NavigationScene();
-        NavigationSceneOptions options = new NavigationSceneOptions(ChildScene.class);
-        navigationScene.setArguments(options.toBundle());
+        GroupScene groupScene=new GroupScene() {
+            @NonNull
+            @Override
+            public ViewGroup onCreateView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container, @Nullable Bundle savedInstanceState) {
+                return new FrameLayout(requireSceneContext());
+            }
+        };
 
-        navigationScene.dispatchAttachActivity(testActivity);
-        navigationScene.dispatchAttachScene(null);
-        navigationScene.dispatchCreate(null);
-        navigationScene.dispatchCreateView(null, new FrameLayout(testActivity));
+        groupScene.dispatchAttachActivity(testActivity);
+        groupScene.dispatchAttachScene(null);
+        groupScene.dispatchCreate(null);
+        groupScene.dispatchCreateView(null, new FrameLayout(testActivity));
 
         sceneLifecycleManager.onActivityCreated(testActivity, testActivity.mFrameLayout,
-                navigationScene, new Scope.RootScopeFactory() {
+                groupScene, new Scope.RootScopeFactory() {
                     @NonNull
                     @Override
                     public Scope getRootScope() {
@@ -246,14 +238,18 @@ public class SceneLifecycleManagerExceptionTests {
     public void testStateException() {
         ActivityController<TestActivity> controller = Robolectric.buildActivity(TestActivity.class).create().start().resume();
         TestActivity testActivity = controller.get();
-        SceneLifecycleManager<NavigationScene> sceneLifecycleManager = new SceneLifecycleManager<>();
+        SceneLifecycleManager<GroupScene> sceneLifecycleManager = new SceneLifecycleManager<>();
 
-        NavigationScene navigationScene = new NavigationScene();
-        NavigationSceneOptions options = new NavigationSceneOptions(ChildScene.class);
-        navigationScene.setArguments(options.toBundle());
+        GroupScene groupScene=new GroupScene() {
+            @NonNull
+            @Override
+            public ViewGroup onCreateView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container, @Nullable Bundle savedInstanceState) {
+                return new FrameLayout(requireSceneContext());
+            }
+        };
 
         sceneLifecycleManager.onActivityCreated(testActivity, testActivity.mFrameLayout,
-                navigationScene, new Scope.RootScopeFactory() {
+                groupScene, new Scope.RootScopeFactory() {
                     @NonNull
                     @Override
                     public Scope getRootScope() {
@@ -267,14 +263,18 @@ public class SceneLifecycleManagerExceptionTests {
     public void testStateException1() {
         ActivityController<TestActivity> controller = Robolectric.buildActivity(TestActivity.class).create().start().resume();
         TestActivity testActivity = controller.get();
-        SceneLifecycleManager<NavigationScene> sceneLifecycleManager = new SceneLifecycleManager<>();
+        SceneLifecycleManager<GroupScene> sceneLifecycleManager = new SceneLifecycleManager<>();
 
-        NavigationScene navigationScene = new NavigationScene();
-        NavigationSceneOptions options = new NavigationSceneOptions(ChildScene.class);
-        navigationScene.setArguments(options.toBundle());
+        GroupScene groupScene = new GroupScene() {
+            @NonNull
+            @Override
+            public ViewGroup onCreateView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container, @Nullable Bundle savedInstanceState) {
+                return new FrameLayout(requireSceneContext());
+            }
+        };
 
         sceneLifecycleManager.onActivityCreated(testActivity, testActivity.mFrameLayout,
-                navigationScene, new Scope.RootScopeFactory() {
+                groupScene, new Scope.RootScopeFactory() {
                     @NonNull
                     @Override
                     public Scope getRootScope() {
@@ -288,14 +288,18 @@ public class SceneLifecycleManagerExceptionTests {
     public void testStateException2() {
         ActivityController<TestActivity> controller = Robolectric.buildActivity(TestActivity.class).create().start().resume();
         TestActivity testActivity = controller.get();
-        SceneLifecycleManager<NavigationScene> sceneLifecycleManager = new SceneLifecycleManager<>();
+        SceneLifecycleManager<GroupScene> sceneLifecycleManager = new SceneLifecycleManager<>();
 
-        NavigationScene navigationScene = new NavigationScene();
-        NavigationSceneOptions options = new NavigationSceneOptions(ChildScene.class);
-        navigationScene.setArguments(options.toBundle());
+        GroupScene groupScene=new GroupScene() {
+            @NonNull
+            @Override
+            public ViewGroup onCreateView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container, @Nullable Bundle savedInstanceState) {
+                return new FrameLayout(requireSceneContext());
+            }
+        };
 
         sceneLifecycleManager.onActivityCreated(testActivity, testActivity.mFrameLayout,
-                navigationScene, new Scope.RootScopeFactory() {
+                groupScene, new Scope.RootScopeFactory() {
                     @NonNull
                     @Override
                     public Scope getRootScope() {
@@ -308,12 +312,7 @@ public class SceneLifecycleManagerExceptionTests {
     @Test(expected = IllegalStateException.class)
     public void testStateException4() {
         ActivityController<TestActivity> controller = Robolectric.buildActivity(TestActivity.class).create().start().resume();
-        TestActivity testActivity = controller.get();
         SceneLifecycleManager sceneLifecycleManager = new SceneLifecycleManager();
-
-        NavigationScene navigationScene = new NavigationScene();
-        NavigationSceneOptions options = new NavigationSceneOptions(ChildScene.class);
-        navigationScene.setArguments(options.toBundle());
         sceneLifecycleManager.onStart();
     }
 
@@ -321,13 +320,18 @@ public class SceneLifecycleManagerExceptionTests {
     public void testStateException5() {
         ActivityController<TestActivity> controller = Robolectric.buildActivity(TestActivity.class).create().start().resume();
         TestActivity testActivity = controller.get();
-        SceneLifecycleManager<NavigationScene> sceneLifecycleManager = new SceneLifecycleManager<>();
+        SceneLifecycleManager<GroupScene> sceneLifecycleManager = new SceneLifecycleManager<>();
 
-        NavigationScene navigationScene = new NavigationScene();
-        NavigationSceneOptions options = new NavigationSceneOptions(ChildScene.class);
-        navigationScene.setArguments(options.toBundle());
+        GroupScene groupScene=new GroupScene() {
+            @NonNull
+            @Override
+            public ViewGroup onCreateView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container, @Nullable Bundle savedInstanceState) {
+                return new FrameLayout(requireSceneContext());
+            }
+        };
+
         sceneLifecycleManager.onActivityCreated(testActivity, testActivity.mFrameLayout,
-                navigationScene, new Scope.RootScopeFactory() {
+                groupScene, new Scope.RootScopeFactory() {
                     @NonNull
                     @Override
                     public Scope getRootScope() {
@@ -335,7 +339,7 @@ public class SceneLifecycleManagerExceptionTests {
                     }
                 }, false, null);
         sceneLifecycleManager.onActivityCreated(testActivity, testActivity.mFrameLayout,
-                navigationScene, new Scope.RootScopeFactory() {
+                groupScene, new Scope.RootScopeFactory() {
                     @NonNull
                     @Override
                     public Scope getRootScope() {
@@ -350,9 +354,6 @@ public class SceneLifecycleManagerExceptionTests {
         TestActivity testActivity = controller.get();
         SceneLifecycleManager sceneLifecycleManager = new SceneLifecycleManager();
 
-        NavigationScene navigationScene = new NavigationScene();
-        NavigationSceneOptions options = new NavigationSceneOptions(ChildScene.class);
-        navigationScene.setArguments(options.toBundle());
         sceneLifecycleManager.onSaveInstanceState(new Bundle());
     }
 

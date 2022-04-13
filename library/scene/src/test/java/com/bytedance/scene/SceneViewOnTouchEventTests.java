@@ -8,7 +8,6 @@ import android.widget.FrameLayout;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.bytedance.scene.group.GroupScene;
-import com.bytedance.scene.navigation.NavigationScene;
 import com.bytedance.scene.utlity.ViewIdGenerator;
 import com.bytedance.scene.utlity.ViewUtility;
 import org.junit.Test;
@@ -45,14 +44,14 @@ public class SceneViewOnTouchEventTests {
                 getView().setId(id);
             }
         };
-        NavigationScene navigationScene = NavigationSourceUtility.createFromSceneLifecycleManager(groupScene);
+        GroupScene rootScene = NavigationSourceUtility.createFromSceneLifecycleManager(groupScene);
 
         TestScene scene = new TestScene();
         groupScene.add(id, scene, "TAG");
 
         shadowOf(getMainLooper()).idle();//execute Handler posted task
 
-        View navSceneView = navigationScene.requireView();
+        View navSceneView = rootScene.requireView();
 
         //force layout, otherwise View width and height will be zero
         navSceneView.measure(View.MeasureSpec.makeMeasureSpec(100, View.MeasureSpec.EXACTLY),

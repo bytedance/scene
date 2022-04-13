@@ -10,7 +10,6 @@ import android.view.ViewGroup;
 import androidx.core.util.Pair;
 import com.bytedance.scene.group.GroupScene;
 import com.bytedance.scene.group.ScenePlaceHolderView;
-import com.bytedance.scene.navigation.NavigationScene;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
@@ -57,9 +56,8 @@ public class ScenePlaceHolderViewTests {
             }
         };
 
-        Pair<SceneLifecycleManager<NavigationScene>, NavigationScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(groupScene);
+        Pair<SceneLifecycleManager<GroupScene>, GroupScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(groupScene);
         SceneLifecycleManager sceneLifecycleManager = pair.first;
-        NavigationScene navigationScene = pair.second;
         sceneLifecycleManager.onStart();
         sceneLifecycleManager.onResume();
         assertTrue(called.get());
@@ -92,9 +90,8 @@ public class ScenePlaceHolderViewTests {
             }
         };
 
-        Pair<SceneLifecycleManager<NavigationScene>, NavigationScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(groupScene);
+        Pair<SceneLifecycleManager<GroupScene>, GroupScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(groupScene);
         SceneLifecycleManager sceneLifecycleManager = pair.first;
-        NavigationScene navigationScene = pair.second;
         sceneLifecycleManager.onStart();
         sceneLifecycleManager.onResume();
         assertTrue(called.get());
@@ -118,9 +115,8 @@ public class ScenePlaceHolderViewTests {
             }
         };
 
-        Pair<SceneLifecycleManager<NavigationScene>, NavigationScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(groupScene);
+        Pair<SceneLifecycleManager<GroupScene>, GroupScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(groupScene);
         SceneLifecycleManager sceneLifecycleManager = pair.first;
-        NavigationScene navigationScene = pair.second;
         sceneLifecycleManager.onStart();
         sceneLifecycleManager.onResume();
         assertTrue(called.get());
@@ -159,9 +155,8 @@ public class ScenePlaceHolderViewTests {
             }
         };
 
-        Pair<SceneLifecycleManager<NavigationScene>, NavigationScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(groupScene);
+        Pair<SceneLifecycleManager<GroupScene>, GroupScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(groupScene);
         SceneLifecycleManager sceneLifecycleManager = pair.first;
-        NavigationScene navigationScene = pair.second;
         sceneLifecycleManager.onStart();
         sceneLifecycleManager.onResume();
         assertTrue(called.get());
@@ -178,9 +173,8 @@ public class ScenePlaceHolderViewTests {
             }
         };
 
-        Pair<SceneLifecycleManager<NavigationScene>, NavigationScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(groupScene);
+        Pair<SceneLifecycleManager<GroupScene>, GroupScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(groupScene);
         SceneLifecycleManager sceneLifecycleManager = pair.first;
-        NavigationScene navigationScene = pair.second;
         sceneLifecycleManager.onStart();
         sceneLifecycleManager.onResume();
         assertTrue(called.get());
@@ -197,9 +191,8 @@ public class ScenePlaceHolderViewTests {
             }
         };
 
-        Pair<SceneLifecycleManager<NavigationScene>, NavigationScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(groupScene);
+        Pair<SceneLifecycleManager<GroupScene>, GroupScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(groupScene);
         SceneLifecycleManager sceneLifecycleManager = pair.first;
-        NavigationScene navigationScene = pair.second;
         sceneLifecycleManager.onStart();
         sceneLifecycleManager.onResume();
         assertTrue(called.get());

@@ -9,7 +9,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.util.Pair;
 import com.bytedance.scene.group.GroupScene;
-import com.bytedance.scene.navigation.NavigationScene;
 import com.bytedance.scene.utlity.ViewIdGenerator;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -24,9 +23,9 @@ public class ScopeTests {
     @Test
     public void testRegisterScope() {
         TestScene rootScene = new TestScene();
-        Pair<SceneLifecycleManager<NavigationScene>, NavigationScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(rootScene);
+        Pair<SceneLifecycleManager<GroupScene>, GroupScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(rootScene);
         SceneLifecycleManager sceneLifecycleManager = pair.first;
-        NavigationScene navigationScene = pair.second;
+        GroupScene navigationScene = pair.second;
         sceneLifecycleManager.onStart();
         sceneLifecycleManager.onResume();
 
@@ -50,9 +49,9 @@ public class ScopeTests {
     @Test
     public void testUnRegisterScope() {
         TestScene rootScene = new TestScene();
-        Pair<SceneLifecycleManager<NavigationScene>, NavigationScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(rootScene);
+        Pair<SceneLifecycleManager<GroupScene>, GroupScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(rootScene);
         SceneLifecycleManager sceneLifecycleManager = pair.first;
-        NavigationScene navigationScene = pair.second;
+        GroupScene navigationScene = pair.second;
         sceneLifecycleManager.onStart();
         sceneLifecycleManager.onResume();
 
@@ -72,9 +71,9 @@ public class ScopeTests {
     @Test
     public void testUnRegisterScopeByDestroy() {
         TestScene rootScene = new TestScene();
-        Pair<SceneLifecycleManager<NavigationScene>, NavigationScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(rootScene);
+        Pair<SceneLifecycleManager<GroupScene>, GroupScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(rootScene);
         SceneLifecycleManager sceneLifecycleManager = pair.first;
-        NavigationScene navigationScene = pair.second;
+        GroupScene navigationScene = pair.second;
         sceneLifecycleManager.onStart();
         sceneLifecycleManager.onResume();
 

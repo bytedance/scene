@@ -8,7 +8,6 @@ import android.widget.FrameLayout;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.bytedance.scene.group.InheritedScene;
-import com.bytedance.scene.navigation.NavigationScene;
 import com.bytedance.scene.utlity.ViewIdGenerator;
 import org.junit.Test;
 import org.junit.runner.RunWith;

@@ -3,7 +3,6 @@ package com.bytedance.scene;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,7 +12,6 @@ import androidx.annotation.Nullable;
 import androidx.core.util.Pair;
 import androidx.lifecycle.LifecycleObserver;
 import com.bytedance.scene.group.GroupScene;
-import com.bytedance.scene.navigation.NavigationScene;
 import com.bytedance.scene.utlity.ViewIdGenerator;
 import com.bytedance.scene.view.SceneContextThemeWrapper;
 import org.junit.Test;
@@ -65,7 +63,7 @@ public class SceneTests {
                 return new View(requireSceneContext());
             }
         };
-        Pair<SceneLifecycleManager<NavigationScene>, NavigationScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(scene);
+        Pair<SceneLifecycleManager<GroupScene>, GroupScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(scene);
         assertNotNull(scene.getView());
         assertNotNull(scene.requireView());
     }
@@ -103,7 +101,7 @@ public class SceneTests {
                 return new FrameLayout(requireSceneContext());
             }
         };
-        Pair<SceneLifecycleManager<NavigationScene>, NavigationScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(scene);
+        Pair<SceneLifecycleManager<GroupScene>, GroupScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(scene);
 
         Scene childScene = new Scene() {
             @NonNull
@@ -129,10 +127,10 @@ public class SceneTests {
                 return new View(requireSceneContext());
             }
         };
-        Pair<SceneLifecycleManager<NavigationScene>, NavigationScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(scene);
+        Pair<SceneLifecycleManager<GroupScene>, GroupScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(scene);
 
-        assertNull(scene.getNavigationScene().getParentScene());
-        scene.getNavigationScene().requireParentScene();
+        assertNull(scene.getParentScene().getParentScene());
+        scene.getParentScene().requireParentScene();
     }
 
     @Test(expected = IllegalStateException.class)
@@ -252,7 +250,7 @@ public class SceneTests {
                 reference.set(getView());
             }
         };
-        Pair<SceneLifecycleManager<NavigationScene>, NavigationScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(scene);
+        Pair<SceneLifecycleManager<GroupScene>, GroupScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(scene);
         SceneLifecycleManager manager = pair.first;
         manager.onStart();
         manager.onResume();
@@ -281,7 +279,7 @@ public class SceneTests {
                 reference.set(getView());
             }
         };
-        Pair<SceneLifecycleManager<NavigationScene>, NavigationScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(scene);
+        Pair<SceneLifecycleManager<GroupScene>, GroupScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(scene);
         SceneLifecycleManager manager = pair.first;
         manager.onStart();
         manager.onResume();
@@ -304,7 +302,7 @@ public class SceneTests {
                 reference.set(getView());
             }
         };
-        Pair<SceneLifecycleManager<NavigationScene>, NavigationScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(scene);
+        Pair<SceneLifecycleManager<GroupScene>, GroupScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(scene);
         SceneLifecycleManager manager = pair.first;
         manager.onStart();
         manager.onResume();
@@ -336,7 +334,7 @@ public class SceneTests {
                 reference.set(getView());
             }
         };
-        Pair<SceneLifecycleManager<NavigationScene>, NavigationScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(scene);
+        Pair<SceneLifecycleManager<GroupScene>, GroupScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(scene);
         SceneLifecycleManager manager = pair.first;
         manager.onStart();
         manager.onResume();

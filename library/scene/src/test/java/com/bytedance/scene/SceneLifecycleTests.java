@@ -8,7 +8,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.util.Pair;
 import androidx.lifecycle.Lifecycle;
-import com.bytedance.scene.navigation.NavigationScene;
+
+import com.bytedance.scene.group.GroupScene;
 import com.bytedance.scene.utlity.ViewUtility;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -28,17 +29,13 @@ public class SceneLifecycleTests {
         assertNull(testScene.getView());
         assertNull(testScene.getActivity());
         assertNull(testScene.getParentScene());
-        assertNull(testScene.getNavigationScene());
         assertNull(testScene.getApplicationContext());
         assertEquals(testScene.getLifecycle().getCurrentState(), Lifecycle.State.INITIALIZED);
         assertEquals(testScene.getState(), State.NONE);
         assertFalse(testScene.isVisible());
 
-        Pair<SceneLifecycleManager<NavigationScene>, NavigationScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(testScene);
+        Pair<SceneLifecycleManager<GroupScene>, GroupScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(testScene);
         SceneLifecycleManager sceneLifecycleManager = pair.first;
-        NavigationScene navigationScene = pair.second;
-
-        assertEquals(navigationScene.getCurrentScene(), testScene);
 
         assertNotNull(testScene.getView());
         assertNotNull(testScene.getActivity());
@@ -46,7 +43,6 @@ public class SceneLifecycleTests {
         assertNotNull(testScene.getResources());
         assertNotNull(testScene.getLayoutInflater());
         assertNotNull(testScene.getParentScene());
-        assertNotNull(testScene.getNavigationScene());
         assertEquals(testScene.getLifecycle().getCurrentState(), Lifecycle.State.CREATED);
         assertEquals(testScene.getState(), State.ACTIVITY_CREATED);
         assertTrue(testScene.getStateHistory().contains(State.ACTIVITY_CREATED.getName()));
@@ -57,7 +53,6 @@ public class SceneLifecycleTests {
 
         testScene.requireView();
         testScene.requireParentScene();
-        testScene.requireNavigationScene();
         testScene.requireActivity();
         testScene.requireSceneContext();
         testScene.requireApplicationContext();
@@ -93,7 +88,6 @@ public class SceneLifecycleTests {
         assertNull(testScene.getActivity());
         assertNull(testScene.getApplicationContext());
         assertNull(testScene.getParentScene());
-        assertNull(testScene.getNavigationScene());
         assertEquals(testScene.getLifecycle().getCurrentState(), Lifecycle.State.DESTROYED);
         assertEquals(testScene.getState(), State.NONE);
         assertFalse(testScene.isVisible());

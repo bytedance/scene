@@ -1,46 +1,35 @@
 package com.bytedance.scene;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.ViewGroup;
 import android.widget.FrameLayout;
+
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.util.Pair;
-import com.bytedance.scene.animation.animatorexecutor.NoAnimationExecutor;
-import com.bytedance.scene.navigation.NavigationScene;
-import com.bytedance.scene.navigation.NavigationSceneOptions;
+
+import com.bytedance.scene.group.GroupScene;
+import com.bytedance.scene.utlity.ViewIdGenerator;
+
 import org.robolectric.Robolectric;
 import org.robolectric.android.controller.ActivityController;
 
 public class NavigationSourceUtility {
-    public static SceneDelegate createFromNavigationSceneUtility(final Scene rootScene) {
-        ActivityController<TestActivity> controller = Robolectric.buildActivity(TestActivity.class).create().start().resume();
-        TestActivity testActivity = controller.get();
-        return NavigationSceneUtility.setupWithActivity(testActivity, null, rootScene.getClass(), new SceneComponentFactory() {
-            @Override
-            public Scene instantiateScene(ClassLoader cl, String className, Bundle bundle) {
-                if (className.equals(rootScene.getClass().getName())) {
-                    return rootScene;
-                }
-                return null;
-            }
-        }, false);
-    }
-
-    public static NavigationScene createFromSceneLifecycleManager(final Scene rootScene) {
-        Pair<SceneLifecycleManager<NavigationScene>, NavigationScene> pair = createFromInitSceneLifecycleManager(rootScene);
-        SceneLifecycleManager sceneLifecycleManager = pair.first;
+    public static GroupScene createFromSceneLifecycleManager(final Scene childScene) {
+        Pair<SceneLifecycleManager<GroupScene>, GroupScene> pair = createFromInitSceneLifecycleManager(childScene);
+        SceneLifecycleManager<GroupScene> sceneLifecycleManager = pair.first;
         sceneLifecycleManager.onStart();
         sceneLifecycleManager.onResume();
         return pair.second;
     }
 
-    public static Pair<SceneLifecycleManager<NavigationScene>, NavigationScene> createFromInitSceneLifecycleManager(final Scene rootScene) {
+    public static Pair<SceneLifecycleManager<GroupScene>, GroupScene> createFromInitSceneLifecycleManager(final Scene childScene) {
         ActivityController<TestActivity> controller = Robolectric.buildActivity(TestActivity.class).create().start().resume();
         TestActivity testActivity = controller.get();
-        NavigationScene navigationScene = new NavigationScene();
-        NavigationSceneOptions options = new NavigationSceneOptions(rootScene.getClass());
-        navigationScene.setArguments(options.toBundle());
+        TestGroupScene groupScene = new TestGroupScene();
+        groupScene.disableSupportRestore();
 
         Scope.RootScopeFactory rootScopeFactory = new Scope.RootScopeFactory() {
             @Override
@@ -49,24 +38,13 @@ public class NavigationSourceUtility {
             }
         };
 
-        SceneComponentFactory sceneComponentFactory = new SceneComponentFactory() {
-            @Override
-            public Scene instantiateScene(ClassLoader cl, String className, Bundle bundle) {
-                if (className.equals(rootScene.getClass().getName())) {
-                    return rootScene;
-                }
-                return null;
-            }
-        };
+        groupScene.add(groupScene.mId, childScene, "childScene");
 
-        navigationScene.setDefaultNavigationAnimationExecutor(new NoAnimationExecutor());
-        navigationScene.setRootSceneComponentFactory(sceneComponentFactory);
-
-        SceneLifecycleManager<NavigationScene> sceneLifecycleManager = new SceneLifecycleManager<>();
+        SceneLifecycleManager<GroupScene> sceneLifecycleManager = new SceneLifecycleManager<>();
         sceneLifecycleManager.onActivityCreated(testActivity, testActivity.mFrameLayout,
-                navigationScene, rootScopeFactory,
+                groupScene, rootScopeFactory,
                 false, null);
-        return Pair.create(sceneLifecycleManager, navigationScene);
+        return Pair.create(sceneLifecycleManager, (GroupScene) groupScene);
     }
 
     public static class TestActivity extends Activity {
@@ -77,6 +55,22 @@ public class NavigationSourceUtility {
             super.onCreate(savedInstanceState);
             mFrameLayout = new FrameLayout(this);
             setContentView(mFrameLayout);
+        }
+    }
+
+    public static class TestGroupScene extends GroupScene {
+        public final int mId;
+
+        public TestGroupScene() {
+            mId = ViewIdGenerator.generateViewId();
+        }
+
+        @NonNull
+        @Override
+        public ViewGroup onCreateView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container, @Nullable Bundle savedInstanceState) {
+            FrameLayout layout = new FrameLayout(requireSceneContext());
+            layout.setId(mId);
+            return layout;
         }
     }
 }

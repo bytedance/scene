@@ -2,7 +2,6 @@ package com.bytedance.scene;
 
 
 import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -17,9 +16,7 @@ import com.bytedance.scene.interfaces.ChildSceneLifecycleCallbacks;
 import com.bytedance.scene.utlity.ViewIdGenerator;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
-import org.robolectric.android.controller.ActivityController;
 import org.robolectric.annotation.Config;
 
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -139,7 +136,7 @@ public class ChildSceneLifecycleCallbacksTests {
             }
         };
 
-        Pair<SceneLifecycleManager<NavigationScene>, NavigationScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(rootScene);
+        Pair<SceneLifecycleManager<GroupScene>, GroupScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(rootScene);
         rootScene.registerChildSceneLifecycleCallbacks(callbacks, false);
 
         SceneLifecycleManager lifecycleManager = pair.first;
@@ -313,7 +310,7 @@ public class ChildSceneLifecycleCallbacksTests {
             }
         };
 
-        Pair<SceneLifecycleManager<NavigationScene>, NavigationScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(rootScene);
+        Pair<SceneLifecycleManager<GroupScene>, GroupScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(rootScene);
         rootScene.registerChildSceneLifecycleCallbacks(callbacks, true);
 
         SceneLifecycleManager lifecycleManager = pair.first;

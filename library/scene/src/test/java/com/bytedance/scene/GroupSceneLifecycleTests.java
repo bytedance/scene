@@ -12,7 +12,6 @@ import androidx.annotation.Nullable;
 import androidx.core.util.Pair;
 import androidx.lifecycle.Lifecycle;
 import com.bytedance.scene.group.GroupScene;
-import com.bytedance.scene.navigation.NavigationScene;
 import com.bytedance.scene.utlity.ViewIdGenerator;
 
 import com.bytedance.scene.utlity.ViewUtility;
@@ -31,10 +30,9 @@ public class GroupSceneLifecycleTests {
     @Test
     public void testAdd() {
         TestEmptyScene testScene = new TestEmptyScene();
-        Pair<SceneLifecycleManager<NavigationScene>, NavigationScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(testScene);
+        Pair<SceneLifecycleManager<GroupScene>, GroupScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(testScene);
 
         SceneLifecycleManager sceneLifecycleManager = pair.first;
-        NavigationScene navigationScene = pair.second;
 
         TestChildScene childScene = new TestChildScene();
         testScene.add(testScene.mId, childScene, "childScene");
@@ -87,10 +85,9 @@ public class GroupSceneLifecycleTests {
     @Test
     public void testRemove() {
         TestEmptyScene testScene = new TestEmptyScene();
-        Pair<SceneLifecycleManager<NavigationScene>, NavigationScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(testScene);
+        Pair<SceneLifecycleManager<GroupScene>, GroupScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(testScene);
 
         SceneLifecycleManager sceneLifecycleManager = pair.first;
-        NavigationScene navigationScene = pair.second;
 
         TestChildScene childScene = new TestChildScene();
         testScene.add(testScene.mId, childScene, "childScene");
@@ -117,10 +114,9 @@ public class GroupSceneLifecycleTests {
     @Test
     public void testShowAndHide() {
         TestEmptyScene testScene = new TestEmptyScene();
-        Pair<SceneLifecycleManager<NavigationScene>, NavigationScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(testScene);
+        Pair<SceneLifecycleManager<GroupScene>, GroupScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(testScene);
 
         SceneLifecycleManager sceneLifecycleManager = pair.first;
-        NavigationScene navigationScene = pair.second;
 
         TestChildScene childScene = new TestChildScene();
         assertEquals(childScene.getState(), State.NONE);
@@ -200,10 +196,9 @@ public class GroupSceneLifecycleTests {
     @Test
     public void testShowAndHide2() {
         TestEmptyScene testScene = new TestEmptyScene();
-        Pair<SceneLifecycleManager<NavigationScene>, NavigationScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(testScene);
+        Pair<SceneLifecycleManager<GroupScene>, GroupScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(testScene);
 
         SceneLifecycleManager sceneLifecycleManager = pair.first;
-        NavigationScene navigationScene = pair.second;
 
         TestChildScene childScene = new TestChildScene();
         assertEquals(childScene.getState(), State.NONE);
@@ -252,10 +247,10 @@ public class GroupSceneLifecycleTests {
     @Test
     public void testGroupSceneLifecycle() {
         TestScene groupScene = new TestScene();
-        Pair<SceneLifecycleManager<NavigationScene>, NavigationScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(groupScene);
+        Pair<SceneLifecycleManager<GroupScene>, GroupScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(groupScene);
 
         SceneLifecycleManager sceneLifecycleManager = pair.first;
-        NavigationScene navigationScene = pair.second;
+        GroupScene navigationScene = pair.second;
 
         sceneLifecycleManager.onStart();
         sceneLifecycleManager.onResume();
@@ -268,7 +263,7 @@ public class GroupSceneLifecycleTests {
         assertTrue(groupScene.isAdded(childScene));
         assertEquals(childScene, groupScene.findSceneByTag("childScene"));
         assertEquals(childScene.getParentScene(), groupScene);
-        assertEquals(childScene.getNavigationScene(), navigationScene);
+        assertEquals(childScene.getParentScene().getParentScene(), navigationScene);
         assertEquals(childScene.getState(), State.RESUMED);
         assertEquals(childScene.getLifecycle().getCurrentState(), groupScene.getLifecycle().getCurrentState());
 
@@ -545,7 +540,6 @@ public class GroupSceneLifecycleTests {
                 assertFalse(scene.isVisible());
                 assertNull(scene.getView());
                 assertNull(scene.getParentScene());
-                assertNull(scene.getNavigationScene());
                 assertNull(scene.getActivity());
                 assertNull(scene.getApplicationContext());
                 assertNotNull(scene.getLifecycle());
@@ -563,7 +557,6 @@ public class GroupSceneLifecycleTests {
                 assertSame(scene.getView().getContext().getSystemService(Scene.SCENE_SERVICE), scene);
                 assertNotNull(scene.getActivity());
                 assertNotNull(scene.getParentScene());
-                assertNotNull(scene.getNavigationScene());
                 assertNotNull(scene.getActivity());
                 assertNotNull(scene.getApplicationContext());
                 assertNotNull(scene.getSceneContext());
@@ -581,7 +574,6 @@ public class GroupSceneLifecycleTests {
                 assertSame(scene.getView().getContext().getSystemService(Scene.SCENE_SERVICE), scene);
                 assertEquals(ViewUtility.findSceneByView(scene.getView()), scene);
                 assertNotNull(scene.getParentScene());
-                assertNotNull(scene.getNavigationScene());
                 assertNotNull(scene.getActivity());
                 assertNotNull(scene.getApplicationContext());
                 assertNotNull(scene.getSceneContext());
@@ -599,7 +591,6 @@ public class GroupSceneLifecycleTests {
                 assertSame(scene.getView().getContext().getSystemService(Scene.SCENE_SERVICE), scene);
                 assertEquals(ViewUtility.findSceneByView(scene.getView()), scene);
                 assertNotNull(scene.getParentScene());
-                assertNotNull(scene.getNavigationScene());
                 assertNotNull(scene.getActivity());
                 assertNotNull(scene.getApplicationContext());
                 assertNotNull(scene.getSceneContext());
@@ -617,7 +608,6 @@ public class GroupSceneLifecycleTests {
                 assertSame(scene.getView().getContext().getSystemService(Scene.SCENE_SERVICE), scene);
                 assertEquals(ViewUtility.findSceneByView(scene.getView()), scene);
                 assertNotNull(scene.getParentScene());
-                assertNotNull(scene.getNavigationScene());
                 assertNotNull(scene.getActivity());
                 assertNotNull(scene.getApplicationContext());
                 assertNotNull(scene.getSceneContext());
