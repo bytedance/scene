@@ -41,51 +41,51 @@ class NavigationListDemo : UserVisibleHintGroupScene() {
         addTitle(layout, getString(R.string.main_title_basic))
 
         addButton(layout, getString(R.string.main_nav_btn_push_pop), View.OnClickListener {
-            requireNavigationScene().push(PushPopBasicUsageDemoScene::class.java)
+            requireNavigationScene().push(PushPopBasicUsageDemoScene())
         })
 
         addButton(layout, getString(R.string.main_nav_btn_single_top), View.OnClickListener {
-            requireNavigationScene().push(PushSingleTopRootScene::class.java)
+            requireNavigationScene().push(PushSingleTopRootScene())
         })
 
         addButton(layout, getString(R.string.main_nav_btn_single_task), View.OnClickListener {
-            requireNavigationScene().push(SingleTaskDemoScene::class.java)
+            requireNavigationScene().push(SingleTaskDemoScene())
         })
 
         addButton(layout, getString(R.string.main_nav_btn_clear_task), View.OnClickListener {
-            requireNavigationScene().push(PushClearTaskScene::class.java)
+            requireNavigationScene().push(PushClearTaskScene())
         })
 
         addButton(layout, getString(R.string.main_nav_btn_clear_current), View.OnClickListener {
-            requireNavigationScene().push(PushClearCurrentDemoScene::class.java)
+            requireNavigationScene().push(PushClearCurrentDemoScene())
         })
 
         addButton(layout, getString(R.string.main_nav_btn_remove), View.OnClickListener {
-            requireNavigationScene().push(RemoveDemoScene::class.java)
+            requireNavigationScene().push(RemoveDemoScene())
         })
 
         addTitle(layout, getString(R.string.main_title_pro));
 
         addButton(layout, getString(R.string.main_nav_btn_pop_to), View.OnClickListener {
-            requireNavigationScene().push(PopToScene::class.java)
+            requireNavigationScene().push(PopToScene())
         })
 
         addButton(layout, getString(R.string.main_nav_btn_interrupt_pop), View.OnClickListener {
-            requireNavigationScene().push(PopInterruptScene::class.java)
+            requireNavigationScene().push(PopInterruptScene())
         })
 
         addButton(layout, getString(R.string.main_nav_btn_for_result), View.OnClickListener {
-            requireNavigationScene().push(SceneResultScene_0::class.java)
+            requireNavigationScene().push(SceneResultScene_0())
         })
 
         addTitle(layout, getString(R.string.main_title_other));
 
         addButton(layout, getString(R.string.main_nav_btn_reuse), View.OnClickListener {
-            requireNavigationScene().push(ReuseDemoScene::class.java)
+            requireNavigationScene().push(ReuseDemoScene())
         })
 
         addButton(layout, getString(R.string.main_nav_btn_app_compat), View.OnClickListener {
-            requireNavigationScene().push(DefaultScene::class.java)
+            requireNavigationScene().push(DefaultScene())
         })
 
         addTitle(layout, getString(R.string.main_title_todo))

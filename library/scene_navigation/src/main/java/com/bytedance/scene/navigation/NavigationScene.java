@@ -230,10 +230,18 @@ public final class NavigationScene extends Scene implements NavigationListener, 
         mLruCache.put(scene.getClass(), scene);
     }
 
+    /**
+     * @deprecated Use {@link #push(Scene)}.
+     */
+    @Deprecated
     public void push(@NonNull Class<? extends Scene> clazz) {
         push(clazz, null);
     }
 
+    /**
+     * @deprecated Use {@link #push(Scene)}.
+     */
+    @Deprecated
     public void push(@NonNull Class<? extends Scene> clazz, @Nullable Bundle argument) {
         push(clazz, argument, null);
     }
@@ -242,7 +250,9 @@ public final class NavigationScene extends Scene implements NavigationListener, 
      * Push a new Scene.
      *
      * @see #pop()
+     * @deprecated Use {@link #push(Scene, PushOptions)}.
      */
+    @Deprecated
     public void push(@NonNull Class<? extends Scene> clazz, @Nullable Bundle argument, @Nullable PushOptions pushOptions) {
         Scene scene = null;
         if (ReuseGroupScene.class.isAssignableFrom(clazz)) {
@@ -264,6 +274,9 @@ public final class NavigationScene extends Scene implements NavigationListener, 
         pushInstance(scene, null);
     }
 
+    /**
+     * Navigate to a new Scene.
+     */
     public void push(@NonNull Scene scene, @Nullable PushOptions pushOptions) {
         pushInstance(scene, pushOptions);
     }
