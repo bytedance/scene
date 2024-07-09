@@ -305,7 +305,6 @@ public final class NavigationScene extends Scene implements NavigationListener, 
         }
 
         hideSoftInputIfNeeded();
-        cancelPendingInputEventsIfNeeded();
         mNavigationSceneManager.push(scene, pushOptions);
     }
 
@@ -313,16 +312,6 @@ public final class NavigationScene extends Scene implements NavigationListener, 
         Scene currentScene = mNavigationSceneManager.getCurrentScene();
         if (currentScene != null) {
             SoftInputUtility.hideSoftInputFromWindow(currentScene.getView());
-        }
-    }
-
-    private void cancelPendingInputEventsIfNeeded() {
-        Scene currentScene = mNavigationSceneManager.getCurrentScene();
-        if (currentScene != null) {
-            View view = currentScene.getView();
-            if (view != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                view.cancelPendingInputEvents();
-            }
         }
     }
 
@@ -358,7 +347,6 @@ public final class NavigationScene extends Scene implements NavigationListener, 
             return;
         }
         hideSoftInputIfNeeded();
-        cancelPendingInputEventsIfNeeded();
         mNavigationSceneManager.pop();
     }
 
@@ -397,7 +385,6 @@ public final class NavigationScene extends Scene implements NavigationListener, 
             return;
         }
         hideSoftInputIfNeeded();
-        cancelPendingInputEventsIfNeeded();
         mNavigationSceneManager.pop(popOptions);
     }
 
@@ -412,7 +399,6 @@ public final class NavigationScene extends Scene implements NavigationListener, 
             return;
         }
         hideSoftInputIfNeeded();
-        cancelPendingInputEventsIfNeeded();
         mNavigationSceneManager.popTo(clazz, animationFactory);
     }
 
@@ -426,7 +412,6 @@ public final class NavigationScene extends Scene implements NavigationListener, 
             return;
         }
         hideSoftInputIfNeeded();
-        cancelPendingInputEventsIfNeeded();
         mNavigationSceneManager.popToRoot(animationFactory);
     }
 
@@ -438,7 +423,6 @@ public final class NavigationScene extends Scene implements NavigationListener, 
         }
         if (mNavigationSceneManager.getCurrentScene() == scene) {
             hideSoftInputIfNeeded();
-            cancelPendingInputEventsIfNeeded();
         }
         mNavigationSceneManager.remove(scene);
     }

@@ -901,10 +901,6 @@ class NavigationSceneManager {
                 throw new IllegalArgumentException("Can't push, current NavigationScene state " + mNavigationScene.getState().name);
             }
 
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                mNavigationScene.getView().cancelPendingInputEvents();
-            }
-
             final Record currentRecord = mBackStackList.getCurrentRecord();
             final View currentView = currentRecord != null ? currentRecord.mScene.getView() : null;
 
