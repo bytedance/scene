@@ -25,6 +25,9 @@
         android:id="@+id/activity_compatibility"
         android:title="@string/main_scene_title_activity_compatibility" />
     <item
+        android:id="@+id/other_library"
+        android:title="@string/main_scene_title_other_library" />
+    <item
         android:id="@+id/migrate"
         android:title="@string/main_scene_title_migrate" />
     <item

@@ -34,4 +34,6 @@ dependencies {
     implementation project(path: ':library:scene_dialog')
 
     implementation KOTLIN_LIB
+
+    implementation GLIDE_LIB
 }

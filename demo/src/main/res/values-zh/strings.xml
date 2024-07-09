@@ -10,6 +10,8 @@
     <string name="main_scene_title_migrate">迁移</string>
     <string name="main_scene_title_benchmark">Benchmark</string>
     <string name="main_scene_title_extreme_case">极端Case</string>
+    <string name="main_scene_title_other_library">其他库</string>
+
     <string name="main_scene_title_lifecycle">生命周期</string>
     <string name="main_scene_title_composition">UI组合</string>
     <string name="main_title_basic">基本用法</string>
@@ -169,4 +171,5 @@
     <string name="patterns_mvvm">MVVM</string>
     <string name="patterns_mvi">MVI/Redux/Unidirectional data flow</string>
     <string name="patterns_viper">VIPER</string>
+    <string name="lib_glide">Glide</string>
 </resources>

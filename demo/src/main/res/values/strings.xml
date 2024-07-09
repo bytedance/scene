@@ -16,6 +16,7 @@
     <string name="main_scene_title_benchmark">Benchmark</string>
     <string name="main_scene_title_lifecycle">LifeCycle</string>
     <string name="main_scene_title_extreme_case">Case</string>
+    <string name="main_scene_title_other_library">Other Library</string>
 
     <string name="main_title_basic">Basic Usage</string>
     <string name="main_title_pro">Pro Usage</string>
@@ -185,4 +186,5 @@
     <string name="patterns_mvi">MVI/Redux/Unidirectional data flow</string>
     <string name="patterns_viper">VIPER</string>
 
+    <string name="lib_glide">Glide</string>
 </resources>
