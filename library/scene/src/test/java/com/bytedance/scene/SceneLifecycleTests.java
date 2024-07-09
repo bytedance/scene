@@ -10,6 +10,7 @@ import androidx.core.util.Pair;
 import androidx.lifecycle.Lifecycle;
 
 import com.bytedance.scene.group.GroupScene;
+import com.bytedance.scene.utlity.SceneViewTreeLifecycleOwner;
 import com.bytedance.scene.utlity.ViewUtility;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -38,6 +39,7 @@ public class SceneLifecycleTests {
         SceneLifecycleManager sceneLifecycleManager = pair.first;
 
         assertNotNull(testScene.getView());
+        assertEquals(SceneViewTreeLifecycleOwner.get(testScene.getView()), testScene);
         assertNotNull(testScene.getActivity());
         assertNotNull(testScene.getApplicationContext());
         assertNotNull(testScene.getResources());
