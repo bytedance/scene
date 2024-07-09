@@ -197,4 +197,22 @@ public class ScenePlaceHolderViewTests {
         sceneLifecycleManager.onResume();
         assertTrue(called.get());
     }
+
+    @Test
+    public void groupScene_Add_ChildScene_Which_Has_ScenePlaceHolderView() {
+        NavigationSourceUtility.TestGroupScene groupScene = new NavigationSourceUtility.TestGroupScene();
+        groupScene.disableSupportRestore();
+        groupScene.add(groupScene.mId, new Scene() {
+            @NonNull
+            @Override
+            public View onCreateView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container, @Nullable Bundle savedInstanceState) {
+                return inflater.inflate(TestResources.getLayout(this, "layout_place_holder_view"), container, false);
+            }
+        }, "tag");
+
+        Pair<SceneLifecycleManager<GroupScene>, GroupScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(groupScene);
+        SceneLifecycleManager<GroupScene> sceneLifecycleManager = pair.first;
+        sceneLifecycleManager.onStart();
+        sceneLifecycleManager.onResume();
+    }
 }

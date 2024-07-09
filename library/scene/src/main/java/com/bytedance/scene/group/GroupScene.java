@@ -387,8 +387,8 @@ public abstract class GroupScene extends Scene implements SceneParent {
             throw new IllegalArgumentException("GroupScene onCreateView view must be ViewGroup");
         }
         this.mGroupSceneManager.setView((ViewGroup) getView());
-        dispatchChildrenState(State.VIEW_CREATED);
         replacePlaceHolderViewToTargetScene();
+        dispatchChildrenState(State.VIEW_CREATED);
     }
 
     private void replacePlaceHolderViewToTargetScene() {
