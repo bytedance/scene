@@ -43,14 +43,6 @@ class PatternsSamples : Scene() {
             requireNavigationScene().push(ViewModelSceneSamples::class.java)
         })
 
-        addButton(layout, getString(R.string.patterns_mvi), View.OnClickListener {
-            Toast.makeText(requireApplicationContext(), "TODO", Toast.LENGTH_SHORT).show()
-        })
-
-        addButton(layout, getString(R.string.patterns_viper), View.OnClickListener {
-            Toast.makeText(requireApplicationContext(), "TODO", Toast.LENGTH_SHORT).show()
-        })
-
         addSpace(layout, 100)
 
         return scrollView

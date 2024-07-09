@@ -15,6 +15,7 @@ import com.bytedance.scenedemo.utility.ColorUtil
 /**
  * Created by JiangQi on 8/21/18.
  */
+@Deprecated("unused")
 class InheritedDemo : InheritedScene() {
     lateinit var summary: TextView
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup, savedInstanceState: Bundle?): ViewGroup {

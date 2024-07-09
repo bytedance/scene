@@ -12,7 +12,6 @@ import com.bytedance.scenedemo.group.async_inflate.AsyncInflateSceneDemo
 import com.bytedance.scenedemo.group.basic_usage.GroupSceneBasicUsageSample
 import com.bytedance.scenedemo.group.drawer.NavigationViewSample
 import com.bytedance.scenedemo.group.hybrid.HybridSample
-import com.bytedance.scenedemo.group.inherited.InheritedDemo
 import com.bytedance.scenedemo.group.placeholder.PlaceHolderViewSample
 import com.bytedance.scenedemo.group.tab.BottomNavigationViewSample
 import com.bytedance.scenedemo.group.viewpager.ViewPagerSample
@@ -62,10 +61,6 @@ class GroupSceneUsageSamples : UserVisibleHintGroupScene() {
 
         addButton(layout, getString(R.string.main_part_btn_async_inflate), View.OnClickListener {
             requireNavigationScene().push(AsyncInflateSceneDemo::class.java)
-        })
-
-        addButton(layout, getString(R.string.main_part_btn_inherited_scene), View.OnClickListener {
-            requireNavigationScene().push(InheritedDemo::class.java)
         })
 
         addSpace(layout, 100)

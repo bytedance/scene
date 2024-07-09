@@ -182,7 +182,7 @@
     <string name="patterns_scope">Scope</string>
     <string name="patterns_constructor">By Constructor Method</string>
     <string name="patterns_mvp">MVP</string>
-    <string name="patterns_mvvm">MVVM</string>
+    <string name="patterns_mvvm">Jetpack MVVM</string>
     <string name="patterns_mvi">MVI/Redux/Unidirectional data flow</string>
     <string name="patterns_viper">VIPER</string>
 

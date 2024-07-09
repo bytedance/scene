@@ -21,6 +21,7 @@ import androidx.annotation.Nullable;
 /**
  * Created by JiangQi on 8/21/18.
  */
+@Deprecated
 public abstract class InheritedScene extends GroupScene {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
