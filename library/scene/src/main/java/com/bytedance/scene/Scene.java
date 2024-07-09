@@ -38,6 +38,9 @@ import androidx.lifecycle.LifecycleRegistry;
 import androidx.lifecycle.ViewModelStore;
 import androidx.lifecycle.ViewModelStoreOwner;
 
+import androidx.savedstate.SavedStateRegistry;
+import androidx.savedstate.SavedStateRegistryController;
+import androidx.savedstate.SavedStateRegistryOwner;
 import com.bytedance.scene.parcel.ParcelConstants;
 import com.bytedance.scene.utlity.SceneViewTreeLifecycleOwner;
 import com.bytedance.scene.utlity.SceneViewTreeViewModelStoreOwner;
@@ -119,7 +122,7 @@ import static androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP;
  * }
  * ```
  */
-public abstract class Scene implements LifecycleOwner, ViewModelStoreOwner {
+public abstract class Scene implements LifecycleOwner, SavedStateRegistryOwner, ViewModelStoreOwner {
     /**
      * use ViewUtility.findSceneByView(View) instead
      */
@@ -147,6 +150,7 @@ public abstract class Scene implements LifecycleOwner, ViewModelStoreOwner {
     @StyleRes
     private int mThemeResource;
     private final FixSceneReuseLifecycleAdapter mLifecycleRegistry = new FixSceneReuseLifecycleAdapter(new LifecycleRegistry(this));
+    private final SavedStateRegistryController mSavedStateRegistryController = SavedStateRegistryController.create(this);
 
     /**
      * @hide
@@ -310,6 +314,7 @@ public abstract class Scene implements LifecycleOwner, ViewModelStoreOwner {
         }
 
         mCalled = false;
+        mSavedStateRegistryController.performRestore(savedInstanceState);
         onCreate(savedInstanceState);
         if (!mCalled) {
             throw new SuperNotCalledException("Scene " + this
@@ -469,6 +474,7 @@ public abstract class Scene implements LifecycleOwner, ViewModelStoreOwner {
             throw new SuperNotCalledException("Scene " + this
                     + " did not call through to super.onSaveInstanceState()");
         }
+        mSavedStateRegistryController.performSave(outState);
     }
 
     /** @hide */
@@ -1046,6 +1052,12 @@ public abstract class Scene implements LifecycleOwner, ViewModelStoreOwner {
         public void onUnRegister() {
             this.mViewModelStore.clear();
         }
+    }
+
+    @NonNull
+    @Override
+    public final SavedStateRegistry getSavedStateRegistry() {
+        return mSavedStateRegistryController.getSavedStateRegistry();
     }
 
     /**

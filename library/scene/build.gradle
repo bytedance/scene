@@ -19,6 +19,7 @@ dependencies {
     implementation LIFECYCLE_EXTENSIONS_LIB
     implementation LIFECYCLE_RUNTIME_LIB
     implementation ANNOTATION_LIB
+    api SAVED_STATE_LIB
 
     testImplementation ROBOLECTRIC
     testImplementation JUNIT
