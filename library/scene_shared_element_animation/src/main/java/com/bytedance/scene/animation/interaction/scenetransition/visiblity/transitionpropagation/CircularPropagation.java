@@ -18,8 +18,6 @@ package com.bytedance.scene.animation.interaction.scenetransition.visiblity.tran
 import android.graphics.Rect;
 import android.view.ViewGroup;
 
-import androidx.transition.TransitionValues;
-
 import com.bytedance.scene.animation.interaction.scenetransition.visiblity.SceneVisibilityTransition;
 
 public class CircularPropagation extends VisibilityPropagation {
@@ -48,7 +46,6 @@ public class CircularPropagation extends VisibilityPropagation {
     @Override
     public long getStartDelay(ViewGroup sceneRoot, SceneVisibilityTransition transition, TransitionPropagationResult result, boolean appear) {
         int directionMultiplier = 1;
-        TransitionValues positionValues;
         if (!appear) {
             directionMultiplier = -1;
         }
