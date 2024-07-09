@@ -151,7 +151,7 @@ public abstract class Scene implements LifecycleOwner, SavedStateRegistryOwner, 
     @StyleRes
     private int mThemeResource;
     private final FixSceneReuseLifecycleAdapter mLifecycleRegistry = new FixSceneReuseLifecycleAdapter(new LifecycleRegistry(this));
-    private final SavedStateRegistryController mSavedStateRegistryController = SavedStateRegistryController.create(this);
+    private SavedStateRegistryController mSavedStateRegistryController;
 
     /**
      * @hide
@@ -315,6 +315,7 @@ public abstract class Scene implements LifecycleOwner, SavedStateRegistryOwner, 
         }
 
         mCalled = false;
+        mSavedStateRegistryController = SavedStateRegistryController.create(this);
         mSavedStateRegistryController.performRestore(savedInstanceState);
         onCreate(savedInstanceState);
         if (!mCalled) {
@@ -1059,6 +1060,9 @@ public abstract class Scene implements LifecycleOwner, SavedStateRegistryOwner, 
     @NonNull
     @Override
     public final SavedStateRegistry getSavedStateRegistry() {
+        if (mSavedStateRegistryController == null) {
+            throw new IllegalStateException("SavedStateRegistry is not created, you can't call before onCreate");
+        }
         return mSavedStateRegistryController.getSavedStateRegistry();
     }
 
