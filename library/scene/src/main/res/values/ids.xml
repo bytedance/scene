@@ -5,4 +5,7 @@
 
     <!-- ViewTreeLifecycleOwner -->
     <item type="id" name="view_tree_lifecycle_owner"/>
+
+    <!-- ViewTreeViewModelStoreOwner -->
+    <item type="id" name="view_tree_view_model_store_owner"/>
 </resources>

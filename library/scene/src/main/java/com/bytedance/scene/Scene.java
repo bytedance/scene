@@ -40,6 +40,7 @@ import androidx.lifecycle.ViewModelStoreOwner;
 
 import com.bytedance.scene.parcel.ParcelConstants;
 import com.bytedance.scene.utlity.SceneViewTreeLifecycleOwner;
+import com.bytedance.scene.utlity.SceneViewTreeViewModelStoreOwner;
 import com.bytedance.scene.utlity.ViewRefUtility;
 import com.bytedance.scene.utlity.SceneInternalException;
 import com.bytedance.scene.utlity.Utility;
@@ -368,6 +369,7 @@ public abstract class Scene implements LifecycleOwner, ViewModelStoreOwner {
         }
 
         SceneViewTreeLifecycleOwner.set(view, this);
+        SceneViewTreeViewModelStoreOwner.set(view, this);
         view.setTag(R.id.bytedance_scene_view_scene_tag, this);
         view.setSaveFromParentEnabled(false);
         mView = view;

@@ -11,6 +11,9 @@ import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.bytedance.scene.group.GroupScene;
+import com.bytedance.scene.utlity.SceneViewTreeViewModelStoreOwner;
+import com.google.common.truth.Truth;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
@@ -40,6 +43,8 @@ public class ViewModelTests {
             }
         };
         Pair<SceneLifecycleManager<GroupScene>, GroupScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(scene);
+
+        Truth.assertThat(SceneViewTreeViewModelStoreOwner.get(scene.requireView())).isEqualTo(scene);
     }
 
     @Test
