@@ -8,4 +8,7 @@
 
     <!-- ViewTreeViewModelStoreOwner -->
     <item type="id" name="view_tree_view_model_store_owner"/>
+
+    <!-- ViewTreeSavedStateRegistryOwner -->
+    <item type="id" name="view_tree_saved_state_registry_owner"/>
 </resources>

@@ -43,6 +43,7 @@ import androidx.savedstate.SavedStateRegistryController;
 import androidx.savedstate.SavedStateRegistryOwner;
 import com.bytedance.scene.parcel.ParcelConstants;
 import com.bytedance.scene.utlity.SceneViewTreeLifecycleOwner;
+import com.bytedance.scene.utlity.SceneViewTreeSavedStateRegistryOwner;
 import com.bytedance.scene.utlity.SceneViewTreeViewModelStoreOwner;
 import com.bytedance.scene.utlity.ViewRefUtility;
 import com.bytedance.scene.utlity.SceneInternalException;
@@ -375,6 +376,7 @@ public abstract class Scene implements LifecycleOwner, SavedStateRegistryOwner, 
 
         SceneViewTreeLifecycleOwner.set(view, this);
         SceneViewTreeViewModelStoreOwner.set(view, this);
+        SceneViewTreeSavedStateRegistryOwner.set(view, this);
         view.setTag(R.id.bytedance_scene_view_scene_tag, this);
         view.setSaveFromParentEnabled(false);
         mView = view;

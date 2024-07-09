@@ -11,6 +11,7 @@ import androidx.lifecycle.Lifecycle;
 
 import com.bytedance.scene.group.GroupScene;
 import com.bytedance.scene.utlity.SceneViewTreeLifecycleOwner;
+import com.bytedance.scene.utlity.SceneViewTreeSavedStateRegistryOwner;
 import com.bytedance.scene.utlity.SceneViewTreeViewModelStoreOwner;
 import com.bytedance.scene.utlity.ViewUtility;
 import com.google.common.truth.Truth;
@@ -44,6 +45,7 @@ public class SceneLifecycleTests {
         assertNotNull(testScene.getView());
         assertEquals(SceneViewTreeLifecycleOwner.get(testScene.getView()), testScene);
         Truth.assertThat(SceneViewTreeViewModelStoreOwner.get(testScene.requireView())).isEqualTo(testScene);
+        Truth.assertThat(SceneViewTreeSavedStateRegistryOwner.get(testScene.requireView())).isEqualTo(testScene);
         assertNotNull(testScene.getActivity());
         assertNotNull(testScene.getApplicationContext());
         assertNotNull(testScene.getResources());
