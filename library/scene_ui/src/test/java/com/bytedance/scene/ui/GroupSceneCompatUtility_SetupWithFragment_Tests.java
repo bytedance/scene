@@ -9,6 +9,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import com.bytedance.scene.GroupSceneDelegate;
+import com.bytedance.scene.Scene;
+import com.bytedance.scene.SceneComponentFactory;
+import com.bytedance.scene.SceneDelegate;
 import com.bytedance.scene.State;
 import com.bytedance.scene.group.GroupScene;
 import com.bytedance.scene.ui.utility.TestAppCompatActivity;
@@ -38,6 +41,63 @@ public class GroupSceneCompatUtility_SetupWithFragment_Tests {
         controller.stop();
         controller.destroy();
         assertEquals(6, testFragment.mMethodInvokedCount);
+    }
+
+    @Test
+    public void testRootSceneComponentFactory() {
+        ActivityController<TestAppCompatActivity> controller = Robolectric.buildActivity(TestAppCompatActivity.class).create();
+        TestAppCompatActivity activity = controller.get();
+
+        TestFragment testFragment = new TestFragment();
+        activity.getSupportFragmentManager().beginTransaction().add(activity.mFrameLayout.getId(), testFragment).commitNowAllowingStateLoss();
+        controller.start();
+        controller.resume();
+
+        final TestScene scene = new TestScene();
+        GroupSceneDelegate sceneDelegate = GroupSceneCompatUtility.setupWithFragment(testFragment, TestScene.class, testFragment.mId)
+                .rootSceneComponentFactory(new SceneComponentFactory() {
+                    @Override
+                    public Scene instantiateScene(ClassLoader cl, String className, Bundle bundle) {
+                        return scene;
+                    }
+                }).build();
+        assertEquals(scene, sceneDelegate.getGroupScene());
+    }
+
+    @Test
+    public void testRootSceneInstance() {
+        ActivityController<TestAppCompatActivity> controller = Robolectric.buildActivity(TestAppCompatActivity.class).create();
+        TestAppCompatActivity activity = controller.get();
+
+        TestFragment testFragment = new TestFragment();
+        activity.getSupportFragmentManager().beginTransaction().add(activity.mFrameLayout.getId(), testFragment).commitNowAllowingStateLoss();
+        controller.start();
+        controller.resume();
+
+        final TestScene scene = new TestScene();
+        GroupSceneDelegate sceneDelegate = GroupSceneCompatUtility.setupWithFragment(testFragment, TestScene.class, testFragment.mId)
+                .rootScene(scene).build();
+        assertEquals(scene, sceneDelegate.getGroupScene());
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testRootSceneInstanceTypeError() {
+        ActivityController<TestAppCompatActivity> controller = Robolectric.buildActivity(TestAppCompatActivity.class).create();
+        TestAppCompatActivity activity = controller.get();
+
+        TestFragment testFragment = new TestFragment();
+        activity.getSupportFragmentManager().beginTransaction().add(activity.mFrameLayout.getId(), testFragment).commitNowAllowingStateLoss();
+        controller.start();
+        controller.resume();
+
+        GroupSceneDelegate sceneDelegate = GroupSceneCompatUtility.setupWithFragment(testFragment, TestScene.class, testFragment.mId)
+                .rootScene(new GroupScene() {
+                    @NonNull
+                    @Override
+                    public ViewGroup onCreateView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container, @Nullable Bundle savedInstanceState) {
+                        return new FrameLayout(requireSceneContext());
+                    }
+                }).build();
     }
 
     public static class TestNormalFragment_Add_In_Activity_OnCreate extends Fragment {
@@ -124,6 +184,17 @@ public class GroupSceneCompatUtility_SetupWithFragment_Tests {
         @Override
         public ViewGroup onCreateView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container, @Nullable Bundle savedInstanceState) {
             return new FrameLayout(requireSceneContext());
+        }
+    }
+
+    public static class TestFragment extends Fragment{
+        final int mId = ViewIdGenerator.generateViewId();
+        @Nullable
+        @Override
+        public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+            FrameLayout layout = new FrameLayout(requireActivity());
+            layout.setId(mId);
+            return layout;
         }
     }
 }

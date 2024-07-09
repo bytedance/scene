@@ -93,6 +93,22 @@ public final class NavigationSceneUtility {
         }
 
         @NonNull
+        public Builder rootScene(@NonNull final Scene scene) {
+            if (scene.getClass() != this.mRootSceneClazz) {
+                throw new IllegalArgumentException("Scene type error, must be " + this.mRootSceneClazz + " instance");
+            }
+
+            this.mRootSceneComponentFactory = new SceneComponentFactory() {
+                @Nullable
+                @Override
+                public Scene instantiateScene(@NonNull ClassLoader cl, @NonNull String className, @Nullable Bundle bundle) {
+                    return scene;
+                }
+            };
+            return this;
+        }
+
+        @NonNull
         public Builder drawWindowBackground(boolean drawWindowBackground) {
             this.mDrawWindowBackground = drawWindowBackground;
             return this;

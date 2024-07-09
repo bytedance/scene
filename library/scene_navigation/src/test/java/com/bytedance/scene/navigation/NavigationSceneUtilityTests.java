@@ -244,7 +244,7 @@ public class NavigationSceneUtilityTests {
     }
 
     @Test
-    public void testSetRootScopeFactory() {
+    public void testRootSceneComponentFactory() {
         ActivityController<TestActivity> controller = Robolectric.buildActivity(TestActivity.class).create();
         TestActivity activity = controller.get();
         final TestScene scene = new TestScene();
@@ -257,6 +257,31 @@ public class NavigationSceneUtilityTests {
                 }).build();
         controller.start().resume();
         assertEquals(scene, sceneDelegate.getNavigationScene().getCurrentScene());
+    }
+
+    @Test
+    public void testRootSceneInstance() {
+        ActivityController<TestActivity> controller = Robolectric.buildActivity(TestActivity.class).create();
+        TestActivity activity = controller.get();
+        final TestScene scene = new TestScene();
+        SceneDelegate sceneDelegate = NavigationSceneUtility.setupWithActivity(activity, TestScene.class)
+                .rootScene(scene).build();
+        controller.start().resume();
+        assertEquals(scene, sceneDelegate.getNavigationScene().getCurrentScene());
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testRootSceneInstanceTypeError() {
+        ActivityController<TestActivity> controller = Robolectric.buildActivity(TestActivity.class).create();
+        TestActivity activity = controller.get();
+        SceneDelegate sceneDelegate = NavigationSceneUtility.setupWithActivity(activity, TestScene.class)
+                .rootScene(new Scene() {
+                    @NonNull
+                    @Override
+                    public View onCreateView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container, @Nullable Bundle savedInstanceState) {
+                        return new View(requireSceneContext());
+                    }
+                }).build();
     }
 
     @Test

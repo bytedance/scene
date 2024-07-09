@@ -77,6 +77,22 @@ public class GroupSceneCompatUtility {
         }
 
         @NonNull
+        public Builder rootScene(@NonNull final GroupScene scene) {
+            if (scene.getClass() != this.mRootSceneClazz) {
+                throw new IllegalArgumentException("Scene type error, must be " + this.mRootSceneClazz + " instance");
+            }
+
+            this.mRootSceneComponentFactory = new SceneComponentFactory() {
+                @Nullable
+                @Override
+                public Scene instantiateScene(@NonNull ClassLoader cl, @NonNull String className, @Nullable Bundle bundle) {
+                    return scene;
+                }
+            };
+            return this;
+        }
+
+        @NonNull
         public GroupSceneCompatUtility.Builder tag(@NonNull String tag) {
             this.mTag = Utility.requireNonNull(tag, "Tag can't be null");
             return this;
