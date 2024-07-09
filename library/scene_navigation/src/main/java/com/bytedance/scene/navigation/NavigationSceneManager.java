@@ -524,10 +524,6 @@ class NavigationSceneManager {
                 throw new IllegalArgumentException("Can't pop, current NavigationScene state " + mNavigationScene.getState().name);
             }
 
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                mNavigationScene.getView().cancelPendingInputEvents();
-            }
-
             List<Record> recordList = mBackStackList.getCurrentRecordList();
             if (this.popCount <= 0) {
                 throw new IllegalArgumentException("popCount can not be " + this.popCount + " stackSize is " + recordList.size());
@@ -679,10 +675,6 @@ class NavigationSceneManager {
 
             if (!canExecuteNavigationStackOperation()) {
                 throw new IllegalArgumentException("Can't change translucent, current NavigationScene state " + mNavigationScene.getState().name);
-            }
-
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                mNavigationScene.getView().cancelPendingInputEvents();
             }
 
             Record curRecord = findRecordByScene(scene);
