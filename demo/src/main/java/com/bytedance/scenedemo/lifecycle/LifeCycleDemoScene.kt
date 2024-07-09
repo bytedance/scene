@@ -15,7 +15,7 @@ import com.bytedance.scene.Scene
 class LifeCycleDemoScene : GroupScene() {
     lateinit var frameLayout: FrameLayout
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup, savedInstanceState: Bundle?): ViewGroup {
-        frameLayout = FrameLayout(activity)
+        frameLayout = FrameLayout(requireActivity())
         frameLayout!!.id = View.generateViewId()
         return frameLayout
     }
