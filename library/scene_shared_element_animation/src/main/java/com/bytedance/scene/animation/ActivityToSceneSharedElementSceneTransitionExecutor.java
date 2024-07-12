@@ -41,7 +41,7 @@ public class ActivityToSceneSharedElementSceneTransitionExecutor extends Navigat
     @NonNull
     private final NavigationAnimationExecutor mFallbackAnimationExecutor;
     @NonNull
-    private View mActivityView;
+    private final View mActivityView;
     private boolean mDelayEnterTransitionExecute = false;
     private Runnable mEnterTransitionRunnable = null;
 
