@@ -117,7 +117,7 @@
     <string name="part_inherited_tip">当内嵌层级很深的时候，跨层级的Scene想共享数据会非常困难，所以提供了InheritedScene和InheritedScene.of方法直接取到最近的InheritedScene</string>
     <string name="main_anim_btn_ios_anim">iOS Interaction 动画</string>
     <string name="main_anim_btn_res_anim">使用 XML 资源自定义转场动画</string>
-    <string name="main_anim_btn_share_element">Android 5 共享元素动画</string>
+    <string name="main_anim_btn_share_element">共享元素动画</string>
     <string name="main_anim_btn_swipe_back">滑动返回动画</string>
     <string name="anim_xml_btn">打开 Scene</string>
     <string name="anim_xml_tip_1">进入动画</string>

@@ -7,7 +7,6 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.os.Bundle
 import com.bytedance.scenedemo.R
-import com.bytedance.scenedemo.animation.TransitionDemo.TransitionDemo2
 import com.bytedance.scene.interfaces.PushOptions
 import com.bytedance.scene.animation.NavigationTransitionExecutor
 import android.view.Gravity

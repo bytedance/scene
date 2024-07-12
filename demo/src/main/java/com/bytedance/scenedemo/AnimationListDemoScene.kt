@@ -8,11 +8,10 @@ import android.view.View
 import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.Space
-import com.bytedance.scenedemo.R
 import com.bytedance.scenedemo.animation.AnimationResDemoScene
 import com.bytedance.scenedemo.animation.SwipeBackDemo
 import com.bytedance.scenedemo.animation.SlideBackButtonDemoScene
-import com.bytedance.scenedemo.animation.TransitionDemo
+import com.bytedance.scenedemo.animation.TransitionListDemo
 import android.widget.TextView
 import com.bytedance.scene.ktx.requireNavigationScene
 
@@ -43,7 +42,7 @@ class AnimationListDemoScene : UserVisibleHintGroupScene() {
         addButton(
             layout,
             getString(R.string.main_anim_btn_share_element),
-            View.OnClickListener { requireNavigationScene().push(TransitionDemo::class.java) })
+            View.OnClickListener { requireNavigationScene().push(TransitionListDemo::class.java) })
         addSpace(layout, 100)
         return layout
     }

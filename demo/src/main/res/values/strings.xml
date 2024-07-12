@@ -61,7 +61,7 @@
     <string name="main_anim_btn_res_anim">Custom Animation by XML Resource</string>
     <string name="main_anim_btn_swipe_back">Swipe Back Animation</string>
     <string name="main_anim_btn_ios_anim">iOS Interaction Animation</string>
-    <string name="main_anim_btn_share_element">Android 5 Share Element Animation</string>
+    <string name="main_anim_btn_share_element">Share Element Animation</string>
     <string name="main_lifecycle_child_callbacks">Child Scene Lifecycle Callbacks</string>
     <string name="main_lifecycle_status">Lifecycle Status</string>
     <string name="main_lifecycle_rx_java">RxJava Binding</string>
