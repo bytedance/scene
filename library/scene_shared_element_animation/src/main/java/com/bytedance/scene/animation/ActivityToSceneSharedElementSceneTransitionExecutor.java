@@ -50,12 +50,12 @@ public class ActivityToSceneSharedElementSceneTransitionExecutor extends Navigat
         return true;
     }
 
-    public ActivityToSceneSharedElementSceneTransitionExecutor(@NonNull View fromView,
+    public ActivityToSceneSharedElementSceneTransitionExecutor(@NonNull View fromViewContainer,
                                                                @NonNull Map<String, SceneTransition> sharedElementTransition,
                                                                @Nullable SceneVisibilityTransition otherTransition,
                                                                @NonNull NavigationAnimationExecutor fallbackAnimationExecutor,
                                                                @NonNull SharedElementNotFoundPolicy sharedElementNotFoundPolicy) {
-        this.mActivityView = fromView;
+        this.mActivityView = fromViewContainer;
         this.mSharedElementTransition = sharedElementTransition;
         this.mOtherTransition = otherTransition;
         this.mSharedElementNotFoundPolicy = sharedElementNotFoundPolicy;
