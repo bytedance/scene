@@ -87,9 +87,11 @@ private class SceneGlideLifecycle(private val lifecycle: Lifecycle) : com.bumpte
     override fun addListener(listener: LifecycleListener) {
         glideLifecycleListeners.add(listener)
         when (lifecycle.currentState) {
+            Lifecycle.State.INITIALIZED -> listener.onStop()
+            Lifecycle.State.CREATED -> listener.onStop()
             Lifecycle.State.STARTED -> listener.onStart()
+            Lifecycle.State.RESUMED -> listener.onStart()
             Lifecycle.State.DESTROYED -> listener.onDestroy()
-            else -> listener.onStop()
         }
     }
 
