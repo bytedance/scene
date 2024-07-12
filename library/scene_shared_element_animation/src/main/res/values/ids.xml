@@ -1,4 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <item type="id" name="scene_ghost_view" />
+    <item name="scene_ghost_view" type="id" />
+    <item name="ghost_view_holder" type="id" />
+    <item name="ghost_view" type="id" />
+    <item name="transition_layout_save" type="id" />
+    <item name="save_non_transition_alpha" type="id" />
 </resources>
