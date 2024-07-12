@@ -42,7 +42,7 @@ import java.util.Set;
  * Created by JiangQi on 9/2/18.
  */
 @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-public class SharedElementViewTransitionExecutor {
+class SharedElementViewTransitionExecutor {
     private static final int ANIMATION_DURATION = 300;
     @NonNull
     private final Map<String, SceneTransition> mSharedElementTransition;
@@ -52,7 +52,7 @@ public class SharedElementViewTransitionExecutor {
     /**
      * TODO: Support for excluding certain Views to do otherElementTransition
      */
-    public SharedElementViewTransitionExecutor(@NonNull Map<String, SceneTransition> sharedElementTransition,
+    SharedElementViewTransitionExecutor(@NonNull Map<String, SceneTransition> sharedElementTransition,
                                                @Nullable SceneVisibilityTransition otherElementTransition) {
         this.mSharedElementTransition = sharedElementTransition;
         this.mOtherTransition = otherElementTransition;
