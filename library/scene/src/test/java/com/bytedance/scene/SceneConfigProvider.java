@@ -15,10 +15,10 @@ public class SceneConfigProvider implements GlobalConfigProvider {
 //        return new Config.Builder(provider.get()).setSdk(Build.VERSION_CODES.P).build();
 //        return new Config.Builder(provider.get()).setMinSdk(Build.VERSION_CODES.JELLY_BEAN).setMaxSdk(Build.VERSION_CODES.P).build();
         return new Config.Builder(provider.get()).setSdk(
-                Build.VERSION_CODES.JELLY_BEAN,
-                Build.VERSION_CODES.JELLY_BEAN_MR1,
-                Build.VERSION_CODES.JELLY_BEAN_MR2,
-                Build.VERSION_CODES.KITKAT).build();
+                Build.VERSION_CODES.KITKAT,
+                Build.VERSION_CODES.LOLLIPOP,
+                Build.VERSION_CODES.M,
+                Build.VERSION_CODES.N).build();
 
     }
 }
