@@ -295,7 +295,7 @@ public final class NavigationScene extends Scene implements NavigationListener, 
             throw new IllegalArgumentException("Scene already has a parent, parent " + scene.getParentScene());
         }
 
-        if (isSupportRestore() && !SceneInstanceUtility.isSupportRestore(scene)) {
+        if (isSupportRestore() && !SceneInstanceUtility.isConstructorMethodSupportRestore(scene)) {
             throw new IllegalArgumentException("Scene " + scene.getClass().getName() + " must be a public class or public static class, " +
                     "and have only one parameterless constructor to be properly recreated from instance state.");
         }

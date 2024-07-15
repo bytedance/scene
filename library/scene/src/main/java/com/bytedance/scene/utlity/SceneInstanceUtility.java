@@ -85,7 +85,7 @@ public class SceneInstanceUtility {
         }
     }
 
-    public static boolean isSupportRestore(Scene scene) {
+    public static boolean isConstructorMethodSupportRestore(Scene scene) {
         Class<? extends Scene> clazz = scene.getClass();
         if (clazz.isAnonymousClass() || clazz.isLocalClass()) {
             return false;
