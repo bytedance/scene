@@ -219,7 +219,7 @@ public class GroupSceneUtilityTests {
     }
 
     //api16 can't known whether Activity is destroyed
-    @Config(minSdk = Build.VERSION_CODES.KITKAT, maxSdk = Build.VERSION_CODES.P)
+    @Config(minSdk = Build.VERSION_CODES.KITKAT, maxSdk = Build.VERSION_CODES.O_MR1)
     @Test
     public void testSetupInActivityOnDestroy() {
         ActivityController<TestActivity> controller = Robolectric.buildActivity(TestActivity.class).create().start().resume().pause().stop().destroy();
