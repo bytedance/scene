@@ -139,14 +139,14 @@ public abstract class GroupScene extends Scene implements SceneParent {
     };
 
     public final void add(@IdRes final int viewId, @NonNull final Scene scene, @NonNull final String tag) {
-        add(viewId, scene, tag, EMPTY_ANIMATION_FACTORY);
+        addInstance(viewId, scene, tag, EMPTY_ANIMATION_FACTORY);
     }
 
     public final void add(@IdRes final int viewId, @NonNull final Scene scene, @NonNull final String tag, @AnimRes @AnimatorRes final int animationResId) {
-        add(viewId, scene, tag, buildAnimatorFactory(scene, animationResId));
+        addInstance(viewId, scene, tag, buildAnimatorFactory(scene, animationResId));
     }
 
-    private void add(@IdRes final int viewId, @NonNull final Scene scene, @NonNull final String tag, @NonNull AnimationOrAnimatorFactory animationOrAnimatorFactory) {
+    private void addInstance(@IdRes final int viewId, @NonNull final Scene scene, @NonNull final String tag, @NonNull AnimationOrAnimatorFactory animationOrAnimatorFactory) {
         ThreadUtility.checkUIThread();
 
         if (TextUtils.isEmpty(tag)) {
