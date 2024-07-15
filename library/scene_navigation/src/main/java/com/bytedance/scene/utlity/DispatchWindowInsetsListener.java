@@ -27,6 +27,8 @@ import static androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP;
 
 /**
  * Created by JiangQi on 8/24/18.
+ * <p>
+ * consumeStableInsets will be consumed by DecorView#updateColorViews
  */
 
 /**
@@ -43,6 +45,13 @@ public class DispatchWindowInsetsListener implements View.OnApplyWindowInsetsLis
         for (int i = 0; i < count; i++) {
             viewGroup.getChildAt(i).dispatchApplyWindowInsets(copy);
         }
-        return insets.consumeSystemWindowInsets();
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            return WindowInsets.CONSUMED;
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            return insets.consumeSystemWindowInsets().consumeDisplayCutout();
+        } else {
+            return insets.consumeSystemWindowInsets();
+        }
     }
 }

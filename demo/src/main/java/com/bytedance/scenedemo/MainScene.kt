@@ -4,6 +4,7 @@ import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.view.View
+import android.view.WindowManager
 import com.bytedance.scene.Scene
 import com.bytedance.scene.ui.template.NavigationViewScene
 import com.bytedance.scenedemo.benchmark.BenchmarkSamples
@@ -41,6 +42,13 @@ class MainScene : NavigationViewScene() {
         }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             window.statusBarColor = Color.TRANSPARENT
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            val lp: WindowManager.LayoutParams = window.attributes
+            lp.layoutInDisplayCutoutMode =
+                WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES
+            window.attributes = lp
         }
     }
 }
