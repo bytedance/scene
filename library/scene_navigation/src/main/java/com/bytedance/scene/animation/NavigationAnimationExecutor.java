@@ -89,6 +89,7 @@ public abstract class NavigationAnimationExecutor {
          */
         final boolean isFromViewReady = !(fromView.getWidth() == 0 || fromView.getHeight() == 0);
         boolean isToViewReady = !(toView.getWidth() == 0 || toView.getHeight() == 0);
+        final boolean isFromViewVisible = fromView.getVisibility() == View.VISIBLE;
         if (!isFromViewReady || !isToViewReady) {
             final CancellationSignal layoutCancellationSignal = cancellationSignal.getChildCancellationSignal();
 
@@ -101,6 +102,11 @@ public abstract class NavigationAnimationExecutor {
 
                     if (!layoutCancellationSignal.isCanceled()) {
                         executePushChangeCancelable(fromInfo, toInfo, pushEndAction, cancellationSignal.getChildCancellationSignal());
+                    } else {
+                        if (!isFromViewReady && isFromViewVisible) {
+                            //restore to previous state
+                            fromView.setVisibility(View.VISIBLE);
+                        }
                     }
                 }
             });
