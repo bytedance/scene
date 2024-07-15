@@ -27,6 +27,10 @@ public interface SceneParent {
 
     void disableSupportRestore();
 
+    /**
+     * This method controls whether or not all children are supported to save and restore,
+     * and if you want to disable a particular child, use that method {@link Scene#disableSceneRestore()}}
+     */
     boolean isSupportRestore();
 
     @Nullable

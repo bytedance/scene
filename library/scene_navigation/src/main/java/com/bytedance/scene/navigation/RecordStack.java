@@ -86,7 +86,16 @@ class RecordStack {
     }
 
     public void saveToBundle(Bundle bundle) {
-        bundle.putParcelableArrayList(ParcelConstants.KEY_NAVIGATION_RECORD_LIST, new ArrayList<Parcelable>(mBackStackList));
+        ArrayList<Record> tmp = new ArrayList<>(mBackStackList);
+        ArrayList<Parcelable> resultList = new ArrayList<>(tmp.size());
+        //skip restore disabled scene
+        for (int i = 0; i <= tmp.size() - 1; i++) {
+            Record record = tmp.get(i);
+            if (record.mScene.isSceneRestoreEnabled()) {
+                resultList.add(record);
+            }
+        }
+        bundle.putParcelableArrayList(ParcelConstants.KEY_NAVIGATION_RECORD_LIST, resultList);
     }
 
     public void restoreFromBundle(Context context, Bundle bundle, SceneComponentFactory rootSceneComponentFactory) {

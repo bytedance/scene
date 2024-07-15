@@ -119,9 +119,14 @@ class NavigationSceneManager {
         ArrayList<Bundle> bundleList = new ArrayList<>();
         List<Record> recordList = this.mBackStackList.getCurrentRecordList();
         for (Record record : recordList) {
-            Bundle sceneBundle = new Bundle();
-            record.mScene.dispatchSaveInstanceState(sceneBundle);
-            bundleList.add(sceneBundle);
+            Scene scene = record.mScene;
+            if (scene.isSceneRestoreEnabled()) {
+                Bundle sceneBundle = new Bundle();
+                scene.dispatchSaveInstanceState(sceneBundle);
+                bundleList.add(sceneBundle);
+            } else {
+                //skip because Scene disable restore
+            }
         }
         bundle.putParcelableArrayList(ParcelConstants.KEY_NAVIGATION_SCENE_MANAGER_TAG, bundleList);
     }

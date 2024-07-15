@@ -29,8 +29,8 @@ import androidx.annotation.IdRes;
 import androidx.annotation.IntDef;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-
 import androidx.core.util.Pair;
+
 import com.bytedance.scene.Scene;
 import com.bytedance.scene.SceneTrace;
 import com.bytedance.scene.State;
@@ -44,6 +44,8 @@ import com.bytedance.scene.utlity.SceneInstanceUtility;
 import com.bytedance.scene.utlity.SceneInternalException;
 import com.bytedance.scene.utlity.Utility;
 
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -51,10 +53,8 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.util.*;
 
 /**
  * Created by JiangQi on 7/30/18.
@@ -183,7 +183,16 @@ class GroupRecordList {
     }
 
     public void saveToBundle(@NonNull Bundle bundle) {
-        bundle.putParcelableArrayList(KEY_TAG, new ArrayList<Parcelable>(mSceneList));
+        ArrayList<GroupRecord> tmp = new ArrayList<>(mSceneList);
+        ArrayList<Parcelable> resultList = new ArrayList<>(tmp.size());
+        //skip restore disabled scene
+        for (int i = 0; i <= tmp.size() - 1; i++) {
+            GroupRecord record = tmp.get(i);
+            if (record.scene.isSceneRestoreEnabled()) {
+                resultList.add(record);
+            }
+        }
+        bundle.putParcelableArrayList(KEY_TAG, new ArrayList<Parcelable>(resultList));
     }
 
     public void restoreFromBundle(@NonNull Context context, @NonNull Bundle bundle) {
@@ -518,10 +527,13 @@ class GroupSceneManager {
         List<Scene> childSceneList = this.getChildSceneList();
         for (int i = 0; i <= childSceneList.size() - 1; i++) {
             Scene scene = childSceneList.get(i);
-
-            Bundle sceneBundle = new Bundle();
-            scene.dispatchSaveInstanceState(sceneBundle);
-            bundleList.add(sceneBundle);
+            if (scene.isSceneRestoreEnabled()) {
+                Bundle sceneBundle = new Bundle();
+                scene.dispatchSaveInstanceState(sceneBundle);
+                bundleList.add(sceneBundle);
+            } else {
+                //skip because Scene disable restore
+            }
         }
 
         bundle.putParcelableArrayList(KEY_TAG, bundleList);

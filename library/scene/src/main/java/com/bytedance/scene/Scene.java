@@ -17,7 +17,6 @@ package com.bytedance.scene;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.app.Application;
 import android.content.Context;
 import android.content.res.Resources;
 import android.os.Build;
@@ -142,6 +141,7 @@ public abstract class Scene implements LifecycleOwner, SavedStateRegistryOwner, 
     private State mState = State.NONE;
     private final StringBuilder mStateHistoryBuilder = new StringBuilder(mState.name);
     private Bundle mArguments;
+    private boolean mSceneRestoreEnabled = true;
 
     private final Handler mHandler = new Handler(Looper.getMainLooper());
     private final List<Runnable> mPendingActionList = new ArrayList<>();
@@ -226,6 +226,14 @@ public abstract class Scene implements LifecycleOwner, SavedStateRegistryOwner, 
             throw new IllegalStateException("Scene " + this + " does not have any arguments.");
         }
         return arguments;
+    }
+
+    public final void disableSceneRestore() {
+        this.mSceneRestoreEnabled = false;
+    }
+
+    public final boolean isSceneRestoreEnabled() {
+        return this.mSceneRestoreEnabled;
     }
 
     /** @hide */
