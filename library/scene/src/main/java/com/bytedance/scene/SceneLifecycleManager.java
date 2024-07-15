@@ -15,6 +15,8 @@
  */
 package com.bytedance.scene;
 
+import static androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP;
+
 import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
@@ -25,8 +27,6 @@ import androidx.annotation.Nullable;
 import androidx.annotation.RestrictTo;
 
 import com.bytedance.scene.utlity.Utility;
-
-import static androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP;
 
 
 /**
@@ -43,6 +43,8 @@ public class SceneLifecycleManager<T extends Scene & SceneParent> {
     @NonNull
     private SceneLifecycleManagerState mState = SceneLifecycleManagerState.NONE;
     private boolean mSupportRestore = false;
+    private SceneStateSaveStrategy mSceneStateSaveStrategy = null;
+    private boolean mStateSaved = false;
 
     private enum SceneLifecycleManagerState {
         NONE, ACTIVITY_CREATED, START, RESUME, PAUSE, STOP
@@ -52,6 +54,16 @@ public class SceneLifecycleManager<T extends Scene & SceneParent> {
                                   @NonNull ViewGroup viewGroup,
                                   @NonNull T scene,
                                   @NonNull Scope.RootScopeFactory rootScopeFactory,
+                                  boolean supportRestore,
+                                  @Nullable Bundle savedInstanceState) {
+        this.onActivityCreated(activity, viewGroup, scene, rootScopeFactory, null, supportRestore, savedInstanceState);
+    }
+
+    public void onActivityCreated(@NonNull Activity activity,
+                                  @NonNull ViewGroup viewGroup,
+                                  @NonNull T scene,
+                                  @NonNull Scope.RootScopeFactory rootScopeFactory,
+                                  @Nullable SceneStateSaveStrategy sceneStateSaveStrategy,
                                   boolean supportRestore,
                                   @Nullable Bundle savedInstanceState) {
         if (this.mState != SceneLifecycleManagerState.NONE) {
@@ -71,8 +83,10 @@ public class SceneLifecycleManager<T extends Scene & SceneParent> {
         if (!this.mSupportRestore && savedInstanceState != null) {
             throw new IllegalArgumentException("savedInstanceState should be null when not support restore");
         }
+        this.mSceneStateSaveStrategy = sceneStateSaveStrategy;
 
         this.mState = SceneLifecycleManagerState.ACTIVITY_CREATED;
+        this.mStateSaved = false;
         log("onActivityCreated");
 
         this.mScene = scene;
@@ -82,10 +96,15 @@ public class SceneLifecycleManager<T extends Scene & SceneParent> {
         this.mScene.setRootScopeFactory(rootScopeFactory);
         this.mScene.dispatchAttachActivity(activity);
         this.mScene.dispatchAttachScene(null);
-        this.mScene.dispatchCreate(savedInstanceState);
-        this.mScene.dispatchCreateView(savedInstanceState, viewGroup);
+
+        Bundle sceneSavedInstanceState = savedInstanceState;
+        if (savedInstanceState != null && this.mSceneStateSaveStrategy != null) {
+            sceneSavedInstanceState = mSceneStateSaveStrategy.onRestoreInstanceState(savedInstanceState);
+        }
+        this.mScene.dispatchCreate(sceneSavedInstanceState);
+        this.mScene.dispatchCreateView(sceneSavedInstanceState, viewGroup);
         viewGroup.addView(this.mScene.requireView(), new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-        this.mScene.dispatchActivityCreated(savedInstanceState);
+        this.mScene.dispatchActivityCreated(sceneSavedInstanceState);
     }
 
     public void onStart() {
@@ -144,6 +163,12 @@ public class SceneLifecycleManager<T extends Scene & SceneParent> {
         this.mScene.dispatchDetachScene();
         this.mScene.dispatchDetachActivity();
         this.mScene.setRootScopeFactory(null);
+        if (this.mSceneStateSaveStrategy != null) {
+            if (!this.mStateSaved && this.mSupportRestore) {
+                this.mSceneStateSaveStrategy.onClear();
+            }
+            this.mSceneStateSaveStrategy = null;
+        }
         this.mScene = null;
     }
 
@@ -156,7 +181,15 @@ public class SceneLifecycleManager<T extends Scene & SceneParent> {
             throw new IllegalArgumentException("cant invoke onSaveInstanceState when not support restore");
         }
         log("onSaveInstanceState");
-        this.mScene.dispatchSaveInstanceState(outState);
+
+        if (this.mSceneStateSaveStrategy != null) {
+            Bundle sceneOutState = new Bundle();
+            this.mScene.dispatchSaveInstanceState(sceneOutState);
+            this.mSceneStateSaveStrategy.onSaveInstanceState(outState, sceneOutState);
+        } else {
+            this.mScene.dispatchSaveInstanceState(outState);
+        }
+        this.mStateSaved = true;
     }
 
     private void log(@NonNull String log) {

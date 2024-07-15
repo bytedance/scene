@@ -15,6 +15,8 @@
  */
 package com.bytedance.scene;
 
+import static androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP;
+
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.ViewGroup;
@@ -23,8 +25,6 @@ import androidx.annotation.IdRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RestrictTo;
-
-import static androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP;
 
 
 /**
@@ -51,16 +51,27 @@ public class SceneLifecycleDispatcher<T extends Scene & SceneParent> implements 
     private final Scope.RootScopeFactory mRootScopeFactory;
     private final boolean mSupportRestore;
     private final SceneLifecycleManager<T> mLifecycleManager = new SceneLifecycleManager<>();
+    private final SceneStateSaveStrategy mSceneStateSaveStrategy;
 
     public SceneLifecycleDispatcher(@IdRes int sceneContainerViewId,
-                                    ViewFinder viewFinder,
-                                    T rootScene,
-                                    Scope.RootScopeFactory rootScopeFactory,
+                                    @NonNull ViewFinder viewFinder,
+                                    @NonNull T rootScene,
+                                    @NonNull Scope.RootScopeFactory rootScopeFactory,
+                                    boolean supportRestore) {
+        this(sceneContainerViewId, viewFinder, rootScene, rootScopeFactory, null, supportRestore);
+    }
+
+    public SceneLifecycleDispatcher(@IdRes int sceneContainerViewId,
+                                    @NonNull ViewFinder viewFinder,
+                                    @NonNull T rootScene,
+                                    @NonNull Scope.RootScopeFactory rootScopeFactory,
+                                    @Nullable SceneStateSaveStrategy sceneStateSaveStrategy,
                                     boolean supportRestore) {
         this.mSceneContainerViewId = sceneContainerViewId;
         this.mViewFinder = viewFinder;
         this.mScene = rootScene;
         this.mRootScopeFactory = rootScopeFactory;
+        this.mSceneStateSaveStrategy = sceneStateSaveStrategy;
         this.mSupportRestore = supportRestore;
     }
 
@@ -69,7 +80,7 @@ public class SceneLifecycleDispatcher<T extends Scene & SceneParent> implements 
         SceneTrace.beginSection(TRACE_ACTIVITY_CREATED_TAG);
         ViewGroup viewGroup = this.mViewFinder.requireViewById(this.mSceneContainerViewId);
         this.mLifecycleManager.onActivityCreated(activity, viewGroup, this.mScene, this.mRootScopeFactory,
-                this.mSupportRestore, this.mSupportRestore ? savedInstanceState : null);
+                this.mSceneStateSaveStrategy, this.mSupportRestore, this.mSupportRestore ? savedInstanceState : null);
         SceneTrace.endSection();
     }
 
