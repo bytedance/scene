@@ -216,9 +216,9 @@ In essence, there is a transparent Scene cover on the Activity, but it is not vi
 Then provide the Push method in the Activity:
 
 ```java
-public void push(@NonNull Class<? extends Scene> clazz, @Nullable Bundle argument, @Nullable PushOptions pushOptions) {
+public void push(@NonNull Scene scene, @Nullable PushOptions pushOptions) {
     if (mSceneActivityDelegate != null) {
-        mSceneActivityDelegate.getNavigationScene().push(clazz, argument, pushOptions);
+        mSceneActivityDelegate.getNavigationScene().push(scene, pushOptions);
     }
 }
 ```

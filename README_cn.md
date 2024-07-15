@@ -213,9 +213,9 @@ mSceneActivityDelegate = NavigationSceneUtility.setupWithActivity(this, R.id.sce
 然后在Activity中提供Push的方法
 
 ```java
-public void push(@NonNull Class<? extends Scene> clazz, @Nullable Bundle argument, @Nullable PushOptions pushOptions) {
+public void push(@NonNull Scene scene, @Nullable PushOptions pushOptions) {
     if (mSceneActivityDelegate != null) {
-        mSceneActivityDelegate.getNavigationScene().push(clazz, argument, pushOptions);
+        mSceneActivityDelegate.getNavigationScene().push(scene, pushOptions);
     }
 }
 ```
