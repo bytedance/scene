@@ -19,6 +19,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
@@ -38,6 +39,11 @@ public abstract class ScenePageAdapter extends PagerAdapter {
     }
 
     public abstract UserVisibleHintGroupScene getItem(int position);
+
+    @Nullable
+    public UserVisibleHintGroupScene getCurrentScene() {
+        return this.mCurrentScene;
+    }
 
     @NonNull
     @Override
