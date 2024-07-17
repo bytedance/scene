@@ -183,7 +183,7 @@ class NavigationSceneManager {
                         if (canExecuteNavigationStackOperation()) {
                             SceneTrace.beginSection(TRACE_EXECUTE_OPERATION_TAG);
                             String suppressTag = beginSuppressStackOperation("NavigationManager execute operation by Handler.post()");
-                            operation.execute(EMPTY_RUNNABLE);
+                            executeOperationSafely(operation, EMPTY_RUNNABLE);
                             endSuppressStackOperation(suppressTag);
                             SceneTrace.endSection();
                         } else {
@@ -197,7 +197,7 @@ class NavigationSceneManager {
             } else {
                 SceneTrace.beginSection(TRACE_EXECUTE_OPERATION_TAG);
                 String suppressTag = beginSuppressStackOperation("NavigationManager execute operation directly");
-                operation.execute(EMPTY_RUNNABLE);
+                executeOperationSafely(operation, EMPTY_RUNNABLE);
                 endSuppressStackOperation(suppressTag);
                 SceneTrace.endSection();
             }
@@ -232,13 +232,13 @@ class NavigationSceneManager {
 
     public void dispatchCurrentChildState(State state) {
         String suppressTag = beginSuppressStackOperation("NavigationManager dispatchCurrentChildState");
-        new SyncCurrentSceneStateOperation(state).execute(EMPTY_RUNNABLE);
+        executeOperationSafely(new SyncCurrentSceneStateOperation(state), EMPTY_RUNNABLE);
         endSuppressStackOperation(suppressTag);
     }
 
     public void dispatchChildrenState(State state, boolean reverseOrder) {
         String suppressTag = beginSuppressStackOperation("NavigationManager dispatchChildrenState");
-        new SyncAllSceneStateOperation(state, reverseOrder).execute(EMPTY_RUNNABLE);
+        executeOperationSafely(new SyncAllSceneStateOperation(state, reverseOrder), EMPTY_RUNNABLE);
         endSuppressStackOperation(suppressTag);
     }
 
@@ -311,7 +311,7 @@ class NavigationSceneManager {
             Operation currentOperation = copy.get(i);
             this.mDisableNavigationAnimation = animationTimeout | (i < copy.size() - 1);
             String suppressTag = beginSuppressStackOperation("NavigationManager executePendingOperation");
-            currentOperation.execute(EMPTY_RUNNABLE);
+            executeOperationSafely(currentOperation, EMPTY_RUNNABLE);
             endSuppressStackOperation(suppressTag);
             this.mDisableNavigationAnimation = false;
         }
@@ -482,6 +482,21 @@ class NavigationSceneManager {
 
     private interface Operation {
         void execute(Runnable operationEndAction);
+    }
+
+    //avoid exceptions being caught externally
+    private void executeOperationSafely(final Operation operation, final Runnable operationEndAction) {
+        try {
+            operation.execute(operationEndAction);
+        } catch (final Throwable throwable) {
+            mHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    throw throwable;
+                }
+            });
+            throw throwable;
+        }
     }
 
     private class PopOptionOperation implements Operation {

@@ -247,7 +247,7 @@ class GroupSceneManager {
 
     private void executeOperation(final Operation operation) {
         SceneTrace.beginSection(TRACE_EXECUTE_OPERATION_TAG);
-        operation.execute(EMPTY_RUNNABLE);
+        operation.executeSafely(operation, EMPTY_RUNNABLE);
         SceneTrace.endSection();
     }
 
@@ -455,7 +455,7 @@ class GroupSceneManager {
             //may be removed by other child Scene
             if (containsScene(scene)) {
                 beginTrackSceneStateChange(scene);
-                GroupSceneManager.moveState(mGroupScene, scene, state, false, new Runnable() {
+                moveStateSafely(mGroupScene, scene, state, false, new Runnable() {
                     @Override
                     public void run() {
                         endTrackSceneStateChange(scene);
@@ -474,7 +474,7 @@ class GroupSceneManager {
                 //may be removed by other child Scene
                 if (containsScene(scene)) {
                     beginTrackSceneStateChange(scene);
-                    GroupSceneManager.moveState(mGroupScene, record.scene, state, false, new Runnable() {
+                    moveStateSafely(mGroupScene, record.scene, state, false, new Runnable() {
                         @Override
                         public void run() {
                             endTrackSceneStateChange(scene);
@@ -558,7 +558,7 @@ class GroupSceneManager {
                 throw new SceneInternalException("Scene is not found");
             }
             beginTrackSceneStateChange(scene);
-            moveState(this.mGroupScene, scene, mGroupScene.getState(), false, new Runnable() {
+            moveStateSafely(this.mGroupScene, scene, mGroupScene.getState(), false, new Runnable() {
                 @Override
                 public void run() {
                     endTrackSceneStateChange(scene);
@@ -589,6 +589,21 @@ class GroupSceneManager {
         }
 
         abstract void execute(@NonNull Runnable operationEndAction);
+
+        //avoid exceptions being caught externally
+        private void executeSafely(final Operation operation, final Runnable operationEndAction) {
+            try {
+                operation.execute(operationEndAction);
+            } catch (final Throwable throwable) {
+                mHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        throw throwable;
+                    }
+                });
+                throw throwable;
+            }
+        }
     }
 
     private boolean containsScene(@NonNull Scene scene) {
@@ -650,7 +665,7 @@ class GroupSceneManager {
             executeOnStart(executeStateChange);
 
             beginTrackSceneStateChange(scene);
-            moveState(mGroupScene, scene, dstState, forceRemove, new Runnable() {
+            moveStateSafely(mGroupScene, scene, dstState, forceRemove, new Runnable() {
                 @Override
                 public void run() {
                     endTrackSceneStateChange(scene);
@@ -942,11 +957,31 @@ class GroupSceneManager {
         }
     }
 
+    //avoid exceptions being caught externally
+    private void moveStateSafely(@NonNull GroupScene groupScene,
+                                 @NonNull Scene scene,
+                                 @NonNull State to,
+                                 boolean forceRemove,
+                                 @Nullable Runnable endAction) {
+        try {
+            moveState(groupScene, scene, to, forceRemove, endAction);
+        } catch (final Throwable throwable) {
+            mHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    throw throwable;
+                }
+            });
+            throw throwable;
+        }
+    }
+
     /**
      * forceRemove value is true when be invoked by GroupScene.remove()
      */
     private static void moveState(@NonNull GroupScene groupScene,
-                                  @NonNull Scene scene, @NonNull State to,
+                                  @NonNull Scene scene,
+                                  @NonNull State to,
                                   boolean forceRemove,
                                   @Nullable Runnable endAction) {
         State currentState = scene.getState();
