@@ -40,6 +40,51 @@ public class ChildSceneLifecycleCallbacksTests {
 
         ChildSceneLifecycleCallbacks callbacks = new ChildSceneLifecycleCallbacks() {
             @Override
+            public void onPreSceneCreated(@NonNull Scene scene, @Nullable Bundle savedInstanceState) {
+
+            }
+
+            @Override
+            public void onPreSceneViewCreated(@NonNull Scene scene, @Nullable Bundle savedInstanceState) {
+
+            }
+
+            @Override
+            public void onPreSceneActivityCreated(@NonNull Scene scene, @Nullable Bundle savedInstanceState) {
+
+            }
+
+            @Override
+            public void onPreSceneStarted(@NonNull Scene scene) {
+
+            }
+
+            @Override
+            public void onPreSceneResumed(@NonNull Scene scene) {
+
+            }
+
+            @Override
+            public void onPreScenePaused(@NonNull Scene scene) {
+
+            }
+
+            @Override
+            public void onPreSceneStopped(@NonNull Scene scene) {
+
+            }
+
+            @Override
+            public void onPreSceneViewDestroyed(@NonNull Scene scene) {
+
+            }
+
+            @Override
+            public void onPreSceneDestroyed(@NonNull Scene scene) {
+
+            }
+
+            @Override
             public void onSceneCreated(@NonNull Scene scene, @Nullable Bundle savedInstanceState) {
                 if (!isCreatedCalled.compareAndSet(false, true)) {
                     throw new IllegalStateException("crash");
@@ -167,6 +212,16 @@ public class ChildSceneLifecycleCallbacksTests {
 
     @Test
     public void testGroupSceneRecursiveExcludingOnSceneSaveInstanceState() {
+        final AtomicBoolean isPreCreatedCalled = new AtomicBoolean(false);
+        final AtomicBoolean isPreViewCreatedCalled = new AtomicBoolean(false);
+        final AtomicBoolean isPreActivityCreatedCalled = new AtomicBoolean(false);
+        final AtomicBoolean isPreStartedCalled = new AtomicBoolean(false);
+        final AtomicBoolean isPreResumedCalled = new AtomicBoolean(false);
+        final AtomicBoolean isPrePausedCalled = new AtomicBoolean(false);
+        final AtomicBoolean isPreStoppedCalled = new AtomicBoolean(false);
+        final AtomicBoolean isPreViewDestroyedCalled = new AtomicBoolean(false);
+        final AtomicBoolean isPreDestroyedCalled = new AtomicBoolean(false);
+
         final AtomicBoolean isCreatedCalled = new AtomicBoolean(false);
         final AtomicBoolean isViewCreatedCalled = new AtomicBoolean(false);
         final AtomicBoolean isActivityCreatedCalled = new AtomicBoolean(false);
@@ -186,6 +241,99 @@ public class ChildSceneLifecycleCallbacksTests {
         };
 
         ChildSceneLifecycleCallbacks callbacks = new ChildSceneLifecycleCallbacks() {
+            @Override
+            public void onPreSceneCreated(@NonNull Scene scene, @Nullable Bundle savedInstanceState) {
+                if (scene != childScene) {
+                    return;
+                }
+                if (!isPreCreatedCalled.compareAndSet(false, true)) {
+                    throw new IllegalStateException("crash");
+                }
+                assertNull(scene.getView());
+            }
+
+            @Override
+            public void onPreSceneViewCreated(@NonNull Scene scene, @Nullable Bundle savedInstanceState) {
+                if (scene != childScene) {
+                    return;
+                }
+                if (!isPreViewCreatedCalled.compareAndSet(false, true)) {
+                    throw new IllegalStateException("crash");
+                }
+                assertNotNull(scene.getView());
+            }
+
+            @Override
+            public void onPreSceneActivityCreated(@NonNull Scene scene, @Nullable Bundle savedInstanceState) {
+                if (scene != childScene) {
+                    return;
+                }
+                if (!isPreActivityCreatedCalled.compareAndSet(false, true)) {
+                    throw new IllegalStateException("crash");
+                }
+                assertNotNull(scene.getView());
+            }
+
+            @Override
+            public void onPreSceneStarted(@NonNull Scene scene) {
+                if (scene != childScene) {
+                    return;
+                }
+                if (!isPreStartedCalled.compareAndSet(false, true)) {
+                    throw new IllegalStateException("crash");
+                }
+            }
+
+            @Override
+            public void onPreSceneResumed(@NonNull Scene scene) {
+                if (scene != childScene) {
+                    return;
+                }
+                if (!isPreResumedCalled.compareAndSet(false, true)) {
+                    throw new IllegalStateException("crash");
+                }
+            }
+
+            @Override
+            public void onPreScenePaused(@NonNull Scene scene) {
+                if (scene != childScene) {
+                    return;
+                }
+                if (!isPrePausedCalled.compareAndSet(false, true)) {
+                    throw new IllegalStateException("crash");
+                }
+            }
+
+            @Override
+            public void onPreSceneStopped(@NonNull Scene scene) {
+                if (scene != childScene) {
+                    return;
+                }
+                if (!isPreStoppedCalled.compareAndSet(false, true)) {
+                    throw new IllegalStateException("crash");
+                }
+            }
+
+            @Override
+            public void onPreSceneViewDestroyed(@NonNull Scene scene) {
+                if (scene != childScene) {
+                    return;
+                }
+                if (!isPreViewDestroyedCalled.compareAndSet(false, true)) {
+                    throw new IllegalStateException("crash");
+                }
+            }
+
+            @Override
+            public void onPreSceneDestroyed(@NonNull Scene scene) {
+                if (scene != childScene) {
+                    return;
+                }
+                if (!isPreDestroyedCalled.compareAndSet(false, true)) {
+                    throw new IllegalStateException("crash");
+                }
+            }
+
             @Override
             public void onSceneCreated(@NonNull Scene scene, @Nullable Bundle savedInstanceState) {
                 if (scene != childScene) {
@@ -345,6 +493,16 @@ public class ChildSceneLifecycleCallbacksTests {
         assertTrue(isStoppedCalled.get());
         assertTrue(isViewDestroyedCalled.get());
         assertTrue(isDestroyedCalled.get());
+
+        assertTrue(isPreCreatedCalled.get());
+        assertTrue(isPreViewCreatedCalled.get());
+        assertTrue(isPreActivityCreatedCalled.get());
+        assertTrue(isPreStartedCalled.get());
+        assertTrue(isPreResumedCalled.get());
+        assertTrue(isPrePausedCalled.get());
+        assertTrue(isPreStoppedCalled.get());
+        assertTrue(isPreViewDestroyedCalled.get());
+        assertTrue(isPreDestroyedCalled.get());
     }
 
     @Test

@@ -25,6 +25,52 @@ import com.bytedance.scene.Scene;
  * Created by JiangQi on 8/1/18.
  */
 public class ChildSceneLifecycleAdapterCallbacks implements ChildSceneLifecycleCallbacks {
+
+    @Override
+    public void onPreSceneCreated(@NonNull Scene scene, @Nullable Bundle savedInstanceState) {
+
+    }
+
+    @Override
+    public void onPreSceneViewCreated(@NonNull Scene scene, @Nullable Bundle savedInstanceState) {
+
+    }
+
+    @Override
+    public void onPreSceneActivityCreated(@NonNull Scene scene, @Nullable Bundle savedInstanceState) {
+
+    }
+
+    @Override
+    public void onPreSceneStarted(@NonNull Scene scene) {
+
+    }
+
+    @Override
+    public void onPreSceneResumed(@NonNull Scene scene) {
+
+    }
+
+    @Override
+    public void onPreScenePaused(@NonNull Scene scene) {
+
+    }
+
+    @Override
+    public void onPreSceneStopped(@NonNull Scene scene) {
+
+    }
+
+    @Override
+    public void onPreSceneViewDestroyed(@NonNull Scene scene) {
+
+    }
+
+    @Override
+    public void onPreSceneDestroyed(@NonNull Scene scene) {
+
+    }
+
     /**
      * use {@link #onSceneActivityCreated(Scene, Bundle)} instead
      */

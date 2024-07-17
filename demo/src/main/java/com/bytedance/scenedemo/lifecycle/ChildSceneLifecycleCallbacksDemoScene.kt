@@ -1,18 +1,17 @@
 package com.bytedance.scenedemo.lifecycle
 
-import com.bytedance.scene.group.GroupScene
-import android.view.LayoutInflater
-import android.view.ViewGroup
 import android.os.Bundle
 import android.util.Log
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
 import com.bytedance.scene.Scene
-import com.bytedance.scenedemo.R
+import com.bytedance.scene.group.GroupScene
 import com.bytedance.scene.interfaces.ChildSceneLifecycleCallbacks
 import com.bytedance.scene.ktx.navigationScene
-import com.bytedance.scenedemo.lifecycle.ChildSceneLifecycleCallbacksDemoScene
+import com.bytedance.scenedemo.R
 import com.bytedance.scenedemo.utility.ColorUtil
 
 /**
@@ -70,6 +69,42 @@ class ChildSceneLifecycleCallbacksDemoScene : GroupScene() {
     }
 
     private val mChildSceneLifecycleCallbacks: ChildSceneLifecycleCallbacks = object : ChildSceneLifecycleCallbacks {
+        override fun onPreSceneCreated(scene: Scene, savedInstanceState: Bundle?) {
+            log("Scene", "$scene onPreSceneCreated")
+        }
+
+        override fun onPreSceneViewCreated(scene: Scene, savedInstanceState: Bundle?) {
+            log("Scene", "$scene onPreSceneViewCreated")
+        }
+
+        override fun onPreSceneActivityCreated(scene: Scene, savedInstanceState: Bundle?) {
+            log("Scene", "$scene onPreSceneActivityCreated")
+        }
+
+        override fun onPreSceneStarted(scene: Scene) {
+            log("Scene", "$scene onPreSceneStarted")
+        }
+
+        override fun onPreSceneResumed(scene: Scene) {
+            log("Scene", "$scene onPreSceneResumed")
+        }
+
+        override fun onPreScenePaused(scene: Scene) {
+            log("Scene", "$scene onPreScenePaused")
+        }
+
+        override fun onPreSceneStopped(scene: Scene) {
+            log("Scene", "$scene onPreSceneStopped")
+        }
+
+        override fun onPreSceneViewDestroyed(scene: Scene) {
+            log("Scene", "$scene onPreSceneViewDestroyed")
+        }
+
+        override fun onPreSceneDestroyed(scene: Scene) {
+            log("Scene", "$scene onPreSceneDestroyed")
+        }
+
         override fun onSceneCreated(scene: Scene, savedInstanceState: Bundle?) {
             log("Scene", "$scene onSceneCreated")
         }

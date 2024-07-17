@@ -16,16 +16,35 @@
 package com.bytedance.scene.interfaces;
 
 import android.os.Bundle;
+import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import android.view.View;
+
 import com.bytedance.scene.Scene;
 
 /**
  * Created by JiangQi on 8/1/18.
  */
 public interface ChildSceneLifecycleCallbacks {
+
+    void onPreSceneCreated(@NonNull Scene scene, @Nullable Bundle savedInstanceState);
+
+    void onPreSceneViewCreated(@NonNull Scene scene, @Nullable Bundle savedInstanceState);
+
+    void onPreSceneActivityCreated(@NonNull Scene scene, @Nullable Bundle savedInstanceState);
+
+    void onPreSceneStarted(@NonNull Scene scene);
+
+    void onPreSceneResumed(@NonNull Scene scene);
+
+    void onPreScenePaused(@NonNull Scene scene);
+
+    void onPreSceneStopped(@NonNull Scene scene);
+
+    void onPreSceneViewDestroyed(@NonNull Scene scene);
+
+    void onPreSceneDestroyed(@NonNull Scene scene);
 
     /**
      * use {@link #onSceneActivityCreated(Scene, Bundle)} instead
