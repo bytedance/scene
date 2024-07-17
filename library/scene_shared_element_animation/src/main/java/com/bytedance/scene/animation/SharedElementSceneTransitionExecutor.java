@@ -17,9 +17,10 @@ package com.bytedance.scene.animation;
 
 import android.annotation.TargetApi;
 import android.os.Build;
+import android.view.View;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import android.view.View;
 
 import com.bytedance.scene.Scene;
 import com.bytedance.scene.animation.animatorexecutor.Android8DefaultSceneAnimatorExecutor;
@@ -89,8 +90,12 @@ public class SharedElementSceneTransitionExecutor extends NavigationAnimationExe
 
     @Override
     public final void executePushChangeCancelable(@NonNull final AnimationInfo fromInfo, @NonNull final AnimationInfo toInfo, @NonNull final Runnable endAction, @NonNull final CancellationSignal cancellationSignal) {
-        if (fromInfo.mIsTranslucent || toInfo.mIsTranslucent) {
-            throw new IllegalArgumentException("SharedElement animation don't support translucent scene");
+        if (fromInfo.mIsTranslucent) {
+            throw new IllegalArgumentException("SharedElement animation don't support translucent scene: " + fromInfo.mSceneClass);
+        }
+
+        if (toInfo.mIsTranslucent) {
+            throw new IllegalArgumentException("SharedElement animation don't support translucent scene: " + toInfo.mSceneClass);
         }
 
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
@@ -159,8 +164,12 @@ public class SharedElementSceneTransitionExecutor extends NavigationAnimationExe
     public final void executePopChangeCancelable(@NonNull AnimationInfo
                                                          fromInfo, @NonNull AnimationInfo toInfo, @NonNull final Runnable endAction,
                                                  @NonNull CancellationSignal cancellationSignal) {
-        if (fromInfo.mIsTranslucent || toInfo.mIsTranslucent) {
-            throw new IllegalArgumentException("SharedElement animation don't support translucent scene");
+        if (fromInfo.mIsTranslucent) {
+            throw new IllegalArgumentException("SharedElement animation don't support translucent scene: " + fromInfo.mSceneClass);
+        }
+
+        if (toInfo.mIsTranslucent) {
+            throw new IllegalArgumentException("SharedElement animation don't support translucent scene: " + toInfo.mSceneClass);
         }
 
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
