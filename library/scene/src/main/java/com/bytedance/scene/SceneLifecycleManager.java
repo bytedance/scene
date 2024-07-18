@@ -163,11 +163,16 @@ public class SceneLifecycleManager<T extends Scene & SceneParent> {
         this.mScene.dispatchDestroyView();
         this.mScene.dispatchDestroy();
         this.mScene.dispatchDetachScene();
+        Activity activity = this.mScene.requireActivity();
         this.mScene.dispatchDetachActivity();
         this.mScene.setRootScopeFactory(null);
         if (this.mSceneStateSaveStrategy != null) {
-            if (!this.mStateSaved && this.mSupportRestore) {
-                this.mSceneStateSaveStrategy.onClear();
+            if (this.mSupportRestore) {
+                if (!this.mStateSaved) {
+                    this.mSceneStateSaveStrategy.onClear();
+                } else if (activity.isFinishing()) {
+                    this.mSceneStateSaveStrategy.onClear();
+                }
             }
             this.mSceneStateSaveStrategy = null;
         }

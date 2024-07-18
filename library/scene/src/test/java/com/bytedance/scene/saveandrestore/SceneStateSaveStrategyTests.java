@@ -213,6 +213,76 @@ public class SceneStateSaveStrategyTests {
     }
 
     @Test
+    public void testSceneStateSaveStrategyMakeSureOnClearInvokedWhenActivityFinished() {
+        Bundle bundle = new Bundle();
+
+        final boolean[] sceneStateSaveStrategyInvoked = new boolean[3];
+        SceneStateSaveStrategy sceneStateSaveStrategy = new SceneStateSaveStrategy() {
+            @Nullable
+            @Override
+            public Bundle onRestoreInstanceState(@NonNull Bundle hostSavedInstanceState) {
+                sceneStateSaveStrategyInvoked[0] = true;
+                return hostSavedInstanceState;
+            }
+
+            @Override
+            public void onSaveInstanceState(@NonNull Bundle hostOutState, @NonNull Bundle sceneOutState) {
+                sceneStateSaveStrategyInvoked[1] = true;
+                hostOutState.putAll(sceneOutState);
+            }
+
+            @Override
+            public void onClear() {
+                sceneStateSaveStrategyInvoked[2] = true;
+            }
+        };
+
+        SceneLifecycleManager<GroupScene> sceneLifecycleManager = new SceneLifecycleManager<>();
+        TestFixIdGroupScene rootScene = new TestFixIdGroupScene();
+        ActivityController<NavigationSourceUtility.TestActivity> controller = Robolectric.buildActivity(NavigationSourceUtility.TestActivity.class).create().start().resume();
+        NavigationSourceUtility.TestActivity testActivity = controller.get();
+
+        Scope.RootScopeFactory rootScopeFactory = new Scope.RootScopeFactory() {
+            @Override
+            public Scope getRootScope() {
+                return Scope.DEFAULT_ROOT_SCOPE_FACTORY.getRootScope();
+            }
+        };
+
+        controller.create();
+        sceneLifecycleManager.onActivityCreated(testActivity, testActivity.mFrameLayout,
+                rootScene, rootScopeFactory, sceneStateSaveStrategy,
+                true, null);
+
+        controller.start();
+        sceneLifecycleManager.onStart();
+        controller.resume();
+        sceneLifecycleManager.onResume();
+
+        TestScene childScene = new TestScene();
+        Bundle childSceneBundle = new Bundle();
+        childSceneBundle.putString("key", "value");
+        childScene.setArguments(childSceneBundle);
+        rootScene.add(rootScene.id, childScene, "tag");
+
+        //page pause and stop
+        controller.pause();
+        sceneLifecycleManager.onPause();
+        controller.stop();
+        sceneLifecycleManager.onStop();
+        controller.saveInstanceState(new Bundle());
+        sceneLifecycleManager.onSaveInstanceState(bundle);
+
+        //finish Activity to exit page
+        controller.get().finish();
+        sceneLifecycleManager.onDestroyView();
+
+        assertTrue(bundle.size() > 0);
+        assertTrue(sceneStateSaveStrategyInvoked[1]);
+        assertTrue(sceneStateSaveStrategyInvoked[2]);
+    }
+
+    @Test
     public void testSceneStateSaveStrategyMakeSureOnClearNotInvoked() {
         Bundle bundle = new Bundle();
 
