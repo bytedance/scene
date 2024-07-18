@@ -26,6 +26,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RestrictTo;
 
+import com.bytedance.scene.exceptions.OnSaveInstanceStateMethodMissingException;
 import com.bytedance.scene.utlity.Utility;
 
 
@@ -38,6 +39,7 @@ import com.bytedance.scene.utlity.Utility;
 public class SceneLifecycleManager<T extends Scene & SceneParent> {
     private static final boolean DEBUG = false;
     private static final String TAG = "SceneLifecycleManager";
+    private static final String SCENE_LIFECYCLE_MANAGER_ON_SAVE_INSTANCE_STATE_TAG = "SceneLifecycleManager_onSaveInstanceState_TAG";
 
     private T mScene;
     @NonNull
@@ -100,6 +102,9 @@ public class SceneLifecycleManager<T extends Scene & SceneParent> {
         Bundle sceneSavedInstanceState = savedInstanceState;
         if (savedInstanceState != null && this.mSceneStateSaveStrategy != null) {
             sceneSavedInstanceState = mSceneStateSaveStrategy.onRestoreInstanceState(savedInstanceState);
+        }
+        if (sceneSavedInstanceState != null && !sceneSavedInstanceState.getBoolean(SCENE_LIFECYCLE_MANAGER_ON_SAVE_INSTANCE_STATE_TAG)) {
+            throw new OnSaveInstanceStateMethodMissingException("savedInstanceState argument is not null, but previous onSaveInstanceState() is missing");
         }
         this.mScene.dispatchCreate(sceneSavedInstanceState);
         this.mScene.dispatchCreateView(sceneSavedInstanceState, viewGroup);
@@ -192,9 +197,11 @@ public class SceneLifecycleManager<T extends Scene & SceneParent> {
         if (this.mSceneStateSaveStrategy != null) {
             Bundle sceneOutState = new Bundle();
             this.mScene.dispatchSaveInstanceState(sceneOutState);
+            sceneOutState.putBoolean(SCENE_LIFECYCLE_MANAGER_ON_SAVE_INSTANCE_STATE_TAG, true);
             this.mSceneStateSaveStrategy.onSaveInstanceState(outState, sceneOutState);
         } else {
             this.mScene.dispatchSaveInstanceState(outState);
+            outState.putBoolean(SCENE_LIFECYCLE_MANAGER_ON_SAVE_INSTANCE_STATE_TAG, true);
         }
         this.mStateSaved = true;
     }
