@@ -114,6 +114,7 @@ public class SceneLifecycleManager<T extends Scene & SceneParent> {
         this.mState = SceneLifecycleManagerState.START;
         log("onStart");
         this.mScene.dispatchStart();
+        this.mStateSaved = false;
     }
 
     public void onResume() {
@@ -123,6 +124,7 @@ public class SceneLifecycleManager<T extends Scene & SceneParent> {
         this.mState = SceneLifecycleManagerState.RESUME;
         log("onResume");
         this.mScene.dispatchResume();
+        this.mStateSaved = false;
     }
 
     public void onPause() {
