@@ -16,14 +16,16 @@
 package com.bytedance.scene;
 
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import android.text.TextUtils;
 
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 /**
  * Created by JiangQi on 9/11/18.
@@ -41,7 +43,7 @@ public class Scope {
     public static final RootScopeFactory DEFAULT_ROOT_SCOPE_FACTORY = new RootScopeFactory() {
         @Override
         public Scope getRootScope() {
-            return new Scope(null, generateScopeKey());
+            return new Scope(null, generateScopeKey(null));
         }
     };
 
@@ -57,7 +59,7 @@ public class Scope {
             scopeKey = getScopeKeyFromBundle(bundle);
         }
         if (TextUtils.isEmpty(scopeKey)) {
-            scopeKey = generateScopeKey();
+            scopeKey = generateScopeKey(scene);
         }
         Scope scope = this.mChildrenScopes.get(scopeKey);
         if (scope == null) {
@@ -109,8 +111,19 @@ public class Scope {
     private static final AtomicInteger SCENE_COUNT = new AtomicInteger(0);
     private static final String TAG_SCENE_SCOPE_KEY = "scope_key";
 
-    private static String generateScopeKey() {
-        return "Scene #" + SCENE_COUNT.getAndIncrement();
+    private static String generateScopeKey(@Nullable Scene scene) {
+        switch (SceneGlobalConfig.INSTANCE.getGenScopeStrategy()) {
+            case 1: {
+                if (scene == null) {
+                    return "Scene_" + UUID.randomUUID();
+                } else {
+                    return scene.getClass().getName() + "_" + UUID.randomUUID();
+                }
+            }
+            default: {
+                return "Scene #" + SCENE_COUNT.getAndIncrement();
+            }
+        }
     }
 
     private static String getScopeKeyFromBundle(@NonNull Bundle bundle) {
