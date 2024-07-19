@@ -16,7 +16,6 @@
 package com.bytedance.scene.animation;
 
 import android.os.Build;
-import androidx.annotation.NonNull;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
@@ -30,14 +29,21 @@ import com.bytedance.scene.utlity.Utility;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import androidx.annotation.NonNull;
+
 /**
  * Created by JiangQi on 7/30/18.
  */
 public abstract class NavigationAnimationExecutor {
     protected ViewGroup mAnimationViewGroup;
+    private Runnable mCustomAnimationEndAction;
 
     public void setAnimationViewGroup(@NonNull ViewGroup viewGroup) {
         this.mAnimationViewGroup = viewGroup;
+    }
+
+    public void setAnimationEndAction(Runnable endAction){
+        mCustomAnimationEndAction = endAction;
     }
 
     public abstract boolean isSupport(@NonNull Class<? extends Scene> from, @NonNull Class<? extends Scene> to);
@@ -73,6 +79,9 @@ public abstract class NavigationAnimationExecutor {
                     }
                 }
                 endAction.run();
+                if (mCustomAnimationEndAction != null) {
+                    mCustomAnimationEndAction.run();
+                }
             }
         };
 
@@ -136,6 +145,9 @@ public abstract class NavigationAnimationExecutor {
             public void run() {
                 navigationScene.requestDisableTouchEvent(false);
                 endAction.run();
+                if (mCustomAnimationEndAction != null) {
+                    mCustomAnimationEndAction.run();
+                }
             }
         };
 
