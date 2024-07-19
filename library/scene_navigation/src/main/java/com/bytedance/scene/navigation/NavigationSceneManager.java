@@ -28,11 +28,6 @@ import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.lifecycle.Lifecycle;
-import androidx.lifecycle.LifecycleOwner;
-
 import com.bytedance.scene.Scene;
 import com.bytedance.scene.SceneComponentFactory;
 import com.bytedance.scene.SceneTrace;
@@ -51,7 +46,18 @@ import com.bytedance.scene.utlity.Predicate;
 import com.bytedance.scene.utlity.SceneInternalException;
 import com.bytedance.scene.utlity.Utility;
 
-import java.util.*;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.LifecycleOwner;
 
 /**
  * Priority to ensure that the life cycle is correct,
@@ -698,6 +704,10 @@ class NavigationSceneManager {
             }
 
             Record curRecord = findRecordByScene(scene);
+            if (curRecord == null) {
+                operationEndAction.run();
+                return;
+            }
             if (curRecord.mIsTranslucent == translucent) {
                 operationEndAction.run();
                 return;
