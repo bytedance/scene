@@ -15,6 +15,8 @@
  */
 package com.bytedance.scene.group;
 
+import static androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP;
+
 import android.content.Context;
 import android.os.Handler;
 import android.os.Message;
@@ -34,8 +36,6 @@ import androidx.core.util.Pools;
 import com.bytedance.scene.view.SceneContextThemeWrapper;
 
 import java.util.concurrent.ArrayBlockingQueue;
-
-import static androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP;
 
 /** @hide */
 @RestrictTo(LIBRARY_GROUP)
@@ -138,6 +138,14 @@ public final class SceneAsyncLayoutInflater {
 
             return super.onCreateView(name, attrs);
         }
+    }
+
+    public void setThreadPriority(int newPriority) {
+        InflateThread.getInstance().setPriority(newPriority);
+    }
+
+    public int getThreadPriority() {
+        return InflateThread.getInstance().getPriority();
     }
 
     private static class InflateThread extends Thread {
