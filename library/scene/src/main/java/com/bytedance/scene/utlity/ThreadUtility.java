@@ -15,10 +15,11 @@
  */
 package com.bytedance.scene.utlity;
 
-import android.os.Looper;
-import androidx.annotation.RestrictTo;
-
 import static androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP;
+
+import android.os.Looper;
+
+import androidx.annotation.RestrictTo;
 
 /**
  * Created by JiangQi on 9/5/18.
@@ -30,8 +31,13 @@ import static androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP;
 @RestrictTo(LIBRARY_GROUP)
 public class ThreadUtility {
     public static void checkUIThread() {
-        if (Looper.myLooper() != Looper.getMainLooper()) {
-            throw new IllegalStateException("This method must call on main thread");
-        }
+        ExceptionsUtility.invokeAndThrowExceptionToNextUILoop(new Runnable() {
+            @Override
+            public void run() {
+                if (Looper.myLooper() != Looper.getMainLooper()) {
+                    throw new IllegalStateException("This method must call on main thread");
+                }
+            }
+        });
     }
 }
