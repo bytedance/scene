@@ -21,7 +21,7 @@ import android.text.TextUtils;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.bytedance.scene.utlity.SceneInternalException;
+import com.bytedance.scene.utlity.FindALSSceneInternalException;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -71,7 +71,7 @@ public class Scope {
             if (scope != null) {
                 Class<? extends Scene> previousSceneClass = scope.mSceneClass;
                 if (previousSceneClass != null && previousSceneClass != scene.getClass()) {
-                    throw new SceneInternalException("Scene buildScope error, previous Scene type mismatch previous class " + previousSceneClass.getName() + " instead of " + scene.getClass().getName());
+                    throw new FindALSSceneInternalException("Scene buildScope error, previous Scene type mismatch previous class " + previousSceneClass.getName() + " instead of " + scene.getClass().getName());
                 }
             } else {
                 scope = new Scope(this, scene.getClass(), scopeKey);

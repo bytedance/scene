@@ -53,6 +53,7 @@ import androidx.savedstate.SavedStateRegistryController;
 import androidx.savedstate.SavedStateRegistryOwner;
 
 import com.bytedance.scene.parcel.ParcelConstants;
+import com.bytedance.scene.utlity.FindALSSceneInternalException;
 import com.bytedance.scene.utlity.SceneInternalException;
 import com.bytedance.scene.utlity.SceneViewTreeLifecycleOwner;
 import com.bytedance.scene.utlity.SceneViewTreeSavedStateRegistryOwner;
@@ -581,6 +582,10 @@ public abstract class Scene implements LifecycleOwner, SavedStateRegistryOwner, 
 
         if (!activity.isChangingConfigurations()) {
             this.mScope.destroy();
+            if (this.viewModelStore != null) {
+                this.viewModelStore.clear();
+                this.viewModelStore = null;
+            }
         }
         this.mScope = null;
         // Must be called last, in case someone do add in onDestroy/onDetach
@@ -1050,6 +1055,8 @@ public abstract class Scene implements LifecycleOwner, SavedStateRegistryOwner, 
         return mLifecycleRegistry;
     }
 
+    private ViewModelStore viewModelStore;
+
     /**
      * Returns the {@link ViewModelStore} associated with this Scene
      */
@@ -1057,6 +1064,15 @@ public abstract class Scene implements LifecycleOwner, SavedStateRegistryOwner, 
     @NonNull
     @Override
     public final ViewModelStore getViewModelStore() {
+        if (SceneGlobalConfig.createSceneViewModelStoreBySceneSelf) {
+            synchronized (this) {
+                if (viewModelStore == null) {
+                    viewModelStore = new ViewModelStore();
+                }
+                return viewModelStore;
+            }
+        }
+
         if (SceneGlobalConfig.validateScopeAndViewModelStoreSceneClassStrategy) {
             synchronized (this) {
                 Scope scope = getScope();
@@ -1064,7 +1080,7 @@ public abstract class Scene implements LifecycleOwner, SavedStateRegistryOwner, 
                 if (viewModelStoreHolder != null) {
                     Class<? extends Scene> previousSceneClass = viewModelStoreHolder.mSceneClass;
                     if (previousSceneClass != null && previousSceneClass != this.getClass()) {
-                        throw new SceneInternalException("ViewModelStoreHolder error, previous Scene type mismatch previous class " + previousSceneClass.getName() + " instead of " + this.getClass().getName());
+                        throw new FindALSSceneInternalException("ViewModelStoreHolder error, previous Scene type mismatch previous class " + previousSceneClass.getName() + " instead of " + this.getClass().getName());
                     }
                 } else {
                     ViewModelStore viewModelStore = new ViewModelStore();
