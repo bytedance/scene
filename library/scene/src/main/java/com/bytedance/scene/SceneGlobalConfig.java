@@ -5,8 +5,8 @@ package com.bytedance.scene;
  *
  * @author fengminchao@bytedance.com
  */
-class SceneGlobalConfig {
-    static int genScopeStrategy = 0;
-    static int validateScopeAndViewModelStoreSceneClassStrategy = 0;
-    static int validateSceneViewModelProvidersMainThreadStrategy = 0;
+public class SceneGlobalConfig {
+    public static int genScopeStrategy = 0;
+    public static boolean validateScopeAndViewModelStoreSceneClassStrategy = false;
+    public static boolean validateSceneViewModelProvidersMainThreadStrategy = false;
 }

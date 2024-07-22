@@ -50,7 +50,7 @@ public class SceneViewModelProviders {
 
     @MainThread
     public static ViewModelProvider of(@NonNull Scene scene) {
-        if (SceneGlobalConfig.validateSceneViewModelProvidersMainThreadStrategy == 1) {
+        if (SceneGlobalConfig.validateSceneViewModelProvidersMainThreadStrategy) {
             ThreadUtility.checkUIThread();
         }
 
@@ -62,7 +62,7 @@ public class SceneViewModelProviders {
 
     @MainThread
     public static ViewModelProvider of(@NonNull Scene scene, @NonNull ViewModelProvider.Factory factory) {
-        if (SceneGlobalConfig.validateSceneViewModelProvidersMainThreadStrategy == 1) {
+        if (SceneGlobalConfig.validateSceneViewModelProvidersMainThreadStrategy) {
             ThreadUtility.checkUIThread();
         }
         return new ViewModelProvider(scene.getViewModelStore(), factory);

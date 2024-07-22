@@ -67,26 +67,23 @@ public class Scope {
         }
         Scope scope = this.mChildrenScopes.get(scopeKey);
 
-        switch (SceneGlobalConfig.validateScopeAndViewModelStoreSceneClassStrategy){
-            case 1: {
-                if (scope != null) {
-                    Class<? extends Scene> previousSceneClass = scope.mSceneClass;
-                    if (previousSceneClass != null && previousSceneClass != scene.getClass()) {
-                        throw new SceneInternalException("Scene buildScope error, previous Scene type mismatch previous class " + previousSceneClass.getName() + " instead of " + scene.getClass().getName());
-                    }
-                } else {
-                    scope = new Scope(this, scene.getClass(), scopeKey);
-                    this.mChildrenScopes.put(scopeKey, scope);
+        if (SceneGlobalConfig.validateScopeAndViewModelStoreSceneClassStrategy) {
+            if (scope != null) {
+                Class<? extends Scene> previousSceneClass = scope.mSceneClass;
+                if (previousSceneClass != null && previousSceneClass != scene.getClass()) {
+                    throw new SceneInternalException("Scene buildScope error, previous Scene type mismatch previous class " + previousSceneClass.getName() + " instead of " + scene.getClass().getName());
                 }
-                return scope;
+            } else {
+                scope = new Scope(this, scene.getClass(), scopeKey);
+                this.mChildrenScopes.put(scopeKey, scope);
             }
-            default: {
-                if (scope == null) {
-                    scope = new Scope(this, null, scopeKey);
-                    this.mChildrenScopes.put(scopeKey, scope);
-                }
-                return scope;
+            return scope;
+        } else {
+            if (scope == null) {
+                scope = new Scope(this, null, scopeKey);
+                this.mChildrenScopes.put(scopeKey, scope);
             }
+            return scope;
         }
     }
 

@@ -1057,33 +1057,30 @@ public abstract class Scene implements LifecycleOwner, SavedStateRegistryOwner, 
     @NonNull
     @Override
     public final ViewModelStore getViewModelStore() {
-        switch (SceneGlobalConfig.validateScopeAndViewModelStoreSceneClassStrategy) {
-            case 1: {
-                synchronized (this) {
-                    Scope scope = getScope();
-                    ViewModelStoreHolder viewModelStoreHolder = scope.getServiceInMyScope(ViewModelStoreHolder.class);
-                    if (viewModelStoreHolder != null) {
-                        Class<? extends Scene> previousSceneClass = viewModelStoreHolder.mSceneClass;
-                        if (previousSceneClass != null && previousSceneClass != this.getClass()) {
-                            throw new SceneInternalException("ViewModelStoreHolder error, previous Scene type mismatch previous class " + previousSceneClass.getName() + " instead of " + this.getClass().getName());
-                        }
-                    } else {
-                        ViewModelStore viewModelStore = new ViewModelStore();
-                        viewModelStoreHolder = new ViewModelStoreHolder(viewModelStore, this.getClass());
-                        scope.registerInMyScope(ViewModelStoreHolder.class, viewModelStoreHolder);
-                    }
-                    return viewModelStoreHolder.get();
-                }
-            }
-            default: {
+        if (SceneGlobalConfig.validateScopeAndViewModelStoreSceneClassStrategy) {
+            synchronized (this) {
                 Scope scope = getScope();
-                if (scope.hasServiceInMyScope(ViewModelStoreHolder.class)) {
-                    return ((ViewModelStoreHolder) scope.getService(ViewModelStoreHolder.class)).get();
+                ViewModelStoreHolder viewModelStoreHolder = scope.getServiceInMyScope(ViewModelStoreHolder.class);
+                if (viewModelStoreHolder != null) {
+                    Class<? extends Scene> previousSceneClass = viewModelStoreHolder.mSceneClass;
+                    if (previousSceneClass != null && previousSceneClass != this.getClass()) {
+                        throw new SceneInternalException("ViewModelStoreHolder error, previous Scene type mismatch previous class " + previousSceneClass.getName() + " instead of " + this.getClass().getName());
+                    }
                 } else {
                     ViewModelStore viewModelStore = new ViewModelStore();
-                    scope.register(ViewModelStoreHolder.class, new ViewModelStoreHolder(viewModelStore, null));
-                    return viewModelStore;
+                    viewModelStoreHolder = new ViewModelStoreHolder(viewModelStore, this.getClass());
+                    scope.registerInMyScope(ViewModelStoreHolder.class, viewModelStoreHolder);
                 }
+                return viewModelStoreHolder.get();
+            }
+        } else {
+            Scope scope = getScope();
+            if (scope.hasServiceInMyScope(ViewModelStoreHolder.class)) {
+                return ((ViewModelStoreHolder) scope.getService(ViewModelStoreHolder.class)).get();
+            } else {
+                ViewModelStore viewModelStore = new ViewModelStore();
+                scope.register(ViewModelStoreHolder.class, new ViewModelStoreHolder(viewModelStore, null));
+                return viewModelStore;
             }
         }
     }
