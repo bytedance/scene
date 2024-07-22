@@ -18,14 +18,16 @@ package com.bytedance.scene;
 import android.os.Bundle;
 import android.text.TextUtils;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
+import com.bytedance.scene.utlity.SceneInternalException;
+
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
 /**
  * Created by JiangQi on 9/11/18.
@@ -43,12 +45,14 @@ public class Scope {
     public static final RootScopeFactory DEFAULT_ROOT_SCOPE_FACTORY = new RootScopeFactory() {
         @Override
         public Scope getRootScope() {
-            return new Scope(null, generateScopeKey(null));
+            return new Scope(null, null, generateScopeKey(null));
         }
     };
 
     private final Scope mParentScope;
     private final String mScopeKey;
+    @Nullable
+    private final Class<? extends Scene> mSceneClass;
     private final Map<String, Scope> mChildrenScopes = new HashMap<>();
     private final Map<Object, Object> mServices = new HashMap<>();
 
@@ -62,23 +66,45 @@ public class Scope {
             scopeKey = generateScopeKey(scene);
         }
         Scope scope = this.mChildrenScopes.get(scopeKey);
-        if (scope == null) {
-            scope = new Scope(this, scopeKey);
-            this.mChildrenScopes.put(scopeKey, scope);
+
+        switch (SceneGlobalConfig.validateScopeAndViewModelStoreSceneClassStrategy){
+            case 1: {
+                if (scope != null) {
+                    Class<? extends Scene> previousSceneClass = scope.mSceneClass;
+                    if (previousSceneClass != null && previousSceneClass != scene.getClass()) {
+                        throw new SceneInternalException("Scene buildScope error, previous Scene type mismatch previous class " + previousSceneClass.getName() + " instead of " + scene.getClass().getName());
+                    }
+                } else {
+                    scope = new Scope(this, scene.getClass(), scopeKey);
+                    this.mChildrenScopes.put(scopeKey, scope);
+                }
+                return scope;
+            }
+            default: {
+                if (scope == null) {
+                    scope = new Scope(this, null, scopeKey);
+                    this.mChildrenScopes.put(scopeKey, scope);
+                }
+                return scope;
+            }
         }
-        return scope;
     }
 
     private void removeChildScope(String scopeKey) {
         this.mChildrenScopes.remove(scopeKey);
     }
 
-    private Scope(Scope parentScope, String scopeKey) {
+    private Scope(Scope parentScope, @Nullable Class<? extends Scene> sceneClass, String scopeKey) {
         this.mParentScope = parentScope;
+        this.mSceneClass = sceneClass;
         this.mScopeKey = scopeKey;
     }
 
     public void register(@NonNull Object key, @NonNull Object service) {
+        this.mServices.put(key, service);
+    }
+
+    public void registerInMyScope(@NonNull Object key, @NonNull Object service) {
         this.mServices.put(key, service);
     }
 
@@ -94,6 +120,10 @@ public class Scope {
 
     public boolean hasServiceInMyScope(@NonNull Object key) {
         return mServices.containsKey(key);
+    }
+
+    public <T> T getServiceInMyScope(@NonNull Object key) {
+        return (T) this.mServices.get(key);
     }
 
     @Nullable
@@ -112,7 +142,7 @@ public class Scope {
     private static final String TAG_SCENE_SCOPE_KEY = "scope_key";
 
     private static String generateScopeKey(@Nullable Scene scene) {
-        switch (SceneGlobalConfig.INSTANCE.getGenScopeStrategy()) {
+        switch (SceneGlobalConfig.genScopeStrategy) {
             case 1: {
                 if (scene == null) {
                     return "Scene_" + UUID.randomUUID();

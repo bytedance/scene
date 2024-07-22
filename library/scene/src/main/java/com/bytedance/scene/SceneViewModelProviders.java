@@ -24,6 +24,8 @@ import androidx.annotation.MainThread;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.bytedance.scene.utlity.ThreadUtility;
+
 public class SceneViewModelProviders {
     private SceneViewModelProviders() {
 
@@ -48,6 +50,10 @@ public class SceneViewModelProviders {
 
     @MainThread
     public static ViewModelProvider of(@NonNull Scene scene) {
+        if (SceneGlobalConfig.validateSceneViewModelProvidersMainThreadStrategy == 1) {
+            ThreadUtility.checkUIThread();
+        }
+
         ViewModelProvider.AndroidViewModelFactory factory =
                 ViewModelProvider.AndroidViewModelFactory.getInstance(
                         checkApplication(checkActivity(scene)));
@@ -56,6 +62,9 @@ public class SceneViewModelProviders {
 
     @MainThread
     public static ViewModelProvider of(@NonNull Scene scene, @NonNull ViewModelProvider.Factory factory) {
+        if (SceneGlobalConfig.validateSceneViewModelProvidersMainThreadStrategy == 1) {
+            ThreadUtility.checkUIThread();
+        }
         return new ViewModelProvider(scene.getViewModelStore(), factory);
     }
 }

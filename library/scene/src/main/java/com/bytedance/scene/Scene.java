@@ -15,6 +15,8 @@
  */
 package com.bytedance.scene;
 
+import static androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP;
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
@@ -26,9 +28,19 @@ import android.os.Looper;
 import android.os.Parcelable;
 import android.util.Log;
 import android.util.SparseArray;
-import android.view.*;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.Window;
 
-import androidx.annotation.*;
+import androidx.annotation.CallSuper;
+import androidx.annotation.IdRes;
+import androidx.annotation.MainThread;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.RestrictTo;
+import androidx.annotation.StringRes;
+import androidx.annotation.StyleRes;
 import androidx.core.view.ViewCompat;
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleObserver;
@@ -36,23 +48,21 @@ import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.LifecycleRegistry;
 import androidx.lifecycle.ViewModelStore;
 import androidx.lifecycle.ViewModelStoreOwner;
-
 import androidx.savedstate.SavedStateRegistry;
 import androidx.savedstate.SavedStateRegistryController;
 import androidx.savedstate.SavedStateRegistryOwner;
+
 import com.bytedance.scene.parcel.ParcelConstants;
+import com.bytedance.scene.utlity.SceneInternalException;
 import com.bytedance.scene.utlity.SceneViewTreeLifecycleOwner;
 import com.bytedance.scene.utlity.SceneViewTreeSavedStateRegistryOwner;
 import com.bytedance.scene.utlity.SceneViewTreeViewModelStoreOwner;
-import com.bytedance.scene.utlity.ViewRefUtility;
-import com.bytedance.scene.utlity.SceneInternalException;
 import com.bytedance.scene.utlity.Utility;
+import com.bytedance.scene.utlity.ViewRefUtility;
 import com.bytedance.scene.view.SceneContextThemeWrapper;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP;
 
 /**
  * Created by JiangQi on 7/30/18.
@@ -1047,21 +1057,45 @@ public abstract class Scene implements LifecycleOwner, SavedStateRegistryOwner, 
     @NonNull
     @Override
     public final ViewModelStore getViewModelStore() {
-        Scope scope = getScope();
-        if (scope.hasServiceInMyScope(ViewModelStoreHolder.class)) {
-            return ((ViewModelStoreHolder) scope.getService(ViewModelStoreHolder.class)).get();
-        } else {
-            ViewModelStore viewModelStore = new ViewModelStore();
-            scope.register(ViewModelStoreHolder.class, new ViewModelStoreHolder(viewModelStore));
-            return viewModelStore;
+        switch (SceneGlobalConfig.validateScopeAndViewModelStoreSceneClassStrategy) {
+            case 1: {
+                synchronized (this) {
+                    Scope scope = getScope();
+                    ViewModelStoreHolder viewModelStoreHolder = scope.getServiceInMyScope(ViewModelStoreHolder.class);
+                    if (viewModelStoreHolder != null) {
+                        Class<? extends Scene> previousSceneClass = viewModelStoreHolder.mSceneClass;
+                        if (previousSceneClass != null && previousSceneClass != this.getClass()) {
+                            throw new SceneInternalException("ViewModelStoreHolder error, previous Scene type mismatch previous class " + previousSceneClass.getName() + " instead of " + this.getClass().getName());
+                        }
+                    } else {
+                        ViewModelStore viewModelStore = new ViewModelStore();
+                        viewModelStoreHolder = new ViewModelStoreHolder(viewModelStore, this.getClass());
+                        scope.registerInMyScope(ViewModelStoreHolder.class, viewModelStoreHolder);
+                    }
+                    return viewModelStoreHolder.get();
+                }
+            }
+            default: {
+                Scope scope = getScope();
+                if (scope.hasServiceInMyScope(ViewModelStoreHolder.class)) {
+                    return ((ViewModelStoreHolder) scope.getService(ViewModelStoreHolder.class)).get();
+                } else {
+                    ViewModelStore viewModelStore = new ViewModelStore();
+                    scope.register(ViewModelStoreHolder.class, new ViewModelStoreHolder(viewModelStore, null));
+                    return viewModelStore;
+                }
+            }
         }
     }
 
     private static class ViewModelStoreHolder implements Scope.Scoped {
         private ViewModelStore mViewModelStore;
+        private Class<? extends Scene> mSceneClass;
 
-        private ViewModelStoreHolder(@NonNull ViewModelStore viewModelStore) {
+        private ViewModelStoreHolder(@NonNull ViewModelStore viewModelStore,
+                                     @Nullable Class<? extends Scene> sceneClass) {
             this.mViewModelStore = viewModelStore;
+            this.mSceneClass = sceneClass;
         }
 
         @NonNull
