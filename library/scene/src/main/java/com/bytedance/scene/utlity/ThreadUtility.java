@@ -34,10 +34,14 @@ public class ThreadUtility {
         ExceptionsUtility.invokeAndThrowExceptionToNextUILoop(new Runnable() {
             @Override
             public void run() {
-                if (Looper.myLooper() != Looper.getMainLooper()) {
+                if (!isMainThread()) {
                     throw new IllegalStateException("This method must call on main thread");
                 }
             }
         });
+    }
+
+    private static boolean isMainThread() {
+        return Looper.getMainLooper() == Looper.myLooper() && Looper.getMainLooper().getThread() == Thread.currentThread();
     }
 }
