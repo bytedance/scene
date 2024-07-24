@@ -22,7 +22,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.bytedance.scene.parcel.ParcelConstants;
-import com.bytedance.scene.utlity.FindALSSceneInternalException;
+import com.bytedance.scene.utlity.ExceptionsUtility;
+import com.bytedance.scene.utlity.SceneInternalException;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -58,7 +59,7 @@ public class Scope {
     private final Map<Object, Object> mServices = new HashMap<>();
 
     @NonNull
-    Scope buildScope(@NonNull Scene scene, @Nullable Bundle bundle) {
+    Scope buildScope(@NonNull final Scene scene, @Nullable Bundle bundle) {
         String scopeKey = null;
         if (bundle != null) {
             scopeKey = getScopeKeyFromBundle(bundle);
@@ -68,24 +69,21 @@ public class Scope {
         }
         Scope scope = this.mChildrenScopes.get(scopeKey);
 
-        if (SceneGlobalConfig.validateScopeAndViewModelStoreSceneClassStrategy) {
-            if (scope != null) {
-                Class<? extends Scene> previousSceneClass = scope.mSceneClass;
-                if (previousSceneClass != null && previousSceneClass != scene.getClass()) {
-                    throw new FindALSSceneInternalException("Scene buildScope error, previous Scene type mismatch previous class " + previousSceneClass.getName() + " instead of " + scene.getClass().getName());
-                }
-            } else {
-                scope = new Scope(this, scene.getClass(), scopeKey);
-                this.mChildrenScopes.put(scopeKey, scope);
+        if (scope != null) {
+            final Class<? extends Scene> previousSceneClass = scope.mSceneClass;
+            if (previousSceneClass != null && previousSceneClass != scene.getClass()) {
+                ExceptionsUtility.invokeAndThrowExceptionToNextUILoop(new Runnable() {
+                    @Override
+                    public void run() {
+                        throw new SceneInternalException("Scene buildScope() error, Scope type mismatch, request " + scene.getClass().getName() + " but get " + previousSceneClass.getName());
+                    }
+                });
             }
-            return scope;
         } else {
-            if (scope == null) {
-                scope = new Scope(this, null, scopeKey);
-                this.mChildrenScopes.put(scopeKey, scope);
-            }
-            return scope;
+            scope = new Scope(this, scene.getClass(), scopeKey);
+            this.mChildrenScopes.put(scopeKey, scope);
         }
+        return scope;
     }
 
     private void removeChildScope(String scopeKey) {

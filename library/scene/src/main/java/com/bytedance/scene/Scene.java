@@ -53,6 +53,7 @@ import androidx.savedstate.SavedStateRegistryController;
 import androidx.savedstate.SavedStateRegistryOwner;
 
 import com.bytedance.scene.parcel.ParcelConstants;
+import com.bytedance.scene.utlity.ExceptionsUtility;
 import com.bytedance.scene.utlity.FindALSSceneInternalException;
 import com.bytedance.scene.utlity.SceneInternalException;
 import com.bytedance.scene.utlity.SceneViewTreeLifecycleOwner;
@@ -1073,31 +1074,25 @@ public abstract class Scene implements LifecycleOwner, SavedStateRegistryOwner, 
             }
         }
 
-        if (SceneGlobalConfig.validateScopeAndViewModelStoreSceneClassStrategy) {
-            synchronized (this) {
-                Scope scope = getScope();
-                ViewModelStoreHolder viewModelStoreHolder = scope.getServiceInMyScope(ViewModelStoreHolder.class);
-                if (viewModelStoreHolder != null) {
-                    Class<? extends Scene> previousSceneClass = viewModelStoreHolder.mSceneClass;
-                    if (previousSceneClass != null && previousSceneClass != this.getClass()) {
-                        throw new FindALSSceneInternalException("ViewModelStoreHolder error, previous Scene type mismatch previous class " + previousSceneClass.getName() + " instead of " + this.getClass().getName());
-                    }
-                } else {
-                    ViewModelStore viewModelStore = new ViewModelStore();
-                    viewModelStoreHolder = new ViewModelStoreHolder(viewModelStore, this.getClass());
-                    scope.registerInMyScope(ViewModelStoreHolder.class, viewModelStoreHolder);
-                }
-                return viewModelStoreHolder.get();
-            }
-        } else {
+        synchronized (this) {
             Scope scope = getScope();
-            if (scope.hasServiceInMyScope(ViewModelStoreHolder.class)) {
-                return ((ViewModelStoreHolder) scope.getService(ViewModelStoreHolder.class)).get();
+            ViewModelStoreHolder viewModelStoreHolder = scope.getServiceInMyScope(ViewModelStoreHolder.class);
+            if (viewModelStoreHolder != null) {
+                final Class<? extends Scene> previousSceneClass = viewModelStoreHolder.mSceneClass;
+                if (previousSceneClass != null && previousSceneClass != this.getClass()) {
+                    ExceptionsUtility.invokeAndThrowExceptionToNextUILoop(new Runnable() {
+                        @Override
+                        public void run() {
+                            throw new SceneInternalException("Scene getViewModelStore() error, ViewModelStoreHolder type mismatch, request " + this.getClass().getName() + " but get " + previousSceneClass.getName());
+                        }
+                    });
+                }
             } else {
                 ViewModelStore viewModelStore = new ViewModelStore();
-                scope.register(ViewModelStoreHolder.class, new ViewModelStoreHolder(viewModelStore, null));
-                return viewModelStore;
+                viewModelStoreHolder = new ViewModelStoreHolder(viewModelStore, this.getClass());
+                scope.registerInMyScope(ViewModelStoreHolder.class, viewModelStoreHolder);
             }
+            return viewModelStoreHolder.get();
         }
     }
 
