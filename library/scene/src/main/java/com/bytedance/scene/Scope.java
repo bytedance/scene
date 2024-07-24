@@ -21,6 +21,7 @@ import android.text.TextUtils;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.bytedance.scene.parcel.ParcelConstants;
 import com.bytedance.scene.utlity.FindALSSceneInternalException;
 
 import java.util.Collection;
@@ -136,7 +137,6 @@ public class Scope {
     }
 
     private static final AtomicInteger SCENE_COUNT = new AtomicInteger(0);
-    private static final String TAG_SCENE_SCOPE_KEY = "scope_key";
 
     private static String generateScopeKey(@Nullable Scene scene) {
         switch (SceneGlobalConfig.genScopeStrategy) {
@@ -154,11 +154,11 @@ public class Scope {
     }
 
     private static String getScopeKeyFromBundle(@NonNull Bundle bundle) {
-        return bundle.getString(TAG_SCENE_SCOPE_KEY);
+        return bundle.getString(ParcelConstants.KEY_SCENE_SCOPE_KEY_TAG);
     }
 
     public void saveInstance(@NonNull Bundle bundle) {
-        bundle.putString(TAG_SCENE_SCOPE_KEY, mScopeKey);
+        bundle.putString(ParcelConstants.KEY_SCENE_SCOPE_KEY_TAG, mScopeKey);
     }
 
     void destroy() {

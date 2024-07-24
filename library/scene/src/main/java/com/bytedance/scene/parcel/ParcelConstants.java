@@ -39,4 +39,5 @@ public class ParcelConstants {
 
     public static final String KEY_SCENE_VIEWS_TAG = "bd-scene:views";
     public static final String KEY_SCENE_FOCUSED_ID_TAG = "bd-scene:focusedViewId";
+    public static final String KEY_SCENE_SCOPE_KEY_TAG = "bd-scene:scope_key";
 }
