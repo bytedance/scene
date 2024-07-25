@@ -42,7 +42,12 @@ public class SceneViewModelProviders {
     private static Activity checkActivity(Scene scene) {
         Activity activity = scene.getActivity();
         if (activity == null) {
-            throw new IllegalStateException("Can't create ViewModelProvider for scene, current scene state: " + scene.getLifecycle().getCurrentState());
+            Scene parentScene = scene.getParentScene();
+            if (parentScene != null) {
+                throw new IllegalStateException("Can't create ViewModelProvider for scene, current scene state: " + scene.getLifecycle().getCurrentState() + " parent scene state: " + parentScene.getLifecycle().getCurrentState());
+            } else {
+                throw new IllegalStateException("Can't create ViewModelProvider for scene, current scene state: " + scene.getLifecycle().getCurrentState() + " don't have parent scene");
+            }
         }
         return activity;
     }
