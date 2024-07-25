@@ -71,7 +71,7 @@ public class Scope {
 
         if (scope != null) {
             final Class<? extends Scene> previousSceneClass = scope.mSceneClass;
-            if (previousSceneClass != null && previousSceneClass != scene.getClass()) {
+            if (SceneGlobalConfig.validateScopeAndViewModelStoreSceneClassStrategy && previousSceneClass != null && previousSceneClass != scene.getClass()) {
                 ExceptionsUtility.invokeAndThrowExceptionToNextUILoop(new Runnable() {
                     @Override
                     public void run() {

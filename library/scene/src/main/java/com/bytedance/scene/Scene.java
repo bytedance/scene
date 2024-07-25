@@ -55,7 +55,6 @@ import androidx.savedstate.SavedStateRegistryOwner;
 
 import com.bytedance.scene.parcel.ParcelConstants;
 import com.bytedance.scene.utlity.ExceptionsUtility;
-import com.bytedance.scene.utlity.FindALSSceneInternalException;
 import com.bytedance.scene.utlity.SceneInternalException;
 import com.bytedance.scene.utlity.SceneViewTreeLifecycleOwner;
 import com.bytedance.scene.utlity.SceneViewTreeSavedStateRegistryOwner;
@@ -1086,7 +1085,7 @@ public abstract class Scene implements LifecycleOwner, SavedStateRegistryOwner, 
             ViewModelStoreHolder viewModelStoreHolder = scope.getServiceInMyScope(ViewModelStoreHolder.class);
             if (viewModelStoreHolder != null) {
                 final Class<? extends Scene> previousSceneClass = viewModelStoreHolder.mSceneClass;
-                if (previousSceneClass != null && previousSceneClass != this.getClass()) {
+                if (SceneGlobalConfig.validateScopeAndViewModelStoreSceneClassStrategy && previousSceneClass != null && previousSceneClass != this.getClass()) {
                     ExceptionsUtility.invokeAndThrowExceptionToNextUILoop(new Runnable() {
                         @Override
                         public void run() {

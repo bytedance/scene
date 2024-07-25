@@ -7,6 +7,6 @@ package com.bytedance.scene;
  */
 public class SceneGlobalConfig {
     public static volatile int genScopeStrategy = 0;
-
+    public static volatile boolean validateScopeAndViewModelStoreSceneClassStrategy = false;
     public static volatile boolean createSceneViewModelStoreBySceneSelf = false;
 }
