@@ -42,7 +42,7 @@ public class SceneViewModelProviders {
     private static Activity checkActivity(Scene scene) {
         Activity activity = scene.getActivity();
         if (activity == null) {
-            throw new IllegalStateException("Can't create ViewModelProvider for removed scene");
+            throw new IllegalStateException("Can't create ViewModelProvider for scene, current scene state: " + scene.getLifecycle().getCurrentState());
         }
         return activity;
     }
