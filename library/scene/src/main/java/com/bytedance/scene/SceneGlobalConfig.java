@@ -6,9 +6,9 @@ package com.bytedance.scene;
  * @author fengminchao@bytedance.com
  */
 public class SceneGlobalConfig {
-    public static int genScopeStrategy = 0;
+    public static volatile int genScopeStrategy = 0;
 
-    public static boolean validateSceneViewModelProvidersMainThreadStrategy = false;
+    public static volatile boolean validateSceneViewModelProvidersMainThreadStrategy = false;
 
-    public static boolean createSceneViewModelStoreBySceneSelf = false;
+    public static volatile boolean createSceneViewModelStoreBySceneSelf = false;
 }
