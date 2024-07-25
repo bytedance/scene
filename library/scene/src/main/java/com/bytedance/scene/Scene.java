@@ -1064,6 +1064,9 @@ public abstract class Scene implements LifecycleOwner, SavedStateRegistryOwner, 
     private ViewModelStore viewModelStore;
     private SceneViewModelStore sceneVModelStore;
 
+    private final boolean createSceneViewModelStoreBySceneSelf = SceneGlobalConfig.createSceneViewModelStoreBySceneSelf;
+    private final boolean validateScopeAndViewModelStoreSceneClassStrategy = SceneGlobalConfig.validateScopeAndViewModelStoreSceneClassStrategy;
+
     /**
      * Returns the {@link ViewModelStore} associated with this Scene
      */
@@ -1071,7 +1074,7 @@ public abstract class Scene implements LifecycleOwner, SavedStateRegistryOwner, 
     @NonNull
     @Override
     public final ViewModelStore getViewModelStore() {
-        if (SceneGlobalConfig.createSceneViewModelStoreBySceneSelf) {
+        if (createSceneViewModelStoreBySceneSelf) {
             synchronized (this) {
                 if (viewModelStore == null) {
                     viewModelStore = new ViewModelStore();
@@ -1085,7 +1088,7 @@ public abstract class Scene implements LifecycleOwner, SavedStateRegistryOwner, 
             ViewModelStoreHolder viewModelStoreHolder = scope.getServiceInMyScope(ViewModelStoreHolder.class);
             if (viewModelStoreHolder != null) {
                 final Class<? extends Scene> previousSceneClass = viewModelStoreHolder.mSceneClass;
-                if (SceneGlobalConfig.validateScopeAndViewModelStoreSceneClassStrategy && previousSceneClass != null && previousSceneClass != this.getClass()) {
+                if (validateScopeAndViewModelStoreSceneClassStrategy && previousSceneClass != null && previousSceneClass != this.getClass()) {
                     ExceptionsUtility.invokeAndThrowExceptionToNextUILoop(new Runnable() {
                         @Override
                         public void run() {

@@ -58,6 +58,8 @@ public class Scope {
     private final Map<String, Scope> mChildrenScopes = new HashMap<>();
     private final Map<Object, Object> mServices = new HashMap<>();
 
+    private final boolean validateScopeAndViewModelStoreSceneClassStrategy = SceneGlobalConfig.validateScopeAndViewModelStoreSceneClassStrategy;
+
     @NonNull
     Scope buildScope(@NonNull final Scene scene, @Nullable Bundle bundle) {
         String scopeKey = null;
@@ -71,7 +73,7 @@ public class Scope {
 
         if (scope != null) {
             final Class<? extends Scene> previousSceneClass = scope.mSceneClass;
-            if (SceneGlobalConfig.validateScopeAndViewModelStoreSceneClassStrategy && previousSceneClass != null && previousSceneClass != scene.getClass()) {
+            if (validateScopeAndViewModelStoreSceneClassStrategy && previousSceneClass != null && previousSceneClass != scene.getClass()) {
                 ExceptionsUtility.invokeAndThrowExceptionToNextUILoop(new Runnable() {
                     @Override
                     public void run() {
