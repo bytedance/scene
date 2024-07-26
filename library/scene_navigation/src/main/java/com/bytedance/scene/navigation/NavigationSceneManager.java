@@ -28,6 +28,11 @@ import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.LifecycleOwner;
+
 import com.bytedance.scene.Scene;
 import com.bytedance.scene.SceneComponentFactory;
 import com.bytedance.scene.SceneGlobalConfig;
@@ -39,6 +44,7 @@ import com.bytedance.scene.animation.interaction.InteractionNavigationPopAnimati
 import com.bytedance.scene.group.ReuseGroupScene;
 import com.bytedance.scene.interfaces.PopOptions;
 import com.bytedance.scene.interfaces.PushOptions;
+import com.bytedance.scene.logger.LoggerManager;
 import com.bytedance.scene.parcel.ParcelConstants;
 import com.bytedance.scene.utlity.AnimatorUtility;
 import com.bytedance.scene.utlity.CancellationSignalList;
@@ -54,11 +60,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.lifecycle.Lifecycle;
-import androidx.lifecycle.LifecycleOwner;
 
 /**
  * Priority to ensure that the life cycle is correct,
@@ -267,14 +268,17 @@ class NavigationSceneManager {
     };
 
     public void remove(@NonNull Scene scene) {
+        LoggerManager.getInstance().i("NavigationSceneManager", "remove " + scene);
         scheduleToNextUIThreadLoop(new RemoveOperation(scene));
     }
 
     public void pop() {
+        LoggerManager.getInstance().i("NavigationSceneManager", "pop");
         scheduleToNextUIThreadLoop(new PopOperation(null));
     }
 
     public void pop(PopOptions popOptions) {
+        LoggerManager.getInstance().i("NavigationSceneManager", "pop with PopOptions");
         if (mActivityCompatibleLifecycleStrategyEnabled && popOptions.isUseActivityCompatibleLifecycle()) {
             scheduleToNextUIThreadLoop(new PopOptionActivityCompatibleLifecycleOperation(popOptions));
         } else {
@@ -283,10 +287,12 @@ class NavigationSceneManager {
     }
 
     public void popTo(Class<? extends Scene> clazz, NavigationAnimationExecutor animationFactory) {
+        LoggerManager.getInstance().i("NavigationSceneManager", "popTo " + clazz);
         scheduleToNextUIThreadLoop(new PopToOperation(clazz, animationFactory));
     }
 
     public void popToRoot(NavigationAnimationExecutor animationFactory) {
+        LoggerManager.getInstance().i("NavigationSceneManager", "popToRoot");
         scheduleToNextUIThreadLoop(new PopToRootOperation(animationFactory));
     }
 
@@ -294,6 +300,7 @@ class NavigationSceneManager {
         if (scene == null) {
             throw new NullPointerException("scene can't be null");
         }
+        LoggerManager.getInstance().i("NavigationSceneManager", "push " + scene.toString());
         scheduleToNextUIThreadLoop(new PushOptionOperation(scene, pushOptions));
     }
 
@@ -301,6 +308,7 @@ class NavigationSceneManager {
         if (scene == null) {
             throw new NullPointerException("scene can't be null");
         }
+        LoggerManager.getInstance().i("NavigationSceneManager", "changeTranslucent " + scene.toString());
         scheduleToNextUIThreadLoop(new TranslucentOperation(scene, translucent));
     }
 
@@ -310,6 +318,8 @@ class NavigationSceneManager {
         if (this.mPendingActionList.size() == 0 || !canExecuteNavigationStackOperation()) {
             return;
         }
+        LoggerManager.getInstance().i("NavigationSceneManager", "executePendingOperation");
+
         SceneTrace.beginSection(TRACE_EXECUTE_PENDING_OPERATION_TAG);
         /*
          * Only the last one need to do the transition animation, the previous doesn't.
