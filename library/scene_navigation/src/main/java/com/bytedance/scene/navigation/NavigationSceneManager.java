@@ -30,6 +30,7 @@ import android.view.ViewGroup;
 
 import com.bytedance.scene.Scene;
 import com.bytedance.scene.SceneComponentFactory;
+import com.bytedance.scene.SceneGlobalConfig;
 import com.bytedance.scene.SceneTrace;
 import com.bytedance.scene.State;
 import com.bytedance.scene.animation.AnimationInfo;
@@ -113,6 +114,8 @@ class NavigationSceneManager {
 
     private final CancellationSignalManager mCancellationSignalManager = new CancellationSignalManager();
     private final List<NonNullPair<LifecycleOwner, OnBackPressedListener>> mOnBackPressedListenerList = new ArrayList<>();
+
+    private final boolean mActivityCompatibleLifecycleStrategyEnabled = SceneGlobalConfig.useActivityCompatibleLifecycleStrategy;
 
     NavigationSceneManager(NavigationScene scene) {
         this.mNavigationScene = scene;
@@ -272,7 +275,11 @@ class NavigationSceneManager {
     }
 
     public void pop(PopOptions popOptions) {
-        scheduleToNextUIThreadLoop(new PopOptionOperation(popOptions));
+        if (mActivityCompatibleLifecycleStrategyEnabled && popOptions.isUseActivityCompatibleLifecycle()) {
+            scheduleToNextUIThreadLoop(new PopOptionActivityCompatibleLifecycleOperation(popOptions));
+        } else {
+            scheduleToNextUIThreadLoop(new PopOptionOperation(popOptions));
+        }
     }
 
     public void popTo(Class<? extends Scene> clazz, NavigationAnimationExecutor animationFactory) {
@@ -533,6 +540,38 @@ class NavigationSceneManager {
         }
     }
 
+    private class PopOptionActivityCompatibleLifecycleOperation implements Operation {
+        private final PopOptions mPopOptions;
+
+        private PopOptionActivityCompatibleLifecycleOperation(PopOptions popOptions) {
+            this.mPopOptions = popOptions;
+        }
+
+        @Override
+        public void execute(final Runnable operationEndAction) {
+            List<Record> recordList = mBackStackList.getCurrentRecordList();
+
+            Predicate<Scene> popUtilPredicate = this.mPopOptions.getPopUtilPredicate();
+            int count = 0;
+            if (popUtilPredicate != null) {
+                for (int i = recordList.size() - 1; i >= 0; i--) {
+                    Record record = recordList.get(i);
+                    if (popUtilPredicate.apply(record.mScene)) {
+                        break;
+                    }
+                    count++;
+                }
+                new PopCountActivityCompatibleLifecycleOperation(mPopOptions.getNavigationAnimationExecutor(), count).execute(operationEndAction);
+            } else {
+                new PopActivityCompatibleLifecycleOperation(mPopOptions.getNavigationAnimationExecutor()).execute(operationEndAction);
+            }
+        }
+    }
+
+    /**
+     *  A -> B, then B return to A
+     *  A onPause -> A onStop -> A onDestroyView -> B onStart -> B onResume
+     */
     private class PopCountOperation implements Operation {
         private final NavigationAnimationExecutor animationFactory;
         private final int popCount;
@@ -683,6 +722,170 @@ class NavigationSceneManager {
             return scene.requireSceneContext().getResources().getDrawable(resId);
         } else {
             return Utility.getWindowBackground(scene.requireSceneContext());
+        }
+    }
+
+    /**
+     *  A -> B, then B return to A
+     *  A onPause -> B onStart -> B onResume -> A onStop -> A onDestroyView
+     */
+    private class PopCountActivityCompatibleLifecycleOperation implements Operation {
+        private final NavigationAnimationExecutor animationFactory;
+        private final int popCount;
+
+        private PopCountActivityCompatibleLifecycleOperation(NavigationAnimationExecutor animationFactory, int popCount) {
+            this.animationFactory = animationFactory;
+            this.popCount = popCount;
+        }
+
+        @Override
+        public void execute(final Runnable operationEndAction) {
+            cancelCurrentRunningAnimation();
+
+            if (!canExecuteNavigationStackOperation()) {
+                throw new IllegalArgumentException("Can't pop, current NavigationScene state " + mNavigationScene.getState().name);
+            }
+
+            List<Record> recordList = mBackStackList.getCurrentRecordList();
+            if (this.popCount <= 0) {
+                throw new IllegalArgumentException("popCount can not be " + this.popCount + " stackSize is " + recordList.size());
+            }
+            if (this.popCount >= recordList.size()) {
+                /*
+                 * Need to pop all that can pop.
+                 * Extreme case: there are 2 Scenes, pop two times and push one new,
+                 * the new one will push failed because the Activity has been destroyed.
+                 */
+                if (recordList.size() > 1) {
+                    new PopCountActivityCompatibleLifecycleOperation(animationFactory, recordList.size() - 1).execute(EMPTY_RUNNABLE);
+                }
+                mNavigationScene.finishCurrentActivity();
+                operationEndAction.run();
+                return;
+            }
+
+            final List<Record> destroyRecordList = new ArrayList<>();
+            for (int i = 0; i <= this.popCount - 1; i++) {
+                Record record = recordList.get(recordList.size() - 1 - i);
+                destroyRecordList.add(record);
+            }
+
+            final Record returnRecord = recordList.get(recordList.size() - this.popCount - 1);
+            final Record currentRecord = mBackStackList.getCurrentRecord();
+            final Scene currentScene = currentRecord.mScene;
+            final View currentSceneView = currentScene.getView();
+
+            Runnable actionAfterPopped = null;
+
+            /*
+             * The practice here should be to remove those Scenes in the middle,
+             * then animate the two Scenes.
+             */
+            for (final Record record : destroyRecordList) {
+                Scene scene = record.mScene;
+                moveState(mNavigationScene, scene, State.STARTED, null, false, null);
+            }
+
+            actionAfterPopped = new Runnable() {
+                @Override
+                public void run() {
+                    for (final Record record : destroyRecordList) {
+                        Scene scene = record.mScene;
+                        moveState(mNavigationScene, scene, State.NONE, null, false, null);
+                        mBackStackList.remove(record);
+                        // If it is a reusable Scene, save it
+                        if (record != currentRecord && scene instanceof ReuseGroupScene) {
+                            mNavigationScene.addToReusePool((ReuseGroupScene) scene);
+                        }
+                    }
+                }
+            };
+
+            final Scene dstScene = returnRecord.mScene;
+            final boolean isNavigationSceneInAnimationState = mNavigationScene.getState().value >= State.STARTED.value;
+            final State dstState = mNavigationScene.getState();
+
+            moveState(mNavigationScene, dstScene, dstState, null, false, null);
+            // Ensure that the requesting Scene is correct
+            if (currentRecord.mPushResultCallback != null) {
+                currentRecord.mPushResultCallback.onResult(currentRecord.mPushResult);
+            }
+
+            /*
+             * In case of multiple translucent overlays of an opaque Scene,
+             * after returning, it is necessary to set the previous translucent Scene to STARTED
+             */
+            if (returnRecord.mIsTranslucent) {
+                final List<Record> currentRecordList = mBackStackList.getCurrentRecordList();
+                if (currentRecordList.size() > 1) {
+                    for (int i = currentRecordList.size() - 2; i >= 0; i--) {
+                        Record record = currentRecordList.get(i);
+                        moveState(mNavigationScene, record.mScene, findMinState(mNavigationScene.getState(), State.STARTED), null, false, null);
+                        if (!record.mIsTranslucent) {
+                            break;
+                        }
+                    }
+                }
+            }
+
+            if (actionAfterPopped != null) {
+                actionAfterPopped.run();
+            }
+
+            restoreActivityStatus(returnRecord.mActivityStatusRecord);
+            mNavigationListener.navigationChange(currentRecord.mScene, returnRecord.mScene, false);
+
+            NavigationAnimationExecutor navigationAnimationExecutor = null;
+            // If Pop has a specified animation, the animation specified by Pop is preferred.
+            if (animationFactory != null && animationFactory.isSupport(currentRecord.mScene.getClass(), returnRecord.mScene.getClass())) {
+                navigationAnimationExecutor = animationFactory;
+            }
+
+            if (navigationAnimationExecutor == null && currentRecord.mNavigationAnimationExecutor != null && currentRecord.mNavigationAnimationExecutor.isSupport(currentRecord.mScene.getClass(), returnRecord.mScene.getClass())) {
+                navigationAnimationExecutor = currentRecord.mNavigationAnimationExecutor;
+            }
+
+            if (navigationAnimationExecutor == null) {
+                navigationAnimationExecutor = mNavigationScene.getDefaultNavigationAnimationExecutor();
+            }
+
+            if (!mDisableNavigationAnimation && isNavigationSceneInAnimationState && navigationAnimationExecutor != null && navigationAnimationExecutor.isSupport(currentRecord.mScene.getClass(), returnRecord.mScene.getClass())) {
+                ViewGroup animationContainer = mNavigationScene.getAnimationContainer();
+                // Ensure that the Z-axis is correct
+                AnimatorUtility.bringToFrontIfNeeded(animationContainer);
+                navigationAnimationExecutor.setAnimationViewGroup(animationContainer);
+
+                final CancellationSignalList cancellationSignalList = new CancellationSignalList();
+                final Runnable endAction = new Runnable() {
+                    @Override
+                    public void run() {
+                        mCancellationSignalManager.remove(cancellationSignalList);
+                        if (currentRecord.mScene instanceof ReuseGroupScene) {
+                            mNavigationScene.addToReusePool((ReuseGroupScene) currentRecord.mScene);
+                        }
+                        operationEndAction.run();
+                    }
+                };
+
+                final AnimationInfo fromInfo = new AnimationInfo(currentScene, currentSceneView, currentScene.getState(), currentRecord.mIsTranslucent);
+                final AnimationInfo toInfo = new AnimationInfo(returnRecord.mScene, returnRecord.mScene.getView(), returnRecord.mScene.getState(), returnRecord.mIsTranslucent);
+
+                mCancellationSignalManager.add(cancellationSignalList);
+                /*
+                 * In the extreme case of Pop immediately after Push,
+                 * We are likely to executed pop() before the layout() of the View being pushing.
+                 * At this time, both height and width are 0, and it has no parent.
+                 * As the animation cannot be executed, so we need to correct this case.
+                 */
+                navigationAnimationExecutor.executePopChange(mNavigationScene,
+                        mNavigationScene.getView().getRootView(),
+                        fromInfo, toInfo, cancellationSignalList, endAction);
+            } else {
+                if (currentRecord.mScene instanceof ReuseGroupScene) {
+                    mNavigationScene.addToReusePool((ReuseGroupScene) currentRecord.mScene);
+                }
+                operationEndAction.run();
+            }
         }
     }
 
@@ -842,6 +1045,19 @@ class NavigationSceneManager {
         @Override
         public void execute(final Runnable operationEndAction) {
             new PopCountOperation(animationFactory, 1).execute(operationEndAction);
+        }
+    }
+
+    private class PopActivityCompatibleLifecycleOperation implements Operation {
+        private final NavigationAnimationExecutor animationFactory;
+
+        private PopActivityCompatibleLifecycleOperation(NavigationAnimationExecutor animationFactory) {
+            this.animationFactory = animationFactory;
+        }
+
+        @Override
+        public void execute(final Runnable operationEndAction) {
+            new PopCountActivityCompatibleLifecycleOperation(animationFactory, 1).execute(operationEndAction);
         }
     }
 
