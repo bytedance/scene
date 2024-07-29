@@ -691,6 +691,7 @@ public final class NavigationScene extends Scene implements NavigationListener, 
      * @param option
      */
     public void changeSceneTranslucent(@NonNull Scene scene, @NonNull TranslucentOption option) {
+        ThreadUtility.checkUIThread();
         Record record = mNavigationSceneManager.findRecordByScene(scene);
         if (record == null) {
             throw new IllegalArgumentException("Scene not found");
