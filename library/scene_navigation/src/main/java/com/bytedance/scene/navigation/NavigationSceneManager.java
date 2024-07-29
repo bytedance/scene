@@ -15,15 +15,11 @@
  */
 package com.bytedance.scene.navigation;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.Looper;
-import android.os.Message;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
@@ -60,43 +56,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-
-/**
- * Priority to ensure that the life cycle is correct,
- * and then ensure that the animation is coherent
- * Push/Pop requires NavigationScene to be onResume state.
- * If not, subsequent the execution.
- * The subsequent Scene life cycle will wait for the next UI loop.
- */
-class AsyncHandler extends Handler {
-    private boolean async = true;
-
-    @SuppressLint("NewApi")
-    AsyncHandler(Looper looper) {
-        super(looper);
-        if (Build.VERSION.SDK_INT < 16) {
-            async = false;
-        } else if (async && Build.VERSION.SDK_INT < 22) {
-            // Confirm that the method is available on this API level despite being @hide.
-            Message message = Message.obtain();
-            try {
-                message.setAsynchronous(true);
-            } catch (NoSuchMethodError e) {
-                async = false;
-            }
-            message.recycle();
-        }
-    }
-
-    @SuppressLint("NewApi")
-    public void postAsyncIfNeeded(Runnable runnable) {
-        Message message = Message.obtain(this, runnable);
-        if (async) {
-            message.setAsynchronous(true);
-        }
-        sendMessage(message);
-    }
-}
 
 class NavigationSceneManager {
     private static final String TRACE_EXECUTE_OPERATION_TAG = "NavigationSceneManager#executeOperation";
