@@ -38,6 +38,8 @@ public class NavigationSourceUtility {
         TestActivity testActivity = controller.get();
         NavigationScene navigationScene = new NavigationScene();
         NavigationSceneOptions options = new NavigationSceneOptions(rootScene.getClass());
+        SceneGlobalConfig.useActivityCompatibleLifecycleStrategy = true;
+        options.setOnlyRestoreVisibleScene(true);
         navigationScene.setArguments(options.toBundle());
 
         Scope.RootScopeFactory rootScopeFactory = new Scope.RootScopeFactory() {
