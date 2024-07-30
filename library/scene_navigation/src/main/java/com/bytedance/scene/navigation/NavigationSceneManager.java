@@ -44,6 +44,7 @@ import com.bytedance.scene.logger.LoggerManager;
 import com.bytedance.scene.parcel.ParcelConstants;
 import com.bytedance.scene.utlity.AnimatorUtility;
 import com.bytedance.scene.utlity.CancellationSignalList;
+import com.bytedance.scene.utlity.NavigationSceneViewUtility;
 import com.bytedance.scene.utlity.NonNullPair;
 import com.bytedance.scene.utlity.Predicate;
 import com.bytedance.scene.utlity.SceneInternalException;
@@ -77,18 +78,33 @@ class NavigationSceneManager implements INavigationManager{
 
     private final boolean mActivityCompatibleLifecycleStrategyEnabled = SceneGlobalConfig.useActivityCompatibleLifecycleStrategy;
 
+    private final boolean mOnlyRestoreVisibleScene;
+
     NavigationSceneManager(NavigationScene scene) {
         this.mNavigationScene = scene;
         this.mNavigationListener = scene;
+        this.mOnlyRestoreVisibleScene = scene.mNavigationSceneOptions.onlyRestoreVisibleScene();
     }
 
     public void saveToBundle(Bundle bundle) {
+        Record currentRecord = getCurrentRecord();
+        if (currentRecord != null) {
+            currentRecord.saveActivityStatus();
+        }
+
         this.mBackStackList.saveToBundle(bundle);
 
         ArrayList<Bundle> bundleList = new ArrayList<>();
         List<Record> recordList = this.mBackStackList.getCurrentRecordList();
         for (Record record : recordList) {
             Scene scene = record.mScene;
+            if (mOnlyRestoreVisibleScene) {
+                //so some Scene are not created after restore, reuse previous saved state
+                if (record.mPreviousSavedState != null && scene.getState() == State.NONE) {
+                    bundleList.add(record.mPreviousSavedState);
+                    continue;
+                }
+            }
             if (scene.isSceneRestoreEnabled()) {
                 Bundle sceneBundle = new Bundle();
                 scene.dispatchSaveInstanceState(sceneBundle);
@@ -105,10 +121,38 @@ class NavigationSceneManager implements INavigationManager{
         ArrayList<Bundle> bundleList = bundle.getParcelableArrayList(ParcelConstants.KEY_NAVIGATION_SCENE_MANAGER_TAG);
 
         List<Record> recordList = this.mBackStackList.getCurrentRecordList();
-        for (int i = 0; i <= recordList.size() - 1; i++) {
-            Record record = recordList.get(i);
-            Bundle sceneBundle = bundleList.get(i);
-            moveState(this.mNavigationScene, record.mScene, State.ACTIVITY_CREATED, sceneBundle, false, null);
+
+        if (this.mOnlyRestoreVisibleScene) {
+            int nonTranslucentIndex = 0;
+            for (int i = recordList.size() - 1; i >= 0; i--) {
+                Record record = recordList.get(i);
+                if (!record.mIsTranslucent) {
+                    nonTranslucentIndex = i;
+                    break;
+                }
+            }
+
+            for (int i = nonTranslucentIndex; i <= recordList.size() - 1; i++) {
+                Record record = recordList.get(i);
+                Bundle sceneBundle = bundleList.get(i);
+                moveState(this.mNavigationScene, record.mScene, State.ACTIVITY_CREATED, sceneBundle, false, null);
+
+                if (i == recordList.size() - 1) {
+                    restoreActivityStatus(record.mActivityStatusRecord);
+                }
+            }
+
+            for (int i = 0; i < nonTranslucentIndex; i++) {
+                Record record = recordList.get(i);
+                //temporarily saved previous state
+                record.mPreviousSavedState = bundleList.get(i);
+            }
+        } else {
+            for (int i = 0; i <= recordList.size() - 1; i++) {
+                Record record = recordList.get(i);
+                Bundle sceneBundle = bundleList.get(i);
+                moveState(this.mNavigationScene, record.mScene, State.ACTIVITY_CREATED, sceneBundle, false, null);
+            }
         }
     }
 
@@ -406,7 +450,13 @@ class NavigationSceneManager implements INavigationManager{
                          * TODO: What if the NavigationScene has been destroyed at this time?
                          * TODO: What to do with serialization
                          */
-                        containerView.addView(scene.getView());
+                        if (bundle != null) {
+                            //Scene restore from save and restore path
+                            int viewIndex = NavigationSceneViewUtility.targetViewIndexOfScene(navigationScene, navigationScene.mNavigationSceneOptions, scene);
+                            containerView.addView(scene.getView(), viewIndex);
+                        } else {
+                            containerView.addView(scene.getView());
+                        }
                     }
                     scene.getView().setVisibility(View.GONE);
                     moveState(navigationScene, scene, to, bundle, causedByActivityLifeCycle, endAction);
@@ -605,7 +655,13 @@ class NavigationSceneManager implements INavigationManager{
             final boolean isNavigationSceneInAnimationState = mNavigationScene.getState().value >= State.STARTED.value;
             final State dstState = mNavigationScene.getState();
 
-            moveState(mNavigationScene, dstScene, dstState, null, false, null);
+            if (mOnlyRestoreVisibleScene) {
+                Bundle dstScenePreviousDstSavedState = returnRecord.mPreviousSavedState;
+                returnRecord.mPreviousSavedState = null;
+                moveState(mNavigationScene, dstScene, dstState, dstScenePreviousDstSavedState, false, null);
+            } else {
+                moveState(mNavigationScene, dstScene, dstState, null, false, null);
+            }
             // Ensure that the requesting Scene is correct
             if (currentRecord.mPushResultCallback != null) {
                 currentRecord.mPushResultCallback.onResult(currentRecord.mPushResult);
@@ -620,7 +676,12 @@ class NavigationSceneManager implements INavigationManager{
                 if (currentRecordList.size() > 1) {
                     for (int i = currentRecordList.size() - 2; i >= 0; i--) {
                         Record record = currentRecordList.get(i);
-                        moveState(mNavigationScene, record.mScene, findMinState(mNavigationScene.getState(), State.STARTED), null, false, null);
+                        if (mOnlyRestoreVisibleScene) {
+                            moveState(mNavigationScene, record.mScene, findMinState(mNavigationScene.getState(), State.STARTED), record.mPreviousSavedState, false, null);
+                            record.mPreviousSavedState = null;
+                        } else {
+                            moveState(mNavigationScene, record.mScene, findMinState(mNavigationScene.getState(), State.STARTED), null, false, null);
+                        }
                         if (!record.mIsTranslucent) {
                             break;
                         }
@@ -774,7 +835,14 @@ class NavigationSceneManager implements INavigationManager{
             final boolean isNavigationSceneInAnimationState = mNavigationScene.getState().value >= State.STARTED.value;
             final State dstState = mNavigationScene.getState();
 
-            moveState(mNavigationScene, dstScene, dstState, null, false, null);
+            if (mOnlyRestoreVisibleScene) {
+                Bundle dstScenePreviousDstSavedState = returnRecord.mPreviousSavedState;
+                returnRecord.mPreviousSavedState = null;
+                moveState(mNavigationScene, dstScene, dstState, dstScenePreviousDstSavedState, false, null);
+            } else {
+                moveState(mNavigationScene, dstScene, dstState, null, false, null);
+            }
+
             // Ensure that the requesting Scene is correct
             if (currentRecord.mPushResultCallback != null) {
                 currentRecord.mPushResultCallback.onResult(currentRecord.mPushResult);
@@ -789,7 +857,12 @@ class NavigationSceneManager implements INavigationManager{
                 if (currentRecordList.size() > 1) {
                     for (int i = currentRecordList.size() - 2; i >= 0; i--) {
                         Record record = currentRecordList.get(i);
-                        moveState(mNavigationScene, record.mScene, findMinState(mNavigationScene.getState(), State.STARTED), null, false, null);
+                        if (mOnlyRestoreVisibleScene) {
+                            moveState(mNavigationScene, record.mScene, findMinState(mNavigationScene.getState(), State.STARTED), record.mPreviousSavedState, false, null);
+                            record.mPreviousSavedState = null;
+                        } else {
+                            moveState(mNavigationScene, record.mScene, findMinState(mNavigationScene.getState(), State.STARTED), null, false, null);
+                        }
                         if (!record.mIsTranslucent) {
                             break;
                         }
@@ -995,7 +1068,15 @@ class NavigationSceneManager implements INavigationManager{
                     // Deal with the transparent
                     if (i > 0) {
                         Record belowRecord = list.get(i - 1);
-                        moveState(mNavigationScene, belowRecord.mScene, sceneState, null, false, null);
+                        if (mOnlyRestoreVisibleScene) {
+                            //only recreate below scene when the removed scene is visible
+                            if (sceneState == State.STARTED || sceneState == State.RESUMED) {
+                                moveState(mNavigationScene, belowRecord.mScene, sceneState, belowRecord.mPreviousSavedState, false, null);
+                                belowRecord.mPreviousSavedState = null;
+                            }
+                        } else {
+                            moveState(mNavigationScene, belowRecord.mScene, sceneState, null, false, null);
+                        }
                     }
                     break;
                 }

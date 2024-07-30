@@ -15,6 +15,7 @@
  */
 package com.bytedance.scene.navigation;
 
+import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
 import androidx.annotation.NonNull;
@@ -39,6 +40,8 @@ class Record implements Parcelable {
     Object mPushResult;
     @Nullable
     boolean mSceneBackgroundSet = false; //ignore restore
+    @Nullable
+    Bundle mPreviousSavedState = null;
 
     /**
      * In case of A starts B,

@@ -32,6 +32,8 @@ public class NavigationSceneOptions {
     private static final String EXTRA_DRAW_WINDOW_BACKGROUND = "extra_drawWindowBackground";
     private static final String EXTRA_FIX_SCENE_BACKGROUND_ENABLED = "extra_fixSceneBackground_enabled";
     private static final String EXTRA_SCENE_BACKGROUND = "extra_sceneBackground";
+    private static final String EXTRA_ONLY_RESTORE_VISIBLE_SCENE = "extra_onlyRestoreVisibleScene";
+
     @NonNull
     private final String mRootSceneClassName;
     @Nullable
@@ -40,6 +42,7 @@ public class NavigationSceneOptions {
     private boolean mFixSceneBackgroundEnabled = true;
     @DrawableRes
     private int mSceneBackgroundResId = 0;
+    private boolean mOnlyRestoreVisibleScene = false;
 
     public NavigationSceneOptions(@NonNull Class<? extends Scene> rootSceneClazz, @Nullable Bundle rootSceneArguments) {
         if (rootSceneClazz.isAssignableFrom(NavigationScene.class)) {
@@ -77,6 +80,12 @@ public class NavigationSceneOptions {
     }
 
     @NonNull
+    public NavigationSceneOptions setOnlyRestoreVisibleScene(boolean onlyRestoreVisibleScene) {
+        this.mOnlyRestoreVisibleScene = onlyRestoreVisibleScene;
+        return this;
+    }
+
+    @NonNull
     public String getRootSceneClassName() {
         return this.mRootSceneClassName;
     }
@@ -98,6 +107,10 @@ public class NavigationSceneOptions {
         return this.mSceneBackgroundResId;
     }
 
+    public boolean onlyRestoreVisibleScene() {
+        return this.mOnlyRestoreVisibleScene;
+    }
+
     /**
      * @hide
      */
@@ -113,6 +126,7 @@ public class NavigationSceneOptions {
         navigationSceneOptions.mDrawWindowBackground = bundle.getBoolean(EXTRA_DRAW_WINDOW_BACKGROUND);
         navigationSceneOptions.mFixSceneBackgroundEnabled = bundle.getBoolean(EXTRA_FIX_SCENE_BACKGROUND_ENABLED);
         navigationSceneOptions.mSceneBackgroundResId = bundle.getInt(EXTRA_SCENE_BACKGROUND);
+        navigationSceneOptions.mOnlyRestoreVisibleScene = bundle.getBoolean(EXTRA_ONLY_RESTORE_VISIBLE_SCENE);
         return navigationSceneOptions;
     }
 
@@ -127,6 +141,7 @@ public class NavigationSceneOptions {
         bundle.putBoolean(EXTRA_DRAW_WINDOW_BACKGROUND, mDrawWindowBackground);
         bundle.putBoolean(EXTRA_FIX_SCENE_BACKGROUND_ENABLED, mFixSceneBackgroundEnabled);
         bundle.putInt(EXTRA_SCENE_BACKGROUND, mSceneBackgroundResId);
+        bundle.putBoolean(EXTRA_ONLY_RESTORE_VISIBLE_SCENE, mOnlyRestoreVisibleScene);
         return bundle;
     }
 }

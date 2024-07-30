@@ -1,6 +1,7 @@
 package com.bytedance.scenedemo;
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -96,5 +97,15 @@ class NavigationListDemo : UserVisibleHintGroupScene() {
         addSpace(layout, 100)
 
         return scrollView
+    }
+
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        Log.i("Lifecycle",this.toString() + " onActivityCreated")
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        Log.i("Lifecycle",this.toString() + " onDestroyView")
     }
 }

@@ -15,6 +15,10 @@
  */
 package com.bytedance.scene.navigation;
 
+import static androidx.annotation.RestrictTo.Scope.LIBRARY;
+import static androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP;
+import static androidx.lifecycle.Lifecycle.State.DESTROYED;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Build;
@@ -24,7 +28,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
-import androidx.annotation.*;
+import androidx.annotation.MainThread;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
+import androidx.annotation.RestrictTo;
 import androidx.collection.LruCache;
 import androidx.core.view.ViewCompat;
 import androidx.lifecycle.Lifecycle;
@@ -32,26 +40,33 @@ import androidx.lifecycle.LifecycleObserver;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.OnLifecycleEvent;
 
-import com.bytedance.scene.*;
+import com.bytedance.scene.ActivityCompatibilityUtility;
+import com.bytedance.scene.Scene;
+import com.bytedance.scene.SceneComponentFactory;
+import com.bytedance.scene.SceneParent;
+import com.bytedance.scene.State;
+import com.bytedance.scene.SuppressOperationAware;
 import com.bytedance.scene.animation.NavigationAnimationExecutor;
 import com.bytedance.scene.animation.animatorexecutor.Android8DefaultSceneAnimatorExecutor;
 import com.bytedance.scene.animation.interaction.InteractionNavigationPopAnimationFactory;
-import com.bytedance.scene.interfaces.ChildSceneLifecycleCallbacks;
 import com.bytedance.scene.group.ReuseGroupScene;
 import com.bytedance.scene.interfaces.ActivityResultCallback;
+import com.bytedance.scene.interfaces.ChildSceneLifecycleCallbacks;
 import com.bytedance.scene.interfaces.PermissionResultCallback;
 import com.bytedance.scene.interfaces.PopOptions;
 import com.bytedance.scene.interfaces.PushOptions;
-import com.bytedance.scene.utlity.*;
-import com.bytedance.scene.view.NavigationFrameLayout;
+import com.bytedance.scene.utlity.DispatchWindowInsetsListener;
+import com.bytedance.scene.utlity.NonNullPair;
+import com.bytedance.scene.utlity.SceneInstanceUtility;
+import com.bytedance.scene.utlity.SceneInternalException;
+import com.bytedance.scene.utlity.SoftInputUtility;
+import com.bytedance.scene.utlity.ThreadUtility;
+import com.bytedance.scene.utlity.Utility;
 import com.bytedance.scene.view.AnimationContainerLayout;
+import com.bytedance.scene.view.NavigationFrameLayout;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static androidx.annotation.RestrictTo.Scope.LIBRARY;
-import static androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP;
-import static androidx.lifecycle.Lifecycle.State.DESTROYED;
 
 /**
  * Created by JiangQi on 7/30/18.
@@ -518,13 +533,19 @@ public final class NavigationScene extends Scene implements NavigationListener, 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        this.mNavigationSceneManager = new NavigationSceneManager(this);
 
         Bundle arguments = getArguments();
         if (arguments == null) {
             throw new IllegalArgumentException("NavigationScene need NavigationSceneOptions bundle");
         }
-        mNavigationSceneOptions = NavigationSceneOptions.fromBundle(getArguments());
+        this.mNavigationSceneOptions = NavigationSceneOptions.fromBundle(getArguments());
+
+        if (this.mNavigationSceneOptions.onlyRestoreVisibleScene()) {
+            this.mNavigationSceneManager = new NavigationSceneManager(this);
+        } else {
+            this.mNavigationSceneManager = new NavigationSceneManagerV1(this);
+        }
+
         if (savedInstanceState != null) {
             boolean supportRestore = savedInstanceState.getBoolean(KEY_NAVIGATION_SCENE_SUPPORT_RESTORE_ARGUMENT, isSupportRestore());
             if (!supportRestore) {

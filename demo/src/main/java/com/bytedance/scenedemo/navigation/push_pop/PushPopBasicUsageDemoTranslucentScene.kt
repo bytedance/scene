@@ -11,6 +11,7 @@ import com.bytedance.scene.Scene
 import com.bytedance.scene.animation.animatorexecutor.DialogSceneAnimatorExecutor
 import com.bytedance.scene.interfaces.PushOptions
 import com.bytedance.scene.ktx.requireNavigationScene
+import com.bytedance.scene.navigation.SceneTranslucent
 import com.bytedance.scenedemo.R
 import com.bytedance.scenedemo.utility.ColorUtil
 import com.bytedance.scenedemo.utility.addButton
@@ -21,7 +22,7 @@ import com.bytedance.scenedemo.utility.addTitle
 /**
  * Created by JiangQi on 7/30/18.
  */
-class PushPopBasicUsageDemoScene : Scene() {
+class PushPopBasicUsageDemoTranslucentScene : Scene(), SceneTranslucent {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup, savedInstanceState: Bundle?): View {
         val scrollView = ScrollView(requireSceneContext())
         scrollView.fitsSystemWindows = true
@@ -33,7 +34,7 @@ class PushPopBasicUsageDemoScene : Scene() {
 
         val argument = arguments
         val value = argument?.getInt("1", 0) ?: 0
-        scrollView.setBackgroundColor(ColorUtil.getMaterialColor(activity!!.resources, value))
+        layout.setBackgroundColor(ColorUtil.getMaterialColor(activity!!.resources, value))
 
         addClassPathTitle(layout)
         addSpace(layout, 12)
@@ -54,7 +55,15 @@ class PushPopBasicUsageDemoScene : Scene() {
             )
         })
 
-        addSpace(layout, 100)
+        addButton(layout, "Close ${value-2} page", View.OnClickListener {
+            requireNavigationScene().remove(
+                requireNavigationScene().sceneList.get(
+                    requireNavigationScene().sceneList.size - 3
+                )
+            )
+        })
+
+        addSpace(layout, 400)
 
         return scrollView
     }
