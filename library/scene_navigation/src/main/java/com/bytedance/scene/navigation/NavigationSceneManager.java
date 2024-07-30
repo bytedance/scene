@@ -855,16 +855,19 @@ class NavigationSceneManager implements INavigationManager{
             if (returnRecord.mIsTranslucent) {
                 final List<Record> currentRecordList = mBackStackList.getCurrentRecordList();
                 if (currentRecordList.size() > 1) {
-                    for (int i = currentRecordList.size() - 2; i >= 0; i--) {
-                        Record record = currentRecordList.get(i);
-                        if (mOnlyRestoreVisibleScene) {
-                            moveState(mNavigationScene, record.mScene, findMinState(mNavigationScene.getState(), State.STARTED), record.mPreviousSavedState, false, null);
-                            record.mPreviousSavedState = null;
-                        } else {
-                            moveState(mNavigationScene, record.mScene, findMinState(mNavigationScene.getState(), State.STARTED), null, false, null);
-                        }
-                        if (!record.mIsTranslucent) {
-                            break;
+                    int index = currentRecordList.indexOf(returnRecord);
+                    if (index > 0) {
+                        for (int i = index - 1; i >= 0; i--) {
+                            Record record = currentRecordList.get(i);
+                            if (mOnlyRestoreVisibleScene) {
+                                moveState(mNavigationScene, record.mScene, findMinState(mNavigationScene.getState(), State.STARTED), record.mPreviousSavedState, false, null);
+                                record.mPreviousSavedState = null;
+                            } else {
+                                moveState(mNavigationScene, record.mScene, findMinState(mNavigationScene.getState(), State.STARTED), null, false, null);
+                            }
+                            if (!record.mIsTranslucent) {
+                                break;
+                            }
                         }
                     }
                 }
