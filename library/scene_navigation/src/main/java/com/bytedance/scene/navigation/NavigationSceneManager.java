@@ -57,7 +57,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-class NavigationSceneManager {
+class NavigationSceneManager implements INavigationManager{
     private static final String TRACE_EXECUTE_OPERATION_TAG = "NavigationSceneManager#executeOperation";
     private static final String TRACE_EXECUTE_PENDING_OPERATION_TAG = "NavigationSceneManager#executePendingOperation";
 
@@ -181,7 +181,7 @@ class NavigationSceneManager {
     }
 
     @NonNull
-    String beginSuppressStackOperation(@NonNull String tagPrefix) {
+    public String beginSuppressStackOperation(@NonNull String tagPrefix) {
         String value = tagPrefix + "_" + mSuppressStackOperationId++;
         if (!mIsNavigationStateChangeInProgress.add(value)) {
             throw new SceneInternalException("suppressTag already exists");
@@ -189,7 +189,7 @@ class NavigationSceneManager {
         return value;
     }
 
-    void endSuppressStackOperation(@NonNull String suppressTag) {
+    public void endSuppressStackOperation(@NonNull String suppressTag) {
         if (!mIsNavigationStateChangeInProgress.remove(suppressTag)) {
             throw new SceneInternalException("suppressTag not found");
         }

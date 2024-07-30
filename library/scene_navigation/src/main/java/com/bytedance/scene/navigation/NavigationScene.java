@@ -98,7 +98,7 @@ public final class NavigationScene extends Scene implements NavigationListener, 
     private SceneComponentFactory mRootSceneComponentFactory;   // Use this when destroying recovery
     NavigationSceneOptions mNavigationSceneOptions;
 
-    private NavigationSceneManager mNavigationSceneManager;
+    private INavigationManager mNavigationSceneManager;
     private FrameLayout mSceneContainer;
     private FrameLayout mAnimationContainer;
     @Nullable
