@@ -34,6 +34,7 @@ public class NavigationSceneOptions {
     private static final String EXTRA_SCENE_BACKGROUND = "extra_sceneBackground";
     private static final String EXTRA_ONLY_RESTORE_VISIBLE_SCENE = "extra_onlyRestoreVisibleScene";
     private static final String EXTRA_USE_POST_IN_LIFECYCLE = "extra_usePostInLifecycle";
+    private static final String EXTRA_AUTO_RECYCLE_INVISIBLE_SCENES_THRESHOLD = "extra_autoRecycleInvisibleScenesThreshold";
 
     @NonNull
     private final String mRootSceneClassName;
@@ -45,6 +46,7 @@ public class NavigationSceneOptions {
     private int mSceneBackgroundResId = 0;
     private boolean mOnlyRestoreVisibleScene = false;
     private boolean mUsePostInLifecycle = false;
+    private float mAutoRecycleInvisibleScenesThreshold = 0F;
 
     public NavigationSceneOptions(@NonNull Class<? extends Scene> rootSceneClazz, @Nullable Bundle rootSceneArguments) {
         if (rootSceneClazz.isAssignableFrom(NavigationScene.class)) {
@@ -94,6 +96,12 @@ public class NavigationSceneOptions {
     }
 
     @NonNull
+    public NavigationSceneOptions setAutoRecycleInvisibleScenesThreshold(@FloatRange(from = 0.0, to = 1.0) float threshold) {
+        this.mAutoRecycleInvisibleScenesThreshold = threshold;
+        return this;
+    }
+
+    @NonNull
     public String getRootSceneClassName() {
         return this.mRootSceneClassName;
     }
@@ -123,6 +131,10 @@ public class NavigationSceneOptions {
         return this.mUsePostInLifecycle;
     }
 
+    public float getAutoRecycleInvisibleSceneThreshold() {
+        return this.mAutoRecycleInvisibleScenesThreshold;
+    }
+
     /**
      * @hide
      */
@@ -140,6 +152,7 @@ public class NavigationSceneOptions {
         navigationSceneOptions.mSceneBackgroundResId = bundle.getInt(EXTRA_SCENE_BACKGROUND);
         navigationSceneOptions.mOnlyRestoreVisibleScene = bundle.getBoolean(EXTRA_ONLY_RESTORE_VISIBLE_SCENE);
         navigationSceneOptions.mUsePostInLifecycle = bundle.getBoolean(EXTRA_USE_POST_IN_LIFECYCLE);
+        navigationSceneOptions.mAutoRecycleInvisibleScenesThreshold = bundle.getFloat(EXTRA_AUTO_RECYCLE_INVISIBLE_SCENES_THRESHOLD);
         return navigationSceneOptions;
     }
 
@@ -156,6 +169,7 @@ public class NavigationSceneOptions {
         bundle.putInt(EXTRA_SCENE_BACKGROUND, mSceneBackgroundResId);
         bundle.putBoolean(EXTRA_ONLY_RESTORE_VISIBLE_SCENE, mOnlyRestoreVisibleScene);
         bundle.putBoolean(EXTRA_USE_POST_IN_LIFECYCLE, mUsePostInLifecycle);
+        bundle.putFloat(EXTRA_AUTO_RECYCLE_INVISIBLE_SCENES_THRESHOLD, mAutoRecycleInvisibleScenesThreshold);
         return bundle;
     }
 }

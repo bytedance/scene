@@ -23,6 +23,8 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -56,6 +58,7 @@ import com.bytedance.scene.interfaces.PermissionResultCallback;
 import com.bytedance.scene.interfaces.PopOptions;
 import com.bytedance.scene.interfaces.PushOptions;
 import com.bytedance.scene.utlity.DispatchWindowInsetsListener;
+import com.bytedance.scene.utlity.MemoryMonitor;
 import com.bytedance.scene.utlity.NonNullPair;
 import com.bytedance.scene.utlity.SceneInstanceUtility;
 import com.bytedance.scene.utlity.SceneInternalException;
@@ -70,11 +73,11 @@ import java.util.List;
 
 /**
  * Created by JiangQi on 7/30/18.
- *
+ * <p>
  * (NavigationScene cannot be inherited)
- *
+ * <p>
  * When entering:
- *
+ * <p>
  *                                                                                         +-------------------------+
  *                                                                                         |      Child onStart      |
  *                                                                                         +-------------------------+
@@ -90,11 +93,11 @@ import java.util.List;
  *                                  +--------------------+     +---------------------+     +-------------------------+                             +----------------+
  *                                  | Child onCreateView | --> | Child onViewCreated | --> | Child onActivityCreated |                             | Child onResume |
  *                                  +--------------------+     +---------------------+     +-------------------------+                             +----------------+
- *
+ * <p>
  *
  *
  * When exiting:
- *
+ * <p>
  * +---------------+     +----------------+     +--------------+     +---------------+     +---------------------+     +----------------------+
  * | Child onPause | --> |     sync_1     | --> | Child onStop | --> |    sync_2     | --> | Child onDestroyView | --> |        sync_3        | ---
  * +---------------+     +----------------+     +--------------+     +---------------+     +---------------------+     +----------------------+
@@ -116,14 +119,28 @@ public final class NavigationScene extends Scene implements NavigationListener, 
     private INavigationManager mNavigationSceneManager;
     private FrameLayout mSceneContainer;
     private FrameLayout mAnimationContainer;
+    private final Handler mHandler = new Handler(Looper.getMainLooper());
     @Nullable
     private NavigationAnimationExecutor mDefaultNavigationAnimationExecutor = new Android8DefaultSceneAnimatorExecutor();
     private final List<InteractionNavigationPopAnimationFactory.InteractionCallback> mInteractionListenerList = new ArrayList<>();
 
-    private final LruCache<Class, ReuseGroupScene> mLruCache = new LruCache<>(3);
+    private final LruCache<Class<? extends Scene>, ReuseGroupScene> mLruCache = new LruCache<>(3);
 
     private final List<NavigationListener> mNavigationListenerList = new ArrayList<>();
     private final List<NonNullPair<ChildSceneLifecycleCallbacks, Boolean>> mLifecycleCallbacks = new ArrayList<>();
+
+    @Nullable
+    private MemoryMonitor mMemoryMonitor;
+    private boolean mAnySceneStateChanged = false;
+    private final Runnable mRecycleInvisibleScenesJob = new Runnable() {
+        @Override
+        public void run() {
+            if (mAnySceneStateChanged) {
+                mAnySceneStateChanged = false;
+                recycleInvisibleScenes();
+            }
+        }
+    };
 
     @MainThread
     public void addNavigationListener(@NonNull final LifecycleOwner lifecycleOwner, @NonNull final NavigationListener listener) {
@@ -330,6 +347,7 @@ public final class NavigationScene extends Scene implements NavigationListener, 
 
         hideSoftInputIfNeeded();
         mNavigationSceneManager.push(scene, pushOptions);
+        mAnySceneStateChanged = true;
     }
 
     private void hideSoftInputIfNeeded() {
@@ -372,6 +390,7 @@ public final class NavigationScene extends Scene implements NavigationListener, 
         }
         hideSoftInputIfNeeded();
         mNavigationSceneManager.pop();
+        mAnySceneStateChanged = true;
     }
 
     /**
@@ -414,6 +433,7 @@ public final class NavigationScene extends Scene implements NavigationListener, 
         }
         hideSoftInputIfNeeded();
         mNavigationSceneManager.pop(popOptions);
+        mAnySceneStateChanged = true;
     }
 
     public void popTo(@NonNull Class<? extends Scene> clazz) {
@@ -428,6 +448,7 @@ public final class NavigationScene extends Scene implements NavigationListener, 
         }
         hideSoftInputIfNeeded();
         mNavigationSceneManager.popTo(clazz, animationFactory);
+        mAnySceneStateChanged = true;
     }
 
     public void popToRoot() {
@@ -441,6 +462,7 @@ public final class NavigationScene extends Scene implements NavigationListener, 
         }
         hideSoftInputIfNeeded();
         mNavigationSceneManager.popToRoot(animationFactory);
+        mAnySceneStateChanged = true;
     }
 
     public void remove(@NonNull Scene scene) {
@@ -453,6 +475,7 @@ public final class NavigationScene extends Scene implements NavigationListener, 
             hideSoftInputIfNeeded();
         }
         mNavigationSceneManager.remove(scene);
+        mAnySceneStateChanged = true;
     }
 
     public void requestDisableTouchEvent(boolean disable) {
@@ -566,6 +589,17 @@ public final class NavigationScene extends Scene implements NavigationListener, 
             if (!supportRestore) {
                 disableSupportRestore();
             }
+        }
+
+        float autoRecycleInvisibleSceneThreshold = this.mNavigationSceneOptions.getAutoRecycleInvisibleSceneThreshold();
+        if (autoRecycleInvisibleSceneThreshold > 0F && autoRecycleInvisibleSceneThreshold < 1F) {
+            mMemoryMonitor = new MemoryMonitor(autoRecycleInvisibleSceneThreshold, new Runnable() {
+                @Override
+                public void run() {
+                    mHandler.post(mRecycleInvisibleScenesJob);
+                }
+            });
+            mMemoryMonitor.start();
         }
     }
 
@@ -688,6 +722,10 @@ public final class NavigationScene extends Scene implements NavigationListener, 
 
     @Override
     public void onDestroyView() {
+        if (mMemoryMonitor != null) {
+            mMemoryMonitor.stop();
+            mHandler.removeCallbacks(mRecycleInvisibleScenesJob);
+        }
         dispatchChildrenState(State.NONE, true);
         super.onDestroyView();
     }
@@ -697,6 +735,7 @@ public final class NavigationScene extends Scene implements NavigationListener, 
             throw new IllegalArgumentException("dispatchCurrentChildState can only call when state is VIEW_CREATED, ACTIVITY_CREATED, STARTED, RESUMED");
         }
         mNavigationSceneManager.dispatchCurrentChildState(state);
+        mAnySceneStateChanged = true;
     }
 
     /**
@@ -704,6 +743,7 @@ public final class NavigationScene extends Scene implements NavigationListener, 
      */
     private void dispatchChildrenState(@NonNull State state, boolean reverseOrder) {
         mNavigationSceneManager.dispatchChildrenState(state, reverseOrder);
+        mAnySceneStateChanged = true;
     }
 
     Record findRecordByScene(Scene scene) {
