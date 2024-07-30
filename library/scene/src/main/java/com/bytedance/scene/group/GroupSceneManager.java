@@ -38,6 +38,7 @@ import com.bytedance.scene.SuppressOperationAware;
 import com.bytedance.scene.animation.AnimationOrAnimator;
 import com.bytedance.scene.animation.AnimationOrAnimatorFactory;
 import com.bytedance.scene.exceptions.IllegalLifecycleException;
+import com.bytedance.scene.exceptions.PreviousExceptionMistakenlyForceCaughtException;
 import com.bytedance.scene.parcel.ParcelConstants;
 import com.bytedance.scene.utlity.CancellationSignal;
 import com.bytedance.scene.utlity.SceneInstanceUtility;
@@ -229,6 +230,8 @@ class GroupSceneManager {
     private static final HashMap<Scene, CancellationSignal> SCENE_RUNNING_ANIMATION_CANCELLATION_SIGNAL_MAP = new HashMap<>();
     @NonNull
     private final Set<Pair<Scene, String>> mCurrentTrackMoveStateSceneSet = new HashSet<>();
+    @Nullable
+    private Throwable mLastException;
 
     GroupSceneManager(@NonNull GroupScene groupScene) {
         this.mGroupScene = groupScene;
@@ -337,7 +340,11 @@ class GroupSceneManager {
     private void checkStateChange(@NonNull Scene scene) {
         for (Pair<Scene, String> pair : this.mCurrentTrackMoveStateSceneSet) {
             if (pair.first == scene) {
-                throw new IllegalLifecycleException("Cant add/remove/show/hide " + scene.getClass().getCanonicalName() + " before it finish previous add/remove/show/hide operation or in its lifecycle method");
+                if (mLastException != null) {
+                    throw new PreviousExceptionMistakenlyForceCaughtException("Cant add/remove/show/hide " + scene.getClass().getCanonicalName() + " before it finish previous add/remove/show/hide operation or in its lifecycle method, last exception ", mLastException);
+                } else {
+                    throw new IllegalLifecycleException("Cant add/remove/show/hide " + scene.getClass().getCanonicalName() + " before it finish previous add/remove/show/hide operation or in its lifecycle method");
+                }
             }
         }
     }
@@ -345,7 +352,11 @@ class GroupSceneManager {
     private void beginTrackSceneStateChange(@NonNull Scene scene) {
         for (Pair<Scene, String> pair : this.mCurrentTrackMoveStateSceneSet) {
             if (pair.first == scene) {
-                throw new SceneInternalException("Target scene " + scene.getClass().getCanonicalName() + " is already tracked");
+                if (mLastException != null) {
+                    throw new PreviousExceptionMistakenlyForceCaughtException("Target scene " + scene.getClass().getCanonicalName() + " is already tracked, last exception ", mLastException);
+                } else {
+                    throw new SceneInternalException("Target scene " + scene.getClass().getCanonicalName() + " is already tracked");
+                }
             }
         }
         //forbid NavigationScene execute navigation stack operation immediately, otherwise GroupScene may sync lifecycle to child,
@@ -966,6 +977,7 @@ class GroupSceneManager {
         try {
             moveState(groupScene, scene, to, forceRemove, endAction);
         } catch (final Throwable throwable) {
+            mLastException = throwable;
             mHandler.post(new Runnable() {
                 @Override
                 public void run() {

@@ -25,6 +25,12 @@ public class NavigationSourceUtility {
         return pair.second;
     }
 
+    public static Pair<SceneLifecycleManager<GroupScene>, GroupScene> createFromSceneLifecycleManagerWithManager(final Scene childScene) {
+        Pair<SceneLifecycleManager<GroupScene>, GroupScene> pair = createFromInitSceneLifecycleManager(childScene);
+        SceneLifecycleManager<GroupScene> sceneLifecycleManager = pair.first;
+        return pair;
+    }
+
     public static Pair<SceneLifecycleManager<GroupScene>, GroupScene> createFromInitSceneLifecycleManager(final Scene childScene) {
         ActivityController<TestActivity> controller = Robolectric.buildActivity(TestActivity.class).create().start().resume();
         TestActivity testActivity = controller.get();
