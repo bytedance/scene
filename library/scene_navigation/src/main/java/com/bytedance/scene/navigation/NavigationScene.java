@@ -238,10 +238,19 @@ public final class NavigationScene extends Scene implements NavigationListener, 
         if (rootScene == null) {
             rootScene = SceneInstanceUtility.getInstanceFromClassName(requireActivity(), clazzName, arguments);
         }
-        mNavigationSceneManager.push(rootScene, new PushOptions.Builder().build());
+        if (this.mNavigationSceneOptions.usePostInLifecycle()) {
+            //the root should not use post policy
+            mNavigationSceneManager.push(rootScene, new PushOptions.Builder().setUsePost(false).build());
+        } else {
+            mNavigationSceneManager.push(rootScene, new PushOptions.Builder().build());
+        }
     }
 
-    void addToReusePool(@NonNull ReuseGroupScene scene) {
+    /**
+     * @hide
+     */
+    @RestrictTo(LIBRARY_GROUP)
+    public void addToReusePool(@NonNull ReuseGroupScene scene) {
         mLruCache.put(scene.getClass(), scene);
     }
 
@@ -389,7 +398,11 @@ public final class NavigationScene extends Scene implements NavigationListener, 
      * there is no Scene that can pop. Turn it out to the outside,
      * in case the Activity has intercepted onBackPressed.
      */
-    void finishCurrentActivity() {
+    /**
+     * @hide
+     */
+    @RestrictTo(LIBRARY_GROUP)
+    public void finishCurrentActivity() {
         requireActivity().onBackPressed();
     }
 
@@ -540,8 +553,10 @@ public final class NavigationScene extends Scene implements NavigationListener, 
         }
         this.mNavigationSceneOptions = NavigationSceneOptions.fromBundle(getArguments());
 
-        if (this.mNavigationSceneOptions.onlyRestoreVisibleScene()) {
+        if (this.mNavigationSceneOptions.usePostInLifecycle()) {
             this.mNavigationSceneManager = new NavigationSceneManager(this);
+        } else if (this.mNavigationSceneOptions.onlyRestoreVisibleScene()) {
+            this.mNavigationSceneManager = new NavigationSceneManagerV2(this);
         } else {
             this.mNavigationSceneManager = new NavigationSceneManagerV1(this);
         }
@@ -769,6 +784,11 @@ public final class NavigationScene extends Scene implements NavigationListener, 
             animationFactory.setCallback(null);
         }
         return result;
+    }
+
+    public void forceExecutePendingNavigationOperation() {
+        ThreadUtility.checkUIThread();
+        mNavigationSceneManager.forceExecutePendingNavigationOperation();
     }
 
     private InteractionNavigationPopAnimationFactory.InteractionCallback mInteractionCallback = new InteractionNavigationPopAnimationFactory.InteractionCallback() {

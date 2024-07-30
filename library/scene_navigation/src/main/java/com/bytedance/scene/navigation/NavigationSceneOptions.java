@@ -33,6 +33,7 @@ public class NavigationSceneOptions {
     private static final String EXTRA_FIX_SCENE_BACKGROUND_ENABLED = "extra_fixSceneBackground_enabled";
     private static final String EXTRA_SCENE_BACKGROUND = "extra_sceneBackground";
     private static final String EXTRA_ONLY_RESTORE_VISIBLE_SCENE = "extra_onlyRestoreVisibleScene";
+    private static final String EXTRA_USE_POST_IN_LIFECYCLE = "extra_usePostInLifecycle";
 
     @NonNull
     private final String mRootSceneClassName;
@@ -43,6 +44,7 @@ public class NavigationSceneOptions {
     @DrawableRes
     private int mSceneBackgroundResId = 0;
     private boolean mOnlyRestoreVisibleScene = false;
+    private boolean mUsePostInLifecycle = false;
 
     public NavigationSceneOptions(@NonNull Class<? extends Scene> rootSceneClazz, @Nullable Bundle rootSceneArguments) {
         if (rootSceneClazz.isAssignableFrom(NavigationScene.class)) {
@@ -86,6 +88,12 @@ public class NavigationSceneOptions {
     }
 
     @NonNull
+    public NavigationSceneOptions setUsePostInLifecycle(boolean usePostInLifecycle) {
+        this.mUsePostInLifecycle = usePostInLifecycle;
+        return this;
+    }
+
+    @NonNull
     public String getRootSceneClassName() {
         return this.mRootSceneClassName;
     }
@@ -111,6 +119,10 @@ public class NavigationSceneOptions {
         return this.mOnlyRestoreVisibleScene;
     }
 
+    public boolean usePostInLifecycle() {
+        return this.mUsePostInLifecycle;
+    }
+
     /**
      * @hide
      */
@@ -127,6 +139,7 @@ public class NavigationSceneOptions {
         navigationSceneOptions.mFixSceneBackgroundEnabled = bundle.getBoolean(EXTRA_FIX_SCENE_BACKGROUND_ENABLED);
         navigationSceneOptions.mSceneBackgroundResId = bundle.getInt(EXTRA_SCENE_BACKGROUND);
         navigationSceneOptions.mOnlyRestoreVisibleScene = bundle.getBoolean(EXTRA_ONLY_RESTORE_VISIBLE_SCENE);
+        navigationSceneOptions.mUsePostInLifecycle = bundle.getBoolean(EXTRA_USE_POST_IN_LIFECYCLE);
         return navigationSceneOptions;
     }
 
@@ -142,6 +155,7 @@ public class NavigationSceneOptions {
         bundle.putBoolean(EXTRA_FIX_SCENE_BACKGROUND_ENABLED, mFixSceneBackgroundEnabled);
         bundle.putInt(EXTRA_SCENE_BACKGROUND, mSceneBackgroundResId);
         bundle.putBoolean(EXTRA_ONLY_RESTORE_VISIBLE_SCENE, mOnlyRestoreVisibleScene);
+        bundle.putBoolean(EXTRA_USE_POST_IN_LIFECYCLE, mUsePostInLifecycle);
         return bundle;
     }
 }

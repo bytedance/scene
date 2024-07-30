@@ -15,11 +15,15 @@
  */
 package com.bytedance.scene.navigation;
 
+import static androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP;
+
 import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RestrictTo;
 
 import com.bytedance.scene.Scene;
 import com.bytedance.scene.animation.NavigationAnimationExecutor;
@@ -28,27 +32,32 @@ import com.bytedance.scene.interfaces.PushResultCallback;
 /**
  * Created by JiangQi on 7/30/18.
  */
-class Record implements Parcelable {
+
+/**
+ * @hide
+ */
+@RestrictTo(LIBRARY_GROUP)
+public class Record implements Parcelable {
     @NonNull
-    Scene mScene;
-    boolean mIsTranslucent;
+    public Scene mScene;
+    public boolean mIsTranslucent;
     @Nullable
-    ActivityStatusRecord mActivityStatusRecord;
+    public ActivityStatusRecord mActivityStatusRecord;
     @Nullable
-    NavigationAnimationExecutor mNavigationAnimationExecutor;
+    public NavigationAnimationExecutor mNavigationAnimationExecutor;
     @Nullable
-    Object mPushResult;
+    public Object mPushResult;
     @Nullable
     boolean mSceneBackgroundSet = false; //ignore restore
     @Nullable
-    Bundle mPreviousSavedState = null;
+    public Bundle mPreviousSavedState = null;
 
     /**
      * In case of A starts B,
      * the attached callback will be placed in B's Record's mPushResultCallback
      */
     @Nullable
-    PushResultCallback mPushResultCallback;
+    public PushResultCallback mPushResultCallback;
 
     String mSceneClassName;
 

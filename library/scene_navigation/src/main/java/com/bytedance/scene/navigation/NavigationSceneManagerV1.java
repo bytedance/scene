@@ -1364,4 +1364,9 @@ class NavigationSceneManagerV1 implements INavigationManager{
         Scene previous = previousRecord.mScene;
         return animationFactory.isSupport(current, previous);
     }
+
+    @Override
+    public void forceExecutePendingNavigationOperation() {
+
+    }
 }

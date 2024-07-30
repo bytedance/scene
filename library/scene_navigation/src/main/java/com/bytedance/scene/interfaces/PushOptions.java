@@ -35,10 +35,12 @@ public class PushOptions {
     private final boolean mIsTranslucent;       // TODO: Translucent and clearTask cannot be together
 
     private final Predicate<Scene> mRemovePredicate;
+    private final boolean mUsePost;
 
-    private PushOptions(Predicate<Scene> removePredicate, boolean isTranslucent, PushResultCallback pushResultCallback, NavigationAnimationExecutor navigationAnimationExecutor) {
+    private PushOptions(Predicate<Scene> removePredicate, boolean isTranslucent, boolean usePost, PushResultCallback pushResultCallback, NavigationAnimationExecutor navigationAnimationExecutor) {
         this.mRemovePredicate = removePredicate;
         this.mIsTranslucent = isTranslucent;
+        this.mUsePost = usePost;
         this.mPushResultCallback = pushResultCallback;
         this.mNavigationAnimationExecutor = navigationAnimationExecutor;
     }
@@ -49,6 +51,10 @@ public class PushOptions {
 
     public boolean isIsTranslucent() {
         return this.mIsTranslucent;
+    }
+
+    public boolean isUsePost() {
+        return this.mUsePost;
     }
 
     public NavigationAnimationExecutor getNavigationAnimationFactory() {
@@ -64,6 +70,7 @@ public class PushOptions {
         private PushResultCallback mPushResultCallback;
         private NavigationAnimationExecutor mNavigationAnimationExecutor;
         private Predicate<Scene> mRemovePredicate;
+        private boolean mUsePost;
 
         public Builder() {
         }
@@ -77,6 +84,12 @@ public class PushOptions {
         @NonNull
         public Builder setTranslucent(boolean isTranslucent) {
             this.mIsTranslucent = isTranslucent;
+            return this;
+        }
+
+        @NonNull
+        public Builder setUsePost(boolean usePost) {
+            this.mUsePost = usePost;
             return this;
         }
 
@@ -111,7 +124,7 @@ public class PushOptions {
 
         @NonNull
         public PushOptions build() {
-            return new PushOptions(this.mRemovePredicate, this.mIsTranslucent, this.mPushResultCallback, this.mNavigationAnimationExecutor);
+            return new PushOptions(this.mRemovePredicate, this.mIsTranslucent, this.mUsePost, this.mPushResultCallback, this.mNavigationAnimationExecutor);
         }
     }
 

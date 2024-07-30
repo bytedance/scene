@@ -15,8 +15,6 @@
  */
 package com.bytedance.scene.navigation;
 
-import static androidx.annotation.RestrictTo.Scope.LIBRARY;
-
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
@@ -28,7 +26,6 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.annotation.RestrictTo;
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleOwner;
 
@@ -44,11 +41,7 @@ import com.bytedance.scene.group.ReuseGroupScene;
 import com.bytedance.scene.interfaces.PopOptions;
 import com.bytedance.scene.interfaces.PushOptions;
 import com.bytedance.scene.logger.LoggerManager;
-import com.bytedance.scene.navigation.pop.CoordinatePopOptionOperation;
-import com.bytedance.scene.navigation.push.CoordinatePushOptionOperation;
 import com.bytedance.scene.parcel.ParcelConstants;
-import com.bytedance.scene.queue.NavigationMessageQueue;
-import com.bytedance.scene.queue.NavigationRunnable;
 import com.bytedance.scene.utlity.AnimatorUtility;
 import com.bytedance.scene.utlity.CancellationSignalList;
 import com.bytedance.scene.utlity.NavigationSceneViewUtility;
@@ -66,11 +59,11 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * @hide
+ * 2023.11.13
+ * before add activity compatible post
  */
-@RestrictTo(LIBRARY)
-public class NavigationSceneManager implements INavigationManager, NavigationManagerAbility{
-    public static final String TRACE_EXECUTE_OPERATION_TAG = "NavigationSceneManager#executeOperation";
+class NavigationSceneManagerV2 implements INavigationManager{
+    private static final String TRACE_EXECUTE_OPERATION_TAG = "NavigationSceneManager#executeOperation";
     private static final String TRACE_EXECUTE_PENDING_OPERATION_TAG = "NavigationSceneManager#executePendingOperation";
 
     private NavigationScene mNavigationScene;
@@ -91,9 +84,7 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
 
     private final boolean mOnlyRestoreVisibleScene;
 
-    private final NavigationMessageQueue mSceneMessageQueue = new NavigationMessageQueue();
-
-    NavigationSceneManager(NavigationScene scene) {
+    NavigationSceneManagerV2(NavigationScene scene) {
         this.mNavigationScene = scene;
         this.mNavigationListener = scene;
         this.mOnlyRestoreVisibleScene = scene.mNavigationSceneOptions.onlyRestoreVisibleScene();
@@ -198,7 +189,7 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
              * must be scheduled with Handler.post too to make sure navigation order is correct
              */
             if (mIsNavigationStateChangeInProgress.size() > 0 || mCurrentScheduledStackOperationCount > 0) {
-                NavigationRunnable task = new NavigationRunnable() {
+                Runnable task = new Runnable() {
                     @Override
                     public void run() {
                         mCurrentScheduledStackOperationCount--;
@@ -219,19 +210,13 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
                     }
                 };
                 mCurrentScheduledStackOperationCount++;
-                mSceneMessageQueue.postAsync(task);
+                mHandler.postAsyncIfNeeded(task);
             } else {
-                NavigationRunnable task = new NavigationRunnable() {
-                    @Override
-                    public void run() {
-                        SceneTrace.beginSection(TRACE_EXECUTE_OPERATION_TAG);
-                        String suppressTag = beginSuppressStackOperation("NavigationManager execute operation directly");
-                        executeOperationSafely(operation, EMPTY_RUNNABLE);
-                        endSuppressStackOperation(suppressTag);
-                        SceneTrace.endSection();
-                    }
-                };
-                mSceneMessageQueue.postSync(task);
+                SceneTrace.beginSection(TRACE_EXECUTE_OPERATION_TAG);
+                String suppressTag = beginSuppressStackOperation("NavigationManager execute operation directly");
+                executeOperationSafely(operation, EMPTY_RUNNABLE);
+                endSuppressStackOperation(suppressTag);
+                SceneTrace.endSection();
             }
         } else {
             /**
@@ -262,26 +247,16 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
         }
     }
 
-    public void dispatchCurrentChildState(final State state) {
-        this.mSceneMessageQueue.postSync(new Runnable() {
-            @Override
-            public void run() {
-                String suppressTag = beginSuppressStackOperation("NavigationManager dispatchCurrentChildState");
-                executeOperationSafely(new SyncCurrentSceneStateOperation(state), EMPTY_RUNNABLE);
-                endSuppressStackOperation(suppressTag);
-            }
-        });
+    public void dispatchCurrentChildState(State state) {
+        String suppressTag = beginSuppressStackOperation("NavigationManager dispatchCurrentChildState");
+        executeOperationSafely(new SyncCurrentSceneStateOperation(state), EMPTY_RUNNABLE);
+        endSuppressStackOperation(suppressTag);
     }
 
-    public void dispatchChildrenState(final State state, final boolean reverseOrder) {
-        this.mSceneMessageQueue.postSync(new Runnable() {
-            @Override
-            public void run() {
-                String suppressTag = beginSuppressStackOperation("NavigationManager dispatchChildrenState");
-                executeOperationSafely(new SyncAllSceneStateOperation(state, reverseOrder), EMPTY_RUNNABLE);
-                endSuppressStackOperation(suppressTag);
-            }
-        });
+    public void dispatchChildrenState(State state, boolean reverseOrder) {
+        String suppressTag = beginSuppressStackOperation("NavigationManager dispatchChildrenState");
+        executeOperationSafely(new SyncAllSceneStateOperation(state, reverseOrder), EMPTY_RUNNABLE);
+        endSuppressStackOperation(suppressTag);
     }
 
     public void setResult(Scene scene, Object result) {
@@ -311,9 +286,7 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
 
     public void pop(PopOptions popOptions) {
         LoggerManager.getInstance().i("NavigationSceneManager", "pop with PopOptions");
-        if (popOptions.isUsePost()) {
-            scheduleToNextUIThreadLoop(new CoordinatePopOptionOperation(this, mSceneMessageQueue, popOptions));
-        } else if (mActivityCompatibleLifecycleStrategyEnabled && popOptions.isUseActivityCompatibleLifecycle()) {
+        if (mActivityCompatibleLifecycleStrategyEnabled && popOptions.isUseActivityCompatibleLifecycle()) {
             scheduleToNextUIThreadLoop(new PopOptionActivityCompatibleLifecycleOperation(popOptions));
         } else {
             scheduleToNextUIThreadLoop(new PopOptionOperation(popOptions));
@@ -334,13 +307,8 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
         if (scene == null) {
             throw new NullPointerException("scene can't be null");
         }
-        if (pushOptions.isUsePost()) {
-            LoggerManager.getInstance().i("NavigationSceneManager", "push " + scene.toString() + " by post");
-            scheduleToNextUIThreadLoop(new CoordinatePushOptionOperation(this, mSceneMessageQueue, scene, pushOptions));
-        } else {
-            LoggerManager.getInstance().i("NavigationSceneManager", "push " + scene.toString());
-            scheduleToNextUIThreadLoop(new PushOptionOperation(scene, pushOptions));
-        }
+        LoggerManager.getInstance().i("NavigationSceneManager", "push " + scene.toString());
+        scheduleToNextUIThreadLoop(new PushOptionOperation(scene, pushOptions));
     }
 
     public void changeTranslucent(@NonNull final Scene scene, boolean translucent) {
@@ -359,42 +327,37 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
         }
         LoggerManager.getInstance().i("NavigationSceneManager", "executePendingOperation");
 
-        this.mSceneMessageQueue.postSync(new Runnable() {
-            @Override
-            public void run() {
-                SceneTrace.beginSection(TRACE_EXECUTE_PENDING_OPERATION_TAG);
-                /*
-                 * Only the last one need to do the transition animation, the previous doesn't.
-                 * If not, it is easy to see that the jump animation of SchemaActivity not be executed,
-                 * as SchemaActivity is usually a translucent Activity cover over the other Activity.
-                 *
-                 * If it is over 800ms, it will not be animated also.
-                 */
-                boolean animationTimeout = System.currentTimeMillis() - mLastPendingActionListItemTimestamp > 800;
-                List<Operation> copy = new ArrayList<>(NavigationSceneManager.this.mPendingActionList);
-                for (int i = 0; i < copy.size(); i++) {
-                    Operation currentOperation = copy.get(i);
-                    NavigationSceneManager.this.mDisableNavigationAnimation = animationTimeout | (i < copy.size() - 1);
-                    String suppressTag = beginSuppressStackOperation("NavigationManager executePendingOperation");
-                    executeOperationSafely(currentOperation, EMPTY_RUNNABLE);
-                    endSuppressStackOperation(suppressTag);
-                    NavigationSceneManager.this.mDisableNavigationAnimation = false;
-                }
-                NavigationSceneManager.this.mPendingActionList.removeAll(copy);
-                if (NavigationSceneManager.this.mPendingActionList.size() > 0) {
-                    throw new IllegalStateException("why mPendingActionList still have item?");
-                }
-                NavigationSceneManager.this.mLastPendingActionListItemTimestamp = -1L;
-                SceneTrace.endSection();
-            }
-        });
+        SceneTrace.beginSection(TRACE_EXECUTE_PENDING_OPERATION_TAG);
+        /*
+         * Only the last one need to do the transition animation, the previous doesn't.
+         * If not, it is easy to see that the jump animation of SchemaActivity not be executed,
+         * as SchemaActivity is usually a translucent Activity cover over the other Activity.
+         *
+         * If it is over 800ms, it will not be animated also.
+         */
+        boolean animationTimeout = System.currentTimeMillis() - mLastPendingActionListItemTimestamp > 800;
+        List<Operation> copy = new ArrayList<>(this.mPendingActionList);
+        for (int i = 0; i < copy.size(); i++) {
+            Operation currentOperation = copy.get(i);
+            this.mDisableNavigationAnimation = animationTimeout | (i < copy.size() - 1);
+            String suppressTag = beginSuppressStackOperation("NavigationManager executePendingOperation");
+            executeOperationSafely(currentOperation, EMPTY_RUNNABLE);
+            endSuppressStackOperation(suppressTag);
+            this.mDisableNavigationAnimation = false;
+        }
+        this.mPendingActionList.removeAll(copy);
+        if (this.mPendingActionList.size() > 0) {
+            throw new IllegalStateException("why mPendingActionList still have item?");
+        }
+        this.mLastPendingActionListItemTimestamp = -1L;
+        SceneTrace.endSection();
     }
 
     public boolean canPop() {
         return this.mBackStackList.canPop();
     }
 
-    public void restoreActivityStatus(ActivityStatusRecord statusRecord) {
+    private void restoreActivityStatus(ActivityStatusRecord statusRecord) {
         Activity activity = mNavigationScene.getActivity();
         statusRecord.restore(activity);
     }
@@ -453,7 +416,7 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
         return false;
     }
 
-    public static void moveState(@NonNull NavigationScene navigationScene,
+    private static void moveState(@NonNull NavigationScene navigationScene,
                                   @NonNull Scene scene, @NonNull State to,
                                   @Nullable Bundle bundle,
                                   boolean causedByActivityLifeCycle,
@@ -553,8 +516,12 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
         }
     }
 
+    private interface Operation {
+        void execute(Runnable operationEndAction);
+    }
+
     //avoid exceptions being caught externally
-    public void executeOperationSafely(final Operation operation, final Runnable operationEndAction) {
+    private void executeOperationSafely(final Operation operation, final Runnable operationEndAction) {
         try {
             operation.execute(operationEndAction);
         } catch (final Throwable throwable) {
@@ -1051,7 +1018,7 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
         InteractionNavigationPopAnimationFactory.cancelAllRunningInteractionAnimation();
     }
 
-    public static class CancellationSignalManager {
+    private static class CancellationSignalManager {
         private final List<CancellationSignalList> cancelableList = new ArrayList<>();
 
         private void cancelAllRunningAnimationExecutor() {
@@ -1069,11 +1036,11 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
             cancelableList.removeAll(copy);
         }
 
-        public void add(CancellationSignalList cancellationSignalList) {
+        private void add(CancellationSignalList cancellationSignalList) {
             this.cancelableList.add(cancellationSignalList);
         }
 
-        public void remove(CancellationSignalList cancellationSignalList) {
+        private void remove(CancellationSignalList cancellationSignalList) {
             this.cancelableList.remove(cancellationSignalList);
         }
     }
@@ -1212,7 +1179,7 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
         }
     }
 
-    public static State findMinState(State left, State right) {
+    private static State findMinState(State left, State right) {
         if (left.value > right.value) {
             return right;
         } else {
@@ -1220,7 +1187,7 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
         }
     }
 
-    public boolean canExecuteNavigationStackOperation() {
+    private boolean canExecuteNavigationStackOperation() {
         return mNavigationScene.getState().value >= State.ACTIVITY_CREATED.value;
     }
 
@@ -1386,7 +1353,7 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
             for (int i = recordList.size() - 1; i >= 0; i--) {
                 Record record = recordList.get(i);
                 if (i == recordList.size() - 1) {
-                    NavigationSceneManager.moveState(mNavigationScene, record.mScene, targetState, null, true, operationEndAction);
+                    NavigationSceneManagerV2.moveState(mNavigationScene, record.mScene, targetState, null, true, operationEndAction);
                     // If the current one is opaque, there is no need to traverse it again.
                     if (!record.mIsTranslucent) {
                         break;
@@ -1403,7 +1370,7 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
                         fixDstState = State.VIEW_CREATED;
                     }
 
-                    NavigationSceneManager.moveState(mNavigationScene, record.mScene, fixDstState, null, true, operationEndAction);
+                    NavigationSceneManagerV2.moveState(mNavigationScene, record.mScene, fixDstState, null, true, operationEndAction);
                     if (!record.mIsTranslucent) {
                         break;
                     }
@@ -1485,57 +1452,7 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
     }
 
     @Override
-    public NavigationScene getNavigationScene() {
-        return this.mNavigationScene;
-    }
-
-    @Override
-    public NavigationListener getNavigationListener() {
-        return this.mNavigationListener;
-    }
-
-    @Override
-    public boolean containsRecord(Record record) {
-        return this.getCurrentRecordList().contains(record);
-    }
-
-    @Override
-    public List<Record> getCurrentRecordList() {
-        return this.mBackStackList.getCurrentRecordList();
-    }
-
-    @Override
-    public void pushRecord(Record record) {
-        this.mBackStackList.push(record);
-    }
-
-    @Override
-    public void removeRecord(Record record) {
-        this.mBackStackList.remove(record);
-    }
-
-    @Override
-    public boolean isDisableNavigationAnimation() {
-        return this.mDisableNavigationAnimation;
-    }
-
-    @Override
-    public CancellationSignalManager getCancellationSignalManager() {
-        return this.mCancellationSignalManager;
-    }
-
-    @Override
-    public boolean isOnlyRestoreVisibleScene() {
-        return this.mOnlyRestoreVisibleScene;
-    }
-
-    @Override
     public void forceExecutePendingNavigationOperation() {
-        this.mSceneMessageQueue.postSync(new Runnable() {
-            @Override
-            public void run() {
 
-            }
-        });
     }
 }

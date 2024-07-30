@@ -23,6 +23,7 @@
     <string name="main_nav_btn_single_top">Push 的 SingleTop 用法</string>
     <string name="main_nav_btn_single_task">Push 的 SingleTask 用法</string>
     <string name="main_nav_btn_push_pop">Push 和 Pop</string>
+    <string name="main_nav_btn_push_pop_with_post">Push 和 Pop（Post 方式）</string>
     <string name="main_nav_btn_clear_current">Push 时关闭当前页面</string>
     <string name="nav_single_top_btn_root">点击跳到 PushSingleTopScene_0</string>
     <string name="nav_single_top_btn_0">点击跳到 PushSingleTopScene_1</string>

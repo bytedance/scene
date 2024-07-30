@@ -33,11 +33,13 @@ public class PopOptions {
     private final NavigationAnimationExecutor mNavigationAnimationExecutor;
     private final Predicate<Scene> mPopUtilPredicate;
     private final boolean mUseActivityCompatibleLifecycle;
+    private final boolean mUsePost;
 
-    private PopOptions(NavigationAnimationExecutor navigationAnimatorExecutor, Predicate<Scene> popUtilPredicate, boolean useActivityCompatibleLifecycle) {
+    private PopOptions(NavigationAnimationExecutor navigationAnimatorExecutor, Predicate<Scene> popUtilPredicate, boolean useActivityCompatibleLifecycle, boolean usePost) {
         this.mNavigationAnimationExecutor = navigationAnimatorExecutor;
         this.mPopUtilPredicate = popUtilPredicate;
         this.mUseActivityCompatibleLifecycle = useActivityCompatibleLifecycle;
+        this.mUsePost = usePost;
     }
 
     public NavigationAnimationExecutor getNavigationAnimationExecutor() {
@@ -52,10 +54,15 @@ public class PopOptions {
         return this.mUseActivityCompatibleLifecycle;
     }
 
+    public boolean isUsePost() {
+        return this.mUsePost;
+    }
+
     public static class Builder {
         private NavigationAnimationExecutor mNavigationAnimationExecutor;
         private Predicate<Scene> mPopUtilPredicate;
         private boolean mUseActivityCompatibleLifecycle;
+        private boolean mUsePost;
 
         public Builder() {
         }
@@ -85,8 +92,14 @@ public class PopOptions {
         }
 
         @NonNull
+        public PopOptions.Builder setUsePost(boolean usePost) {
+            this.mUsePost = usePost;
+            return this;
+        }
+
+        @NonNull
         public PopOptions build() {
-            return new PopOptions(this.mNavigationAnimationExecutor, this.mPopUtilPredicate, this.mUseActivityCompatibleLifecycle);
+            return new PopOptions(this.mNavigationAnimationExecutor, this.mPopUtilPredicate, this.mUseActivityCompatibleLifecycle, this.mUsePost);
         }
     }
 

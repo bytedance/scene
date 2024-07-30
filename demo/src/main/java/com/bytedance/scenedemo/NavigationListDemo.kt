@@ -14,6 +14,7 @@ import com.bytedance.scenedemo.navigation.popinterupt.PopInterruptScene
 import com.bytedance.scenedemo.navigation.popto.PopToScene
 import com.bytedance.scenedemo.navigation.push_clear_current.PushClearCurrentDemoScene
 import com.bytedance.scenedemo.navigation.push_pop.PushPopBasicUsageDemoScene
+import com.bytedance.scenedemo.navigation.push_pop_with_post.PushPopWithPostBasicUsageDemoScene
 import com.bytedance.scenedemo.navigation.push_singletop.PushSingleTopRootScene
 import com.bytedance.scenedemo.navigation.pushandclear.PushClearTaskScene
 import com.bytedance.scenedemo.navigation.remove.RemoveDemoScene
@@ -43,6 +44,10 @@ class NavigationListDemo : UserVisibleHintGroupScene() {
 
         addButton(layout, getString(R.string.main_nav_btn_push_pop), View.OnClickListener {
             requireNavigationScene().push(PushPopBasicUsageDemoScene())
+        })
+
+        addButton(layout, getString(R.string.main_nav_btn_push_pop_with_post), View.OnClickListener {
+            requireNavigationScene().push(PushPopWithPostBasicUsageDemoScene())
         })
 
         addButton(layout, getString(R.string.main_nav_btn_single_top), View.OnClickListener {

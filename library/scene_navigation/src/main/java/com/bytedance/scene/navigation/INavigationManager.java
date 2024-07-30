@@ -77,4 +77,6 @@ public interface INavigationManager {
     public boolean pop(InteractionNavigationPopAnimationFactory animationFactory);
 
     public boolean isInteractionNavigationPopSupport(InteractionNavigationPopAnimationFactory animationFactory);
+
+    public void forceExecutePendingNavigationOperation();
 }
