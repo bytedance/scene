@@ -994,7 +994,12 @@ class NavigationSceneManager implements INavigationManager{
 
             for (int i = 0; i < needChangeStateSceneRecordList.size(); i++) {
                 Record tmpRecord = needChangeStateSceneRecordList.get(i);
-                moveState(mNavigationScene, tmpRecord.mScene, dstState, null, false, null);
+                if (mOnlyRestoreVisibleScene && tmpRecord.mScene.getView() == null) {
+                    moveState(mNavigationScene, tmpRecord.mScene, dstState, tmpRecord.mPreviousSavedState, false, null);
+                    tmpRecord.mPreviousSavedState = null;
+                } else {
+                    moveState(mNavigationScene, tmpRecord.mScene, dstState, null, false, null);
+                }
             }
 
             operationEndAction.run();
