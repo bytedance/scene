@@ -1,6 +1,7 @@
 # Scene
 
 [简体中文版说明 >>>](/README_cn.md)
+[日本語の説明 >>>](/README_ja.md)
 
 [![GitHub license](https://img.shields.io/github/license/bytedance/scene)](https://github.com/bytedance/scene/blob/master/LICENSE) 
 [![](https://jitpack.io/v/bytedance/scene.svg)](https://jitpack.io/#bytedance/scene)
