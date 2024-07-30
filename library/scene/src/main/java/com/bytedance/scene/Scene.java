@@ -392,8 +392,8 @@ public abstract class Scene implements LifecycleOwner, SavedStateRegistryOwner, 
         Context viewContext = view.getContext();
         if (viewContext != sceneContext && getTheme() != 0) {
             if (viewContext.getSystemService(SCENE_SERVICE) != this) {
-                throw new IllegalArgumentException("Scene view's context is incorrect, you should create view with " +
-                        "getLayoutInflater() or requireSceneContext() instead");
+                throw new IllegalArgumentException("Scene theme is not 0, but Scene view's context is incorrect, you should use " +
+                        "getLayoutInflater() or requireSceneContext() to create view with theme instead, please check Scene " + getClass().toString());
             }
         }
 
