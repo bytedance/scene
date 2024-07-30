@@ -110,7 +110,7 @@ public final class NavigationScene extends Scene implements NavigationListener, 
     private static final String KEY_NAVIGATION_SCENE_SUPPORT_RESTORE_ARGUMENT = "bd-scene-navigation:support_restore";
 
     private boolean mSupportRestore = true;//default support restore
-    private SceneComponentFactory mRootSceneComponentFactory;   // Use this when destroying recovery
+    SceneComponentFactory mRootSceneComponentFactory;   // Use this when destroying recovery
     NavigationSceneOptions mNavigationSceneOptions;
 
     private INavigationManager mNavigationSceneManager;
@@ -789,6 +789,15 @@ public final class NavigationScene extends Scene implements NavigationListener, 
     public void forceExecutePendingNavigationOperation() {
         ThreadUtility.checkUIThread();
         mNavigationSceneManager.forceExecutePendingNavigationOperation();
+    }
+
+    /**
+     * recycle invisible Scenes to save memory, they will be restored when user return to them via back action
+     * If Scene doesn't support restore({@link Scene#isSceneRestoreEnabled == false}), it will not reappear
+     */
+    public void recycleInvisibleScenes() {
+        ThreadUtility.checkUIThread();
+        mNavigationSceneManager.recycleInvisibleScenes();
     }
 
     private InteractionNavigationPopAnimationFactory.InteractionCallback mInteractionCallback = new InteractionNavigationPopAnimationFactory.InteractionCallback() {

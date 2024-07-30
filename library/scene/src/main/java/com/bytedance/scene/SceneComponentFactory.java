@@ -22,6 +22,8 @@ import androidx.annotation.Nullable;
 
 /**
  * Created by JiangQi on 10/25/18.
+ * <p>
+ * Pay attention, this method will be invoked more than once because of Scene application restore strategy, {@link NavigationSene#recycleInvisibleScenes}
  */
 public interface SceneComponentFactory {
     @Nullable

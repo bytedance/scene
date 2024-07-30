@@ -103,20 +103,25 @@ class RecordStack {
         this.mBackStackList = new ArrayList<>(list);
         for (int i = 0; i < this.mBackStackList.size(); i++) {
             Record record = this.mBackStackList.get(i);
-            Scene scene = null;
-            // The first Scene will generated with the SceneComponentFactory first
-            if (i == 0 && rootSceneComponentFactory != null) {
-                Scene rootScene = rootSceneComponentFactory.instantiateScene(context.getClassLoader(), record.mSceneClassName, null);
-                if (rootScene != null && rootScene.getParentScene() != null) {
-                    throw new IllegalArgumentException("SceneComponentFactory instantiateScene return Scene already has a parent");
-                }
-                scene = rootScene;
-            }
-            if (scene == null) {
-                scene = SceneInstanceUtility.getInstanceFromClassName(context, record.mSceneClassName, null);
-            }
+            Scene scene = createNewSceneInstance(context,i,record,rootSceneComponentFactory);
             record.mScene = scene;
         }
+    }
+
+    public static Scene createNewSceneInstance(Context context, int i, Record record, SceneComponentFactory rootSceneComponentFactory) {
+        Scene scene = null;
+        // The first Scene will generated with the SceneComponentFactory first
+        if (i == 0 && rootSceneComponentFactory != null) {
+            Scene rootScene = rootSceneComponentFactory.instantiateScene(context.getClassLoader(), record.mSceneClassName, null);
+            if (rootScene != null && rootScene.getParentScene() != null) {
+                throw new IllegalArgumentException("SceneComponentFactory instantiateScene return Scene already has a parent");
+            }
+            scene = rootScene;
+        }
+        if (scene == null) {
+            scene = SceneInstanceUtility.getInstanceFromClassName(context, record.mSceneClassName, null);
+        }
+        return scene;
     }
 
     public int getOrderByView(View view) {

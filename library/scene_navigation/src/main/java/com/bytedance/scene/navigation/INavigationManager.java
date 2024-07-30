@@ -79,4 +79,6 @@ public interface INavigationManager {
     public boolean isInteractionNavigationPopSupport(InteractionNavigationPopAnimationFactory animationFactory);
 
     public void forceExecutePendingNavigationOperation();
+
+    public void recycleInvisibleScenes();
 }

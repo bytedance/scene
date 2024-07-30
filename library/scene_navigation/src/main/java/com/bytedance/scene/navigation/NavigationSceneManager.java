@@ -1538,4 +1538,29 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
             }
         });
     }
+
+    @Override
+    public void recycleInvisibleScenes() {
+        if (!this.mOnlyRestoreVisibleScene) {
+            return;
+        }
+        List<Record> recordList = this.mBackStackList.getCurrentRecordList();
+        int size = recordList.size();
+        for (int i = size - 1; i >= 0; i--) {
+            Record record = recordList.get(i);
+            Scene scene = record.mScene;
+            if ((scene.getState() == State.ACTIVITY_CREATED || scene.getState() == State.VIEW_CREATED) && scene.isSceneRestoreEnabled()) {
+                Bundle sceneBundle = new Bundle();
+                scene.dispatchSaveInstanceState(sceneBundle);
+                record.mPreviousSavedState = sceneBundle;
+                View view = scene.getView();
+                NavigationSceneManager.moveState(mNavigationScene, scene, State.NONE, null, true, null);
+                Utility.removeFromParentView(view);
+                //create a new Scene instance to replace previous one
+                record.mScene = this.mBackStackList.createNewSceneInstance(mNavigationScene.requireActivity(), i, record, mNavigationScene.mRootSceneComponentFactory);
+            } else {
+                //skip because Scene is visible or disable restore
+            }
+        }
+    }
 }

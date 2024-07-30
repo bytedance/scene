@@ -1369,4 +1369,8 @@ class NavigationSceneManagerV1 implements INavigationManager{
     public void forceExecutePendingNavigationOperation() {
 
     }
+
+    public void recycleInvisibleScenes() {
+
+    }
 }
