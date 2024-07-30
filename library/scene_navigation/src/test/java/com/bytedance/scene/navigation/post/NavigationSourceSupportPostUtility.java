@@ -1,30 +1,25 @@
-package com.bytedance.scene.navigation;
+package com.bytedance.scene.navigation.post;
 
 import android.app.Activity;
 import android.os.Bundle;
 import android.widget.FrameLayout;
+
 import androidx.annotation.Nullable;
 import androidx.core.util.Pair;
-import com.bytedance.scene.*;
+
+import com.bytedance.scene.Scene;
+import com.bytedance.scene.SceneComponentFactory;
+import com.bytedance.scene.SceneGlobalConfig;
+import com.bytedance.scene.SceneLifecycleManager;
+import com.bytedance.scene.Scope;
 import com.bytedance.scene.animation.animatorexecutor.NoAnimationExecutor;
+import com.bytedance.scene.navigation.NavigationScene;
+import com.bytedance.scene.navigation.NavigationSceneOptions;
+
 import org.robolectric.Robolectric;
 import org.robolectric.android.controller.ActivityController;
 
-public class NavigationSourceUtility {
-    public static SceneDelegate createFromNavigationSceneUtility(final Scene rootScene) {
-        ActivityController<TestActivity> controller = Robolectric.buildActivity(TestActivity.class).create().start().resume();
-        TestActivity testActivity = controller.get();
-        return NavigationSceneUtility.setupWithActivity(testActivity, null, rootScene.getClass(), new SceneComponentFactory() {
-            @Override
-            public Scene instantiateScene(ClassLoader cl, String className, Bundle bundle) {
-                if (className.equals(rootScene.getClass().getName())) {
-                    return rootScene;
-                }
-                return null;
-            }
-        }, false);
-    }
-
+public class NavigationSourceSupportPostUtility {
     public static NavigationScene createFromSceneLifecycleManager(final Scene rootScene) {
         Pair<SceneLifecycleManager<NavigationScene>, NavigationScene> pair = createFromInitSceneLifecycleManager(rootScene);
         SceneLifecycleManager sceneLifecycleManager = pair.first;
@@ -38,7 +33,6 @@ public class NavigationSourceUtility {
         TestActivity testActivity = controller.get();
         NavigationScene navigationScene = new NavigationScene();
         NavigationSceneOptions options = new NavigationSceneOptions(rootScene.getClass());
-        SceneGlobalConfig.useActivityCompatibleLifecycleStrategy = true;
         options.setOnlyRestoreVisibleScene(true);
         options.setUsePostInLifecycle(true);
         navigationScene.setArguments(options.toBundle());
