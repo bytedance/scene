@@ -21,7 +21,6 @@ import android.view.MenuItem;
 import androidx.annotation.IdRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.collection.SparseArrayCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.viewpager.widget.ViewPager;
 
@@ -52,7 +51,7 @@ public class GroupSceneUIUtility {
         final List<String> menuIdList = new ArrayList<>();
         int menuSize = bottomNavigationView.getMenu().size();
         for (int i = 0; i < menuSize; i++) {
-            menuIdList.add("" + bottomNavigationView.getMenu().getItem(i).getItemId());
+            menuIdList.add(String.valueOf(bottomNavigationView.getMenu().getItem(i).getItemId()));
         }
 
         bottomNavigationView.setOnNavigationItemSelectedListener(
@@ -61,7 +60,7 @@ public class GroupSceneUIUtility {
                     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                         item.setChecked(true);
 
-                        String tag = "" + item.getItemId();
+                        String tag = String.valueOf(item.getItemId());
 
                         Scene scene = groupScene.findSceneByTag(tag);
                         if (scene == null) {
@@ -70,13 +69,13 @@ public class GroupSceneUIUtility {
 
                         if (!groupScene.isAdded(scene)) {
                             groupScene.add(containerId, scene, tag);
-                        } else if (!groupScene.isShow(scene)) {
+                        } else if (!groupScene.isShowing(scene)) {
                             groupScene.show(scene);
                         }
 
                         for (int i = 0; i < menuIdList.size(); i++) {
                             Scene otherScene = groupScene.findSceneByTag(menuIdList.get(i));
-                            if (otherScene != null && otherScene != scene && groupScene.isAdded(otherScene) && groupScene.isShow(otherScene)) {
+                            if (otherScene != null && otherScene != scene && groupScene.isAdded(otherScene) && groupScene.isShowing(otherScene)) {
                                 groupScene.hide(otherScene);
                             }
                         }
@@ -86,7 +85,7 @@ public class GroupSceneUIUtility {
                 });
 
         Map.Entry<Integer, Scene> firstItem = children.entrySet().iterator().next();
-        String tag = "" + firstItem.getKey();
+        String tag = String.valueOf(firstItem.getKey());
         Scene scene = groupScene.findSceneByTag(tag);
         if (scene == null) {
             scene = firstItem.getValue();
@@ -94,8 +93,15 @@ public class GroupSceneUIUtility {
 
         if (!groupScene.isAdded(scene)) {
             groupScene.add(containerId, scene, tag);
-        } else if (!groupScene.isShow(scene)) {
+        } else if (!groupScene.isShowing(scene)) {
             groupScene.show(scene);
+        }
+
+        for (int i = 0; i < menuIdList.size(); i++) {
+            Scene otherScene = groupScene.findSceneByTag(menuIdList.get(i));
+            if (otherScene != null && otherScene != scene && groupScene.isAdded(otherScene) && groupScene.isShowing(otherScene)) {
+                groupScene.hide(otherScene);
+            }
         }
 
         bottomNavigationView.getMenu().findItem(firstItem.getKey()).setChecked(true);
@@ -114,7 +120,7 @@ public class GroupSceneUIUtility {
         final List<String> menuIdList = new ArrayList<>();
         int menuSize = navigationView.getMenu().size();
         for (int i = 0; i < menuSize; i++) {
-            menuIdList.add("" + navigationView.getMenu().getItem(i).getItemId());
+            menuIdList.add(String.valueOf(navigationView.getMenu().getItem(i).getItemId()));
         }
 
         navigationView.setNavigationItemSelectedListener(
@@ -128,14 +134,10 @@ public class GroupSceneUIUtility {
                         Set<Integer> menuItemIdSet = children.keySet();
                         for (Integer menuItemId : menuItemIdSet) {
                             MenuItem menuItemById = menu.findItem(menuItemId);
-                            if (menuItemById == item) {
-                                menuItemById.setChecked(true);
-                            } else {
-                                menuItemById.setChecked(false);
-                            }
+                            menuItemById.setChecked(menuItemById == item);
                         }
                         drawerLayout.closeDrawer(navigationView);
-                        String tag = "" + item.getItemId();
+                        String tag = String.valueOf(item.getItemId());
 
                         Scene scene = groupScene.findSceneByTag(tag);
                         if (scene == null) {
@@ -144,13 +146,13 @@ public class GroupSceneUIUtility {
 
                         if (!groupScene.isAdded(scene)) {
                             groupScene.add(containerId, scene, tag);
-                        } else if (!groupScene.isShow(scene)) {
+                        } else if (!groupScene.isShowing(scene)) {
                             groupScene.show(scene);
                         }
 
                         for (int i = 0; i < menuIdList.size(); i++) {
                             Scene otherScene = groupScene.findSceneByTag(menuIdList.get(i));
-                            if (otherScene != null && otherScene != scene && groupScene.isAdded(otherScene) && groupScene.isShow(otherScene)) {
+                            if (otherScene != null && otherScene != scene && groupScene.isAdded(otherScene) && groupScene.isShowing(otherScene)) {
                                 groupScene.hide(otherScene);
                             }
                         }
@@ -158,7 +160,7 @@ public class GroupSceneUIUtility {
                     }
                 });
         Map.Entry<Integer, Scene> firstItem = children.entrySet().iterator().next();
-        String tag = "" + firstItem.getKey();
+        String tag = String.valueOf(firstItem.getKey());
         Scene scene = groupScene.findSceneByTag(tag);
         if (scene == null) {
             scene = firstItem.getValue();
@@ -166,9 +168,16 @@ public class GroupSceneUIUtility {
 
         if (!groupScene.isAdded(scene)) {
             groupScene.add(containerId, scene, tag);
-        } else if (!groupScene.isShow(scene)) {
+        } else if (!groupScene.isShowing(scene)) {
             groupScene.show(scene);
         }
+        for (int i = 0; i < menuIdList.size(); i++) {
+            Scene otherScene = groupScene.findSceneByTag(menuIdList.get(i));
+            if (otherScene != null && otherScene != scene && groupScene.isAdded(otherScene) && groupScene.isShowing(otherScene)) {
+                groupScene.hide(otherScene);
+            }
+        }
+
         MenuItem menuItem = navigationView.getMenu().findItem(firstItem.getKey());
         menuItem.setChecked(true);
         if (onNavigationItemSelectedListener != null) {
