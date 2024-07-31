@@ -76,6 +76,7 @@
     <string name="main_case_push_pop_in_lifecycle">Push or Pop in Lifecycle of Scene</string>
     <string name="main_case_add_remove_group_scene">Add/Remove GroupScene before adding to a Scene</string>
     <string name="main_case_push_pop_after_finish">Push/Pop after Activity Finished</string>
+    <string name="main_case_auto_recycle_scene_when_low_memory">Auto Recycle Invisible Scene when low memory</string>
 
     <string name="nav_single_top_btn_root">Click to push PushSingleTopScene_0</string>
     <string name="nav_single_top_btn_0">Click to push PushSingleTopScene_1</string>
@@ -177,6 +178,11 @@
     <string name="case_push_pop_lifecycle_btn_2">Pop during method onCreateView() of Scene</string>
     <string name="case_group_scene_btn_1">Create GroupScene and its Children first, then add it</string>
     <string name="case_group_scene_btn_2">Create GroupScene first, then Add/Remove by reusing</string>
+    <string name="case_auto_recycle_btn1">Update Memory Used</string>
+    <string name="case_auto_recycle_btn2">Open SecondScene</string>
+    <string name="case_auto_recycle_btn3">Open ThirdScene</string>
+    <string name="case_auto_recycle_btn4">Allocate Memory</string>
+    <string name="case_auto_recycle_memory_info">Memory Used: %1$d\nMemory Max: %2$dUsed/Max: %3$.3f</string>
 
     <string name="main_activity_btn_scene_get_activity_result">Scene get Activity result</string>
     <string name="main_activity_btn_activity_get_scene_result">Activity push Scene(with SceneContainerActivity) for result</string>

@@ -143,6 +143,7 @@
     <string name="main_case_push_pop_in_lifecycle">Scene 生命周期内又执行 Push/Pop</string>
     <string name="main_case_add_remove_group_scene">GroupScene 没添加到Scene之前就add/remove</string>
     <string name="main_case_push_pop_after_finish">Activity finish后立刻 Push/Pop</string>
+    <string name="main_case_auto_recycle_scene_when_low_memory">内存不足时自动回收不可见 Scene</string>
     <string name="main_case_push_many">同时 Push 100个</string>
     <string name="case_restore_tip">在开发者页面中打开不保留活动开关，在页面销毁和恢复后检查 Checkbox 的状态是否正常</string>
     <string name="case_restore_checkbox">请点击这个 Checkbox</string>
@@ -164,6 +165,11 @@
     <string name="case_push_pop_lifecycle_btn_2">Scene onCreateView 的时候执行 Pop</string>
     <string name="case_group_scene_btn_1">每次先生成GroupScene，添加Child后再添加进来</string>
     <string name="case_group_scene_btn_2">先生成GroupScene，复用反复删除添加</string>
+    <string name="case_auto_recycle_btn1">更新内存信息</string>
+    <string name="case_auto_recycle_btn2">跳转 SecondScene</string>
+    <string name="case_auto_recycle_btn3">跳转 ThirdScene</string>
+    <string name="case_auto_recycle_btn4">申请内存</string>
+    <string name="case_auto_recycle_memory_info">已使用：%1$d\n最大值：%2$d\n比值：%3$.3f</string>
     <string name="main_activity_btn_scene_get_activity_result">Scene拿Activity返回值</string>
     <string name="main_activity_btn_activity_get_scene_result">Activity 启动 Scene（托管到SceneContainerActivity）</string>
     <string name="patterns_scope">Scope</string>

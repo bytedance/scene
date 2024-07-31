@@ -33,6 +33,7 @@
         <activity android:name=".migrate.migrate_from_classic_activity_fragment.MigrateFromClassicAndroidActivitySamplesActivity" />
         <activity android:name=".migrate.GroupSceneBindToActivitySample" />
         <activity android:name=".migrate.GroupSceneBindToFragmentSample"/>
+        <activity android:name=".auto_recycle.AutoRecycleActivity" />
     </application>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 

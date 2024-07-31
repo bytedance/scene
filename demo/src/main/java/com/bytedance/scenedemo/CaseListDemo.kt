@@ -4,11 +4,11 @@ import com.bytedance.scene.group.UserVisibleHintGroupScene
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.os.Bundle
-import com.bytedance.scenedemo.R
 import android.content.Intent
 import android.view.View
 import android.widget.*
 import com.bytedance.scene.ktx.requireNavigationScene
+import com.bytedance.scenedemo.auto_recycle.AutoRecycleActivity
 import com.bytedance.scenedemo.restore.SupportRestoreActivity
 import com.bytedance.scenedemo.extreme_case.Case0Scene
 import com.bytedance.scenedemo.extreme_case.Case1Scene
@@ -16,6 +16,7 @@ import com.bytedance.scenedemo.extreme_case.Case2Scene
 import com.bytedance.scenedemo.extreme_case.Case3Scene
 import com.bytedance.scenedemo.extreme_case.Case4Scene
 import com.bytedance.scenedemo.extreme_case.Case5Scene
+import com.bytedance.scenedemo.utility.addClassPathTitle
 
 /**
  * Created by JiangQi on 8/21/18.
@@ -26,6 +27,7 @@ class CaseListDemo : UserVisibleHintGroupScene() {
         val layout = LinearLayout(activity)
         layout.orientation = LinearLayout.VERTICAL
         scrollView.addView(layout)
+        addClassPathTitle(layout)
         addSpace(layout, 12)
         addTitle(layout, getString(R.string.main_title_case))
         addButton(
@@ -67,6 +69,18 @@ class CaseListDemo : UserVisibleHintGroupScene() {
             requireActivity().finish()
             requireNavigationScene().push(Case0Scene.EmptyScene::class.java)
         })
+        addButton(
+            layout,
+            getString(R.string.main_case_auto_recycle_scene_when_low_memory),
+            View.OnClickListener {
+                requireNavigationScene().startActivity(
+                    Intent(
+                        requireActivity(),
+                        AutoRecycleActivity::class.java
+                    )
+                )
+            }
+        )
         addSpace(layout, 100)
         return scrollView
     }
