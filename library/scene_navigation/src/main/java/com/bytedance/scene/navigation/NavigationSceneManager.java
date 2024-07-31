@@ -69,7 +69,8 @@ import java.util.Set;
  * @hide
  */
 @RestrictTo(LIBRARY)
-public class NavigationSceneManager implements INavigationManager, NavigationManagerAbility{
+public class NavigationSceneManager implements INavigationManager, NavigationManagerAbility {
+    private static final String TAG = "NavigationSceneManager";
     public static final String TRACE_EXECUTE_OPERATION_TAG = "NavigationSceneManager#executeOperation";
     private static final String TRACE_EXECUTE_PENDING_OPERATION_TAG = "NavigationSceneManager#executePendingOperation";
 
@@ -300,17 +301,17 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
     };
 
     public void remove(@NonNull Scene scene) {
-        LoggerManager.getInstance().i("NavigationSceneManager", "remove " + scene);
+        LoggerManager.getInstance().i(TAG, "remove " + scene);
         scheduleToNextUIThreadLoop(new RemoveOperation(scene));
     }
 
     public void pop() {
-        LoggerManager.getInstance().i("NavigationSceneManager", "pop");
+        LoggerManager.getInstance().i(TAG, "pop");
         scheduleToNextUIThreadLoop(new PopOperation(null));
     }
 
     public void pop(PopOptions popOptions) {
-        LoggerManager.getInstance().i("NavigationSceneManager", "pop with PopOptions");
+        LoggerManager.getInstance().i(TAG, "pop with PopOptions");
         if (popOptions.isUsePost()) {
             scheduleToNextUIThreadLoop(new CoordinatePopOptionOperation(this, mSceneMessageQueue, popOptions));
         } else if (mActivityCompatibleLifecycleStrategyEnabled && popOptions.isUseActivityCompatibleLifecycle()) {
@@ -321,12 +322,12 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
     }
 
     public void popTo(Class<? extends Scene> clazz, NavigationAnimationExecutor animationFactory) {
-        LoggerManager.getInstance().i("NavigationSceneManager", "popTo " + clazz);
+        LoggerManager.getInstance().i(TAG, "popTo " + clazz);
         scheduleToNextUIThreadLoop(new PopToOperation(clazz, animationFactory));
     }
 
     public void popToRoot(NavigationAnimationExecutor animationFactory) {
-        LoggerManager.getInstance().i("NavigationSceneManager", "popToRoot");
+        LoggerManager.getInstance().i(TAG, "popToRoot");
         scheduleToNextUIThreadLoop(new PopToRootOperation(animationFactory));
     }
 
@@ -335,10 +336,10 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
             throw new NullPointerException("scene can't be null");
         }
         if (pushOptions.isUsePost()) {
-            LoggerManager.getInstance().i("NavigationSceneManager", "push " + scene.toString() + " by post");
+            LoggerManager.getInstance().i(TAG, "push " + scene.toString() + " by post");
             scheduleToNextUIThreadLoop(new CoordinatePushOptionOperation(this, mSceneMessageQueue, scene, pushOptions));
         } else {
-            LoggerManager.getInstance().i("NavigationSceneManager", "push " + scene.toString());
+            LoggerManager.getInstance().i(TAG, "push " + scene.toString());
             scheduleToNextUIThreadLoop(new PushOptionOperation(scene, pushOptions));
         }
     }
@@ -347,7 +348,7 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
         if (scene == null) {
             throw new NullPointerException("scene can't be null");
         }
-        LoggerManager.getInstance().i("NavigationSceneManager", "changeTranslucent " + scene.toString());
+        LoggerManager.getInstance().i(TAG, "changeTranslucent " + scene.toString());
         scheduleToNextUIThreadLoop(new TranslucentOperation(scene, translucent));
     }
 
@@ -357,7 +358,7 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
         if (this.mPendingActionList.size() == 0 || !canExecuteNavigationStackOperation()) {
             return;
         }
-        LoggerManager.getInstance().i("NavigationSceneManager", "executePendingOperation");
+        LoggerManager.getInstance().i(TAG, "executePendingOperation");
 
         this.mSceneMessageQueue.postSync(new Runnable() {
             @Override
@@ -1544,12 +1545,14 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
         if (!this.mOnlyRestoreVisibleScene) {
             return;
         }
+        LoggerManager.getInstance().i(TAG, "recycleInvisibleScenes");
         List<Record> recordList = this.mBackStackList.getCurrentRecordList();
         int size = recordList.size();
         for (int i = size - 1; i >= 0; i--) {
             Record record = recordList.get(i);
             Scene scene = record.mScene;
-            if ((scene.getState() == State.ACTIVITY_CREATED || scene.getState() == State.VIEW_CREATED) && scene.isSceneRestoreEnabled()) {
+            State sceneState = scene.getState();
+            if ((sceneState == State.ACTIVITY_CREATED || sceneState == State.VIEW_CREATED) && scene.isSceneRestoreEnabled()) {
                 Bundle sceneBundle = new Bundle();
                 scene.dispatchSaveInstanceState(sceneBundle);
                 record.mPreviousSavedState = sceneBundle;
@@ -1558,6 +1561,7 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
                 Utility.removeFromParentView(view);
                 //create a new Scene instance to replace previous one
                 record.mScene = this.mBackStackList.createNewSceneInstance(mNavigationScene.requireActivity(), i, record, mNavigationScene.mRootSceneComponentFactory);
+                LoggerManager.getInstance().i(TAG, "recycle scene " + scene + " " + sceneState.getName());
             } else {
                 //skip because Scene is visible or disable restore
             }

@@ -61,7 +61,8 @@ import java.util.Set;
  * 2023.11.7
  * default INavigationManager implementation
  */
-class NavigationSceneManagerV1 implements INavigationManager{
+class NavigationSceneManagerV1 implements INavigationManager {
+    private static final String TAG = "NavigationSceneManagerV1";
     private static final String TRACE_EXECUTE_OPERATION_TAG = "NavigationSceneManager#executeOperation";
     private static final String TRACE_EXECUTE_PENDING_OPERATION_TAG = "NavigationSceneManager#executePendingOperation";
 
@@ -231,17 +232,17 @@ class NavigationSceneManagerV1 implements INavigationManager{
     };
 
     public void remove(@NonNull Scene scene) {
-        LoggerManager.getInstance().i("NavigationSceneManager", "remove " + scene);
+        LoggerManager.getInstance().i(TAG, "remove " + scene);
         scheduleToNextUIThreadLoop(new RemoveOperation(scene));
     }
 
     public void pop() {
-        LoggerManager.getInstance().i("NavigationSceneManager", "pop");
+        LoggerManager.getInstance().i(TAG, "pop");
         scheduleToNextUIThreadLoop(new PopOperation(null));
     }
 
     public void pop(PopOptions popOptions) {
-        LoggerManager.getInstance().i("NavigationSceneManager", "pop with PopOptions");
+        LoggerManager.getInstance().i(TAG, "pop with PopOptions");
         if (mActivityCompatibleLifecycleStrategyEnabled && popOptions.isUseActivityCompatibleLifecycle()) {
             scheduleToNextUIThreadLoop(new PopOptionActivityCompatibleLifecycleOperation(popOptions));
         } else {
@@ -250,12 +251,12 @@ class NavigationSceneManagerV1 implements INavigationManager{
     }
 
     public void popTo(Class<? extends Scene> clazz, NavigationAnimationExecutor animationFactory) {
-        LoggerManager.getInstance().i("NavigationSceneManager", "popTo " + clazz);
+        LoggerManager.getInstance().i(TAG, "popTo " + clazz);
         scheduleToNextUIThreadLoop(new PopToOperation(clazz, animationFactory));
     }
 
     public void popToRoot(NavigationAnimationExecutor animationFactory) {
-        LoggerManager.getInstance().i("NavigationSceneManager", "popToRoot");
+        LoggerManager.getInstance().i(TAG, "popToRoot");
         scheduleToNextUIThreadLoop(new PopToRootOperation(animationFactory));
     }
 
@@ -263,7 +264,7 @@ class NavigationSceneManagerV1 implements INavigationManager{
         if (scene == null) {
             throw new NullPointerException("scene can't be null");
         }
-        LoggerManager.getInstance().i("NavigationSceneManager", "push " + scene.toString());
+        LoggerManager.getInstance().i(TAG, "push " + scene.toString());
         scheduleToNextUIThreadLoop(new PushOptionOperation(scene, pushOptions));
     }
 
@@ -271,7 +272,7 @@ class NavigationSceneManagerV1 implements INavigationManager{
         if (scene == null) {
             throw new NullPointerException("scene can't be null");
         }
-        LoggerManager.getInstance().i("NavigationSceneManager", "changeTranslucent " + scene.toString());
+        LoggerManager.getInstance().i(TAG, "changeTranslucent " + scene.toString());
         scheduleToNextUIThreadLoop(new TranslucentOperation(scene, translucent));
     }
 
@@ -281,7 +282,7 @@ class NavigationSceneManagerV1 implements INavigationManager{
         if (this.mPendingActionList.size() == 0 || !canExecuteNavigationStackOperation()) {
             return;
         }
-        LoggerManager.getInstance().i("NavigationSceneManager", "executePendingOperation");
+        LoggerManager.getInstance().i(TAG, "executePendingOperation");
 
         SceneTrace.beginSection(TRACE_EXECUTE_PENDING_OPERATION_TAG);
         /*
