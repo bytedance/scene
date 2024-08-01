@@ -92,6 +92,8 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
 
     private final boolean mOnlyRestoreVisibleScene;
 
+    private boolean mAnySceneStateChanged = false;
+
     private final NavigationMessageQueue mSceneMessageQueue = new NavigationMessageQueue();
 
     NavigationSceneManager(NavigationScene scene) {
@@ -212,6 +214,7 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
                             String suppressTag = beginSuppressStackOperation("NavigationManager execute operation by Handler.post()");
                             executeOperationSafely(operation, EMPTY_RUNNABLE);
                             endSuppressStackOperation(suppressTag);
+                            mAnySceneStateChanged = true;
                             SceneTrace.endSection();
                         } else {
                             mPendingActionList.addLast(operation);
@@ -229,6 +232,7 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
                         String suppressTag = beginSuppressStackOperation("NavigationManager execute operation directly");
                         executeOperationSafely(operation, EMPTY_RUNNABLE);
                         endSuppressStackOperation(suppressTag);
+                        mAnySceneStateChanged = true;
                         SceneTrace.endSection();
                     }
                 };
@@ -386,6 +390,7 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
                     throw new IllegalStateException("why mPendingActionList still have item?");
                 }
                 NavigationSceneManager.this.mLastPendingActionListItemTimestamp = -1L;
+                NavigationSceneManager.this.mAnySceneStateChanged = true;
                 SceneTrace.endSection();
             }
         });
@@ -1545,6 +1550,10 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
         if (!this.mOnlyRestoreVisibleScene) {
             return;
         }
+        if (!this.mAnySceneStateChanged) {
+            return;
+        }
+        this.mAnySceneStateChanged = false;
         LoggerManager.getInstance().i(TAG, "recycleInvisibleScenes");
         List<Record> recordList = this.mBackStackList.getCurrentRecordList();
         int size = recordList.size();

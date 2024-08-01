@@ -131,14 +131,10 @@ public final class NavigationScene extends Scene implements NavigationListener, 
 
     @Nullable
     private MemoryMonitor mMemoryMonitor;
-    private boolean mAnySceneStateChanged = false;
     private final Runnable mRecycleInvisibleScenesJob = new Runnable() {
         @Override
         public void run() {
-            if (mAnySceneStateChanged) {
-                mAnySceneStateChanged = false;
-                recycleInvisibleScenes();
-            }
+            recycleInvisibleScenes();
         }
     };
 
@@ -347,7 +343,6 @@ public final class NavigationScene extends Scene implements NavigationListener, 
 
         hideSoftInputIfNeeded();
         mNavigationSceneManager.push(scene, pushOptions);
-        mAnySceneStateChanged = true;
     }
 
     private void hideSoftInputIfNeeded() {
@@ -390,7 +385,6 @@ public final class NavigationScene extends Scene implements NavigationListener, 
         }
         hideSoftInputIfNeeded();
         mNavigationSceneManager.pop();
-        mAnySceneStateChanged = true;
     }
 
     /**
@@ -433,7 +427,6 @@ public final class NavigationScene extends Scene implements NavigationListener, 
         }
         hideSoftInputIfNeeded();
         mNavigationSceneManager.pop(popOptions);
-        mAnySceneStateChanged = true;
     }
 
     public void popTo(@NonNull Class<? extends Scene> clazz) {
@@ -448,7 +441,6 @@ public final class NavigationScene extends Scene implements NavigationListener, 
         }
         hideSoftInputIfNeeded();
         mNavigationSceneManager.popTo(clazz, animationFactory);
-        mAnySceneStateChanged = true;
     }
 
     public void popToRoot() {
@@ -462,7 +454,6 @@ public final class NavigationScene extends Scene implements NavigationListener, 
         }
         hideSoftInputIfNeeded();
         mNavigationSceneManager.popToRoot(animationFactory);
-        mAnySceneStateChanged = true;
     }
 
     public void remove(@NonNull Scene scene) {
@@ -475,7 +466,6 @@ public final class NavigationScene extends Scene implements NavigationListener, 
             hideSoftInputIfNeeded();
         }
         mNavigationSceneManager.remove(scene);
-        mAnySceneStateChanged = true;
     }
 
     public void requestDisableTouchEvent(boolean disable) {
@@ -735,7 +725,6 @@ public final class NavigationScene extends Scene implements NavigationListener, 
             throw new IllegalArgumentException("dispatchCurrentChildState can only call when state is VIEW_CREATED, ACTIVITY_CREATED, STARTED, RESUMED");
         }
         mNavigationSceneManager.dispatchCurrentChildState(state);
-        mAnySceneStateChanged = true;
     }
 
     /**
@@ -743,7 +732,6 @@ public final class NavigationScene extends Scene implements NavigationListener, 
      */
     private void dispatchChildrenState(@NonNull State state, boolean reverseOrder) {
         mNavigationSceneManager.dispatchChildrenState(state, reverseOrder);
-        mAnySceneStateChanged = true;
     }
 
     Record findRecordByScene(Scene scene) {
