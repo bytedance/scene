@@ -42,4 +42,6 @@ public interface NavigationManagerAbility {
     void restoreActivityStatus(ActivityStatusRecord activityStatusRecord);
 
     NavigationSceneManager.CancellationSignalManager getCancellationSignalManager();
+
+    void notifySceneStateChanged();
 }

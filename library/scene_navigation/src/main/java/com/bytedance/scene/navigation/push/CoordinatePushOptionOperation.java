@@ -83,6 +83,7 @@ public class CoordinatePushOptionOperation implements Operation {
                 String suppressTag = mManagerAbility.beginSuppressStackOperation("NavigationManager execute operation directly");
                 mManagerAbility.executeOperationSafely(stopPreviousSceneOperation, operationEndAction);
                 mManagerAbility.endSuppressStackOperation(suppressTag);
+                mManagerAbility.notifySceneStateChanged();
                 SceneTrace.endSection();
             }
         };

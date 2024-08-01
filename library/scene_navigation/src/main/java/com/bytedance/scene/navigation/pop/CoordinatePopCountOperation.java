@@ -103,6 +103,7 @@ public class CoordinatePopCountOperation implements Operation {
                 String suppressTag = mManagerAbility.beginSuppressStackOperation("NavigationManager execute operation directly");
                 mManagerAbility.executeOperationSafely(popDestroyOperation, operationEndAction);
                 mManagerAbility.endSuppressStackOperation(suppressTag);
+                mManagerAbility.notifySceneStateChanged();
                 SceneTrace.endSection();
             }
         };

@@ -1531,6 +1531,11 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
     }
 
     @Override
+    public void notifySceneStateChanged() {
+        this.mAnySceneStateChanged = true;
+    }
+
+    @Override
     public boolean isOnlyRestoreVisibleScene() {
         return this.mOnlyRestoreVisibleScene;
     }
