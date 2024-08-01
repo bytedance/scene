@@ -178,20 +178,20 @@ public abstract class Scene implements LifecycleOwner, SavedStateRegistryOwner, 
         State currentState = this.mState;
         if (state.value > currentState.value) {
             //when Scene enter, state +1
-            if ((state.value - currentState.value) != 1) {
+            if (currentState != State.NONE && (state.value - currentState.value) != 1) {
                 throw new SceneInternalException("Cant setState from " + currentState.name + " to " + state.name);
             }
         } else if (state.value < currentState.value) {
             //when Scene exit, state -1, except for from State.ACTIVITY_CREATED to State.NONE
             if (currentState == State.ACTIVITY_CREATED && state == State.NONE) {
                 //empty
-            } else if (state.value - currentState.value != -1) {
+            } else if (state != State.NONE && state.value - currentState.value != -1) {
                 throw new SceneInternalException("Cant setState from " + currentState.name + " to " + state.name);
             }
         }
 
         this.mState = state;
-        this.mStateHistoryBuilder.append(" - " + state.name);
+        this.mStateHistoryBuilder.append(" - ").append(state.name);
     }
 
     /** @hide */

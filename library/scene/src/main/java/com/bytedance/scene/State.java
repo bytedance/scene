@@ -30,10 +30,11 @@ import static androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP;
 @RestrictTo(LIBRARY_GROUP)
 public enum State {
     NONE(0, "NONE"),
-    VIEW_CREATED(1, "VIEW_CREATED"),
-    ACTIVITY_CREATED(2, "ACTIVITY_CREATED"),
-    STARTED(3, "STARTED"),
-    RESUMED(4, "RESUMED");
+    CREATED(1, "CREATED"),
+    VIEW_CREATED(2, "VIEW_CREATED"),
+    ACTIVITY_CREATED(3, "ACTIVITY_CREATED"),
+    STARTED(4, "STARTED"),
+    RESUMED(5, "RESUMED");
 
     public final int value;
     public final String name;
