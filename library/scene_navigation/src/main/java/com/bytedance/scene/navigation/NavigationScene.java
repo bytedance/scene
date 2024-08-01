@@ -235,6 +235,15 @@ public final class NavigationScene extends Scene implements NavigationListener, 
         return this.mSupportRestore;
     }
 
+    @RestrictTo(LIBRARY_GROUP)
+    public boolean isEnableAutoRecycleInvisibleScenes() {
+        if (this.mNavigationSceneOptions != null) {
+            float threshold = this.mNavigationSceneOptions.getAutoRecycleInvisibleSceneThreshold();
+            return threshold > 0 && threshold < 1;
+        }
+        return false;
+    }
+
     private void createRootSceneIfNeeded() {
         String clazzName = mNavigationSceneOptions.getRootSceneClassName();
         Bundle arguments = mNavigationSceneOptions.getRootSceneArguments();

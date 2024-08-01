@@ -57,6 +57,11 @@ public class PopDestroyOperation implements Operation {
             }
         }
 
+        // Ensure that the requesting Scene is correct
+        if (mCurrentRecord.mPushResultCallback != null && mNavigationScene.isEnableAutoRecycleInvisibleScenes()) {
+            mCurrentRecord.mPushResultCallback.onResult(mCurrentRecord.mPushResult);
+        }
+
         this.mManagerAbility.restoreActivityStatus(mReturnRecord.mActivityStatusRecord);
         this.mManagerAbility.getNavigationListener().navigationChange(mCurrentRecord.mScene, mReturnRecord.mScene, false);
 

@@ -44,7 +44,7 @@ public class PopResumeOperation implements Operation {
         }
 
         // Ensure that the requesting Scene is correct
-        if (currentRecord.mPushResultCallback != null) {
+        if (currentRecord.mPushResultCallback != null && !mNavigationScene.isEnableAutoRecycleInvisibleScenes()) {
             currentRecord.mPushResultCallback.onResult(currentRecord.mPushResult);
         }
 
