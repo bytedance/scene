@@ -1562,7 +1562,17 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
         LoggerManager.getInstance().i(TAG, "recycleInvisibleScenes");
         List<Record> recordList = this.mBackStackList.getCurrentRecordList();
         int size = recordList.size();
-        for (int i = size - 1; i >= 0; i--) {
+        int lastIndex = size - 1;
+        int firstOpaqueIndex = lastIndex;
+        for (int i = lastIndex; i >= 0; i--) {
+            Record record = recordList.get(i);
+            if (!record.mIsTranslucent) {
+                firstOpaqueIndex = i;
+                break;
+            }
+        }
+
+        for (int i = firstOpaqueIndex - 1; i >= 0; i--) {
             Record record = recordList.get(i);
             Scene scene = record.mScene;
             State sceneState = scene.getState();
