@@ -46,8 +46,11 @@ public abstract class SceneActivity extends AppCompatActivity {
         Bundle arguments = getHomeSceneArguments(getIntent());
         this.mDelegate = NavigationSceneUtility.setupWithActivity(this, getHomeSceneClass())
                 .rootSceneArguments(arguments)
+                .supportRestore(supportRestore())
                 .usePostInLifecycle(getUsePostInLifecycle())
-                .supportRestore(supportRestore()).build();
+                .onlyRestoreVisibleScene(true)
+                .separateCreateFromCreateView(true)
+                .build();
     }
 
     @Override
