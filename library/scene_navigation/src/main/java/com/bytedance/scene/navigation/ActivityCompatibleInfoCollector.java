@@ -7,6 +7,7 @@ import androidx.annotation.Nullable;
 import androidx.annotation.RestrictTo;
 
 import com.bytedance.scene.Scene;
+import com.bytedance.scene.interfaces.ActivityCompatibleBehavior;
 import com.bytedance.scene.utlity.ThreadUtility;
 
 import java.util.WeakHashMap;
@@ -31,6 +32,9 @@ public class ActivityCompatibleInfoCollector {
         if (scene == null) {
             throw new NullPointerException("Scene can't be null");
         }
+        if (!isTargetSceneType(scene)) {
+            return null;
+        }
         if (sSceneHolderWeakHashMap.size() == 0) {
             return null;
         }
@@ -39,10 +43,13 @@ public class ActivityCompatibleInfoCollector {
 
     @NonNull
     public static Holder getOrCreateHolder(@NonNull Scene scene) {
-        ThreadUtility.checkUIThread();
         if (scene == null) {
             throw new NullPointerException("Scene can't be null");
         }
+        if (!isTargetSceneType(scene)) {
+            throw new NullPointerException("Scene must implement ActivityCompatibleBehavior");
+        }
+        ThreadUtility.checkUIThread();
         Holder holder = sSceneHolderWeakHashMap.get(scene);
         if (holder == null) {
             holder = new Holder();
@@ -52,6 +59,9 @@ public class ActivityCompatibleInfoCollector {
     }
 
     public static void clearHolder(@NonNull Scene scene) {
+        if (!isTargetSceneType(scene)) {
+            return;
+        }
         ThreadUtility.checkUIThread();
         if (sSceneHolderWeakHashMap.size() > 0) {
             sSceneHolderWeakHashMap.remove(scene);
@@ -62,10 +72,17 @@ public class ActivityCompatibleInfoCollector {
         if (scene == null) {
             throw new NullPointerException("Scene can't be null");
         }
+        if (!isTargetSceneType(scene)) {
+            return false;
+        }
         if (sSceneHolderWeakHashMap.size() == 0) {
             return false;
         }
         Holder holder = sSceneHolderWeakHashMap.get(scene);
         return holder != null && holder.configChanges != null;
+    }
+
+    private static boolean isTargetSceneType(@NonNull Scene scene){
+        return scene instanceof ActivityCompatibleBehavior;
     }
 }
