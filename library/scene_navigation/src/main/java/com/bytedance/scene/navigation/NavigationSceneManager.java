@@ -77,9 +77,9 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
     public static final String TRACE_EXECUTE_OPERATION_TAG = "NavigationSceneManager#executeOperation";
     private static final String TRACE_EXECUTE_PENDING_OPERATION_TAG = "NavigationSceneManager#executePendingOperation";
 
-    private NavigationScene mNavigationScene;
+    private final NavigationScene mNavigationScene;
     private final RecordStack mBackStackList = new RecordStack();
-    private NavigationListener mNavigationListener;
+    private final NavigationListener mNavigationListener;
     private final AsyncHandler mHandler = new AsyncHandler(Looper.getMainLooper());
 
     /**
