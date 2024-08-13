@@ -45,6 +45,7 @@ import androidx.lifecycle.OnLifecycleEvent;
 import com.bytedance.scene.ActivityCompatibilityUtility;
 import com.bytedance.scene.Scene;
 import com.bytedance.scene.SceneComponentFactory;
+import com.bytedance.scene.SceneGlobalConfig;
 import com.bytedance.scene.SceneParent;
 import com.bytedance.scene.State;
 import com.bytedance.scene.SuppressOperationAware;
@@ -139,6 +140,8 @@ public final class NavigationScene extends Scene implements NavigationListener, 
     };
 
     private boolean mIsInitRootSceneOnCreate = false;
+
+    private final boolean mSceneLifecycleCallbackOpt = SceneGlobalConfig.sceneLifecycleCallbackObjectCreationOpt;
 
     @MainThread
     public void addNavigationListener(@NonNull final LifecycleOwner lifecycleOwner, @NonNull final NavigationListener listener) {
@@ -995,10 +998,14 @@ public final class NavigationScene extends Scene implements NavigationListener, 
     @Override
     public void dispatchOnPreSceneCreated(@NonNull Scene scene, @Nullable Bundle savedInstanceState, boolean directChild) {
         if (scene != this) {
-            List<NonNullPair<ChildSceneLifecycleCallbacks, Boolean>> list = new ArrayList<>(mLifecycleCallbacks);
-            for (NonNullPair<ChildSceneLifecycleCallbacks, Boolean> pair : list) {
-                if (directChild || pair.second) {
-                    pair.first.onPreSceneCreated(scene, savedInstanceState);
+            if (mSceneLifecycleCallbackOpt && mLifecycleCallbacks.size() == 0) {
+                //skip
+            } else {
+                List<NonNullPair<ChildSceneLifecycleCallbacks, Boolean>> list = new ArrayList<>(mLifecycleCallbacks);
+                for (NonNullPair<ChildSceneLifecycleCallbacks, Boolean> pair : list) {
+                    if (directChild || pair.second) {
+                        pair.first.onPreSceneCreated(scene, savedInstanceState);
+                    }
                 }
             }
         }
@@ -1012,10 +1019,14 @@ public final class NavigationScene extends Scene implements NavigationListener, 
     @Override
     public void dispatchOnPreSceneViewCreated(@NonNull Scene scene, @Nullable Bundle savedInstanceState, boolean directChild) {
         if (scene != this) {
-            List<NonNullPair<ChildSceneLifecycleCallbacks, Boolean>> list = new ArrayList<>(mLifecycleCallbacks);
-            for (NonNullPair<ChildSceneLifecycleCallbacks, Boolean> pair : list) {
-                if (directChild || pair.second) {
-                    pair.first.onPreSceneViewCreated(scene, savedInstanceState);
+            if (mSceneLifecycleCallbackOpt && mLifecycleCallbacks.size() == 0) {
+                //skip
+            } else {
+                List<NonNullPair<ChildSceneLifecycleCallbacks, Boolean>> list = new ArrayList<>(mLifecycleCallbacks);
+                for (NonNullPair<ChildSceneLifecycleCallbacks, Boolean> pair : list) {
+                    if (directChild || pair.second) {
+                        pair.first.onPreSceneViewCreated(scene, savedInstanceState);
+                    }
                 }
             }
         }
@@ -1029,10 +1040,14 @@ public final class NavigationScene extends Scene implements NavigationListener, 
     @Override
     public void dispatchOnPreSceneActivityCreated(@NonNull Scene scene, @Nullable Bundle savedInstanceState, boolean directChild) {
         if (scene != this) {
-            List<NonNullPair<ChildSceneLifecycleCallbacks, Boolean>> list = new ArrayList<>(mLifecycleCallbacks);
-            for (NonNullPair<ChildSceneLifecycleCallbacks, Boolean> pair : list) {
-                if (directChild || pair.second) {
-                    pair.first.onPreSceneActivityCreated(scene, savedInstanceState);
+            if (mSceneLifecycleCallbackOpt && mLifecycleCallbacks.size() == 0) {
+                //skip
+            } else {
+                List<NonNullPair<ChildSceneLifecycleCallbacks, Boolean>> list = new ArrayList<>(mLifecycleCallbacks);
+                for (NonNullPair<ChildSceneLifecycleCallbacks, Boolean> pair : list) {
+                    if (directChild || pair.second) {
+                        pair.first.onPreSceneActivityCreated(scene, savedInstanceState);
+                    }
                 }
             }
         }
@@ -1046,10 +1061,14 @@ public final class NavigationScene extends Scene implements NavigationListener, 
     @Override
     public void dispatchOnPreSceneStarted(@NonNull Scene scene, boolean directChild) {
         if (scene != this) {
-            List<NonNullPair<ChildSceneLifecycleCallbacks, Boolean>> list = new ArrayList<>(mLifecycleCallbacks);
-            for (NonNullPair<ChildSceneLifecycleCallbacks, Boolean> pair : list) {
-                if (directChild || pair.second) {
-                    pair.first.onPreSceneStarted(scene);
+            if (mSceneLifecycleCallbackOpt && mLifecycleCallbacks.size() == 0) {
+                //skip
+            } else {
+                List<NonNullPair<ChildSceneLifecycleCallbacks, Boolean>> list = new ArrayList<>(mLifecycleCallbacks);
+                for (NonNullPair<ChildSceneLifecycleCallbacks, Boolean> pair : list) {
+                    if (directChild || pair.second) {
+                        pair.first.onPreSceneStarted(scene);
+                    }
                 }
             }
         }
@@ -1063,10 +1082,14 @@ public final class NavigationScene extends Scene implements NavigationListener, 
     @Override
     public void dispatchOnPreSceneResumed(@NonNull Scene scene, boolean directChild) {
         if (scene != this) {
-            List<NonNullPair<ChildSceneLifecycleCallbacks, Boolean>> list = new ArrayList<>(mLifecycleCallbacks);
-            for (NonNullPair<ChildSceneLifecycleCallbacks, Boolean> pair : list) {
-                if (directChild || pair.second) {
-                    pair.first.onPreSceneResumed(scene);
+            if (mSceneLifecycleCallbackOpt && mLifecycleCallbacks.size() == 0) {
+                //skip
+            } else {
+                List<NonNullPair<ChildSceneLifecycleCallbacks, Boolean>> list = new ArrayList<>(mLifecycleCallbacks);
+                for (NonNullPair<ChildSceneLifecycleCallbacks, Boolean> pair : list) {
+                    if (directChild || pair.second) {
+                        pair.first.onPreSceneResumed(scene);
+                    }
                 }
             }
         }
@@ -1080,10 +1103,14 @@ public final class NavigationScene extends Scene implements NavigationListener, 
     @Override
     public void dispatchOnPreScenePaused(@NonNull Scene scene, boolean directChild) {
         if (scene != this) {
-            List<NonNullPair<ChildSceneLifecycleCallbacks, Boolean>> list = new ArrayList<>(mLifecycleCallbacks);
-            for (NonNullPair<ChildSceneLifecycleCallbacks, Boolean> pair : list) {
-                if (directChild || pair.second) {
-                    pair.first.onPreScenePaused(scene);
+            if (mSceneLifecycleCallbackOpt && mLifecycleCallbacks.size() == 0) {
+                //skip
+            } else {
+                List<NonNullPair<ChildSceneLifecycleCallbacks, Boolean>> list = new ArrayList<>(mLifecycleCallbacks);
+                for (NonNullPair<ChildSceneLifecycleCallbacks, Boolean> pair : list) {
+                    if (directChild || pair.second) {
+                        pair.first.onPreScenePaused(scene);
+                    }
                 }
             }
         }
@@ -1097,10 +1124,14 @@ public final class NavigationScene extends Scene implements NavigationListener, 
     @Override
     public void dispatchOnPreSceneStopped(@NonNull Scene scene, boolean directChild) {
         if (scene != this) {
-            List<NonNullPair<ChildSceneLifecycleCallbacks, Boolean>> list = new ArrayList<>(mLifecycleCallbacks);
-            for (NonNullPair<ChildSceneLifecycleCallbacks, Boolean> pair : list) {
-                if (directChild || pair.second) {
-                    pair.first.onPreSceneStopped(scene);
+            if (mSceneLifecycleCallbackOpt && mLifecycleCallbacks.size() == 0) {
+                //skip
+            } else {
+                List<NonNullPair<ChildSceneLifecycleCallbacks, Boolean>> list = new ArrayList<>(mLifecycleCallbacks);
+                for (NonNullPair<ChildSceneLifecycleCallbacks, Boolean> pair : list) {
+                    if (directChild || pair.second) {
+                        pair.first.onPreSceneStopped(scene);
+                    }
                 }
             }
         }
@@ -1114,10 +1145,14 @@ public final class NavigationScene extends Scene implements NavigationListener, 
     @Override
     public void dispatchOnPreSceneViewDestroyed(@NonNull Scene scene, boolean directChild) {
         if (scene != this) {
-            List<NonNullPair<ChildSceneLifecycleCallbacks, Boolean>> list = new ArrayList<>(mLifecycleCallbacks);
-            for (NonNullPair<ChildSceneLifecycleCallbacks, Boolean> pair : list) {
-                if (directChild || pair.second) {
-                    pair.first.onPreSceneViewDestroyed(scene);
+            if (mSceneLifecycleCallbackOpt && mLifecycleCallbacks.size() == 0) {
+                //skip
+            } else {
+                List<NonNullPair<ChildSceneLifecycleCallbacks, Boolean>> list = new ArrayList<>(mLifecycleCallbacks);
+                for (NonNullPair<ChildSceneLifecycleCallbacks, Boolean> pair : list) {
+                    if (directChild || pair.second) {
+                        pair.first.onPreSceneViewDestroyed(scene);
+                    }
                 }
             }
         }
@@ -1130,10 +1165,14 @@ public final class NavigationScene extends Scene implements NavigationListener, 
     @Override
     public void dispatchOnPreSceneDestroyed(@NonNull Scene scene, boolean directChild) {
         if (scene != this) {
-            List<NonNullPair<ChildSceneLifecycleCallbacks, Boolean>> list = new ArrayList<>(mLifecycleCallbacks);
-            for (NonNullPair<ChildSceneLifecycleCallbacks, Boolean> pair : list) {
-                if (directChild || pair.second) {
-                    pair.first.onPreSceneDestroyed(scene);
+            if (mSceneLifecycleCallbackOpt && mLifecycleCallbacks.size() == 0) {
+                //skip
+            } else {
+                List<NonNullPair<ChildSceneLifecycleCallbacks, Boolean>> list = new ArrayList<>(mLifecycleCallbacks);
+                for (NonNullPair<ChildSceneLifecycleCallbacks, Boolean> pair : list) {
+                    if (directChild || pair.second) {
+                        pair.first.onPreSceneDestroyed(scene);
+                    }
                 }
             }
         }
@@ -1147,10 +1186,14 @@ public final class NavigationScene extends Scene implements NavigationListener, 
     @Override
     public void dispatchOnPreSceneSaveInstanceState(@NonNull Scene scene, @NonNull Bundle outState, boolean directChild) {
         if (scene != this) {
-            List<NonNullPair<ChildSceneLifecycleCallbacks, Boolean>> list = new ArrayList<>(mLifecycleCallbacks);
-            for (NonNullPair<ChildSceneLifecycleCallbacks, Boolean> pair : list) {
-                if (directChild || pair.second) {
-                    pair.first.onPreSceneSaveInstanceState(scene, outState);
+            if (mSceneLifecycleCallbackOpt && mLifecycleCallbacks.size() == 0) {
+                //skip
+            } else {
+                List<NonNullPair<ChildSceneLifecycleCallbacks, Boolean>> list = new ArrayList<>(mLifecycleCallbacks);
+                for (NonNullPair<ChildSceneLifecycleCallbacks, Boolean> pair : list) {
+                    if (directChild || pair.second) {
+                        pair.first.onPreSceneSaveInstanceState(scene, outState);
+                    }
                 }
             }
         }
@@ -1164,10 +1207,14 @@ public final class NavigationScene extends Scene implements NavigationListener, 
     @Override
     public void dispatchOnSceneCreated(@NonNull Scene scene, @Nullable Bundle savedInstanceState, boolean directChild) {
         if (scene != this) {
-            List<NonNullPair<ChildSceneLifecycleCallbacks, Boolean>> list = new ArrayList<>(mLifecycleCallbacks);
-            for (NonNullPair<ChildSceneLifecycleCallbacks, Boolean> pair : list) {
-                if (directChild || pair.second) {
-                    pair.first.onSceneCreated(scene, savedInstanceState);
+            if (mSceneLifecycleCallbackOpt && mLifecycleCallbacks.size() == 0) {
+                //skip
+            } else {
+                List<NonNullPair<ChildSceneLifecycleCallbacks, Boolean>> list = new ArrayList<>(mLifecycleCallbacks);
+                for (NonNullPair<ChildSceneLifecycleCallbacks, Boolean> pair : list) {
+                    if (directChild || pair.second) {
+                        pair.first.onSceneCreated(scene, savedInstanceState);
+                    }
                 }
             }
         }
@@ -1182,10 +1229,14 @@ public final class NavigationScene extends Scene implements NavigationListener, 
     @Override
     public final void dispatchOnSceneViewCreated(@NonNull Scene scene, @Nullable Bundle savedInstanceState, boolean directChild) {
         if (scene != this) {
-            List<NonNullPair<ChildSceneLifecycleCallbacks, Boolean>> list = new ArrayList<>(mLifecycleCallbacks);
-            for (NonNullPair<ChildSceneLifecycleCallbacks, Boolean> pair : list) {
-                if (directChild || pair.second) {
-                    pair.first.onSceneViewCreated(scene, savedInstanceState);
+            if (mSceneLifecycleCallbackOpt && mLifecycleCallbacks.size() == 0) {
+                //skip
+            } else {
+                List<NonNullPair<ChildSceneLifecycleCallbacks, Boolean>> list = new ArrayList<>(mLifecycleCallbacks);
+                for (NonNullPair<ChildSceneLifecycleCallbacks, Boolean> pair : list) {
+                    if (directChild || pair.second) {
+                        pair.first.onSceneViewCreated(scene, savedInstanceState);
+                    }
                 }
             }
         }
@@ -1200,10 +1251,14 @@ public final class NavigationScene extends Scene implements NavigationListener, 
     @Override
     public void dispatchOnSceneActivityCreated(@NonNull Scene scene, @Nullable Bundle savedInstanceState, boolean directChild) {
         if (scene != this) {
-            List<NonNullPair<ChildSceneLifecycleCallbacks, Boolean>> list = new ArrayList<>(mLifecycleCallbacks);
-            for (NonNullPair<ChildSceneLifecycleCallbacks, Boolean> pair : list) {
-                if (directChild || pair.second) {
-                    pair.first.onSceneActivityCreated(scene, savedInstanceState);
+            if (mSceneLifecycleCallbackOpt && mLifecycleCallbacks.size() == 0) {
+                //skip
+            } else {
+                List<NonNullPair<ChildSceneLifecycleCallbacks, Boolean>> list = new ArrayList<>(mLifecycleCallbacks);
+                for (NonNullPair<ChildSceneLifecycleCallbacks, Boolean> pair : list) {
+                    if (directChild || pair.second) {
+                        pair.first.onSceneActivityCreated(scene, savedInstanceState);
+                    }
                 }
             }
         }
@@ -1217,10 +1272,14 @@ public final class NavigationScene extends Scene implements NavigationListener, 
     @Override
     public void dispatchOnSceneStarted(@NonNull Scene scene, boolean directChild) {
         if (scene != this) {
-            List<NonNullPair<ChildSceneLifecycleCallbacks, Boolean>> list = new ArrayList<>(mLifecycleCallbacks);
-            for (NonNullPair<ChildSceneLifecycleCallbacks, Boolean> pair : list) {
-                if (directChild || pair.second) {
-                    pair.first.onSceneStarted(scene);
+            if (mSceneLifecycleCallbackOpt && mLifecycleCallbacks.size() == 0) {
+                //skip
+            } else {
+                List<NonNullPair<ChildSceneLifecycleCallbacks, Boolean>> list = new ArrayList<>(mLifecycleCallbacks);
+                for (NonNullPair<ChildSceneLifecycleCallbacks, Boolean> pair : list) {
+                    if (directChild || pair.second) {
+                        pair.first.onSceneStarted(scene);
+                    }
                 }
             }
         }
@@ -1235,10 +1294,14 @@ public final class NavigationScene extends Scene implements NavigationListener, 
     @Override
     public void dispatchOnSceneResumed(@NonNull Scene scene, boolean directChild) {
         if (scene != this) {
-            List<NonNullPair<ChildSceneLifecycleCallbacks, Boolean>> list = new ArrayList<>(mLifecycleCallbacks);
-            for (NonNullPair<ChildSceneLifecycleCallbacks, Boolean> pair : list) {
-                if (directChild || pair.second) {
-                    pair.first.onSceneResumed(scene);
+            if (mSceneLifecycleCallbackOpt && mLifecycleCallbacks.size() == 0) {
+                //skip
+            } else {
+                List<NonNullPair<ChildSceneLifecycleCallbacks, Boolean>> list = new ArrayList<>(mLifecycleCallbacks);
+                for (NonNullPair<ChildSceneLifecycleCallbacks, Boolean> pair : list) {
+                    if (directChild || pair.second) {
+                        pair.first.onSceneResumed(scene);
+                    }
                 }
             }
         }
@@ -1253,10 +1316,14 @@ public final class NavigationScene extends Scene implements NavigationListener, 
     @Override
     public void dispatchOnSceneStopped(@NonNull Scene scene, boolean directChild) {
         if (scene != this) {
-            List<NonNullPair<ChildSceneLifecycleCallbacks, Boolean>> list = new ArrayList<>(mLifecycleCallbacks);
-            for (NonNullPair<ChildSceneLifecycleCallbacks, Boolean> pair : list) {
-                if (directChild || pair.second) {
-                    pair.first.onSceneStopped(scene);
+            if (mSceneLifecycleCallbackOpt && mLifecycleCallbacks.size() == 0) {
+                //skip
+            } else {
+                List<NonNullPair<ChildSceneLifecycleCallbacks, Boolean>> list = new ArrayList<>(mLifecycleCallbacks);
+                for (NonNullPair<ChildSceneLifecycleCallbacks, Boolean> pair : list) {
+                    if (directChild || pair.second) {
+                        pair.first.onSceneStopped(scene);
+                    }
                 }
             }
         }
@@ -1270,10 +1337,14 @@ public final class NavigationScene extends Scene implements NavigationListener, 
     @Override
     public void dispatchOnScenePaused(@NonNull Scene scene, boolean directChild) {
         if (scene != this) {
-            List<NonNullPair<ChildSceneLifecycleCallbacks, Boolean>> list = new ArrayList<>(mLifecycleCallbacks);
-            for (NonNullPair<ChildSceneLifecycleCallbacks, Boolean> pair : list) {
-                if (directChild || pair.second) {
-                    pair.first.onScenePaused(scene);
+            if (mSceneLifecycleCallbackOpt && mLifecycleCallbacks.size() == 0) {
+                //skip
+            } else {
+                List<NonNullPair<ChildSceneLifecycleCallbacks, Boolean>> list = new ArrayList<>(mLifecycleCallbacks);
+                for (NonNullPair<ChildSceneLifecycleCallbacks, Boolean> pair : list) {
+                    if (directChild || pair.second) {
+                        pair.first.onScenePaused(scene);
+                    }
                 }
             }
         }
@@ -1288,10 +1359,14 @@ public final class NavigationScene extends Scene implements NavigationListener, 
     @Override
     public void dispatchOnSceneSaveInstanceState(@NonNull Scene scene, @NonNull Bundle outState, boolean directChild) {
         if (scene != this) {
-            List<NonNullPair<ChildSceneLifecycleCallbacks, Boolean>> list = new ArrayList<>(mLifecycleCallbacks);
-            for (NonNullPair<ChildSceneLifecycleCallbacks, Boolean> pair : list) {
-                if (directChild || pair.second) {
-                    pair.first.onSceneSaveInstanceState(scene, outState);
+            if (mSceneLifecycleCallbackOpt && mLifecycleCallbacks.size() == 0) {
+                //skip
+            } else {
+                List<NonNullPair<ChildSceneLifecycleCallbacks, Boolean>> list = new ArrayList<>(mLifecycleCallbacks);
+                for (NonNullPair<ChildSceneLifecycleCallbacks, Boolean> pair : list) {
+                    if (directChild || pair.second) {
+                        pair.first.onSceneSaveInstanceState(scene, outState);
+                    }
                 }
             }
         }
@@ -1306,10 +1381,14 @@ public final class NavigationScene extends Scene implements NavigationListener, 
     @Override
     public void dispatchOnSceneViewDestroyed(@NonNull Scene scene, boolean directChild) {
         if (scene != this) {
-            List<NonNullPair<ChildSceneLifecycleCallbacks, Boolean>> list = new ArrayList<>(mLifecycleCallbacks);
-            for (NonNullPair<ChildSceneLifecycleCallbacks, Boolean> pair : list) {
-                if (directChild || pair.second) {
-                    pair.first.onSceneViewDestroyed(scene);
+            if (mSceneLifecycleCallbackOpt && mLifecycleCallbacks.size() == 0) {
+                //skip
+            } else {
+                List<NonNullPair<ChildSceneLifecycleCallbacks, Boolean>> list = new ArrayList<>(mLifecycleCallbacks);
+                for (NonNullPair<ChildSceneLifecycleCallbacks, Boolean> pair : list) {
+                    if (directChild || pair.second) {
+                        pair.first.onSceneViewDestroyed(scene);
+                    }
                 }
             }
         }
@@ -1324,10 +1403,14 @@ public final class NavigationScene extends Scene implements NavigationListener, 
     @Override
     public final void dispatchOnSceneDestroyed(@NonNull Scene scene, boolean directChild) {
         if (scene != this) {
-            List<NonNullPair<ChildSceneLifecycleCallbacks, Boolean>> list = new ArrayList<>(mLifecycleCallbacks);
-            for (NonNullPair<ChildSceneLifecycleCallbacks, Boolean> pair : list) {
-                if (directChild || pair.second) {
-                    pair.first.onSceneDestroyed(scene);
+            if (mSceneLifecycleCallbackOpt && mLifecycleCallbacks.size() == 0) {
+                //skip
+            } else {
+                List<NonNullPair<ChildSceneLifecycleCallbacks, Boolean>> list = new ArrayList<>(mLifecycleCallbacks);
+                for (NonNullPair<ChildSceneLifecycleCallbacks, Boolean> pair : list) {
+                    if (directChild || pair.second) {
+                        pair.first.onSceneDestroyed(scene);
+                    }
                 }
             }
         }

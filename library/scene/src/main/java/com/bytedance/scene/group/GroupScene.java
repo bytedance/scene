@@ -108,6 +108,8 @@ public abstract class GroupScene extends Scene implements SceneParent {
     private final List<NonNullPair<ChildSceneLifecycleCallbacks, Boolean>> mLifecycleCallbacks = new ArrayList<>();
     private boolean mSupportRestore = true;
 
+    private final boolean mSceneLifecycleCallbackObjectCreationOpt = SceneGlobalConfig.sceneLifecycleCallbackObjectCreationOpt;
+
     public GroupScene() {
         this.mGroupSceneManager = new GroupSceneManager(this);
     }
@@ -707,10 +709,14 @@ public abstract class GroupScene extends Scene implements SceneParent {
     @Override
     public void dispatchOnPreSceneCreated(@NonNull Scene scene, @Nullable Bundle savedInstanceState, boolean directChild) {
         if (scene != this) {
-            List<NonNullPair<ChildSceneLifecycleCallbacks, Boolean>> list = new ArrayList<>(mLifecycleCallbacks);
-            for (NonNullPair<ChildSceneLifecycleCallbacks, Boolean> pair : list) {
-                if (directChild || pair.second) {
-                    pair.first.onPreSceneCreated(scene, savedInstanceState);
+            if (mSceneLifecycleCallbackObjectCreationOpt && mLifecycleCallbacks.size() == 0) {
+                //skip
+            } else {
+                List<NonNullPair<ChildSceneLifecycleCallbacks, Boolean>> list = new ArrayList<>(mLifecycleCallbacks);
+                for (NonNullPair<ChildSceneLifecycleCallbacks, Boolean> pair : list) {
+                    if (directChild || pair.second) {
+                        pair.first.onPreSceneCreated(scene, savedInstanceState);
+                    }
                 }
             }
         }
@@ -724,10 +730,14 @@ public abstract class GroupScene extends Scene implements SceneParent {
     @Override
     public void dispatchOnPreSceneViewCreated(@NonNull Scene scene, @Nullable Bundle savedInstanceState, boolean directChild) {
         if (scene != this) {
-            List<NonNullPair<ChildSceneLifecycleCallbacks, Boolean>> list = new ArrayList<>(mLifecycleCallbacks);
-            for (NonNullPair<ChildSceneLifecycleCallbacks, Boolean> pair : list) {
-                if (directChild || pair.second) {
-                    pair.first.onPreSceneViewCreated(scene, savedInstanceState);
+            if (mSceneLifecycleCallbackObjectCreationOpt && mLifecycleCallbacks.size() == 0) {
+                //skip
+            } else {
+                List<NonNullPair<ChildSceneLifecycleCallbacks, Boolean>> list = new ArrayList<>(mLifecycleCallbacks);
+                for (NonNullPair<ChildSceneLifecycleCallbacks, Boolean> pair : list) {
+                    if (directChild || pair.second) {
+                        pair.first.onPreSceneViewCreated(scene, savedInstanceState);
+                    }
                 }
             }
         }
@@ -741,10 +751,14 @@ public abstract class GroupScene extends Scene implements SceneParent {
     @Override
     public void dispatchOnPreSceneActivityCreated(@NonNull Scene scene, @Nullable Bundle savedInstanceState, boolean directChild) {
         if (scene != this) {
-            List<NonNullPair<ChildSceneLifecycleCallbacks, Boolean>> list = new ArrayList<>(mLifecycleCallbacks);
-            for (NonNullPair<ChildSceneLifecycleCallbacks, Boolean> pair : list) {
-                if (directChild || pair.second) {
-                    pair.first.onPreSceneActivityCreated(scene, savedInstanceState);
+            if (mSceneLifecycleCallbackObjectCreationOpt && mLifecycleCallbacks.size() == 0) {
+                //skip
+            } else {
+                List<NonNullPair<ChildSceneLifecycleCallbacks, Boolean>> list = new ArrayList<>(mLifecycleCallbacks);
+                for (NonNullPair<ChildSceneLifecycleCallbacks, Boolean> pair : list) {
+                    if (directChild || pair.second) {
+                        pair.first.onPreSceneActivityCreated(scene, savedInstanceState);
+                    }
                 }
             }
         }
@@ -758,10 +772,14 @@ public abstract class GroupScene extends Scene implements SceneParent {
     @Override
     public void dispatchOnPreSceneStarted(@NonNull Scene scene, boolean directChild) {
         if (scene != this) {
-            List<NonNullPair<ChildSceneLifecycleCallbacks, Boolean>> list = new ArrayList<>(mLifecycleCallbacks);
-            for (NonNullPair<ChildSceneLifecycleCallbacks, Boolean> pair : list) {
-                if (directChild || pair.second) {
-                    pair.first.onPreSceneStarted(scene);
+            if (mSceneLifecycleCallbackObjectCreationOpt && mLifecycleCallbacks.size() == 0) {
+                //skip
+            } else {
+                List<NonNullPair<ChildSceneLifecycleCallbacks, Boolean>> list = new ArrayList<>(mLifecycleCallbacks);
+                for (NonNullPair<ChildSceneLifecycleCallbacks, Boolean> pair : list) {
+                    if (directChild || pair.second) {
+                        pair.first.onPreSceneStarted(scene);
+                    }
                 }
             }
         }
@@ -775,10 +793,14 @@ public abstract class GroupScene extends Scene implements SceneParent {
     @Override
     public void dispatchOnPreSceneResumed(@NonNull Scene scene, boolean directChild) {
         if (scene != this) {
-            List<NonNullPair<ChildSceneLifecycleCallbacks, Boolean>> list = new ArrayList<>(mLifecycleCallbacks);
-            for (NonNullPair<ChildSceneLifecycleCallbacks, Boolean> pair : list) {
-                if (directChild || pair.second) {
-                    pair.first.onPreSceneResumed(scene);
+            if (mSceneLifecycleCallbackObjectCreationOpt && mLifecycleCallbacks.size() == 0) {
+                //skip
+            } else {
+                List<NonNullPair<ChildSceneLifecycleCallbacks, Boolean>> list = new ArrayList<>(mLifecycleCallbacks);
+                for (NonNullPair<ChildSceneLifecycleCallbacks, Boolean> pair : list) {
+                    if (directChild || pair.second) {
+                        pair.first.onPreSceneResumed(scene);
+                    }
                 }
             }
         }
@@ -792,10 +814,14 @@ public abstract class GroupScene extends Scene implements SceneParent {
     @Override
     public void dispatchOnPreScenePaused(@NonNull Scene scene, boolean directChild) {
         if (scene != this) {
-            List<NonNullPair<ChildSceneLifecycleCallbacks, Boolean>> list = new ArrayList<>(mLifecycleCallbacks);
-            for (NonNullPair<ChildSceneLifecycleCallbacks, Boolean> pair : list) {
-                if (directChild || pair.second) {
-                    pair.first.onPreScenePaused(scene);
+            if (mSceneLifecycleCallbackObjectCreationOpt && mLifecycleCallbacks.size() == 0) {
+                //skip
+            } else {
+                List<NonNullPair<ChildSceneLifecycleCallbacks, Boolean>> list = new ArrayList<>(mLifecycleCallbacks);
+                for (NonNullPair<ChildSceneLifecycleCallbacks, Boolean> pair : list) {
+                    if (directChild || pair.second) {
+                        pair.first.onPreScenePaused(scene);
+                    }
                 }
             }
         }
@@ -809,10 +835,14 @@ public abstract class GroupScene extends Scene implements SceneParent {
     @Override
     public void dispatchOnPreSceneStopped(@NonNull Scene scene, boolean directChild) {
         if (scene != this) {
-            List<NonNullPair<ChildSceneLifecycleCallbacks, Boolean>> list = new ArrayList<>(mLifecycleCallbacks);
-            for (NonNullPair<ChildSceneLifecycleCallbacks, Boolean> pair : list) {
-                if (directChild || pair.second) {
-                    pair.first.onPreSceneStopped(scene);
+            if (mSceneLifecycleCallbackObjectCreationOpt && mLifecycleCallbacks.size() == 0) {
+                //skip
+            } else {
+                List<NonNullPair<ChildSceneLifecycleCallbacks, Boolean>> list = new ArrayList<>(mLifecycleCallbacks);
+                for (NonNullPair<ChildSceneLifecycleCallbacks, Boolean> pair : list) {
+                    if (directChild || pair.second) {
+                        pair.first.onPreSceneStopped(scene);
+                    }
                 }
             }
         }
@@ -826,10 +856,14 @@ public abstract class GroupScene extends Scene implements SceneParent {
     @Override
     public void dispatchOnPreSceneViewDestroyed(@NonNull Scene scene, boolean directChild) {
         if (scene != this) {
-            List<NonNullPair<ChildSceneLifecycleCallbacks, Boolean>> list = new ArrayList<>(mLifecycleCallbacks);
-            for (NonNullPair<ChildSceneLifecycleCallbacks, Boolean> pair : list) {
-                if (directChild || pair.second) {
-                    pair.first.onPreSceneViewDestroyed(scene);
+            if (mSceneLifecycleCallbackObjectCreationOpt && mLifecycleCallbacks.size() == 0) {
+                //skip
+            } else {
+                List<NonNullPair<ChildSceneLifecycleCallbacks, Boolean>> list = new ArrayList<>(mLifecycleCallbacks);
+                for (NonNullPair<ChildSceneLifecycleCallbacks, Boolean> pair : list) {
+                    if (directChild || pair.second) {
+                        pair.first.onPreSceneViewDestroyed(scene);
+                    }
                 }
             }
         }
@@ -843,10 +877,14 @@ public abstract class GroupScene extends Scene implements SceneParent {
     @Override
     public void dispatchOnPreSceneDestroyed(@NonNull Scene scene, boolean directChild) {
         if (scene != this) {
-            List<NonNullPair<ChildSceneLifecycleCallbacks, Boolean>> list = new ArrayList<>(mLifecycleCallbacks);
-            for (NonNullPair<ChildSceneLifecycleCallbacks, Boolean> pair : list) {
-                if (directChild || pair.second) {
-                    pair.first.onPreSceneDestroyed(scene);
+            if (mSceneLifecycleCallbackObjectCreationOpt && mLifecycleCallbacks.size() == 0) {
+                //skip
+            } else {
+                List<NonNullPair<ChildSceneLifecycleCallbacks, Boolean>> list = new ArrayList<>(mLifecycleCallbacks);
+                for (NonNullPair<ChildSceneLifecycleCallbacks, Boolean> pair : list) {
+                    if (directChild || pair.second) {
+                        pair.first.onPreSceneDestroyed(scene);
+                    }
                 }
             }
         }
@@ -860,10 +898,14 @@ public abstract class GroupScene extends Scene implements SceneParent {
     @Override
     public void dispatchOnPreSceneSaveInstanceState(@NonNull Scene scene, @NonNull Bundle outState, boolean directChild) {
         if (scene != this) {
-            List<NonNullPair<ChildSceneLifecycleCallbacks, Boolean>> list = new ArrayList<>(mLifecycleCallbacks);
-            for (NonNullPair<ChildSceneLifecycleCallbacks, Boolean> pair : list) {
-                if (directChild || pair.second) {
-                    pair.first.onPreSceneSaveInstanceState(scene, outState);
+            if (mSceneLifecycleCallbackObjectCreationOpt && mLifecycleCallbacks.size() == 0) {
+                //skip
+            } else {
+                List<NonNullPair<ChildSceneLifecycleCallbacks, Boolean>> list = new ArrayList<>(mLifecycleCallbacks);
+                for (NonNullPair<ChildSceneLifecycleCallbacks, Boolean> pair : list) {
+                    if (directChild || pair.second) {
+                        pair.first.onPreSceneSaveInstanceState(scene, outState);
+                    }
                 }
             }
         }
@@ -877,10 +919,14 @@ public abstract class GroupScene extends Scene implements SceneParent {
     @Override
     public final void dispatchOnSceneCreated(@NonNull Scene scene, @Nullable Bundle savedInstanceState, boolean directChild) {
         if (scene != this) {
-            List<NonNullPair<ChildSceneLifecycleCallbacks, Boolean>> list = new ArrayList<>(mLifecycleCallbacks);
-            for (NonNullPair<ChildSceneLifecycleCallbacks, Boolean> pair : list) {
-                if (directChild || pair.second) {
-                    pair.first.onSceneCreated(scene, savedInstanceState);
+            if (mSceneLifecycleCallbackObjectCreationOpt && mLifecycleCallbacks.size() == 0) {
+                //skip
+            } else {
+                List<NonNullPair<ChildSceneLifecycleCallbacks, Boolean>> list = new ArrayList<>(mLifecycleCallbacks);
+                for (NonNullPair<ChildSceneLifecycleCallbacks, Boolean> pair : list) {
+                    if (directChild || pair.second) {
+                        pair.first.onSceneCreated(scene, savedInstanceState);
+                    }
                 }
             }
         }
@@ -895,10 +941,14 @@ public abstract class GroupScene extends Scene implements SceneParent {
     @Override
     public final void dispatchOnSceneViewCreated(@NonNull Scene scene, @Nullable Bundle savedInstanceState, boolean directChild) {
         if (scene != this) {
-            List<NonNullPair<ChildSceneLifecycleCallbacks, Boolean>> list = new ArrayList<>(mLifecycleCallbacks);
-            for (NonNullPair<ChildSceneLifecycleCallbacks, Boolean> pair : list) {
-                if (directChild || pair.second) {
-                    pair.first.onSceneViewCreated(scene, savedInstanceState);
+            if (mSceneLifecycleCallbackObjectCreationOpt && mLifecycleCallbacks.size() == 0) {
+                //skip
+            } else {
+                List<NonNullPair<ChildSceneLifecycleCallbacks, Boolean>> list = new ArrayList<>(mLifecycleCallbacks);
+                for (NonNullPair<ChildSceneLifecycleCallbacks, Boolean> pair : list) {
+                    if (directChild || pair.second) {
+                        pair.first.onSceneViewCreated(scene, savedInstanceState);
+                    }
                 }
             }
         }
@@ -913,10 +963,14 @@ public abstract class GroupScene extends Scene implements SceneParent {
     @Override
     public final void dispatchOnSceneActivityCreated(@NonNull Scene scene, @Nullable Bundle savedInstanceState, boolean directChild) {
         if (scene != this) {
-            List<NonNullPair<ChildSceneLifecycleCallbacks, Boolean>> list = new ArrayList<>(mLifecycleCallbacks);
-            for (NonNullPair<ChildSceneLifecycleCallbacks, Boolean> pair : list) {
-                if (directChild || pair.second) {
-                    pair.first.onSceneActivityCreated(scene, savedInstanceState);
+            if (mSceneLifecycleCallbackObjectCreationOpt && mLifecycleCallbacks.size() == 0) {
+                //skip
+            } else {
+                List<NonNullPair<ChildSceneLifecycleCallbacks, Boolean>> list = new ArrayList<>(mLifecycleCallbacks);
+                for (NonNullPair<ChildSceneLifecycleCallbacks, Boolean> pair : list) {
+                    if (directChild || pair.second) {
+                        pair.first.onSceneActivityCreated(scene, savedInstanceState);
+                    }
                 }
             }
         }
@@ -931,10 +985,14 @@ public abstract class GroupScene extends Scene implements SceneParent {
     @Override
     public final void dispatchOnSceneStarted(@NonNull Scene scene, boolean directChild) {
         if (scene != this) {
-            List<NonNullPair<ChildSceneLifecycleCallbacks, Boolean>> list = new ArrayList<>(mLifecycleCallbacks);
-            for (NonNullPair<ChildSceneLifecycleCallbacks, Boolean> pair : list) {
-                if (directChild || pair.second) {
-                    pair.first.onSceneStarted(scene);
+            if (mSceneLifecycleCallbackObjectCreationOpt && mLifecycleCallbacks.size() == 0) {
+                //skip
+            } else {
+                List<NonNullPair<ChildSceneLifecycleCallbacks, Boolean>> list = new ArrayList<>(mLifecycleCallbacks);
+                for (NonNullPair<ChildSceneLifecycleCallbacks, Boolean> pair : list) {
+                    if (directChild || pair.second) {
+                        pair.first.onSceneStarted(scene);
+                    }
                 }
             }
         }
@@ -949,10 +1007,14 @@ public abstract class GroupScene extends Scene implements SceneParent {
     @Override
     public final void dispatchOnSceneResumed(@NonNull Scene scene, boolean directChild) {
         if (scene != this) {
-            List<NonNullPair<ChildSceneLifecycleCallbacks, Boolean>> list = new ArrayList<>(mLifecycleCallbacks);
-            for (NonNullPair<ChildSceneLifecycleCallbacks, Boolean> pair : list) {
-                if (directChild || pair.second) {
-                    pair.first.onSceneResumed(scene);
+            if (mSceneLifecycleCallbackObjectCreationOpt && mLifecycleCallbacks.size() == 0) {
+                //skip
+            } else {
+                List<NonNullPair<ChildSceneLifecycleCallbacks, Boolean>> list = new ArrayList<>(mLifecycleCallbacks);
+                for (NonNullPair<ChildSceneLifecycleCallbacks, Boolean> pair : list) {
+                    if (directChild || pair.second) {
+                        pair.first.onSceneResumed(scene);
+                    }
                 }
             }
         }
@@ -967,10 +1029,14 @@ public abstract class GroupScene extends Scene implements SceneParent {
     @Override
     public final void dispatchOnSceneStopped(@NonNull Scene scene, boolean directChild) {
         if (scene != this) {
-            List<NonNullPair<ChildSceneLifecycleCallbacks, Boolean>> list = new ArrayList<>(mLifecycleCallbacks);
-            for (NonNullPair<ChildSceneLifecycleCallbacks, Boolean> pair : list) {
-                if (directChild || pair.second) {
-                    pair.first.onSceneStopped(scene);
+            if (mSceneLifecycleCallbackObjectCreationOpt && mLifecycleCallbacks.size() == 0) {
+                //skip
+            } else {
+                List<NonNullPair<ChildSceneLifecycleCallbacks, Boolean>> list = new ArrayList<>(mLifecycleCallbacks);
+                for (NonNullPair<ChildSceneLifecycleCallbacks, Boolean> pair : list) {
+                    if (directChild || pair.second) {
+                        pair.first.onSceneStopped(scene);
+                    }
                 }
             }
         }
@@ -985,10 +1051,14 @@ public abstract class GroupScene extends Scene implements SceneParent {
     @Override
     public final void dispatchOnScenePaused(@NonNull Scene scene, boolean directChild) {
         if (scene != this) {
-            List<NonNullPair<ChildSceneLifecycleCallbacks, Boolean>> list = new ArrayList<>(mLifecycleCallbacks);
-            for (NonNullPair<ChildSceneLifecycleCallbacks, Boolean> pair : list) {
-                if (directChild || pair.second) {
-                    pair.first.onScenePaused(scene);
+            if (mSceneLifecycleCallbackObjectCreationOpt && mLifecycleCallbacks.size() == 0) {
+                //skip
+            } else {
+                List<NonNullPair<ChildSceneLifecycleCallbacks, Boolean>> list = new ArrayList<>(mLifecycleCallbacks);
+                for (NonNullPair<ChildSceneLifecycleCallbacks, Boolean> pair : list) {
+                    if (directChild || pair.second) {
+                        pair.first.onScenePaused(scene);
+                    }
                 }
             }
         }
@@ -1003,10 +1073,14 @@ public abstract class GroupScene extends Scene implements SceneParent {
     @Override
     public final void dispatchOnSceneSaveInstanceState(@NonNull Scene scene, @NonNull Bundle outState, boolean directChild) {
         if (scene != this) {
-            List<NonNullPair<ChildSceneLifecycleCallbacks, Boolean>> list = new ArrayList<>(mLifecycleCallbacks);
-            for (NonNullPair<ChildSceneLifecycleCallbacks, Boolean> pair : list) {
-                if (directChild || pair.second) {
-                    pair.first.onSceneSaveInstanceState(scene, outState);
+            if (mSceneLifecycleCallbackObjectCreationOpt && mLifecycleCallbacks.size() == 0) {
+                //skip
+            } else {
+                List<NonNullPair<ChildSceneLifecycleCallbacks, Boolean>> list = new ArrayList<>(mLifecycleCallbacks);
+                for (NonNullPair<ChildSceneLifecycleCallbacks, Boolean> pair : list) {
+                    if (directChild || pair.second) {
+                        pair.first.onSceneSaveInstanceState(scene, outState);
+                    }
                 }
             }
         }
@@ -1021,10 +1095,14 @@ public abstract class GroupScene extends Scene implements SceneParent {
     @Override
     public final void dispatchOnSceneViewDestroyed(@NonNull Scene scene, boolean directChild) {
         if (scene != this) {
-            List<NonNullPair<ChildSceneLifecycleCallbacks, Boolean>> list = new ArrayList<>(mLifecycleCallbacks);
-            for (NonNullPair<ChildSceneLifecycleCallbacks, Boolean> pair : list) {
-                if (directChild || pair.second) {
-                    pair.first.onSceneViewDestroyed(scene);
+            if (mSceneLifecycleCallbackObjectCreationOpt && mLifecycleCallbacks.size() == 0) {
+                //skip
+            } else {
+                List<NonNullPair<ChildSceneLifecycleCallbacks, Boolean>> list = new ArrayList<>(mLifecycleCallbacks);
+                for (NonNullPair<ChildSceneLifecycleCallbacks, Boolean> pair : list) {
+                    if (directChild || pair.second) {
+                        pair.first.onSceneViewDestroyed(scene);
+                    }
                 }
             }
         }
@@ -1039,10 +1117,14 @@ public abstract class GroupScene extends Scene implements SceneParent {
     @Override
     public final void dispatchOnSceneDestroyed(@NonNull Scene scene, boolean directChild) {
         if (scene != this) {
-            List<NonNullPair<ChildSceneLifecycleCallbacks, Boolean>> list = new ArrayList<>(mLifecycleCallbacks);
-            for (NonNullPair<ChildSceneLifecycleCallbacks, Boolean> pair : list) {
-                if (directChild || pair.second) {
-                    pair.first.onSceneDestroyed(scene);
+            if (mSceneLifecycleCallbackObjectCreationOpt && mLifecycleCallbacks.size() == 0) {
+                //skip
+            } else {
+                List<NonNullPair<ChildSceneLifecycleCallbacks, Boolean>> list = new ArrayList<>(mLifecycleCallbacks);
+                for (NonNullPair<ChildSceneLifecycleCallbacks, Boolean> pair : list) {
+                    if (directChild || pair.second) {
+                        pair.first.onSceneDestroyed(scene);
+                    }
                 }
             }
         }
