@@ -34,6 +34,10 @@ public class NavigationSourceUtility {
     }
 
     public static Pair<SceneLifecycleManager<NavigationScene>, NavigationScene> createFromInitSceneLifecycleManager(final Scene rootScene) {
+        return createFromInitSceneLifecycleManager(rootScene, false);
+    }
+
+    public static Pair<SceneLifecycleManager<NavigationScene>, NavigationScene> createFromInitSceneLifecycleManager(final Scene rootScene, boolean separateCreate) {
         ActivityController<TestActivity> controller = Robolectric.buildActivity(TestActivity.class).create().start().resume();
         TestActivity testActivity = controller.get();
         NavigationScene navigationScene = new NavigationScene();
@@ -41,6 +45,7 @@ public class NavigationSourceUtility {
         SceneGlobalConfig.useActivityCompatibleLifecycleStrategy = true;
         options.setOnlyRestoreVisibleScene(true);
         options.setUsePostInLifecycle(true);
+        navigationScene.setSeparateCreateFromCreateView(separateCreate);
         navigationScene.setArguments(options.toBundle());
 
         Scope.RootScopeFactory rootScopeFactory = new Scope.RootScopeFactory() {

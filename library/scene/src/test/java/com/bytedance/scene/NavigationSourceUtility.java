@@ -27,15 +27,19 @@ public class NavigationSourceUtility {
 
     public static Pair<SceneLifecycleManager<GroupScene>, GroupScene> createFromSceneLifecycleManagerWithManager(final Scene childScene) {
         Pair<SceneLifecycleManager<GroupScene>, GroupScene> pair = createFromInitSceneLifecycleManager(childScene);
-        SceneLifecycleManager<GroupScene> sceneLifecycleManager = pair.first;
         return pair;
     }
 
     public static Pair<SceneLifecycleManager<GroupScene>, GroupScene> createFromInitSceneLifecycleManager(final Scene childScene) {
+        return createFromInitSceneLifecycleManager(childScene, false);
+    }
+
+    public static Pair<SceneLifecycleManager<GroupScene>, GroupScene> createFromInitSceneLifecycleManager(final Scene childScene, boolean separateCreate) {
         ActivityController<TestActivity> controller = Robolectric.buildActivity(TestActivity.class).create().start().resume();
         TestActivity testActivity = controller.get();
         TestGroupScene groupScene = new TestGroupScene();
         groupScene.disableSupportRestore();
+        groupScene.setSeparateCreateFromCreateView(separateCreate);
 
         Scope.RootScopeFactory rootScopeFactory = new Scope.RootScopeFactory() {
             @Override

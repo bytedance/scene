@@ -23,6 +23,7 @@ dependencies {
 
     testImplementation ROBOLECTRIC
     testImplementation JUNIT
+    testImplementation project(':library:scene')
     testAnnotationProcessor AUTO_SERVICE
     testCompileOnly AUTO_SERVICE
     testImplementation TRUCH
