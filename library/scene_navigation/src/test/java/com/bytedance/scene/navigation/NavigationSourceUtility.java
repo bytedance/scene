@@ -22,7 +22,7 @@ public class NavigationSourceUtility {
                 }
                 return null;
             }
-        }, false);
+        }, false, false);
     }
 
     public static NavigationScene createFromSceneLifecycleManager(final Scene rootScene) {
