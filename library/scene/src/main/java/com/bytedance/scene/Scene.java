@@ -538,6 +538,7 @@ public abstract class Scene implements LifecycleOwner, SavedStateRegistryOwner, 
                     + " did not call through to super.onSaveInstanceState()");
         }
         mSavedStateRegistryController.performSave(outState);
+        dispatchOnSceneSaveInstanceState(this, outState, false);
     }
 
     /** @hide */
@@ -1014,8 +1015,6 @@ public abstract class Scene implements LifecycleOwner, SavedStateRegistryOwner, 
         if (focusedView != null && focusedView.getId() != View.NO_ID) {
             outState.putInt(ParcelConstants.KEY_SCENE_FOCUSED_ID_TAG, focusedView.getId());
         }
-
-        dispatchOnSceneSaveInstanceState(this, outState, false);
     }
 
     @MainThread
