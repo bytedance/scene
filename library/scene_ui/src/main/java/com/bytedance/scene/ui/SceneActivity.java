@@ -44,6 +44,7 @@ public abstract class SceneActivity extends AppCompatActivity {
         Bundle arguments = getHomeSceneArguments(getIntent());
         this.mDelegate = NavigationSceneUtility.setupWithActivity(this, getHomeSceneClass())
                 .rootSceneArguments(arguments)
+                .usePostInLifecycle(getUsePostInLifecycle())
                 .supportRestore(supportRestore()).build();
     }
 
@@ -52,6 +53,10 @@ public abstract class SceneActivity extends AppCompatActivity {
         if (!this.mDelegate.onBackPressed()) {
             super.onBackPressed();
         }
+    }
+
+    protected boolean getUsePostInLifecycle() {
+        return true;
     }
 
     @NonNull
