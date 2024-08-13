@@ -46,7 +46,6 @@ import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleObserver;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.LifecycleRegistry;
-import androidx.lifecycle.SceneViewModelStore;
 import androidx.lifecycle.ViewModelStore;
 import androidx.lifecycle.ViewModelStoreOwner;
 import androidx.lifecycle.ViewTreeLifecycleOwner;
@@ -635,11 +634,6 @@ public abstract class Scene implements LifecycleOwner, SavedStateRegistryOwner, 
                 this.viewModelStore.clear();
                 this.viewModelStore = null;
             }
-
-            if (this.sceneVModelStore != null) {
-                this.sceneVModelStore.clear();
-                this.sceneVModelStore = null;
-            }
         }
         this.mScope = null;
         // Must be called last, in case someone do add in onDestroy/onDetach
@@ -1126,8 +1120,6 @@ public abstract class Scene implements LifecycleOwner, SavedStateRegistryOwner, 
     }
 
     private ViewModelStore viewModelStore;
-    private SceneViewModelStore sceneVModelStore;
-
     private final boolean createSceneViewModelStoreBySceneSelf = SceneGlobalConfig.createSceneViewModelStoreBySceneSelf;
     private final boolean validateScopeAndViewModelStoreSceneClassStrategy = SceneGlobalConfig.validateScopeAndViewModelStoreSceneClassStrategy;
 
@@ -1167,15 +1159,6 @@ public abstract class Scene implements LifecycleOwner, SavedStateRegistryOwner, 
             }
             return viewModelStoreHolder.get();
         }
-    }
-
-    @MainThread
-    @NonNull
-    public synchronized final SceneViewModelStore getSceneViewModelStore() {
-        if (sceneVModelStore == null) {
-            sceneVModelStore = new SceneViewModelStore();
-        }
-        return sceneVModelStore;
     }
 
     private static class ViewModelStoreHolder implements Scope.Scoped {

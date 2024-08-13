@@ -22,7 +22,6 @@ import android.app.Application;
 
 import androidx.annotation.MainThread;
 import androidx.annotation.NonNull;
-import androidx.lifecycle.SceneViewModelProvider;
 import androidx.lifecycle.ViewModelProvider;
 
 public class SceneViewModelProviders {
@@ -63,13 +62,5 @@ public class SceneViewModelProviders {
     @MainThread
     public static ViewModelProvider of(@NonNull Scene scene, @NonNull ViewModelProvider.Factory factory) {
         return new ViewModelProvider(scene.getViewModelStore(), factory);
-    }
-
-    @MainThread
-    public static SceneViewModelProvider of2(@NonNull Scene scene) {
-        SceneViewModelProvider.AndroidViewModelFactory factory =
-                SceneViewModelProvider.AndroidViewModelFactory.getInstance(
-                        checkApplication(checkActivity(scene)));
-        return new SceneViewModelProvider(scene.getSceneViewModelStore(), factory);
     }
 }
