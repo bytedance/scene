@@ -20,6 +20,7 @@
     <string name="main_title_todo">未完成</string>
     <string name="main_nav_btn_clear_task">Push 时清空 Task</string>
     <string name="main_nav_btn_remove">移除中间任意的 Scene</string>
+    <string name="main_nav_btn_recreate">重建 Scene</string>
     <string name="main_nav_btn_single_top">Push 的 SingleTop 用法</string>
     <string name="main_nav_btn_single_task">Push 的 SingleTask 用法</string>
     <string name="main_nav_btn_push_pop">Push 和 Pop</string>

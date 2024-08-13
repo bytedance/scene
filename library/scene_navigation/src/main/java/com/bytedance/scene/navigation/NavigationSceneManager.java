@@ -54,6 +54,7 @@ import com.bytedance.scene.utlity.CancellationSignalList;
 import com.bytedance.scene.utlity.NavigationSceneViewUtility;
 import com.bytedance.scene.utlity.NonNullPair;
 import com.bytedance.scene.utlity.Predicate;
+import com.bytedance.scene.utlity.SceneInstanceUtility;
 import com.bytedance.scene.utlity.SceneInternalException;
 import com.bytedance.scene.utlity.Utility;
 
@@ -375,6 +376,15 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
             LoggerManager.getInstance().i(TAG, "push " + scene.toString());
             scheduleToNextUIThreadLoop(new PushOptionOperation(scene, pushOptions));
         }
+    }
+
+    @Override
+    public void recreate(@NonNull Scene scene) {
+        if (scene == null) {
+            throw new NullPointerException("scene can't be null");
+        }
+        LoggerManager.getInstance().i(TAG, "recreate " + scene.toString());
+        scheduleToNextUIThreadLoop(new RecreateOperation(scene));
     }
 
     public void changeTranslucent(@NonNull final Scene scene, boolean translucent) {
@@ -1508,7 +1518,6 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
              *       Because of the destruction restore, it is impossible to go directly to RESUMED
              */
             moveState(mNavigationScene, scene, mNavigationScene.getState(), null, false, null);
-
             mNavigationListener.navigationChange(currentRecord != null ? currentRecord.mScene : null, scene, true);
 
             //Navigation animation only execute when NavigationScene is visible, otherwise skip
@@ -1554,6 +1563,51 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
             } else {
                 operationEndAction.run();
             }
+        }
+    }
+
+    private class RecreateOperation implements Operation {
+        private final Scene scene;
+
+        private RecreateOperation(@NonNull Scene scene) {
+            this.scene = scene;
+        }
+
+        @Override
+        public void execute(Runnable operationEndAction) {
+            if (this.scene.getState() == State.NONE) {
+                //Target scene is destroyed, skip
+                operationEndAction.run();
+                return;
+            }
+
+            if (!scene.isSceneRestoreEnabled()) {
+                throw new IllegalArgumentException("Scene " + scene.getClass().getName() + " don't support restore, so it can't use recreate");
+            }
+            if (!SceneInstanceUtility.isConstructorMethodSupportRestore(scene)) {
+                throw new IllegalArgumentException("Scene " + scene.getClass().getName() + " must be a public class or public static class, " +
+                        "and have only one parameterless constructor to be properly recreated.");
+            }
+
+            Record record = mBackStackList.getRecordByScene(this.scene);
+            State targetState = this.scene.getState();
+
+            LoggerManager.getInstance().i(TAG, "RecreateOperation current Scene save latest data, current Scene instance " + scene.toString());
+
+            Bundle savedInstanceState = new Bundle();
+            this.scene.dispatchSaveInstanceState(savedInstanceState);
+
+            LoggerManager.getInstance().i(TAG, "RecreateOperation current Scene destroy itself, current Scene instance " + scene.toString());
+            moveState(mNavigationScene, this.scene, State.NONE, null, false, null);
+
+            Class<?> sceneClass = scene.getClass();
+            Scene newSceneInstance = SceneInstanceUtility.getInstanceFromClass(sceneClass, null);
+            record.mScene = newSceneInstance;
+
+            LoggerManager.getInstance().i(TAG, "RecreateOperation new created Scene restore from previous data, new Scene instance " + newSceneInstance.toString());
+            moveState(mNavigationScene, newSceneInstance, targetState, savedInstanceState, false, null);
+
+            operationEndAction.run();
         }
     }
 

@@ -17,6 +17,7 @@ import com.bytedance.scenedemo.navigation.push_pop.PushPopBasicUsageDemoScene
 import com.bytedance.scenedemo.navigation.push_pop_with_post.PushPopWithPostBasicUsageDemoScene
 import com.bytedance.scenedemo.navigation.push_singletop.PushSingleTopRootScene
 import com.bytedance.scenedemo.navigation.pushandclear.PushClearTaskScene
+import com.bytedance.scenedemo.navigation.recreate.RecreateUsageDemoScene
 import com.bytedance.scenedemo.navigation.remove.RemoveDemoScene
 import com.bytedance.scenedemo.navigation.reuse.ReuseDemoScene
 import com.bytedance.scenedemo.navigation.singletask.SingleTaskDemoScene
@@ -68,6 +69,10 @@ class NavigationListDemo : UserVisibleHintGroupScene() {
 
         addButton(layout, getString(R.string.main_nav_btn_remove), View.OnClickListener {
             requireNavigationScene().push(RemoveDemoScene())
+        })
+
+        addButton(layout, getString(R.string.main_nav_btn_recreate), View.OnClickListener {
+            requireNavigationScene().push(RecreateUsageDemoScene())
         })
 
         addTitle(layout, getString(R.string.main_title_pro));

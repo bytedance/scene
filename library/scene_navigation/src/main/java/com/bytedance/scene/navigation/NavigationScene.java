@@ -367,6 +367,39 @@ public final class NavigationScene extends Scene implements NavigationListener, 
         mNavigationSceneManager.push(scene, pushOptions);
     }
 
+    /**
+     * @hide
+     */
+    @RestrictTo(LIBRARY_GROUP)
+    public void recreate(@NonNull Scene scene) {
+        ThreadUtility.checkUIThread();
+
+        if (!Utility.isActivityStatusValid(getActivity())) {
+            return;
+        }
+
+        if (scene == null) {
+            throw new NullPointerException("scene can't be null");
+        }
+
+        if (scene.getState() == State.NONE) {
+            return;
+        }
+
+        if (scene.getParentScene() != this) {
+            throw new IllegalArgumentException("Scene " + scene.getClass().getName() + " parent is incorrect");
+        }
+
+        if (!scene.isSceneRestoreEnabled()) {
+            throw new IllegalArgumentException("Scene " + scene.getClass().getName() + " don't support restore, so it can't use recreate");
+        }
+        if (!SceneInstanceUtility.isConstructorMethodSupportRestore(scene)) {
+            throw new IllegalArgumentException("Scene " + scene.getClass().getName() + " must be a public class or public static class, " +
+                    "and have only one parameterless constructor to be properly recreated.");
+        }
+        mNavigationSceneManager.recreate(scene);
+    }
+
     private void hideSoftInputIfNeeded() {
         Scene currentScene = mNavigationSceneManager.getCurrentScene();
         if (currentScene != null) {

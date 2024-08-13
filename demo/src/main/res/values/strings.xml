@@ -29,6 +29,7 @@
     <string name="main_nav_btn_single_top">Push with SingleTop</string>
     <string name="main_nav_btn_single_task">Push with SingleTask</string>
     <string name="main_nav_btn_remove">Remove any Scene in Stack</string>
+    <string name="main_nav_btn_recreate">Recreate any Scene</string>
     <string name="main_nav_btn_clear_task">Push with ClearTask</string>
     <string name="main_nav_btn_clear_current">Push and Clear Current</string>
     <string name="main_nav_btn_pop_to">PopTo</string>

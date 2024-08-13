@@ -54,6 +54,8 @@ public interface INavigationManager {
 
     public void push(@NonNull final Scene scene, @NonNull PushOptions pushOptions);
 
+    public void recreate(@NonNull Scene scene);
+
     public void changeTranslucent(@NonNull final Scene scene, boolean translucent);
 
     public void executePendingOperation();

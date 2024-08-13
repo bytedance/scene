@@ -273,6 +273,11 @@ class NavigationSceneManagerV1 implements INavigationManager {
         scheduleToNextUIThreadLoop(new PushOptionOperation(scene, pushOptions));
     }
 
+    @Override
+    public void recreate(@NonNull Scene scene) {
+        throw new IllegalStateException("recreate is not supported");
+    }
+
     public void changeTranslucent(@NonNull final Scene scene, boolean translucent) {
         if (scene == null) {
             throw new NullPointerException("scene can't be null");
