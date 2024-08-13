@@ -46,6 +46,7 @@ public class SharedElementSceneTransitionExecutor extends NavigationAnimationExe
     private final NavigationAnimationExecutor mFallbackAnimationExecutor;
     private boolean mDelayEnterTransitionExecute = false;
     private Runnable mEnterTransitionRunnable = null;
+    protected int mAnimationDuration = -1;
 
     public SharedElementSceneTransitionExecutor(@NonNull Map<String, SceneTransition> sharedElementTransition,
                                                 @Nullable SceneVisibilityTransition otherTransition,
@@ -88,6 +89,10 @@ public class SharedElementSceneTransitionExecutor extends NavigationAnimationExe
         this.mDelayEnterTransitionExecute = false;
     }
 
+    public void setAnimationDuration(int animationDuration) {
+        this.mAnimationDuration = animationDuration;
+    }
+
     @Override
     public final void executePushChangeCancelable(@NonNull final AnimationInfo fromInfo, @NonNull final AnimationInfo toInfo, @NonNull final Runnable endAction, @NonNull final CancellationSignal cancellationSignal) {
         if (fromInfo.mIsTranslucent) {
@@ -116,6 +121,9 @@ public class SharedElementSceneTransitionExecutor extends NavigationAnimationExe
         final View toView = toInfo.mSceneView;
 
         final SharedElementViewTransitionExecutor sharedElementViewTransitionExecutor = new SharedElementViewTransitionExecutor(mSharedElementTransition, mOtherTransition);
+        if (mAnimationDuration >= 0) {
+            sharedElementViewTransitionExecutor.setAnimationDuration(mAnimationDuration);
+        }
         final Runnable fallbackAction = new Runnable() {
             @Override
             public void run() {
@@ -198,7 +206,11 @@ public class SharedElementSceneTransitionExecutor extends NavigationAnimationExe
             }
         };
 
-        new SharedElementViewTransitionExecutor(mSharedElementTransition, mOtherTransition).executePopChange(fromView, toView, new Runnable() {
+        final SharedElementViewTransitionExecutor executor = new SharedElementViewTransitionExecutor(mSharedElementTransition, mOtherTransition);
+        if (mAnimationDuration >= 0) {
+            executor.setAnimationDuration(mAnimationDuration);
+        }
+        executor.executePopChange(fromView, toView, new Runnable() {
             @Override
             public void run() {
                 fromView.setVisibility(View.GONE);

@@ -44,10 +44,12 @@ import java.util.Set;
 @TargetApi(Build.VERSION_CODES.LOLLIPOP)
 class SharedElementViewTransitionExecutor {
     private static final int ANIMATION_DURATION = 300;
+
     @NonNull
     private final Map<String, SceneTransition> mSharedElementTransition;
     @Nullable
     private final SceneVisibilityTransition mOtherTransition;
+    private int mAnimationDuration = ANIMATION_DURATION;
 
     /**
      * TODO: Support for excluding certain Views to do otherElementTransition
@@ -71,6 +73,10 @@ class SharedElementViewTransitionExecutor {
             this.dstView = dstView;
             this.sceneTransition = sceneTransition;
         }
+    }
+
+    public void setAnimationDuration(int animationDuration) {
+        this.mAnimationDuration = animationDuration;
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
@@ -136,7 +142,7 @@ class SharedElementViewTransitionExecutor {
             for (View view : transitioningViews) {
                 // TODO: What if it is a set operation?
                 SceneVisibilityTransition transition = mOtherTransition.clone();
-                transition.setDuration(ANIMATION_DURATION);
+                transition.setDuration(mAnimationDuration);
                 transition.captureValue(view, (ViewGroup) toView);
                 mOtherAnimatorList.add(transition.getAnimator(true));
             }
@@ -160,7 +166,7 @@ class SharedElementViewTransitionExecutor {
         }
 
         final Animator valueAnimator = TransitionUtils.mergeAnimators(animationList);
-        valueAnimator.setDuration(ANIMATION_DURATION);
+        valueAnimator.setDuration(mAnimationDuration);
         valueAnimator.addListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationStart(Animator animation) {
@@ -249,7 +255,7 @@ class SharedElementViewTransitionExecutor {
             List<Animator> mOtherAnimatorList = new ArrayList<>();
             for (View view : transitioningViews) {
                 SceneVisibilityTransition transition = mOtherTransition.clone();
-                transition.setDuration(ANIMATION_DURATION);
+                transition.setDuration(mAnimationDuration);
                 transition.captureValue(view, (ViewGroup) fromView);
                 mOtherAnimatorList.add(transition.getAnimator(false));
             }
@@ -273,7 +279,7 @@ class SharedElementViewTransitionExecutor {
         }
 
         final Animator valueAnimator = TransitionUtils.mergeAnimators(animationList);
-        valueAnimator.setDuration(ANIMATION_DURATION);
+        valueAnimator.setDuration(mAnimationDuration);
 
         valueAnimator.addListener(new AnimatorListenerAdapter() {
             @Override
