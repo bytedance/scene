@@ -19,8 +19,13 @@ android {
 
 dependencies {
     implementation KOTLIN_LIB
-    implementation APPCOMPAT_LIB
-    implementation DESIGN_LIB
+    implementation LIFECYCLE_RUNTIME_LIB
+    implementation CORE_LIB
+    implementation INTERPOLATOR_LIB
+    implementation LIFECYCLE_VIEWMODEL_LIB
+    implementation ANNOTATION_LIB
+    implementation SAVED_STATE_LIB
+
     api project(path: ':library:scene')
 
     testImplementation ROBOLECTRIC

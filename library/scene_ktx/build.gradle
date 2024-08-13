@@ -25,7 +25,6 @@ dependencies {
     implementation LIFECYCLE_VIEWMODEL_LIB
     implementation LIFECYCLE_EXTENSIONS_LIB
     implementation KOTLIN_LIB
-    implementation APPCOMPAT_LIB
 
     testImplementation project(':library:scene_ktx')
     testImplementation ROBOLECTRIC
