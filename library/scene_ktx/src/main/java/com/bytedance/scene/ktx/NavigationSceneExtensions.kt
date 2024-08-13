@@ -15,7 +15,10 @@
  */
 package com.bytedance.scene.ktx
 
+import androidx.annotation.MainThread
 import com.bytedance.scene.Scene
+import com.bytedance.scene.interfaces.ActivityCompatibleBehavior
+import com.bytedance.scene.navigation.ActivityCompatibleInfoCollector
 import com.bytedance.scene.navigation.NavigationScene
 import com.bytedance.scene.navigation.NavigationSceneGetter
 
@@ -28,3 +31,21 @@ fun Scene.requireNavigationScene(): NavigationScene {
     return NavigationSceneGetter.requireNavigationScene(this)
 }
 
+@MainThread
+fun <T> T.activityAttributes(
+    init: ActivityAttributes.() -> Unit
+) where T : Scene, T : ActivityCompatibleBehavior {
+    val activityAttributes = ActivityAttributes()
+    init.invoke(activityAttributes)
+    if (activityAttributes.configChanges == -1) {
+        return
+    }
+    val data = ActivityCompatibleInfoCollector.getOrCreateHolder(this)
+    if (data.configChanges != null) {
+        throw IllegalArgumentException("activityAttributes can't invoke more than once")
+    }
+    val configChanges = activityAttributes.configChanges
+    if (configChanges != -1) {
+        data.configChanges = configChanges
+    }
+}

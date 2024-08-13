@@ -21,6 +21,7 @@ import static androidx.lifecycle.Lifecycle.State.DESTROYED;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -440,6 +441,10 @@ public final class NavigationScene extends Scene implements NavigationListener, 
         }
         hideSoftInputIfNeeded();
         mNavigationSceneManager.pop();
+    }
+
+    public void onConfigurationChanged(@NonNull Configuration configuration) {
+        mNavigationSceneManager.onConfigurationChanged(configuration);
     }
 
     /**

@@ -17,6 +17,7 @@ package com.bytedance.scene.navigation;
 
 import static androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP;
 
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -61,10 +62,14 @@ public class Record implements Parcelable {
 
     String mSceneClassName;
 
+    @Nullable
+    Configuration mConfiguration;
+
     protected Record(Parcel in) {
         mActivityStatusRecord = in.readParcelable(ActivityStatusRecord.class.getClassLoader());
         mIsTranslucent = in.readByte() != 0;
         mSceneClassName = in.readString();
+        mConfiguration = in.readParcelable(Configuration.class.getClassLoader());
     }
 
     public static final Creator<Record> CREATOR = new Creator<Record>() {
@@ -100,6 +105,13 @@ public class Record implements Parcelable {
         mActivityStatusRecord = ActivityStatusRecord.newInstance(mScene.requireActivity());
     }
 
+    public void saveActivityCompatibleInfo() {
+        //Only store Configuration when Scene has ActivityCompatibleManager
+        if (ActivityCompatibleInfoCollector.containsConfigChanges(mScene)) {
+            mConfiguration = mScene.requireActivity().getResources().getConfiguration();
+        }
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -110,5 +122,6 @@ public class Record implements Parcelable {
         dest.writeParcelable(mActivityStatusRecord, flags);
         dest.writeByte((byte) (mIsTranslucent ? 1 : 0));
         dest.writeString(mSceneClassName);
+        dest.writeParcelable(mConfiguration, flags);
     }
 }

@@ -16,6 +16,7 @@
 package com.bytedance.scene.ui;
 
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
@@ -27,6 +28,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.bytedance.scene.NavigationSceneUtility;
 import com.bytedance.scene.Scene;
 import com.bytedance.scene.SceneDelegate;
+import com.bytedance.scene.navigation.NavigationScene;
 
 /**
  * Created by JiangQi on 8/24/18.
@@ -52,6 +54,14 @@ public abstract class SceneActivity extends AppCompatActivity {
     public void onBackPressed() {
         if (!this.mDelegate.onBackPressed()) {
             super.onBackPressed();
+        }
+    }
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        NavigationScene navigationScene = mDelegate.getNavigationScene();
+        if (navigationScene != null) {
+            navigationScene.onConfigurationChanged(newConfig);
         }
     }
 

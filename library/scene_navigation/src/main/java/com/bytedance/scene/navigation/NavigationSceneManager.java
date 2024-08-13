@@ -19,6 +19,7 @@ import static androidx.annotation.RestrictTo.Scope.LIBRARY;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.res.Configuration;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Looper;
@@ -41,6 +42,7 @@ import com.bytedance.scene.animation.AnimationInfo;
 import com.bytedance.scene.animation.NavigationAnimationExecutor;
 import com.bytedance.scene.animation.interaction.InteractionNavigationPopAnimationFactory;
 import com.bytedance.scene.group.ReuseGroupScene;
+import com.bytedance.scene.interfaces.ActivityCompatibleBehavior;
 import com.bytedance.scene.interfaces.PopOptions;
 import com.bytedance.scene.interfaces.PushOptions;
 import com.bytedance.scene.logger.LoggerManager;
@@ -582,6 +584,7 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
                     }
                     //continue
                 case VIEW_CREATED:
+                    ActivityCompatibleInfoCollector.clearHolder(scene);
                     View view = scene.getView();
                     scene.dispatchDestroyView();
                     if (!causedByActivityLifeCycle) {
@@ -685,6 +688,7 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
                     }
                     //continue
                 case VIEW_CREATED:
+                    ActivityCompatibleInfoCollector.clearHolder(scene);
                     View view = scene.getView();
                     scene.dispatchDestroyView();
                     if (!causedByActivityLifeCycle) {
@@ -1420,6 +1424,7 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
 
             moveState(mNavigationScene, scene, mNavigationScene.getState(), null, false, null);
 
+            record.saveActivityCompatibleInfo();
             mNavigationListener.navigationChange(currentRecord != null ? currentRecord.mScene : null, scene, true);
             operationEndAction.run();
         }
@@ -1518,6 +1523,7 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
              *       Because of the destruction restore, it is impossible to go directly to RESUMED
              */
             moveState(mNavigationScene, scene, mNavigationScene.getState(), null, false, null);
+            record.saveActivityCompatibleInfo();
             mNavigationListener.navigationChange(currentRecord != null ? currentRecord.mScene : null, scene, true);
 
             //Navigation animation only execute when NavigationScene is visible, otherwise skip
@@ -1607,6 +1613,7 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
             LoggerManager.getInstance().i(TAG, "RecreateOperation new created Scene restore from previous data, new Scene instance " + newSceneInstance.toString());
             moveState(mNavigationScene, newSceneInstance, targetState, savedInstanceState, false, null);
 
+            record.saveActivityCompatibleInfo();
             operationEndAction.run();
         }
     }
@@ -1833,6 +1840,48 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
                 LoggerManager.getInstance().i(TAG, "recycle scene " + scene + " " + sceneState.getName());
             } else {
                 //skip because Scene is visible or disable restore
+            }
+        }
+    }
+
+    //this is a temporary simple version, just recreate all Scenes which has view
+    //TODO only recreate visible Scenes, other Scenes should only be recreated once it is visible
+    @Override
+    public void onConfigurationChanged(@NonNull Configuration newConfig) {
+        LoggerManager.getInstance().i(TAG, "onConfigurationChanged");
+        executePendingOperation();//make sure all pending operations have finished
+
+        List<Record> recordList = this.mBackStackList.getCurrentRecordList();
+        for (int i = recordList.size() - 1; i >= 0; i--) {
+            Record record = recordList.get(i);
+            Scene scene = record.mScene;
+            if (scene.getView() != null) {
+                ActivityCompatibleInfoCollector.Holder holder = ActivityCompatibleInfoCollector.getHolder(scene);
+                if (holder == null) {
+                    //skip, default behavior, nothing will happen
+                    continue;
+                }
+                Integer configChanges = holder.configChanges;
+                if (holder.configChanges == null) {
+                    //skip, default behavior, nothing will happen
+                    continue;
+                }
+                if (record.mConfiguration != null) {
+                    Configuration sceneConfiguration = record.mConfiguration;
+                    int diff = sceneConfiguration.diff(newConfig);
+                    if ((diff & configChanges) != 0) {
+                        LoggerManager.getInstance().i(TAG, "Configuration has been changed, Scene has suitable configChanges, so dispatch onConfigurationChanged to " + scene.toString());
+                        if (scene instanceof ActivityCompatibleBehavior) {
+                            ((ActivityCompatibleBehavior) scene).onConfigurationChanged(newConfig);
+                            continue;
+                        }
+                    } else {
+                        LoggerManager.getInstance().i(TAG, "Configuration has been changed, recreate " + scene.toString());
+                    }
+                } else {
+                    LoggerManager.getInstance().i(TAG, "Scene previous Configuration not found, recreate " + scene.toString());
+                }
+                recreate(record.mScene);
             }
         }
     }

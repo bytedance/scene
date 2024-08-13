@@ -17,6 +17,7 @@ package com.bytedance.scene.navigation;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.res.Configuration;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Looper;
@@ -1469,5 +1470,10 @@ class NavigationSceneManagerV2 implements INavigationManager {
 
     public void recycleInvisibleScenes() {
 
+    }
+
+    @Override
+    public void onConfigurationChanged(@NonNull Configuration newConfig) {
+        throw new IllegalStateException("onConfigurationChanged is not supported");
     }
 }

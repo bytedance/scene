@@ -1,6 +1,7 @@
 package com.bytedance.scene.navigation;
 
 import android.content.Context;
+import android.content.res.Configuration;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -85,4 +86,6 @@ public interface INavigationManager {
     public void forceExecutePendingNavigationOperation();
 
     public void recycleInvisibleScenes();
+
+    public void onConfigurationChanged(@NonNull Configuration newConfig);
 }

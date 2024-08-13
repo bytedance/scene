@@ -195,4 +195,5 @@
     <string name="patterns_viper">VIPER</string>
 
     <string name="lib_glide">Glide</string>
+    <string name="night_mode_status" translatable="false">Night Mode Status Off</string>
 </resources>
