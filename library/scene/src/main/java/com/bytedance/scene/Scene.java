@@ -284,12 +284,20 @@ public abstract class Scene implements LifecycleOwner, SavedStateRegistryOwner, 
 
         @Override
         public void addObserver(@NonNull LifecycleObserver observer) {
+            if (observer == null) {
+                return;
+            }
+
             this.lifecycleObservers.add(observer);
             this.lifecycleRegistry.addObserver(observer);
         }
 
         @Override
         public void removeObserver(@NonNull LifecycleObserver observer) {
+            if (observer == null) {
+                return;
+            }
+            
             this.lifecycleObservers.remove(observer);
             this.lifecycleRegistry.removeObserver(observer);
         }
