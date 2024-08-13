@@ -16,7 +16,7 @@ class SecondScene : BaseTraceScene() {
     override val name: String
         get() = "SecondScene"
 
-    private val objects = mutableListOf<Any>()
+    private lateinit var objects: Array<Int?>
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup, savedInstanceState: Bundle?): View {
         val layout = LinearLayout(activity)
@@ -37,9 +37,7 @@ class SecondScene : BaseTraceScene() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        repeat(2000000) {
-            objects.add(Any())
-        }
+        objects = arrayOfNulls<Int>(256 * 1024 * 20)
 
         viewModel.updateMemoryUsed()
     }

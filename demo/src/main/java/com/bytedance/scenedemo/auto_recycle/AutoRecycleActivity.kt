@@ -59,8 +59,8 @@ class AutoRecycleActivity : AppCompatActivity() {
 
         viewModel.memoryUpdateEvent.observe(this) {
             val runtime = Runtime.getRuntime()
-            val dalvikMax = runtime.maxMemory()
-            val dalvikUsed = runtime.totalMemory() - runtime.freeMemory()
+            val dalvikMax = runtime.maxMemory() / 1024
+            val dalvikUsed = (runtime.totalMemory() - runtime.freeMemory())  / 1024
             memoryTextView.text = getString(R.string.case_auto_recycle_memory_info, dalvikUsed, dalvikMax, dalvikUsed.toFloat() / dalvikMax)
         }
     }

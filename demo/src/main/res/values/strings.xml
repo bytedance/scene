@@ -182,7 +182,7 @@
     <string name="case_auto_recycle_btn2">Open SecondScene</string>
     <string name="case_auto_recycle_btn3">Open ThirdScene</string>
     <string name="case_auto_recycle_btn4">Allocate Memory</string>
-    <string name="case_auto_recycle_memory_info">Memory Used: %1$d\nMemory Max: %2$dUsed/Max: %3$.3f</string>
+    <string name="case_auto_recycle_memory_info">Memory Used: %1$d Kb\nMemory Max: %2$d Kb\nUsed/Max: %3$.3f</string>
 
     <string name="main_activity_btn_scene_get_activity_result">Scene get Activity result</string>
     <string name="main_activity_btn_activity_get_scene_result">Activity push Scene(with SceneContainerActivity) for result</string>

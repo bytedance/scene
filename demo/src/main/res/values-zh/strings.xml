@@ -169,7 +169,7 @@
     <string name="case_auto_recycle_btn2">跳转 SecondScene</string>
     <string name="case_auto_recycle_btn3">跳转 ThirdScene</string>
     <string name="case_auto_recycle_btn4">申请内存</string>
-    <string name="case_auto_recycle_memory_info">已使用：%1$d\n最大值：%2$d\n比值：%3$.3f</string>
+    <string name="case_auto_recycle_memory_info">已使用：%1$d Kb\n最大值：%2$d Kb\n比值：%3$.3f</string>
     <string name="main_activity_btn_scene_get_activity_result">Scene拿Activity返回值</string>
     <string name="main_activity_btn_activity_get_scene_result">Activity 启动 Scene（托管到SceneContainerActivity）</string>
     <string name="patterns_scope">Scope</string>
