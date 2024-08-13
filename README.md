@@ -17,20 +17,20 @@
 </div>
 
 
-# Scene
+# Features
 
 [![GitHub license](https://img.shields.io/github/license/bytedance/scene)](https://github.com/bytedance/scene/blob/master/LICENSE) 
 [![](https://jitpack.io/v/bytedance/scene.svg)](https://jitpack.io/#bytedance/scene)
 [![API](https://img.shields.io/badge/api-14%2B-green)](https://developer.android.com/about/dashboards)
 
-Scene is a lightweight library of navigation and ui composition based on view.
+**Scene** is a lightweight library of navigation and ui composition based on view.
 
-1. Simple and convenient navigation and stack management, support multi-stack
-2. Improved lifecycle management and distribution
-3. Easier to implement complex cut-scenes animation 
-4. Support properties modification and recovery of Activity and Window 
-5. Support return value between Scenes, support request and grant permissions in Scene
-6. Support save and recovery state of Scene
+- [x] Simple and convenient navigation and stack management, support multi-stack
+- [x] Improved lifecycle management and distribution
+- [x] Easier to implement complex cut-scenes animation 
+- [x] Support properties modification and recovery of Activity and Window 
+- [x] Support return value between Scenes, support request and grant permissions in Scene
+- [x] Support save and recovery state of Scene
 
 [Download the Demo](https://github.com/bytedance/scene/releases/download/v1.0.2/demo-debug.apk)
 
