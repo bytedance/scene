@@ -1,7 +1,23 @@
-# Scene
+<div align="center">
+    <h1>Scene</h1>
+    <p>TikTok Single Activity Framework.</p>
+    <p>English&nbsp;&nbsp;|&nbsp;&nbsp;
+    <a target="_blank" href="https://github.com/Bytedance/scene/blob/main/README-zh-CN.md">简体中文</a>&nbsp;&nbsp;|&nbsp;&nbsp;
+    <a target="_blank" href="https://github.com/Bytedance/scene/blob/main/README-de.md">日本語</a>&nbsp;&nbsp;|&nbsp;&nbsp;
+    <br/>
+</div>
 
-[简体中文版说明 >>>](/README_cn.md)
-[日本語の説明 >>>](/README_ja.md)
+<div align="center">
+    <img alt="GitHub" src="https://img.shields.io/github/license/Bytedance/scene?color=c3e7ff&style=flat-square">
+    <a target="_blank" href="https://github.com/Bytedance/scene/releases">
+        <img alt="Version" src="https://img.shields.io/github/v/release/Bytedance/scene?color=c3e7ff&label=version&style=flat-square">
+    </a>
+    <img alt="GitHub last commit" src="https://img.shields.io/github/last-commit/Bytedance/scene?color=c3e7ff&style=flat-square">
+    <br>
+</div>
+
+
+# Scene
 
 [![GitHub license](https://img.shields.io/github/license/bytedance/scene)](https://github.com/bytedance/scene/blob/master/LICENSE) 
 [![](https://jitpack.io/v/bytedance/scene.svg)](https://jitpack.io/#bytedance/scene)
@@ -234,21 +250,6 @@ A normal Dialog's Window is independent and in front of the Activity's Window,
 so if try to push a Scene in a opening Dialog, it will cause the Scene to appear behind it. 
 You can close the dialog box when click, or use Scene to implement the dialog instead of a system Dialog.
 
-### SurfaceView and TextureView
-
-When the Scene is popping, the animation will be executed after the Scene life cycle is executed.
-However, if there is a SurfaceView or a TextureView, this process will cause the SurfaceView/TextureView to turn to black.
-
-You can get and re-assign the Surface before the animation end to avoid issues on TextureView, 
-and capture the last bitmap and set to a ImageView to avoid issues on SurfaceView.
-
-### Status Bar related
-
-There is no official API of notch screen before Android P, and each vendor has its own implementation.
-
-If you try to hide the status bar with WindowFlag or View's UiVisibility, it will trigger the re-layout of the entire Activity.
-
-This may causes the layout change of the Scene inside, and the behaviors may be not as expected in some cases.
 
 ## License
 ~~~
