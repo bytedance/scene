@@ -583,7 +583,7 @@ public final class NavigationScene extends Scene implements NavigationListener, 
         }
         this.mNavigationSceneOptions = NavigationSceneOptions.fromBundle(getArguments());
 
-        if (this.mNavigationSceneOptions.usePostInLifecycle()) {
+        if (this.mNavigationSceneOptions.usePostInLifecycle() || isSeparateCreateFromCreateView()) {
             this.mNavigationSceneManager = new NavigationSceneManager(this);
         } else if (this.mNavigationSceneOptions.onlyRestoreVisibleScene()) {
             this.mNavigationSceneManager = new NavigationSceneManagerV2(this);
