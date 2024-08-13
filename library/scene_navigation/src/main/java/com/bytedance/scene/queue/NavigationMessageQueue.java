@@ -87,4 +87,8 @@ public class NavigationMessageQueue {
             this.mIsRunningPostSync = false;
         }
     }
+
+    public boolean hasPendingTasks() {
+        return mPendingTask.size() > 0;
+    }
 }

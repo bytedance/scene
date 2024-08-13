@@ -1745,6 +1745,10 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
         if (!this.mAnySceneStateChanged) {
             return;
         }
+        if (!mIsNavigationStateChangeInProgress.isEmpty() || !mPendingActionList.isEmpty() || mSceneMessageQueue.hasPendingTasks()) {
+            return;
+        }
+
         this.mAnySceneStateChanged = false;
         LoggerManager.getInstance().i(TAG, "recycleInvisibleScenes");
         List<Record> recordList = this.mBackStackList.getCurrentRecordList();
