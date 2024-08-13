@@ -1,5 +1,6 @@
 apply plugin: 'com.android.library'
 apply plugin: 'maven-publish'
+apply plugin: 'kotlin-android'
 
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
@@ -16,6 +17,7 @@ android {
 }
 
 dependencies {
+    implementation KOTLIN_LIB
     implementation SUPPORTV4_LIB
     implementation LIFECYCLE_RUNTIME_LIB
     implementation LIFECYCLE_VIEWMODEL_LIB
