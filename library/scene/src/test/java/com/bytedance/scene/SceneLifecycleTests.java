@@ -8,11 +8,11 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.util.Pair;
 import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.ViewTreeLifecycleOwner;
+import androidx.lifecycle.ViewTreeViewModelStoreOwner;
+import androidx.savedstate.ViewTreeSavedStateRegistryOwner;
 
 import com.bytedance.scene.group.GroupScene;
-import com.bytedance.scene.utlity.SceneViewTreeLifecycleOwner;
-import com.bytedance.scene.utlity.SceneViewTreeSavedStateRegistryOwner;
-import com.bytedance.scene.utlity.SceneViewTreeViewModelStoreOwner;
 import com.bytedance.scene.utlity.ViewUtility;
 import com.google.common.truth.Truth;
 
@@ -43,9 +43,9 @@ public class SceneLifecycleTests {
         SceneLifecycleManager sceneLifecycleManager = pair.first;
 
         assertNotNull(testScene.getView());
-        assertEquals(SceneViewTreeLifecycleOwner.get(testScene.getView()), testScene);
-        Truth.assertThat(SceneViewTreeViewModelStoreOwner.get(testScene.requireView())).isEqualTo(testScene);
-        Truth.assertThat(SceneViewTreeSavedStateRegistryOwner.get(testScene.requireView())).isEqualTo(testScene);
+        assertEquals(ViewTreeLifecycleOwner.get(testScene.getView()), testScene);
+        Truth.assertThat(ViewTreeViewModelStoreOwner.get(testScene.requireView())).isEqualTo(testScene);
+        Truth.assertThat(ViewTreeSavedStateRegistryOwner.get(testScene.requireView())).isEqualTo(testScene);
         assertNotNull(testScene.getActivity());
         assertNotNull(testScene.getApplicationContext());
         assertNotNull(testScene.getResources());

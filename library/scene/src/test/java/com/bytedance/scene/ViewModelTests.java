@@ -9,9 +9,9 @@ import androidx.annotation.Nullable;
 import androidx.core.util.Pair;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.lifecycle.ViewTreeViewModelStoreOwner;
 
 import com.bytedance.scene.group.GroupScene;
-import com.bytedance.scene.utlity.SceneViewTreeViewModelStoreOwner;
 import com.google.common.truth.Truth;
 
 import org.junit.Test;
@@ -44,7 +44,7 @@ public class ViewModelTests {
         };
         Pair<SceneLifecycleManager<GroupScene>, GroupScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(scene);
 
-        Truth.assertThat(SceneViewTreeViewModelStoreOwner.get(scene.requireView())).isEqualTo(scene);
+        Truth.assertThat(ViewTreeViewModelStoreOwner.get(scene.requireView())).isEqualTo(scene);
     }
 
     @Test

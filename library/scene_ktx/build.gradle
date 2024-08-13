@@ -22,10 +22,11 @@ dependencies {
     api project(path: ':library:scene_navigation')
 
     implementation ANNOTATION_LIB
-    implementation LIFECYCLE_EXTENSIONS_LIB
+    implementation LIFECYCLE_VIEWMODEL_LIB
     implementation KOTLIN_LIB
     implementation APPCOMPAT_LIB
 
+    testImplementation project(':library:scene_ktx')
     testImplementation ROBOLECTRIC
     testImplementation JUNIT
     testAnnotationProcessor AUTO_SERVICE

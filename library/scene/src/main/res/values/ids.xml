@@ -2,13 +2,4 @@
 <resources>
     <item type="id" name="navigation_scene_content" />
     <item type="id" name="bytedance_scene_view_scene_tag" />
-
-    <!-- ViewTreeLifecycleOwner -->
-    <item type="id" name="view_tree_lifecycle_owner"/>
-
-    <!-- ViewTreeViewModelStoreOwner -->
-    <item type="id" name="view_tree_view_model_store_owner"/>
-
-    <!-- ViewTreeSavedStateRegistryOwner -->
-    <item type="id" name="view_tree_saved_state_registry_owner"/>
 </resources>

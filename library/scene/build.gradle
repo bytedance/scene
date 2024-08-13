@@ -16,8 +16,9 @@ android {
 }
 
 dependencies {
-    implementation LIFECYCLE_EXTENSIONS_LIB
+    implementation SUPPORTV4_LIB
     implementation LIFECYCLE_RUNTIME_LIB
+    implementation LIFECYCLE_VIEWMODEL_LIB
     implementation ANNOTATION_LIB
     api SAVED_STATE_LIB
 

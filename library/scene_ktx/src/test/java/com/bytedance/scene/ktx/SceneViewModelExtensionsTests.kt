@@ -1,6 +1,5 @@
 package com.bytedance.scene.ktx
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -8,7 +7,7 @@ import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import com.bytedance.scene.*
 import com.bytedance.scene.group.GroupScene
 import com.bytedance.scene.navigation.NavigationScene
@@ -56,7 +55,7 @@ class SceneViewModelExtensionsTests {
             override fun onActivityCreated(savedInstanceState: Bundle?) {
                 super.onActivityCreated(savedInstanceState)
                 assertTrue(testViewModel.test())
-                assertSame(ViewModelProviders.of(requireActivity() as FragmentActivity).get(TestActivityModel::class.java), testViewModel)
+                assertSame(ViewModelProvider(requireActivity() as FragmentActivity).get(TestActivityModel::class.java), testViewModel)
             }
         }
         createFromSceneLifecycleManagerByFragmentActivity(scene)

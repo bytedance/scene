@@ -13,7 +13,6 @@ android {
 dependencies {
     implementation APPCOMPAT_LIB
     implementation TRANSITION_SUPPORT_LIB
-    implementation LIFECYCLE_EXTENSIONS_LIB
     implementation LIFECYCLE_RUNTIME_LIB
     api project(path: ':library:scene')
     api project(path: ':library:scene_navigation')
