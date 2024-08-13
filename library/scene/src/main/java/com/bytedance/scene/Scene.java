@@ -153,8 +153,6 @@ public abstract class Scene implements LifecycleOwner, SavedStateRegistryOwner, 
     private final StringBuilder mStateHistoryBuilder = new StringBuilder(mState.name);
     private Bundle mArguments;
     private boolean mSceneRestoreEnabled = true;
-
-    private final Handler mHandler = new Handler(Looper.getMainLooper());
     private final List<Runnable> mPendingActionList = new ArrayList<>();
     private boolean mCalled = false;
     private boolean mVisibleDispatched = false;
