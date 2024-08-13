@@ -50,6 +50,7 @@ public class DisableSceneRestoreTests {
             ActivityController<NavigationSourceUtility.TestActivity> controller = Robolectric.buildActivity(NavigationSourceUtility.TestActivity.class).create().start().resume();
             NavigationSourceUtility.TestActivity testActivity = controller.get();
             NavigationSceneOptions options = new NavigationSceneOptions(TestScene.class);
+            options.setUsePostInLifecycle(true);
             navigationScene.setArguments(options.toBundle());
 
             Scope.RootScopeFactory rootScopeFactory = new Scope.RootScopeFactory() {
@@ -95,6 +96,7 @@ public class DisableSceneRestoreTests {
             ActivityController<NavigationSourceUtility.TestActivity> controller = Robolectric.buildActivity(NavigationSourceUtility.TestActivity.class).create().start().resume();
             NavigationSourceUtility.TestActivity testActivity = controller.get();
             NavigationSceneOptions options = new NavigationSceneOptions(TestScene.class);
+            options.setUsePostInLifecycle(true);
             NavigationScene navigationScene = new NavigationScene();
             navigationScene.setArguments(options.toBundle());
 
@@ -128,6 +130,7 @@ public class DisableSceneRestoreTests {
         ActivityController<NavigationSourceUtility.TestActivity> controller = Robolectric.buildActivity(NavigationSourceUtility.TestActivity.class).create().start().resume();
         NavigationSourceUtility.TestActivity testActivity = controller.get();
         NavigationSceneOptions options = new NavigationSceneOptions(TestScene.class);
+        options.setUsePostInLifecycle(true);
         navigationScene.setArguments(options.toBundle());
 
         Scope.RootScopeFactory rootScopeFactory = new Scope.RootScopeFactory() {

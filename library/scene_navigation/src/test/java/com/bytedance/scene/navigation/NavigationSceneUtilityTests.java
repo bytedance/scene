@@ -35,7 +35,7 @@ public class NavigationSceneUtilityTests {
     public void testSetupInActivityOnCreate() {
         ActivityController<TestActivity> controller = Robolectric.buildActivity(TestActivity.class).create();
         TestActivity activity = controller.get();
-        SceneDelegate sceneDelegate = NavigationSceneUtility.setupWithActivity(activity, TestScene.class).build();
+        SceneDelegate sceneDelegate = NavigationSceneUtility.setupWithActivity(activity, TestScene.class).usePostInLifecycle(true).build();
         NavigationScene navigationScene = sceneDelegate.getNavigationScene();
         assertNotNull(navigationScene);
         assertEquals(State.ACTIVITY_CREATED, navigationScene.getState());
@@ -56,7 +56,7 @@ public class NavigationSceneUtilityTests {
     public void testNotImmediateSetupInActivityOnCreate() {
         ActivityController<TestActivity> controller = Robolectric.buildActivity(TestActivity.class).create();
         TestActivity activity = controller.get();
-        SceneDelegate sceneDelegate = NavigationSceneUtility.setupWithActivity(activity, TestScene.class).immediate(false).build();
+        SceneDelegate sceneDelegate = NavigationSceneUtility.setupWithActivity(activity, TestScene.class).usePostInLifecycle(true).immediate(false).build();
         NavigationScene navigationScene = sceneDelegate.getNavigationScene();
         assertNotNull(navigationScene);
 
@@ -80,7 +80,7 @@ public class NavigationSceneUtilityTests {
     public void testSetupInActivityOnStart() {
         ActivityController<TestActivity> controller = Robolectric.buildActivity(TestActivity.class).create().start();
         TestActivity activity = controller.get();
-        SceneDelegate sceneDelegate = NavigationSceneUtility.setupWithActivity(activity, TestScene.class).build();
+        SceneDelegate sceneDelegate = NavigationSceneUtility.setupWithActivity(activity, TestScene.class).usePostInLifecycle(true).build();
         NavigationScene navigationScene = sceneDelegate.getNavigationScene();
         assertNotNull(navigationScene);
         assertEquals(State.STARTED, navigationScene.getState());
@@ -99,7 +99,7 @@ public class NavigationSceneUtilityTests {
     public void testNotImmediateSetupInActivityOnStart() {
         ActivityController<TestActivity> controller = Robolectric.buildActivity(TestActivity.class).create().start();
         TestActivity activity = controller.get();
-        SceneDelegate sceneDelegate = NavigationSceneUtility.setupWithActivity(activity, TestScene.class).immediate(false).build();
+        SceneDelegate sceneDelegate = NavigationSceneUtility.setupWithActivity(activity, TestScene.class).usePostInLifecycle(true).immediate(false).build();
         NavigationScene navigationScene = sceneDelegate.getNavigationScene();
         assertNotNull(navigationScene);
 
@@ -121,7 +121,7 @@ public class NavigationSceneUtilityTests {
     public void testSetupInActivityOnResume() {
         ActivityController<TestActivity> controller = Robolectric.buildActivity(TestActivity.class).create().start().resume();
         TestActivity activity = controller.get();
-        SceneDelegate sceneDelegate = NavigationSceneUtility.setupWithActivity(activity, TestScene.class).build();
+        SceneDelegate sceneDelegate = NavigationSceneUtility.setupWithActivity(activity, TestScene.class).usePostInLifecycle(true).build();
         NavigationScene navigationScene = sceneDelegate.getNavigationScene();
         assertNotNull(navigationScene);
         assertEquals(State.RESUMED, navigationScene.getState());
@@ -138,7 +138,7 @@ public class NavigationSceneUtilityTests {
     public void testNotImmediateSetupInActivityOnResume() {
         ActivityController<TestActivity> controller = Robolectric.buildActivity(TestActivity.class).create().start().resume();
         TestActivity activity = controller.get();
-        SceneDelegate sceneDelegate = NavigationSceneUtility.setupWithActivity(activity, TestScene.class).immediate(false).build();
+        SceneDelegate sceneDelegate = NavigationSceneUtility.setupWithActivity(activity, TestScene.class).usePostInLifecycle(true).immediate(false).build();
         NavigationScene navigationScene = sceneDelegate.getNavigationScene();
         assertNotNull(navigationScene);
 
@@ -158,7 +158,7 @@ public class NavigationSceneUtilityTests {
     public void testSetupInActivityOnPause() {
         ActivityController<TestActivity> controller = Robolectric.buildActivity(TestActivity.class).create().start().resume().pause();
         TestActivity activity = controller.get();
-        SceneDelegate sceneDelegate = NavigationSceneUtility.setupWithActivity(activity, TestScene.class).build();
+        SceneDelegate sceneDelegate = NavigationSceneUtility.setupWithActivity(activity, TestScene.class).usePostInLifecycle(true).build();
         NavigationScene navigationScene = sceneDelegate.getNavigationScene();
         assertNotNull(navigationScene);
         assertEquals(State.STARTED, navigationScene.getState());
@@ -173,7 +173,7 @@ public class NavigationSceneUtilityTests {
     public void testNotImmediateSetupInActivityOnPause() {
         ActivityController<TestActivity> controller = Robolectric.buildActivity(TestActivity.class).create().start().resume().pause();
         TestActivity activity = controller.get();
-        SceneDelegate sceneDelegate = NavigationSceneUtility.setupWithActivity(activity, TestScene.class).immediate(false).build();
+        SceneDelegate sceneDelegate = NavigationSceneUtility.setupWithActivity(activity, TestScene.class).usePostInLifecycle(true).immediate(false).build();
         NavigationScene navigationScene = sceneDelegate.getNavigationScene();
         assertNotNull(navigationScene);
 
@@ -191,7 +191,7 @@ public class NavigationSceneUtilityTests {
     public void testSetupInActivityOnStop() {
         ActivityController<TestActivity> controller = Robolectric.buildActivity(TestActivity.class).create().start().resume().pause().stop();
         TestActivity activity = controller.get();
-        SceneDelegate sceneDelegate = NavigationSceneUtility.setupWithActivity(activity, TestScene.class).build();
+        SceneDelegate sceneDelegate = NavigationSceneUtility.setupWithActivity(activity, TestScene.class).usePostInLifecycle(true).build();
         NavigationScene navigationScene = sceneDelegate.getNavigationScene();
         assertNotNull(navigationScene);
         assertEquals(State.ACTIVITY_CREATED, navigationScene.getState());
@@ -204,7 +204,7 @@ public class NavigationSceneUtilityTests {
     public void testNotImmediateSetupInActivityOnStop() {
         ActivityController<TestActivity> controller = Robolectric.buildActivity(TestActivity.class).create().start().resume().pause().stop();
         TestActivity activity = controller.get();
-        SceneDelegate sceneDelegate = NavigationSceneUtility.setupWithActivity(activity, TestScene.class).immediate(false).build();
+        SceneDelegate sceneDelegate = NavigationSceneUtility.setupWithActivity(activity, TestScene.class).immediate(false).usePostInLifecycle(true).build();
         NavigationScene navigationScene = sceneDelegate.getNavigationScene();
         assertNotNull(navigationScene);
 
@@ -221,7 +221,7 @@ public class NavigationSceneUtilityTests {
     public void testSetupInActivityOnDestroy() {
         ActivityController<TestActivity> controller = Robolectric.buildActivity(TestActivity.class).create().start().resume().pause().stop().destroy();
         TestActivity activity = controller.get();
-        SceneDelegate sceneDelegate = NavigationSceneUtility.setupWithActivity(activity, TestScene.class).build();
+        SceneDelegate sceneDelegate = NavigationSceneUtility.setupWithActivity(activity, TestScene.class).usePostInLifecycle(true).build();
         NavigationScene navigationScene = sceneDelegate.getNavigationScene();
         assertNotNull(navigationScene);
         assertEquals(State.NONE, navigationScene.getState());
@@ -234,7 +234,7 @@ public class NavigationSceneUtilityTests {
     public void testNotImmediateSetupInActivityOnDestroy() {
         ActivityController<TestActivity> controller = Robolectric.buildActivity(TestActivity.class).create().start().resume().pause().stop().destroy();
         TestActivity activity = controller.get();
-        SceneDelegate sceneDelegate = NavigationSceneUtility.setupWithActivity(activity, TestScene.class).immediate(false).build();
+        SceneDelegate sceneDelegate = NavigationSceneUtility.setupWithActivity(activity, TestScene.class).immediate(false).usePostInLifecycle(true).build();
         NavigationScene navigationScene = sceneDelegate.getNavigationScene();
         assertNotNull(navigationScene);
 
@@ -248,7 +248,7 @@ public class NavigationSceneUtilityTests {
         ActivityController<TestActivity> controller = Robolectric.buildActivity(TestActivity.class).create();
         TestActivity activity = controller.get();
         final TestScene scene = new TestScene();
-        SceneDelegate sceneDelegate = NavigationSceneUtility.setupWithActivity(activity, TestScene.class)
+        SceneDelegate sceneDelegate = NavigationSceneUtility.setupWithActivity(activity, TestScene.class).usePostInLifecycle(true)
                 .rootSceneComponentFactory(new SceneComponentFactory() {
                     @Override
                     public Scene instantiateScene(ClassLoader cl, String className, Bundle bundle) {
@@ -264,7 +264,7 @@ public class NavigationSceneUtilityTests {
         ActivityController<TestActivity> controller = Robolectric.buildActivity(TestActivity.class).create();
         TestActivity activity = controller.get();
         final TestScene scene = new TestScene();
-        SceneDelegate sceneDelegate = NavigationSceneUtility.setupWithActivity(activity, TestScene.class)
+        SceneDelegate sceneDelegate = NavigationSceneUtility.setupWithActivity(activity, TestScene.class).usePostInLifecycle(true)
                 .rootScene(scene).build();
         controller.start().resume();
         assertEquals(scene, sceneDelegate.getNavigationScene().getCurrentScene());
@@ -274,7 +274,7 @@ public class NavigationSceneUtilityTests {
     public void testRootSceneInstanceTypeError() {
         ActivityController<TestActivity> controller = Robolectric.buildActivity(TestActivity.class).create();
         TestActivity activity = controller.get();
-        SceneDelegate sceneDelegate = NavigationSceneUtility.setupWithActivity(activity, TestScene.class)
+        SceneDelegate sceneDelegate = NavigationSceneUtility.setupWithActivity(activity, TestScene.class).usePostInLifecycle(true)
                 .rootScene(new Scene() {
                     @NonNull
                     @Override
@@ -288,13 +288,13 @@ public class NavigationSceneUtilityTests {
     public void testAbandon() {
         ActivityController<TestActivity> controller = Robolectric.buildActivity(TestActivity.class).create();
         TestActivity activity = controller.get();
-        SceneDelegate sceneDelegate = NavigationSceneUtility.setupWithActivity(activity, TestScene.class).build();
+        SceneDelegate sceneDelegate = NavigationSceneUtility.setupWithActivity(activity, TestScene.class).usePostInLifecycle(true).build();
         controller.start().resume();
         NavigationScene navigationScene = sceneDelegate.getNavigationScene();
         View navigationSceneView = navigationScene.requireView();
         sceneDelegate.abandon();
         assertNull(navigationSceneView.getParent());
-        sceneDelegate = NavigationSceneUtility.setupWithActivity(activity, TestScene.class).build();
+        sceneDelegate = NavigationSceneUtility.setupWithActivity(activity, TestScene.class).usePostInLifecycle(true).build();
         sceneDelegate.abandon();
     }
 
@@ -302,20 +302,20 @@ public class NavigationSceneUtilityTests {
     public void testTagDuplicateException() {
         ActivityController<TestActivity> controller = Robolectric.buildActivity(TestActivity.class).create();
         TestActivity activity = controller.get();
-        NavigationSceneUtility.setupWithActivity(activity, TestScene.class).build();
+        NavigationSceneUtility.setupWithActivity(activity, TestScene.class).usePostInLifecycle(true).build();
         controller.start().resume();
-        NavigationSceneUtility.setupWithActivity(activity, TestScene.class).build();
+        NavigationSceneUtility.setupWithActivity(activity, TestScene.class).usePostInLifecycle(true).build();
     }
 
     @Test
     public void testDrawWindowBackground() {
         ActivityController<TestActivity> controller = Robolectric.buildActivity(TestActivity.class).create().resume();
         TestActivity activity = controller.get();
-        SceneDelegate sceneDelegate = NavigationSceneUtility.setupWithActivity(activity, TestScene.class).fixSceneWindowBackgroundEnabled(true).build();
+        SceneDelegate sceneDelegate = NavigationSceneUtility.setupWithActivity(activity, TestScene.class).usePostInLifecycle(true).fixSceneWindowBackgroundEnabled(true).build();
         assertNotNull(sceneDelegate.getNavigationScene().requireView().getBackground());
         sceneDelegate.abandon();
 
-        sceneDelegate = NavigationSceneUtility.setupWithActivity(activity, TestScene.class).drawWindowBackground(false).build();
+        sceneDelegate = NavigationSceneUtility.setupWithActivity(activity, TestScene.class).usePostInLifecycle(true).drawWindowBackground(false).build();
         assertNull(sceneDelegate.getNavigationScene().requireView().getBackground());
     }
 
@@ -324,10 +324,10 @@ public class NavigationSceneUtilityTests {
         ActivityController<TestActivity> controller = Robolectric.buildActivity(TestActivity.class).create().resume();
         TestActivity activity = controller.get();
         List<SceneDelegate> list = new ArrayList<>();
-        list.add(NavigationSceneUtility.setupWithActivity(activity, TestScene.class).build());
-        list.add(NavigationSceneUtility.setupWithActivity(activity, TestScene.class).tag("1").build());
-        list.add(NavigationSceneUtility.setupWithActivity(activity, TestScene.class).tag("2").build());
-        list.add(NavigationSceneUtility.setupWithActivity(activity, TestScene.class).tag("3").build());
+        list.add(NavigationSceneUtility.setupWithActivity(activity, TestScene.class).usePostInLifecycle(true).build());
+        list.add(NavigationSceneUtility.setupWithActivity(activity, TestScene.class).usePostInLifecycle(true).tag("1").build());
+        list.add(NavigationSceneUtility.setupWithActivity(activity, TestScene.class).usePostInLifecycle(true).tag("2").build());
+        list.add(NavigationSceneUtility.setupWithActivity(activity, TestScene.class).usePostInLifecycle(true).tag("3").build());
         for (SceneDelegate delegate : list) {
             delegate.abandon();
         }
@@ -337,7 +337,7 @@ public class NavigationSceneUtilityTests {
     public void testFixSceneWindowBackgroundEnabled() {
         ActivityController<TestActivity> controller = Robolectric.buildActivity(TestActivity.class).create().resume();
         TestActivity activity = controller.get();
-        SceneDelegate sceneDelegate = NavigationSceneUtility.setupWithActivity(activity, TestScene.class).fixSceneWindowBackgroundEnabled(true).build();
+        SceneDelegate sceneDelegate = NavigationSceneUtility.setupWithActivity(activity, TestScene.class).usePostInLifecycle(true).fixSceneWindowBackgroundEnabled(true).build();
         Scene scene = new Scene() {
             @NonNull
             @Override
@@ -354,7 +354,7 @@ public class NavigationSceneUtilityTests {
         assertNotNull(scene.requireView().getBackground());
         sceneDelegate.abandon();
 
-        sceneDelegate = NavigationSceneUtility.setupWithActivity(activity, TestScene.class).fixSceneWindowBackgroundEnabled(false).build();
+        sceneDelegate = NavigationSceneUtility.setupWithActivity(activity, TestScene.class).usePostInLifecycle(true).fixSceneWindowBackgroundEnabled(false).build();
         scene = new Scene() {
             @NonNull
             @Override

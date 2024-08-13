@@ -19,6 +19,7 @@ import android.os.Bundle;
 import android.view.View;
 
 import androidx.annotation.DrawableRes;
+import androidx.annotation.FloatRange;
 import androidx.annotation.IdRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -70,6 +71,9 @@ public final class NavigationSceneCompatUtility {
         @NonNull
         private String mTag = LIFE_CYCLE_FRAGMENT_TAG;
         private boolean mImmediate = true;
+        private float mAutoRecycleInvisibleScenesThreshold = 0F;
+        private boolean mUsePostInLifecycle = false;
+        private boolean mOnlyRestoreVisibleScene = false;
 
         private Builder(@NonNull Fragment fragment, @NonNull Class<? extends Scene> rootSceneClazz, @IdRes int containerId) {
             this.mFragment = Utility.requireNonNull(fragment, "Fragment can't be null");
@@ -142,11 +146,32 @@ public final class NavigationSceneCompatUtility {
         }
 
         @NonNull
+        public Builder autoRecycleInvisibleScenesThreshold(@FloatRange(from = 0.0, to = 1.0)float threshold) {
+            this.mAutoRecycleInvisibleScenesThreshold = threshold;
+            return this;
+        }
+
+        @NonNull
+        public Builder usePostInLifecycle(boolean usePostInLifecycle) {
+            this.mUsePostInLifecycle = usePostInLifecycle;
+            return this;
+        }
+
+        @NonNull
+        public Builder onlyRestoreVisibleScene(boolean onlyRestoreVisibleScene) {
+            this.mOnlyRestoreVisibleScene = onlyRestoreVisibleScene;
+            return this;
+        }
+
+        @NonNull
         public SceneDelegate build() {
             NavigationSceneOptions navigationSceneOptions = new NavigationSceneOptions(this.mRootSceneClazz, this.mRootSceneArguments);
             navigationSceneOptions.setDrawWindowBackground(this.mDrawWindowBackground);
             navigationSceneOptions.setFixSceneWindowBackgroundEnabled(this.mFixSceneBackgroundEnabled);
             navigationSceneOptions.setSceneBackground(this.mSceneBackgroundResId);
+            navigationSceneOptions.setAutoRecycleInvisibleScenesThreshold(this.mAutoRecycleInvisibleScenesThreshold);
+            navigationSceneOptions.setUsePostInLifecycle(this.mUsePostInLifecycle);
+            navigationSceneOptions.setOnlyRestoreVisibleScene(this.mOnlyRestoreVisibleScene);
             return setupWithFragment(this.mFragment, this.mIdRes, navigationSceneOptions, this.mRootSceneComponentFactory, this.mSupportRestore, this.mTag, this.mImmediate);
         }
     }

@@ -108,6 +108,7 @@ public class OnlyRestoreVisibleSceneTests {
             NavigationSourceUtility.TestActivity testActivity = controller.get();
             NavigationSceneOptions options = new NavigationSceneOptions(TestScene.class);
             options.setOnlyRestoreVisibleScene(true);
+            options.setUsePostInLifecycle(true);
             NavigationScene navigationScene = new NavigationScene();
             navigationScene.setArguments(options.toBundle());
 
@@ -207,6 +208,7 @@ public class OnlyRestoreVisibleSceneTests {
             NavigationSourceUtility.TestActivity testActivity = controller.get();
             NavigationSceneOptions options = new NavigationSceneOptions(TestScene.class);
             options.setOnlyRestoreVisibleScene(true);
+            options.setUsePostInLifecycle(true);
             NavigationScene navigationScene = new NavigationScene();
             navigationScene.setArguments(options.toBundle());
 
@@ -309,6 +311,7 @@ public class OnlyRestoreVisibleSceneTests {
             NavigationSourceUtility.TestActivity testActivity = controller.get();
             NavigationSceneOptions options = new NavigationSceneOptions(TestScene.class);
             options.setOnlyRestoreVisibleScene(true);
+            options.setUsePostInLifecycle(true);
             NavigationScene navigationScene = new NavigationScene();
             navigationScene.setArguments(options.toBundle());
 
@@ -430,6 +433,7 @@ public class OnlyRestoreVisibleSceneTests {
             NavigationSourceUtility.TestActivity testActivity = controller.get();
             NavigationSceneOptions options = new NavigationSceneOptions(TestScene.class);
             options.setOnlyRestoreVisibleScene(true);
+            options.setUsePostInLifecycle(true);
             NavigationScene navigationScene = new NavigationScene();
             navigationScene.setArguments(options.toBundle());
 

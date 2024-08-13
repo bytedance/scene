@@ -1,9 +1,6 @@
 package com.bytedance.scene.ktx
 
 import android.app.Activity
-import android.content.Intent
-import android.os.Bundle
-import android.widget.FrameLayout
 import com.bytedance.scene.Scene
 import com.bytedance.scene.SceneComponentFactory
 import com.bytedance.scene.SceneLifecycleManager
@@ -27,6 +24,7 @@ public fun createFromInitSceneLifecycleManager(rootScene: Scene): Pair<SceneLife
     val testActivity = controller.get()
     val navigationScene = NavigationScene()
     val options = NavigationSceneOptions(rootScene.javaClass)
+    options.setUsePostInLifecycle(true)
     navigationScene.setArguments(options.toBundle())
 
     val rootScopeFactory = Scope.RootScopeFactory { Scope.DEFAULT_ROOT_SCOPE_FACTORY.rootScope }
@@ -50,6 +48,7 @@ public fun createFromInitSceneLifecycleManager(activityClass: Class<out Activity
     val testActivity = controller.get()
     val navigationScene = NavigationScene()
     val options = NavigationSceneOptions(rootScene.javaClass)
+    options.setUsePostInLifecycle(true)
     navigationScene.setArguments(options.toBundle())
 
     val rootScopeFactory = Scope.RootScopeFactory { Scope.DEFAULT_ROOT_SCOPE_FACTORY.rootScope }

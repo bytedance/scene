@@ -50,6 +50,7 @@ public class AnimationExecutorTests {
         NavigationSourceUtility.TestActivity testActivity = controller.get();
         NavigationScene navigationScene = new NavigationScene();
         NavigationSceneOptions options = new NavigationSceneOptions(scene.getClass());
+        options.setUsePostInLifecycle(true);
         navigationScene.setArguments(options.toBundle());
 
         Scope.RootScopeFactory rootScopeFactory = new Scope.RootScopeFactory() {
