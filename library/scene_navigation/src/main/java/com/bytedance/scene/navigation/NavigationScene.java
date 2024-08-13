@@ -141,7 +141,7 @@ public final class NavigationScene extends Scene implements NavigationListener, 
 
     private boolean mIsInitRootSceneOnCreate = false;
 
-    private final boolean mSceneLifecycleCallbackOpt = SceneGlobalConfig.sceneLifecycleCallbackObjectCreationOpt;
+    private final boolean mSceneLifecycleCallbackObjectCreationOpt = SceneGlobalConfig.sceneLifecycleCallbackObjectCreationOpt;
 
     @MainThread
     public void addNavigationListener(@NonNull final LifecycleOwner lifecycleOwner, @NonNull final NavigationListener listener) {
@@ -998,7 +998,7 @@ public final class NavigationScene extends Scene implements NavigationListener, 
     @Override
     public void dispatchOnPreSceneCreated(@NonNull Scene scene, @Nullable Bundle savedInstanceState, boolean directChild) {
         if (scene != this) {
-            if (mSceneLifecycleCallbackOpt && mLifecycleCallbacks.size() == 0) {
+            if (mSceneLifecycleCallbackObjectCreationOpt && mLifecycleCallbacks.size() == 0) {
                 //skip
             } else {
                 List<NonNullPair<ChildSceneLifecycleCallbacks, Boolean>> list = new ArrayList<>(mLifecycleCallbacks);
@@ -1019,7 +1019,7 @@ public final class NavigationScene extends Scene implements NavigationListener, 
     @Override
     public void dispatchOnPreSceneViewCreated(@NonNull Scene scene, @Nullable Bundle savedInstanceState, boolean directChild) {
         if (scene != this) {
-            if (mSceneLifecycleCallbackOpt && mLifecycleCallbacks.size() == 0) {
+            if (mSceneLifecycleCallbackObjectCreationOpt && mLifecycleCallbacks.size() == 0) {
                 //skip
             } else {
                 List<NonNullPair<ChildSceneLifecycleCallbacks, Boolean>> list = new ArrayList<>(mLifecycleCallbacks);
@@ -1040,7 +1040,7 @@ public final class NavigationScene extends Scene implements NavigationListener, 
     @Override
     public void dispatchOnPreSceneActivityCreated(@NonNull Scene scene, @Nullable Bundle savedInstanceState, boolean directChild) {
         if (scene != this) {
-            if (mSceneLifecycleCallbackOpt && mLifecycleCallbacks.size() == 0) {
+            if (mSceneLifecycleCallbackObjectCreationOpt && mLifecycleCallbacks.size() == 0) {
                 //skip
             } else {
                 List<NonNullPair<ChildSceneLifecycleCallbacks, Boolean>> list = new ArrayList<>(mLifecycleCallbacks);
@@ -1061,7 +1061,7 @@ public final class NavigationScene extends Scene implements NavigationListener, 
     @Override
     public void dispatchOnPreSceneStarted(@NonNull Scene scene, boolean directChild) {
         if (scene != this) {
-            if (mSceneLifecycleCallbackOpt && mLifecycleCallbacks.size() == 0) {
+            if (mSceneLifecycleCallbackObjectCreationOpt && mLifecycleCallbacks.size() == 0) {
                 //skip
             } else {
                 List<NonNullPair<ChildSceneLifecycleCallbacks, Boolean>> list = new ArrayList<>(mLifecycleCallbacks);
@@ -1082,7 +1082,7 @@ public final class NavigationScene extends Scene implements NavigationListener, 
     @Override
     public void dispatchOnPreSceneResumed(@NonNull Scene scene, boolean directChild) {
         if (scene != this) {
-            if (mSceneLifecycleCallbackOpt && mLifecycleCallbacks.size() == 0) {
+            if (mSceneLifecycleCallbackObjectCreationOpt && mLifecycleCallbacks.size() == 0) {
                 //skip
             } else {
                 List<NonNullPair<ChildSceneLifecycleCallbacks, Boolean>> list = new ArrayList<>(mLifecycleCallbacks);
@@ -1103,7 +1103,7 @@ public final class NavigationScene extends Scene implements NavigationListener, 
     @Override
     public void dispatchOnPreScenePaused(@NonNull Scene scene, boolean directChild) {
         if (scene != this) {
-            if (mSceneLifecycleCallbackOpt && mLifecycleCallbacks.size() == 0) {
+            if (mSceneLifecycleCallbackObjectCreationOpt && mLifecycleCallbacks.size() == 0) {
                 //skip
             } else {
                 List<NonNullPair<ChildSceneLifecycleCallbacks, Boolean>> list = new ArrayList<>(mLifecycleCallbacks);
@@ -1124,7 +1124,7 @@ public final class NavigationScene extends Scene implements NavigationListener, 
     @Override
     public void dispatchOnPreSceneStopped(@NonNull Scene scene, boolean directChild) {
         if (scene != this) {
-            if (mSceneLifecycleCallbackOpt && mLifecycleCallbacks.size() == 0) {
+            if (mSceneLifecycleCallbackObjectCreationOpt && mLifecycleCallbacks.size() == 0) {
                 //skip
             } else {
                 List<NonNullPair<ChildSceneLifecycleCallbacks, Boolean>> list = new ArrayList<>(mLifecycleCallbacks);
@@ -1145,7 +1145,7 @@ public final class NavigationScene extends Scene implements NavigationListener, 
     @Override
     public void dispatchOnPreSceneViewDestroyed(@NonNull Scene scene, boolean directChild) {
         if (scene != this) {
-            if (mSceneLifecycleCallbackOpt && mLifecycleCallbacks.size() == 0) {
+            if (mSceneLifecycleCallbackObjectCreationOpt && mLifecycleCallbacks.size() == 0) {
                 //skip
             } else {
                 List<NonNullPair<ChildSceneLifecycleCallbacks, Boolean>> list = new ArrayList<>(mLifecycleCallbacks);
@@ -1165,7 +1165,7 @@ public final class NavigationScene extends Scene implements NavigationListener, 
     @Override
     public void dispatchOnPreSceneDestroyed(@NonNull Scene scene, boolean directChild) {
         if (scene != this) {
-            if (mSceneLifecycleCallbackOpt && mLifecycleCallbacks.size() == 0) {
+            if (mSceneLifecycleCallbackObjectCreationOpt && mLifecycleCallbacks.size() == 0) {
                 //skip
             } else {
                 List<NonNullPair<ChildSceneLifecycleCallbacks, Boolean>> list = new ArrayList<>(mLifecycleCallbacks);
@@ -1186,7 +1186,7 @@ public final class NavigationScene extends Scene implements NavigationListener, 
     @Override
     public void dispatchOnPreSceneSaveInstanceState(@NonNull Scene scene, @NonNull Bundle outState, boolean directChild) {
         if (scene != this) {
-            if (mSceneLifecycleCallbackOpt && mLifecycleCallbacks.size() == 0) {
+            if (mSceneLifecycleCallbackObjectCreationOpt && mLifecycleCallbacks.size() == 0) {
                 //skip
             } else {
                 List<NonNullPair<ChildSceneLifecycleCallbacks, Boolean>> list = new ArrayList<>(mLifecycleCallbacks);
@@ -1207,7 +1207,7 @@ public final class NavigationScene extends Scene implements NavigationListener, 
     @Override
     public void dispatchOnSceneCreated(@NonNull Scene scene, @Nullable Bundle savedInstanceState, boolean directChild) {
         if (scene != this) {
-            if (mSceneLifecycleCallbackOpt && mLifecycleCallbacks.size() == 0) {
+            if (mSceneLifecycleCallbackObjectCreationOpt && mLifecycleCallbacks.size() == 0) {
                 //skip
             } else {
                 List<NonNullPair<ChildSceneLifecycleCallbacks, Boolean>> list = new ArrayList<>(mLifecycleCallbacks);
@@ -1229,7 +1229,7 @@ public final class NavigationScene extends Scene implements NavigationListener, 
     @Override
     public final void dispatchOnSceneViewCreated(@NonNull Scene scene, @Nullable Bundle savedInstanceState, boolean directChild) {
         if (scene != this) {
-            if (mSceneLifecycleCallbackOpt && mLifecycleCallbacks.size() == 0) {
+            if (mSceneLifecycleCallbackObjectCreationOpt && mLifecycleCallbacks.size() == 0) {
                 //skip
             } else {
                 List<NonNullPair<ChildSceneLifecycleCallbacks, Boolean>> list = new ArrayList<>(mLifecycleCallbacks);
@@ -1251,7 +1251,7 @@ public final class NavigationScene extends Scene implements NavigationListener, 
     @Override
     public void dispatchOnSceneActivityCreated(@NonNull Scene scene, @Nullable Bundle savedInstanceState, boolean directChild) {
         if (scene != this) {
-            if (mSceneLifecycleCallbackOpt && mLifecycleCallbacks.size() == 0) {
+            if (mSceneLifecycleCallbackObjectCreationOpt && mLifecycleCallbacks.size() == 0) {
                 //skip
             } else {
                 List<NonNullPair<ChildSceneLifecycleCallbacks, Boolean>> list = new ArrayList<>(mLifecycleCallbacks);
@@ -1272,7 +1272,7 @@ public final class NavigationScene extends Scene implements NavigationListener, 
     @Override
     public void dispatchOnSceneStarted(@NonNull Scene scene, boolean directChild) {
         if (scene != this) {
-            if (mSceneLifecycleCallbackOpt && mLifecycleCallbacks.size() == 0) {
+            if (mSceneLifecycleCallbackObjectCreationOpt && mLifecycleCallbacks.size() == 0) {
                 //skip
             } else {
                 List<NonNullPair<ChildSceneLifecycleCallbacks, Boolean>> list = new ArrayList<>(mLifecycleCallbacks);
@@ -1294,7 +1294,7 @@ public final class NavigationScene extends Scene implements NavigationListener, 
     @Override
     public void dispatchOnSceneResumed(@NonNull Scene scene, boolean directChild) {
         if (scene != this) {
-            if (mSceneLifecycleCallbackOpt && mLifecycleCallbacks.size() == 0) {
+            if (mSceneLifecycleCallbackObjectCreationOpt && mLifecycleCallbacks.size() == 0) {
                 //skip
             } else {
                 List<NonNullPair<ChildSceneLifecycleCallbacks, Boolean>> list = new ArrayList<>(mLifecycleCallbacks);
@@ -1316,7 +1316,7 @@ public final class NavigationScene extends Scene implements NavigationListener, 
     @Override
     public void dispatchOnSceneStopped(@NonNull Scene scene, boolean directChild) {
         if (scene != this) {
-            if (mSceneLifecycleCallbackOpt && mLifecycleCallbacks.size() == 0) {
+            if (mSceneLifecycleCallbackObjectCreationOpt && mLifecycleCallbacks.size() == 0) {
                 //skip
             } else {
                 List<NonNullPair<ChildSceneLifecycleCallbacks, Boolean>> list = new ArrayList<>(mLifecycleCallbacks);
@@ -1337,7 +1337,7 @@ public final class NavigationScene extends Scene implements NavigationListener, 
     @Override
     public void dispatchOnScenePaused(@NonNull Scene scene, boolean directChild) {
         if (scene != this) {
-            if (mSceneLifecycleCallbackOpt && mLifecycleCallbacks.size() == 0) {
+            if (mSceneLifecycleCallbackObjectCreationOpt && mLifecycleCallbacks.size() == 0) {
                 //skip
             } else {
                 List<NonNullPair<ChildSceneLifecycleCallbacks, Boolean>> list = new ArrayList<>(mLifecycleCallbacks);
@@ -1359,7 +1359,7 @@ public final class NavigationScene extends Scene implements NavigationListener, 
     @Override
     public void dispatchOnSceneSaveInstanceState(@NonNull Scene scene, @NonNull Bundle outState, boolean directChild) {
         if (scene != this) {
-            if (mSceneLifecycleCallbackOpt && mLifecycleCallbacks.size() == 0) {
+            if (mSceneLifecycleCallbackObjectCreationOpt && mLifecycleCallbacks.size() == 0) {
                 //skip
             } else {
                 List<NonNullPair<ChildSceneLifecycleCallbacks, Boolean>> list = new ArrayList<>(mLifecycleCallbacks);
@@ -1381,7 +1381,7 @@ public final class NavigationScene extends Scene implements NavigationListener, 
     @Override
     public void dispatchOnSceneViewDestroyed(@NonNull Scene scene, boolean directChild) {
         if (scene != this) {
-            if (mSceneLifecycleCallbackOpt && mLifecycleCallbacks.size() == 0) {
+            if (mSceneLifecycleCallbackObjectCreationOpt && mLifecycleCallbacks.size() == 0) {
                 //skip
             } else {
                 List<NonNullPair<ChildSceneLifecycleCallbacks, Boolean>> list = new ArrayList<>(mLifecycleCallbacks);
@@ -1403,7 +1403,7 @@ public final class NavigationScene extends Scene implements NavigationListener, 
     @Override
     public final void dispatchOnSceneDestroyed(@NonNull Scene scene, boolean directChild) {
         if (scene != this) {
-            if (mSceneLifecycleCallbackOpt && mLifecycleCallbacks.size() == 0) {
+            if (mSceneLifecycleCallbackObjectCreationOpt && mLifecycleCallbacks.size() == 0) {
                 //skip
             } else {
                 List<NonNullPair<ChildSceneLifecycleCallbacks, Boolean>> list = new ArrayList<>(mLifecycleCallbacks);
