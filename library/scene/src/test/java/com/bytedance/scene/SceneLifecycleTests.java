@@ -92,6 +92,7 @@ public class SceneLifecycleTests {
         assertEquals(testScene.getView().getVisibility(), View.VISIBLE);
 
         sceneLifecycleManager.onDestroyView();
+        assertTrue(testScene.isViewDestroyed());
         assertNull(testScene.getView());
         assertNull(testScene.getActivity());
         assertNull(testScene.getApplicationContext());

@@ -166,6 +166,10 @@ public abstract class Scene implements LifecycleOwner, SavedStateRegistryOwner, 
     private SavedStateRegistryController mSavedStateRegistryController;
 
     private boolean mIsSeparateCreateFromCreateView = false;
+    /**
+     * This flag may be called in non UI thread via {@link #isViewDestroyed()}
+     */
+    private volatile boolean mViewDestroyed = false;
 
     /**
      * @hide
@@ -272,6 +276,8 @@ public abstract class Scene implements LifecycleOwner, SavedStateRegistryOwner, 
         if (this.mLifecycleRegistry.getCurrentState() != Lifecycle.State.INITIALIZED) {
             this.mLifecycleRegistry.rest();
         }
+        //reset other flags
+        this.mViewDestroyed = false;
     }
 
     private static class FixSceneReuseLifecycleAdapter extends Lifecycle {
@@ -566,6 +572,7 @@ public abstract class Scene implements LifecycleOwner, SavedStateRegistryOwner, 
             ViewRefUtility.cancelViewTouchTargetFromParent(this.mView);
         }
 
+        this.mViewDestroyed = true;
         mLifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_DESTROY);
         if (mIsSeparateCreateFromCreateView) {
             setState(State.CREATED);
@@ -1108,6 +1115,14 @@ public abstract class Scene implements LifecycleOwner, SavedStateRegistryOwner, 
     @Override
     public final Lifecycle getLifecycle() {
         return mLifecycleRegistry;
+    }
+
+    /**
+     * Returns true if the final {@link #onDestroyView()} call will be made
+     * on the Scene, so this instance should not continue to execute any logic related to UI.
+     */
+    public final boolean isViewDestroyed() {
+        return this.mViewDestroyed;
     }
 
     private ViewModelStore viewModelStore;

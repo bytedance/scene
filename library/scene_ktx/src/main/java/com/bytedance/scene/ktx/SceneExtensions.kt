@@ -61,6 +61,10 @@ fun Scene.postDelayed(runnable: Runnable, delayMillis: Long) {
     })
 }
 
+/**
+ * Actually it is equal to [Scene.isViewDestroyed]
+ */
+@Deprecated("It is better to use Scene.isViewDestroyed()")
 fun Scene.isDestroyed(): Boolean {
     return this.lifecycle.currentState == Lifecycle.State.DESTROYED
 }
