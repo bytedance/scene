@@ -45,7 +45,7 @@ public class PushStopOperation implements Operation {
 
             for (int i = currentRecordList.size() - 2; i >= 0; i--) {
                 Record record = currentRecordList.get(i);
-                NavigationSceneManager.moveState(mNavigationScene, record.mScene, dstState, null, false, null);
+                mManagerAbility.moveState(mNavigationScene, record.mScene, dstState, null, false, null);
                 if (!record.mIsTranslucent) {
                     break;
                 }

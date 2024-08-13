@@ -39,7 +39,7 @@ public class PushCreateOperation implements Operation {
          *       Because of the destruction restore, it is impossible to go directly to RESUMED
          */
 
-        NavigationSceneManager.moveState(mNavigationScene, mScene, mNavigationScene.getState(), null, false, null);
+        mManagerAbility.moveState(mNavigationScene, mScene, mNavigationScene.getState(), null, false, null);
         operationEndAction.run();
     }
 }

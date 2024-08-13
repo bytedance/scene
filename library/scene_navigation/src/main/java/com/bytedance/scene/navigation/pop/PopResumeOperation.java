@@ -38,9 +38,9 @@ public class PopResumeOperation implements Operation {
         if (mManagerAbility.isOnlyRestoreVisibleScene()) {
             Bundle dstScenePreviousDstSavedState = returnRecord.mPreviousSavedState;
             returnRecord.mPreviousSavedState = null;
-            NavigationSceneManager.moveState(mNavigationScene, dstScene, dstState, dstScenePreviousDstSavedState, false, null);
+            mManagerAbility.moveState(mNavigationScene, dstScene, dstState, dstScenePreviousDstSavedState, false, null);
         } else {
-            NavigationSceneManager.moveState(mNavigationScene, dstScene, dstState, null, false, null);
+            mManagerAbility.moveState(mNavigationScene, dstScene, dstState, null, false, null);
         }
 
         // Ensure that the requesting Scene is correct
@@ -60,10 +60,10 @@ public class PopResumeOperation implements Operation {
                     for (int i = index - 1; i >= 0; i--) {
                         Record record = currentRecordList.get(i);
                         if (mManagerAbility.isOnlyRestoreVisibleScene()) {
-                            NavigationSceneManager.moveState(mNavigationScene, record.mScene, NavigationSceneManager.findMinState(mNavigationScene.getState(), State.STARTED), record.mPreviousSavedState, false, null);
+                            mManagerAbility.moveState(mNavigationScene, record.mScene, NavigationSceneManager.findMinState(mNavigationScene.getState(), State.STARTED), record.mPreviousSavedState, false, null);
                             record.mPreviousSavedState = null;
                         } else {
-                            NavigationSceneManager.moveState(mNavigationScene, record.mScene, NavigationSceneManager.findMinState(mNavigationScene.getState(), State.STARTED), null, false, null);
+                            mManagerAbility.moveState(mNavigationScene, record.mScene, NavigationSceneManager.findMinState(mNavigationScene.getState(), State.STARTED), null, false, null);
                         }
                         if (!record.mIsTranslucent) {
                             break;

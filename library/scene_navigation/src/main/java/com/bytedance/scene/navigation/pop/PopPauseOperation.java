@@ -4,7 +4,6 @@ import com.bytedance.scene.Scene;
 import com.bytedance.scene.State;
 import com.bytedance.scene.navigation.NavigationManagerAbility;
 import com.bytedance.scene.navigation.NavigationScene;
-import com.bytedance.scene.navigation.NavigationSceneManager;
 import com.bytedance.scene.navigation.Operation;
 import com.bytedance.scene.navigation.Record;
 
@@ -34,7 +33,7 @@ public class PopPauseOperation implements Operation {
          */
         for (final Record record : destroyRecordList) {
             Scene scene = record.mScene;
-            NavigationSceneManager.moveState(this.mNavigationScene, scene, State.STARTED, null, false, null);
+            this.mManagerAbility.moveState(this.mNavigationScene, scene, State.STARTED, null, false, null);
         }
 
         operationEndAction.run();

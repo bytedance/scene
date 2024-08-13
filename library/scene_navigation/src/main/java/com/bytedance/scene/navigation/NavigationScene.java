@@ -566,6 +566,14 @@ public final class NavigationScene extends Scene implements NavigationListener, 
     }
 
     @Override
+    public void dispatchCreate(@Nullable Bundle savedInstanceState) {
+        super.dispatchCreate(savedInstanceState);
+        if (isSeparateCreateFromCreateView()) {
+            // dispatch children state
+        }
+    }
+
+    @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
@@ -630,9 +638,21 @@ public final class NavigationScene extends Scene implements NavigationListener, 
         return frameLayout;
     }
 
+    /**
+     * @hide
+     */
+    @RestrictTo(LIBRARY)
+    @Override
+    public void dispatchActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.dispatchActivityCreated(savedInstanceState);
+        this.mNavigationSceneManager.executePendingOperation();
+    }
+
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+
+        // child scene state was synced to ACTIVITY_CREATED here
         if (savedInstanceState != null && isSupportRestore()) {
             this.mNavigationSceneManager.restoreFromBundle(requireActivity(), savedInstanceState, this.mRootSceneComponentFactory);
         } else {
@@ -648,12 +668,6 @@ public final class NavigationScene extends Scene implements NavigationListener, 
                 }
             });
         }
-    }
-
-    @Override
-    public void dispatchActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.dispatchActivityCreated(savedInstanceState);
-        this.mNavigationSceneManager.executePendingOperation();
     }
 
     /**
@@ -719,14 +733,35 @@ public final class NavigationScene extends Scene implements NavigationListener, 
         super.dispatchStop();
     }
 
+    @RestrictTo(LIBRARY)
+    @Override
+    public void dispatchDestroyView() {
+        if (isSeparateCreateFromCreateView()) {
+            dispatchChildrenState(State.CREATED, true);
+        }
+        super.dispatchDestroyView();
+    }
+
     @Override
     public void onDestroyView() {
         if (mMemoryMonitor != null) {
             mMemoryMonitor.stop();
             mHandler.removeCallbacks(mRecycleInvisibleScenesJob);
         }
-        dispatchChildrenState(State.NONE, true);
+        // TODO should be move to dispatchDestroyView
+        if (!isSeparateCreateFromCreateView()) {
+            dispatchChildrenState(State.NONE, true);
+        }
         super.onDestroyView();
+    }
+
+    @RestrictTo(LIBRARY)
+    @Override
+    public void dispatchDestroy() {
+        if (isSeparateCreateFromCreateView()) {
+            dispatchChildrenState(State.NONE, true);
+        }
+        super.dispatchDestroy();
     }
 
     private void dispatchCurrentChildState(@NonNull State state) {

@@ -40,7 +40,7 @@ public class PushPauseOperation implements Operation {
                 if (!removePredicate.apply(oldScene)) {
                     continue;
                 }
-                NavigationSceneManager.moveState(mNavigationScene, oldScene, State.NONE, null, false, null);
+                mManagerAbility.moveState(mNavigationScene, oldScene, State.NONE, null, false, null);
                 mManagerAbility.removeRecord(oldRecord);
             }
         }
@@ -55,7 +55,7 @@ public class PushPauseOperation implements Operation {
             dstState = NavigationSceneManager.findMinState(dstState, mNavigationScene.getState());
 
             if (dstState == State.STARTED || dstState == State.ACTIVITY_CREATED) {
-                NavigationSceneManager.moveState(mNavigationScene, currentScene, State.STARTED, null, false, null);
+                mManagerAbility.moveState(mNavigationScene, currentScene, State.STARTED, null, false, null);
             }
         }
 

@@ -10,7 +10,6 @@ import com.bytedance.scene.animation.NavigationAnimationExecutor;
 import com.bytedance.scene.group.ReuseGroupScene;
 import com.bytedance.scene.navigation.NavigationManagerAbility;
 import com.bytedance.scene.navigation.NavigationScene;
-import com.bytedance.scene.navigation.NavigationSceneManager;
 import com.bytedance.scene.navigation.Operation;
 import com.bytedance.scene.navigation.Record;
 import com.bytedance.scene.utlity.AnimatorUtility;
@@ -49,7 +48,7 @@ public class PopDestroyOperation implements Operation {
     public void execute(final Runnable operationEndAction) {
         for (final Record record : this.mDestroyRecordList) {
             Scene scene = record.mScene;
-            NavigationSceneManager.moveState(this.mManagerAbility.getNavigationScene(), scene, State.NONE, null, false, null);
+            this.mManagerAbility.moveState(this.mManagerAbility.getNavigationScene(), scene, State.NONE, null, false, null);
             this.mManagerAbility.removeRecord(record);
             // If it is a reusable Scene, save it
             if (record != mCurrentRecord && scene instanceof ReuseGroupScene) {

@@ -344,6 +344,9 @@ public abstract class GroupScene extends Scene implements SceneParent {
     @Override
     public final void dispatchAttachScene(@Nullable Scene parentScene) {
         super.dispatchAttachScene(parentScene);
+
+        this.mGroupSceneManager.setSeparateCreateFromCreateView(isSeparateCreateFromCreateView());
+
         if (parentScene == null) {
             //ignore
         } else if (parentScene instanceof SceneParent) {
@@ -359,6 +362,9 @@ public abstract class GroupScene extends Scene implements SceneParent {
     @Override
     public final void dispatchCreate(@Nullable Bundle savedInstanceState) {
         super.dispatchCreate(savedInstanceState);
+        if (isSeparateCreateFromCreateView()) {
+            dispatchChildrenState(State.CREATED);
+        }
     }
 
     @Override
@@ -600,20 +606,39 @@ public abstract class GroupScene extends Scene implements SceneParent {
     @RestrictTo(LIBRARY)
     @Override
     public final void dispatchDestroyView() {
-        dispatchChildrenState(State.NONE);
+        if (isSeparateCreateFromCreateView()) {
+            dispatchChildrenState(State.CREATED);
+        } else {
+            dispatchChildrenState(State.NONE);
+        }
         super.dispatchDestroyView();
     }
 
+    /**
+     * @hide
+     */
+    @RestrictTo(LIBRARY)
     @Override
     public final void dispatchDestroy() {
+        if (isSeparateCreateFromCreateView()) {
+            dispatchChildrenState(State.NONE);
+        }
         super.dispatchDestroy();
     }
 
+    /**
+     * @hide
+     */
+    @RestrictTo(LIBRARY)
     @Override
     public final void dispatchDetachScene() {
         super.dispatchDetachScene();
     }
 
+    /**
+     * @hide
+     */
+    @RestrictTo(LIBRARY)
     @Override
     public final void dispatchDetachActivity() {
         super.dispatchDetachActivity();
