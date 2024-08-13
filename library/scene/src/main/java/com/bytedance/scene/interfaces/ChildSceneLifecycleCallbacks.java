@@ -38,6 +38,8 @@ public interface ChildSceneLifecycleCallbacks {
 
     void onPreSceneResumed(@NonNull Scene scene);
 
+    void onPreSceneSaveInstanceState(@NonNull Scene scene, @NonNull Bundle outState);
+
     void onPreScenePaused(@NonNull Scene scene);
 
     void onPreSceneStopped(@NonNull Scene scene);

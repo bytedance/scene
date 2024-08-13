@@ -1,38 +1,61 @@
-package com.bytedance.scene;
+package com.bytedance.scene.saveandrestore;
 
+
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
 
 import android.app.Activity;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
-import androidx.core.util.Pair;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
+import com.bytedance.scene.NavigationSourceUtility;
+import com.bytedance.scene.Scene;
+import com.bytedance.scene.SceneLifecycleManager;
+import com.bytedance.scene.Scope;
+import com.bytedance.scene.State;
 import com.bytedance.scene.group.GroupScene;
 import com.bytedance.scene.interfaces.ChildSceneLifecycleAdapterCallbacks;
 import com.bytedance.scene.interfaces.ChildSceneLifecycleCallbacks;
 import com.bytedance.scene.utlity.ViewIdGenerator;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
+import org.robolectric.android.controller.ActivityController;
 import org.robolectric.annotation.Config;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import static org.junit.Assert.*;
-
 @RunWith(RobolectricTestRunner.class)
 @Config(manifest = Config.NONE)
-public class ChildSceneLifecycleCallbacksTests {
+public class OnSaveInstanceStateChildSceneLifecycleCallbacksTests {
     @Test
     public void testGroupSceneNotRecursiveExcludingOnSceneSaveInstanceState() {
+        final AtomicBoolean isPreCreatedCalled = new AtomicBoolean(false);
+        final AtomicBoolean isPreViewCreatedCalled = new AtomicBoolean(false);
+        final AtomicBoolean isPreActivityCreatedCalled = new AtomicBoolean(false);
+        final AtomicBoolean isPreStartedCalled = new AtomicBoolean(false);
+        final AtomicBoolean isPreResumedCalled = new AtomicBoolean(false);
+        final AtomicBoolean isPreSaveInstanceState = new AtomicBoolean(false);
+        final AtomicBoolean isPrePausedCalled = new AtomicBoolean(false);
+        final AtomicBoolean isPreStoppedCalled = new AtomicBoolean(false);
+        final AtomicBoolean isPreViewDestroyedCalled = new AtomicBoolean(false);
+        final AtomicBoolean isPreDestroyedCalled = new AtomicBoolean(false);
+
         final AtomicBoolean isCreatedCalled = new AtomicBoolean(false);
         final AtomicBoolean isViewCreatedCalled = new AtomicBoolean(false);
         final AtomicBoolean isActivityCreatedCalled = new AtomicBoolean(false);
         final AtomicBoolean isStartedCalled = new AtomicBoolean(false);
         final AtomicBoolean isResumedCalled = new AtomicBoolean(false);
+        final AtomicBoolean isSaveInstanceState = new AtomicBoolean(false);
         final AtomicBoolean isPausedCalled = new AtomicBoolean(false);
         final AtomicBoolean isStoppedCalled = new AtomicBoolean(false);
         final AtomicBoolean isViewDestroyedCalled = new AtomicBoolean(false);
@@ -41,56 +64,78 @@ public class ChildSceneLifecycleCallbacksTests {
         ChildSceneLifecycleCallbacks callbacks = new ChildSceneLifecycleCallbacks() {
             @Override
             public void onPreSceneCreated(@NonNull Scene scene, @Nullable Bundle savedInstanceState) {
-
+                if (!isPreCreatedCalled.compareAndSet(false, true)) {
+                    throw new IllegalStateException("crash");
+                }
             }
 
             @Override
             public void onPreSceneViewCreated(@NonNull Scene scene, @Nullable Bundle savedInstanceState) {
-
+                if (!isPreViewCreatedCalled.compareAndSet(false, true)) {
+                    throw new IllegalStateException("crash");
+                }
             }
 
             @Override
             public void onPreSceneActivityCreated(@NonNull Scene scene, @Nullable Bundle savedInstanceState) {
-
+                if (!isPreActivityCreatedCalled.compareAndSet(false, true)) {
+                    throw new IllegalStateException("crash");
+                }
             }
 
             @Override
             public void onPreSceneStarted(@NonNull Scene scene) {
-
+                if (!isPreStartedCalled.compareAndSet(false, true)) {
+                    throw new IllegalStateException("crash");
+                }
             }
 
             @Override
             public void onPreSceneResumed(@NonNull Scene scene) {
-
+                if (!isPreResumedCalled.compareAndSet(false, true)) {
+                    throw new IllegalStateException("crash");
+                }
             }
 
             @Override
             public void onPreScenePaused(@NonNull Scene scene) {
-
+                if (!isPrePausedCalled.compareAndSet(false, true)) {
+                    throw new IllegalStateException("crash");
+                }
             }
 
             @Override
             public void onPreSceneStopped(@NonNull Scene scene) {
-
+                if (!isPreStoppedCalled.compareAndSet(false, true)) {
+                    throw new IllegalStateException("crash");
+                }
             }
 
             @Override
             public void onPreSceneViewDestroyed(@NonNull Scene scene) {
-
+                if (!isPreViewDestroyedCalled.compareAndSet(false, true)) {
+                    throw new IllegalStateException("crash");
+                }
             }
 
             @Override
             public void onPreSceneDestroyed(@NonNull Scene scene) {
-
+                if (!isPreDestroyedCalled.compareAndSet(false, true)) {
+                    throw new IllegalStateException("crash");
+                }
             }
 
             @Override
             public void onPreSceneSaveInstanceState(@NonNull Scene scene, @NonNull Bundle outState) {
-
+                if (!isPreSaveInstanceState.compareAndSet(false, true)) {
+                    throw new IllegalStateException("crash");
+                }
             }
 
             @Override
             public void onSceneCreated(@NonNull Scene scene, @Nullable Bundle savedInstanceState) {
+                assertTrue(isPreCreatedCalled.get());
+
                 if (!isCreatedCalled.compareAndSet(false, true)) {
                     throw new IllegalStateException("crash");
                 }
@@ -100,6 +145,8 @@ public class ChildSceneLifecycleCallbacksTests {
 
             @Override
             public void onSceneViewCreated(@NonNull Scene scene, @Nullable Bundle savedInstanceState) {
+                assertTrue(isPreViewCreatedCalled.get());
+
                 if (!isViewCreatedCalled.compareAndSet(false, true)) {
                     throw new IllegalStateException("crash");
                 }
@@ -109,6 +156,8 @@ public class ChildSceneLifecycleCallbacksTests {
 
             @Override
             public void onSceneActivityCreated(@NonNull Scene scene, @Nullable Bundle savedInstanceState) {
+                assertTrue(isPreActivityCreatedCalled.get());
+
                 if (!isActivityCreatedCalled.compareAndSet(false, true)) {
                     throw new IllegalStateException("crash");
                 }
@@ -118,6 +167,8 @@ public class ChildSceneLifecycleCallbacksTests {
 
             @Override
             public void onSceneStarted(@NonNull Scene scene) {
+                assertTrue(isPreStartedCalled.get());
+
                 if (!isStartedCalled.compareAndSet(false, true)) {
                     throw new IllegalStateException("crash");
                 }
@@ -126,6 +177,8 @@ public class ChildSceneLifecycleCallbacksTests {
 
             @Override
             public void onSceneResumed(@NonNull Scene scene) {
+                assertTrue(isPreResumedCalled.get());
+
                 if (!isResumedCalled.compareAndSet(false, true)) {
                     throw new IllegalStateException("crash");
                 }
@@ -134,11 +187,17 @@ public class ChildSceneLifecycleCallbacksTests {
 
             @Override
             public void onSceneSaveInstanceState(@NonNull Scene scene, @NonNull Bundle outState) {
-                //ignored
+                assertTrue(isPreSaveInstanceState.get());
+
+                if (!isSaveInstanceState.compareAndSet(false, true)) {
+                    throw new IllegalStateException("crash");
+                }
             }
 
             @Override
             public void onScenePaused(@NonNull Scene scene) {
+                assertTrue(isPrePausedCalled.get());
+
                 if (!isPausedCalled.compareAndSet(false, true)) {
                     throw new IllegalStateException("crash");
                 }
@@ -147,6 +206,8 @@ public class ChildSceneLifecycleCallbacksTests {
 
             @Override
             public void onSceneStopped(@NonNull Scene scene) {
+                assertTrue(isPreStoppedCalled.get());
+
                 if (!isStoppedCalled.compareAndSet(false, true)) {
                     throw new IllegalStateException("crash");
                 }
@@ -155,6 +216,8 @@ public class ChildSceneLifecycleCallbacksTests {
 
             @Override
             public void onSceneViewDestroyed(@NonNull Scene scene) {
+                assertTrue(isPreViewDestroyedCalled.get());
+
                 if (!isViewDestroyedCalled.compareAndSet(false, true)) {
                     throw new IllegalStateException("crash");
                 }
@@ -164,6 +227,8 @@ public class ChildSceneLifecycleCallbacksTests {
 
             @Override
             public void onSceneDestroyed(@NonNull Scene scene) {
+                assertTrue(isPreDestroyedCalled.get());
+
                 if (!isDestroyedCalled.compareAndSet(false, true)) {
                     throw new IllegalStateException("crash");
                 }
@@ -171,42 +236,39 @@ public class ChildSceneLifecycleCallbacksTests {
             }
         };
 
-        final int id = ViewIdGenerator.generateViewId();
-        final GroupScene rootScene = new GroupScene() {
-            @NonNull
-            @Override
-            public ViewGroup onCreateView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container, @Nullable Bundle savedInstanceState) {
-                return new FrameLayout(requireSceneContext());
-            }
+        final TestGroupScene rootScene = new TestGroupScene();
 
+        SceneLifecycleManager<GroupScene> sceneLifecycleManager = new SceneLifecycleManager<>();
+        ActivityController<NavigationSourceUtility.TestActivity> controller = Robolectric.buildActivity(NavigationSourceUtility.TestActivity.class).create().start().resume();
+        NavigationSourceUtility.TestActivity testActivity = controller.get();
+        Scope.RootScopeFactory rootScopeFactory = new Scope.RootScopeFactory() {
             @Override
-            public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-                super.onActivityCreated(savedInstanceState);
-                getView().setId(id);
+            public Scope getRootScope() {
+                return Scope.DEFAULT_ROOT_SCOPE_FACTORY.getRootScope();
             }
         };
 
-        Pair<SceneLifecycleManager<GroupScene>, GroupScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(rootScene);
+        sceneLifecycleManager.onActivityCreated(testActivity, testActivity.mFrameLayout,
+                rootScene, rootScopeFactory, null,
+                true, null);
+
         rootScene.registerChildSceneLifecycleCallbacks(callbacks, false);
 
-        SceneLifecycleManager lifecycleManager = pair.first;
+        SceneLifecycleManager lifecycleManager = sceneLifecycleManager;
         lifecycleManager.onStart();
         lifecycleManager.onResume();
 
-        Scene scene = new Scene() {
-            @NonNull
-            @Override
-            public View onCreateView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container, @Nullable Bundle savedInstanceState) {
-                return new View(requireSceneContext());
-            }
-        };
+        TestGroupScene scene = new TestGroupScene();
 
-        rootScene.add(id, scene, "TAG");
+        rootScene.add(rootScene.viewId, scene, "TAG");
         assertTrue(isCreatedCalled.get());
         assertTrue(isViewCreatedCalled.get());
         assertTrue(isActivityCreatedCalled.get());
         assertTrue(isStartedCalled.get());
         assertTrue(isResumedCalled.get());
+
+        lifecycleManager.onSaveInstanceState(new Bundle());
+        assertTrue(isSaveInstanceState.get());
 
         rootScene.remove(scene);
         assertTrue(isPausedCalled.get());
@@ -222,6 +284,7 @@ public class ChildSceneLifecycleCallbacksTests {
         final AtomicBoolean isPreActivityCreatedCalled = new AtomicBoolean(false);
         final AtomicBoolean isPreStartedCalled = new AtomicBoolean(false);
         final AtomicBoolean isPreResumedCalled = new AtomicBoolean(false);
+        final AtomicBoolean isPreSaveInstanceState = new AtomicBoolean(false);
         final AtomicBoolean isPrePausedCalled = new AtomicBoolean(false);
         final AtomicBoolean isPreStoppedCalled = new AtomicBoolean(false);
         final AtomicBoolean isPreViewDestroyedCalled = new AtomicBoolean(false);
@@ -232,18 +295,13 @@ public class ChildSceneLifecycleCallbacksTests {
         final AtomicBoolean isActivityCreatedCalled = new AtomicBoolean(false);
         final AtomicBoolean isStartedCalled = new AtomicBoolean(false);
         final AtomicBoolean isResumedCalled = new AtomicBoolean(false);
+        final AtomicBoolean isSaveInstanceState = new AtomicBoolean(false);
         final AtomicBoolean isPausedCalled = new AtomicBoolean(false);
         final AtomicBoolean isStoppedCalled = new AtomicBoolean(false);
         final AtomicBoolean isViewDestroyedCalled = new AtomicBoolean(false);
         final AtomicBoolean isDestroyedCalled = new AtomicBoolean(false);
 
-        final Scene childScene = new Scene() {
-            @NonNull
-            @Override
-            public View onCreateView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container, @Nullable Bundle savedInstanceState) {
-                return new View(requireSceneContext());
-            }
-        };
+        final TestGroupScene childScene = new TestGroupScene();
 
         ChildSceneLifecycleCallbacks callbacks = new ChildSceneLifecycleCallbacks() {
             @Override
@@ -341,7 +399,12 @@ public class ChildSceneLifecycleCallbacksTests {
 
             @Override
             public void onPreSceneSaveInstanceState(@NonNull Scene scene, @NonNull Bundle outState) {
-                //ignored
+                if (scene != childScene) {
+                    return;
+                }
+                if (!isPreSaveInstanceState.compareAndSet(false, true)) {
+                    throw new IllegalStateException("crash");
+                }
             }
 
             @Override
@@ -349,6 +412,8 @@ public class ChildSceneLifecycleCallbacksTests {
                 if (scene != childScene) {
                     return;
                 }
+                assertTrue(isPreCreatedCalled.get());
+
                 if (!isCreatedCalled.compareAndSet(false, true)) {
                     throw new IllegalStateException("crash");
                 }
@@ -361,6 +426,8 @@ public class ChildSceneLifecycleCallbacksTests {
                 if (scene != childScene) {
                     return;
                 }
+                assertTrue(isPreViewCreatedCalled.get());
+
                 if (!isViewCreatedCalled.compareAndSet(false, true)) {
                     throw new IllegalStateException("crash");
                 }
@@ -373,6 +440,8 @@ public class ChildSceneLifecycleCallbacksTests {
                 if (scene != childScene) {
                     return;
                 }
+                assertTrue(isPreActivityCreatedCalled.get());
+
                 if (!isActivityCreatedCalled.compareAndSet(false, true)) {
                     throw new IllegalStateException("crash");
                 }
@@ -385,6 +454,8 @@ public class ChildSceneLifecycleCallbacksTests {
                 if (scene != childScene) {
                     return;
                 }
+                assertTrue(isPreStartedCalled.get());
+
                 if (!isStartedCalled.compareAndSet(false, true)) {
                     throw new IllegalStateException("crash");
                 }
@@ -396,6 +467,8 @@ public class ChildSceneLifecycleCallbacksTests {
                 if (scene != childScene) {
                     return;
                 }
+                assertTrue(isPreResumedCalled.get());
+
                 if (!isResumedCalled.compareAndSet(false, true)) {
                     throw new IllegalStateException("crash");
                 }
@@ -404,7 +477,14 @@ public class ChildSceneLifecycleCallbacksTests {
 
             @Override
             public void onSceneSaveInstanceState(@NonNull Scene scene, @NonNull Bundle outState) {
-                //ignored
+                if (scene != childScene) {
+                    return;
+                }
+                assertTrue(isPreSaveInstanceState.get());
+
+                if (!isSaveInstanceState.compareAndSet(false, true)) {
+                    throw new IllegalStateException("crash");
+                }
             }
 
             @Override
@@ -412,6 +492,8 @@ public class ChildSceneLifecycleCallbacksTests {
                 if (scene != childScene) {
                     return;
                 }
+                assertTrue(isPrePausedCalled.get());
+
                 if (!isPausedCalled.compareAndSet(false, true)) {
                     throw new IllegalStateException("crash");
                 }
@@ -423,6 +505,8 @@ public class ChildSceneLifecycleCallbacksTests {
                 if (scene != childScene) {
                     return;
                 }
+                assertTrue(isPreStoppedCalled.get());
+
                 if (!isStoppedCalled.compareAndSet(false, true)) {
                     throw new IllegalStateException("crash");
                 }
@@ -434,6 +518,8 @@ public class ChildSceneLifecycleCallbacksTests {
                 if (scene != childScene) {
                     return;
                 }
+                assertTrue(isPreViewDestroyedCalled.get());
+
                 if (!isViewDestroyedCalled.compareAndSet(false, true)) {
                     throw new IllegalStateException("crash");
                 }
@@ -446,6 +532,8 @@ public class ChildSceneLifecycleCallbacksTests {
                 if (scene != childScene) {
                     return;
                 }
+                assertTrue(isPreDestroyedCalled.get());
+
                 if (!isDestroyedCalled.compareAndSet(false, true)) {
                     throw new IllegalStateException("crash");
                 }
@@ -468,37 +556,40 @@ public class ChildSceneLifecycleCallbacksTests {
             }
         };
 
-        Pair<SceneLifecycleManager<GroupScene>, GroupScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(rootScene);
+        SceneLifecycleManager<GroupScene> sceneLifecycleManager = new SceneLifecycleManager<>();
+        ActivityController<NavigationSourceUtility.TestActivity> controller = Robolectric.buildActivity(NavigationSourceUtility.TestActivity.class).create().start().resume();
+        NavigationSourceUtility.TestActivity testActivity = controller.get();
+        Scope.RootScopeFactory rootScopeFactory = new Scope.RootScopeFactory() {
+            @Override
+            public Scope getRootScope() {
+                return Scope.DEFAULT_ROOT_SCOPE_FACTORY.getRootScope();
+            }
+        };
+
+        sceneLifecycleManager.onActivityCreated(testActivity, testActivity.mFrameLayout,
+                rootScene, rootScopeFactory, null,
+                true, null);
+
         rootScene.registerChildSceneLifecycleCallbacks(callbacks, true);
 
-        SceneLifecycleManager lifecycleManager = pair.first;
+        SceneLifecycleManager lifecycleManager = sceneLifecycleManager;
         lifecycleManager.onStart();
         lifecycleManager.onResume();
 
-        final int secondRootId = ViewIdGenerator.generateViewId();
-        final GroupScene secondRootScene = new GroupScene() {
-            @NonNull
-            @Override
-            public ViewGroup onCreateView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container, @Nullable Bundle savedInstanceState) {
-                return new FrameLayout(requireSceneContext());
-            }
+        final TestGroupScene testGroupScene = new TestGroupScene();
+        rootScene.add(rootId, testGroupScene, "TAG");
 
-            @Override
-            public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-                super.onActivityCreated(savedInstanceState);
-                getView().setId(secondRootId);
-            }
-        };
-        rootScene.add(rootId, secondRootScene, "TAG");
-
-        secondRootScene.add(secondRootId, childScene, "CHILD");
+        testGroupScene.add(testGroupScene.viewId, childScene, "CHILD");
         assertTrue(isCreatedCalled.get());
         assertTrue(isViewCreatedCalled.get());
         assertTrue(isActivityCreatedCalled.get());
         assertTrue(isStartedCalled.get());
         assertTrue(isResumedCalled.get());
 
-        secondRootScene.remove(childScene);
+        lifecycleManager.onSaveInstanceState(new Bundle());
+        assertTrue(isSaveInstanceState.get());
+
+        testGroupScene.remove(childScene);
         assertTrue(isPausedCalled.get());
         assertTrue(isStoppedCalled.get());
         assertTrue(isViewDestroyedCalled.get());
@@ -539,4 +630,21 @@ public class ChildSceneLifecycleCallbacksTests {
             setContentView(mFrameLayout);
         }
     }
+
+    public static class TestGroupScene extends GroupScene {
+
+        final int viewId = ViewIdGenerator.generateViewId();
+
+        @NonNull
+        @Override
+        public ViewGroup onCreateView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container, @Nullable Bundle savedInstanceState) {
+            return new FrameLayout(requireSceneContext());
+        }
+
+        @Override
+        public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+            super.onActivityCreated(savedInstanceState);
+            getView().setId(viewId);
+        }
+    };
 }

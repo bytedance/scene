@@ -52,6 +52,11 @@ public class ChildSceneLifecycleAdapterCallbacks implements ChildSceneLifecycleC
     }
 
     @Override
+    public void onPreSceneSaveInstanceState(@NonNull Scene scene, @NonNull Bundle outState) {
+
+    }
+
+    @Override
     public void onPreScenePaused(@NonNull Scene scene) {
 
     }

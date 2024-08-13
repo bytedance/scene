@@ -89,6 +89,10 @@ class ChildSceneLifecycleCallbacksDemoScene : GroupScene() {
             log("Scene", "$scene onPreSceneResumed")
         }
 
+        override fun onPreSceneSaveInstanceState(scene: Scene, outState: Bundle) {
+            log("Scene", "$scene onPreSceneSaveInstanceState")
+        }
+
         override fun onPreScenePaused(scene: Scene) {
             log("Scene", "$scene onPreScenePaused")
         }

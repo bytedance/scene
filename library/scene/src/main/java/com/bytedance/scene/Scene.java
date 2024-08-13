@@ -531,6 +531,7 @@ public abstract class Scene implements LifecycleOwner, SavedStateRegistryOwner, 
     @RestrictTo(LIBRARY_GROUP)
     public void dispatchSaveInstanceState(Bundle outState) {
         mCalled = false;
+        dispatchOnPreSceneSaveInstanceState(this, outState, false);
         onSaveInstanceState(outState);
         if (!mCalled) {
             throw new SuperNotCalledException("Scene " + this
@@ -1386,6 +1387,15 @@ public abstract class Scene implements LifecycleOwner, SavedStateRegistryOwner, 
         Scene parentScene = getParentScene();
         if (parentScene != null) {
             parentScene.dispatchOnScenePaused(scene, scene == this);
+        }
+    }
+
+    /** @hide */
+    @RestrictTo(LIBRARY_GROUP)
+    public void dispatchOnPreSceneSaveInstanceState(@NonNull Scene scene, @NonNull Bundle outState, boolean directChild) {
+        Scene parentScene = getParentScene();
+        if (parentScene != null) {
+            parentScene.dispatchOnPreSceneSaveInstanceState(scene, outState, scene == this);
         }
     }
 

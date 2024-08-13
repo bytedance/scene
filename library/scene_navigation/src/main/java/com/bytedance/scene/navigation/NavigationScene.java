@@ -1145,6 +1145,23 @@ public final class NavigationScene extends Scene implements NavigationListener, 
      */
     @RestrictTo(LIBRARY_GROUP)
     @Override
+    public void dispatchOnPreSceneSaveInstanceState(@NonNull Scene scene, @NonNull Bundle outState, boolean directChild) {
+        if (scene != this) {
+            List<NonNullPair<ChildSceneLifecycleCallbacks, Boolean>> list = new ArrayList<>(mLifecycleCallbacks);
+            for (NonNullPair<ChildSceneLifecycleCallbacks, Boolean> pair : list) {
+                if (directChild || pair.second) {
+                    pair.first.onPreSceneSaveInstanceState(scene, outState);
+                }
+            }
+        }
+        super.dispatchOnPreSceneSaveInstanceState(scene, outState, directChild);
+    }
+
+    /**
+     * @hide
+     */
+    @RestrictTo(LIBRARY_GROUP)
+    @Override
     public void dispatchOnSceneCreated(@NonNull Scene scene, @Nullable Bundle savedInstanceState, boolean directChild) {
         if (scene != this) {
             List<NonNullPair<ChildSceneLifecycleCallbacks, Boolean>> list = new ArrayList<>(mLifecycleCallbacks);
