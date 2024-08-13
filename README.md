@@ -34,12 +34,6 @@ Scene is a lightweight library of navigation and ui composition based on view.
 
 [Download the Demo](https://github.com/bytedance/scene/releases/download/v1.0.2/demo-debug.apk)
 
-## Apps using Scene
-
-| <img src="misc/xigua.png" alt="xigua" width="100"/> | <img src="misc/douyin.png" alt="douyin" width="100"/> | <img src="misc/toutiao.png" alt="toutiao" width="100"/> |
-|:-----------:|:-------:|:-------:|
-| Xigua Video | Tik Tok |  Toutiao |
-
 ## Introduction
 
 Scene is designed to replace the use of Activity and Fragment on navigation and page segmentation.
@@ -250,6 +244,11 @@ A normal Dialog's Window is independent and in front of the Activity's Window,
 so if try to push a Scene in a opening Dialog, it will cause the Scene to appear behind it. 
 You can close the dialog box when click, or use Scene to implement the dialog instead of a system Dialog.
 
+## Apps using Scene
+
+| <img src="misc/xigua.png" alt="xigua" width="100"/> | <img src="misc/douyin.png" alt="douyin" width="100"/> | <img src="misc/toutiao.png" alt="toutiao" width="100"/> |
+|:-----------:|:-------:|:-------:|
+| Xigua Video | Tik Tok |  Toutiao |
 
 ## License
 ~~~
