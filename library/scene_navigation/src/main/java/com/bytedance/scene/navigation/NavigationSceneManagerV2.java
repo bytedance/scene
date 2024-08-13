@@ -121,7 +121,7 @@ class NavigationSceneManagerV2 implements INavigationManager {
         bundle.putParcelableArrayList(ParcelConstants.KEY_NAVIGATION_SCENE_MANAGER_TAG, bundleList);
     }
 
-    public void restoreFromBundle(Context context, Bundle bundle, SceneComponentFactory rootSceneComponentFactory) {
+    public void restoreFromBundle(Context context, Bundle bundle, SceneComponentFactory rootSceneComponentFactory, State targetState) {
         this.mBackStackList.restoreFromBundle(context, bundle, rootSceneComponentFactory);
         ArrayList<Bundle> bundleList = bundle.getParcelableArrayList(ParcelConstants.KEY_NAVIGATION_SCENE_MANAGER_TAG);
 
@@ -254,7 +254,7 @@ class NavigationSceneManagerV2 implements INavigationManager {
         endSuppressStackOperation(suppressTag);
     }
 
-    public void dispatchChildrenState(State state, boolean reverseOrder) {
+    public void dispatchChildrenState(State state, boolean reverseOrder, boolean causeByActivityLifecycle) {
         String suppressTag = beginSuppressStackOperation("NavigationManager dispatchChildrenState");
         executeOperationSafely(new SyncAllSceneStateOperation(state, reverseOrder), EMPTY_RUNNABLE);
         endSuppressStackOperation(suppressTag);
@@ -302,6 +302,11 @@ class NavigationSceneManagerV2 implements INavigationManager {
     public void popToRoot(NavigationAnimationExecutor animationFactory) {
         LoggerManager.getInstance().i(TAG, "popToRoot");
         scheduleToNextUIThreadLoop(new PopToRootOperation(animationFactory));
+    }
+
+    @Override
+    public void pushRoot(@NonNull Scene scene) {
+        throw new IllegalStateException("pushRoot is not supported");
     }
 
     public void push(@NonNull final Scene scene, @NonNull PushOptions pushOptions) {

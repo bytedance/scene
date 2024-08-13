@@ -25,7 +25,7 @@ public interface INavigationManager {
 
     public void saveToBundle(Bundle bundle);
 
-    public void restoreFromBundle(Context context, Bundle bundle, SceneComponentFactory rootSceneComponentFactory);
+    public void restoreFromBundle(Context context, Bundle bundle, SceneComponentFactory rootSceneComponentFactory, State targetState);
 
     public String getStackHistory();
 
@@ -36,7 +36,7 @@ public interface INavigationManager {
 
     public void dispatchCurrentChildState(State state);
 
-    public void dispatchChildrenState(State state, boolean reverseOrder);
+    public void dispatchChildrenState(State state, boolean reverseOrder, boolean causeByActivityLifecycle);
 
     public void setResult(Scene scene, Object result);
 
@@ -49,6 +49,8 @@ public interface INavigationManager {
     public void popTo(Class<? extends Scene> clazz, NavigationAnimationExecutor animationFactory);
 
     public void popToRoot(NavigationAnimationExecutor animationFactory);
+
+    public void pushRoot(@NonNull final Scene scene);
 
     public void push(@NonNull final Scene scene, @NonNull PushOptions pushOptions);
 

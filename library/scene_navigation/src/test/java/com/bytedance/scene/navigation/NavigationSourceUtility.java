@@ -46,6 +46,7 @@ public class NavigationSourceUtility {
         options.setOnlyRestoreVisibleScene(true);
         options.setUsePostInLifecycle(true);
         navigationScene.setSeparateCreateFromCreateView(separateCreate);
+        navigationScene.setInitRootSceneOnCreate(separateCreate);
         navigationScene.setArguments(options.toBundle());
 
         Scope.RootScopeFactory rootScopeFactory = new Scope.RootScopeFactory() {

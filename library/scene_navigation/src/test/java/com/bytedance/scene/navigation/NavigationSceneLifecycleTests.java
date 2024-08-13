@@ -35,6 +35,8 @@ public class NavigationSceneLifecycleTests {
         TestChildScene secondScene = new TestChildScene();
 
         Pair<SceneLifecycleManager<NavigationScene>, NavigationScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(groupScene);
+        assertNotNull(groupScene.getView().getParent());
+        assertEquals(groupScene.getState(), State.ACTIVITY_CREATED);
 
         SceneLifecycleManager sceneLifecycleManager = pair.first;
         NavigationScene navigationScene = pair.second;

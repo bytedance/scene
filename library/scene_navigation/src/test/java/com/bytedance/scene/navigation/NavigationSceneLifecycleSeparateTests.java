@@ -23,7 +23,6 @@ import com.bytedance.scene.SceneGlobalConfig;
 import com.bytedance.scene.SceneLifecycleManager;
 import com.bytedance.scene.Scope;
 import com.bytedance.scene.State;
-import com.bytedance.scene.animation.animatorexecutor.NoAnimationExecutor;
 import com.bytedance.scene.group.GroupScene;
 import com.bytedance.scene.interfaces.PushOptions;
 import com.bytedance.scene.utlity.ViewIdGenerator;
@@ -97,6 +96,7 @@ public class NavigationSceneLifecycleSeparateTests {
         TestChildScene secondScene = new TestChildScene();
 
         Pair<SceneLifecycleManager<NavigationScene>, NavigationScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(groupScene, true);
+        assertNotNull(groupScene.getView().getParent());
 
         SceneLifecycleManager sceneLifecycleManager = pair.first;
         NavigationScene navigationScene = pair.second;
@@ -378,6 +378,150 @@ public class NavigationSceneLifecycleSeparateTests {
         assertEquals(rootScene.getState(), State.NONE);
 
         navigationScene.dispatchCreateView(null, testActivity.mFrameLayout);
+        assertNull(rootScene.getView());
+        assertEquals(State.NONE, rootScene.getState());
+
+        navigationScene.dispatchActivityCreated(null);
+        navigationScene.push(secondScene);
+        assertEquals(secondScene.getState(), State.ACTIVITY_CREATED);
+        assertEquals(rootScene.getState(), State.ACTIVITY_CREATED);
+        assertNotNull(rootScene.getView());
+
+        View secondSceneView = secondScene.getView();
+        navigationScene.pop();
+        assertEquals(secondScene.getState(), State.NONE);
+        assertNull(secondSceneView.getParent());
+        assertEquals(rootScene.getState(), State.ACTIVITY_CREATED);
+
+        navigationScene.push(secondScene);
+        assertEquals(secondScene.getState(), State.ACTIVITY_CREATED);
+        assertEquals(rootScene.getState(), State.ACTIVITY_CREATED);
+
+        //start state
+        navigationScene.dispatchStart();
+        assertEquals(secondScene.getState(), State.STARTED);
+        assertEquals(rootScene.getState(), State.ACTIVITY_CREATED);
+
+        secondSceneView = secondScene.getView();
+        navigationScene.pop();
+        assertEquals(secondScene.getState(), State.NONE);
+        assertNull(secondSceneView.getParent());
+        assertEquals(rootScene.getState(), State.STARTED);
+
+        navigationScene.push(secondScene);
+        assertEquals(secondScene.getState(), State.STARTED);
+        assertEquals(rootScene.getState(), State.ACTIVITY_CREATED);
+
+        //resume state
+        navigationScene.dispatchResume();
+        assertEquals(secondScene.getState(), State.RESUMED);
+        assertEquals(rootScene.getState(), State.ACTIVITY_CREATED);
+
+        secondSceneView = secondScene.getView();
+        navigationScene.pop();
+        assertEquals(secondScene.getState(), State.NONE);
+        assertNull(secondSceneView.getParent());
+        assertEquals(rootScene.getState(), State.RESUMED);
+
+        navigationScene.push(secondScene);
+        assertEquals(secondScene.getState(), State.RESUMED);
+        assertEquals(rootScene.getState(), State.ACTIVITY_CREATED);
+
+        //pause state
+        navigationScene.dispatchPause();
+        assertEquals(secondScene.getState(), State.STARTED);
+        assertEquals(rootScene.getState(), State.ACTIVITY_CREATED);
+
+        secondSceneView = secondScene.getView();
+        navigationScene.pop();
+        assertEquals(secondScene.getState(), State.NONE);
+        assertNull(secondSceneView.getParent());
+        assertEquals(rootScene.getState(), State.STARTED);
+
+        navigationScene.push(secondScene);
+        assertEquals(secondScene.getState(), State.STARTED);
+        assertEquals(rootScene.getState(), State.ACTIVITY_CREATED);
+
+        //stop state
+        navigationScene.dispatchStop();
+        assertEquals(secondScene.getState(), State.ACTIVITY_CREATED);
+        assertEquals(rootScene.getState(), State.ACTIVITY_CREATED);
+
+        secondSceneView = secondScene.getView();
+        navigationScene.pop();
+        assertEquals(secondScene.getState(), State.NONE);
+        assertNull(secondSceneView.getParent());
+        assertEquals(rootScene.getState(), State.ACTIVITY_CREATED);
+
+        navigationScene.push(secondScene);
+        assertEquals(secondScene.getState(), State.ACTIVITY_CREATED);
+        assertEquals(rootScene.getState(), State.ACTIVITY_CREATED);
+
+        //destroy state
+        secondSceneView = secondScene.getView();
+        View groupSceneView = rootScene.getView();
+        navigationScene.dispatchDestroyView();
+        assertEquals(secondScene.getState(), State.CREATED);
+        assertNotNull(secondSceneView.getParent());
+        assertEquals(rootScene.getState(), State.CREATED);
+        assertNotNull(groupSceneView.getParent());
+
+        navigationScene.dispatchDestroy();
+        navigationScene.dispatchDetachScene();
+        navigationScene.dispatchDetachActivity();
+        assertEquals(secondScene.getState(), State.NONE);
+        assertNotNull(secondSceneView.getParent());
+        assertEquals(rootScene.getState(), State.NONE);
+        assertNotNull(groupSceneView.getParent());
+    }
+
+    @Test
+    public void testNavigationSceneLifecycle_separateCreateCall_initRootSceneOnCreate() {
+        final TestScene rootScene = new TestScene();
+
+        ActivityController<NavigationSourceUtility.TestActivity> controller = Robolectric.buildActivity(NavigationSourceUtility.TestActivity.class).create().start().resume();
+        NavigationSourceUtility.TestActivity testActivity = controller.get();
+        NavigationScene navigationScene = new NavigationScene();
+        NavigationSceneOptions options = new NavigationSceneOptions(rootScene.getClass());
+        SceneGlobalConfig.useActivityCompatibleLifecycleStrategy = true;
+        options.setOnlyRestoreVisibleScene(true);
+        options.setUsePostInLifecycle(true);
+        navigationScene.setSeparateCreateFromCreateView(true);
+        navigationScene.setInitRootSceneOnCreate(true);
+        navigationScene.setArguments(options.toBundle());
+        Scope.RootScopeFactory rootScopeFactory = new Scope.RootScopeFactory() {
+            @Override
+            public Scope getRootScope() {
+                return Scope.DEFAULT_ROOT_SCOPE_FACTORY.getRootScope();
+            }
+        };
+        navigationScene.setRootScopeFactory(rootScopeFactory);
+        SceneComponentFactory sceneComponentFactory = new SceneComponentFactory() {
+            @Override
+            public Scene instantiateScene(ClassLoader cl, String className, Bundle bundle) {
+                if (className.equals(rootScene.getClass().getName())) {
+                    return rootScene;
+                }
+                return null;
+            }
+        };
+        navigationScene.setRootSceneComponentFactory(sceneComponentFactory);
+        navigationScene.setDefaultNavigationAnimationExecutor(null);//make sure not be affected by animation
+
+        navigationScene.dispatchAttachActivity(testActivity);
+        navigationScene.dispatchAttachScene(null);
+        navigationScene.dispatchCreate(null);
+        assertEquals(State.CREATED, navigationScene.getState());
+        assertEquals(State.CREATED, rootScene.getState());
+        assertNull(rootScene.getView());
+
+        TestChildScene secondScene = new TestChildScene();
+        assertEquals(secondScene.getState(), State.NONE);
+
+        navigationScene.dispatchCreateView(null, testActivity.mFrameLayout);
+        assertEquals(State.VIEW_CREATED, rootScene.getState());
+        assertNotNull(rootScene.getView());
+
         navigationScene.dispatchActivityCreated(null);
         navigationScene.push(secondScene);
         assertEquals(secondScene.getState(), State.ACTIVITY_CREATED);

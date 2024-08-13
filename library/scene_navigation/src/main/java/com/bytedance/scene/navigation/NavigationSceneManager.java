@@ -135,7 +135,7 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
         bundle.putParcelableArrayList(ParcelConstants.KEY_NAVIGATION_SCENE_MANAGER_TAG, bundleList);
     }
 
-    public void restoreFromBundle(Context context, Bundle bundle, SceneComponentFactory rootSceneComponentFactory) {
+    public void restoreFromBundle(Context context, Bundle bundle, SceneComponentFactory rootSceneComponentFactory, State targetState) {
         this.mBackStackList.restoreFromBundle(context, bundle, rootSceneComponentFactory);
         ArrayList<Bundle> bundleList = bundle.getParcelableArrayList(ParcelConstants.KEY_NAVIGATION_SCENE_MANAGER_TAG);
 
@@ -155,7 +155,7 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
                 Record record = recordList.get(i);
                 Bundle sceneBundle = bundleList.get(i);
                 // TODO should moveState to mNavigationScene.getState() ?
-                moveState(this.mNavigationScene, record.mScene, State.ACTIVITY_CREATED, sceneBundle, false, null);
+                moveState(this.mNavigationScene, record.mScene, targetState, sceneBundle, false, null);
 
                 if (i == recordList.size() - 1) {
                     restoreActivityStatus(record.mActivityStatusRecord);
@@ -172,7 +172,7 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
                 Record record = recordList.get(i);
                 Bundle sceneBundle = bundleList.get(i);
                 // TODO should moveState to mNavigationScene.getState() ?
-                moveState(this.mNavigationScene, record.mScene, State.ACTIVITY_CREATED, sceneBundle, false, null);
+                moveState(this.mNavigationScene, record.mScene, targetState, sceneBundle, false, null);
             }
         }
     }
@@ -253,6 +253,20 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
         }
     }
 
+    private void executeOperationImmediately(@NonNull final Operation operation) {
+        NavigationRunnable task = new NavigationRunnable() {
+            @Override
+            public void run() {
+                SceneTrace.beginSection(TRACE_EXECUTE_OPERATION_TAG);
+                String suppressTag = beginSuppressStackOperation("NavigationManager execute operation immediately");
+                executeOperationSafely(operation, EMPTY_RUNNABLE);
+                endSuppressStackOperation(suppressTag);
+                SceneTrace.endSection();
+            }
+        };
+        mSceneMessageQueue.postSync(task);
+    }
+
     @NonNull
     public String beginSuppressStackOperation(@NonNull String tagPrefix) {
         String value = tagPrefix + "_" + mSuppressStackOperationId++;
@@ -283,12 +297,12 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
         });
     }
 
-    public void dispatchChildrenState(final State state, final boolean reverseOrder) {
+    public void dispatchChildrenState(final State state, final boolean reverseOrder, final boolean causeByActivityLifecycle) {
         this.mSceneMessageQueue.postSync(new Runnable() {
             @Override
             public void run() {
                 String suppressTag = beginSuppressStackOperation("NavigationManager dispatchChildrenState");
-                executeOperationSafely(new SyncAllSceneStateOperation(state, reverseOrder), EMPTY_RUNNABLE);
+                executeOperationSafely(new SyncAllSceneStateOperation(state, reverseOrder, causeByActivityLifecycle), EMPTY_RUNNABLE);
                 endSuppressStackOperation(suppressTag);
             }
         });
@@ -338,6 +352,16 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
     public void popToRoot(NavigationAnimationExecutor animationFactory) {
         LoggerManager.getInstance().i(TAG, "popToRoot");
         scheduleToNextUIThreadLoop(new PopToRootOperation(animationFactory));
+    }
+
+    @Override
+    public void pushRoot(@NonNull Scene scene) {
+        if (scene == null) {
+            throw new NullPointerException("rootScene can't be null");
+        }
+        
+        LoggerManager.getInstance().i(TAG, "pushRoot " + scene);
+        executeOperationImmediately(new PushRootOperation(scene));
     }
 
     public void push(@NonNull final Scene scene, @NonNull PushOptions pushOptions) {
@@ -1354,6 +1378,43 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
         return mNavigationScene.getState().value >= State.ACTIVITY_CREATED.value;
     }
 
+    private class PushRootOperation implements Operation {
+        private final Scene scene;
+        private final boolean isSceneTranslucent;
+
+        private PushRootOperation(Scene scene) {
+            this.scene = scene;
+            this.isSceneTranslucent = scene instanceof SceneTranslucent;
+        }
+
+        @Override
+        public void execute(final Runnable operationEndAction) {
+            final Record currentRecord = mBackStackList.getCurrentRecord();
+
+            /*
+             * It is possible to repeatedly push the same Scene object multiple times in multiple NavigationScene
+             * But as the Push operation is not necessarily executed immediately,
+             * the abnormal judgment in the Push method does not necessarily work.
+             * So we need to check this case here to throw an exception.
+             */
+            if (this.scene.getParentScene() != null) {
+                if (this.scene.getParentScene() == mNavigationScene) {
+                    operationEndAction.run();
+                    return;
+                }
+                throw new IllegalArgumentException("Scene already has a parent, parent " + scene.getParentScene());
+            }
+
+            final Record record = Record.newInstance(scene, isSceneTranslucent, null);
+            mBackStackList.push(record);
+
+            moveState(mNavigationScene, scene, mNavigationScene.getState(), null, false, null);
+
+            mNavigationListener.navigationChange(currentRecord != null ? currentRecord.mScene : null, scene, true);
+            operationEndAction.run();
+        }
+    }
+
     private class PushOptionOperation implements Operation {
         private final Scene scene;
         private final PushOptions pushOptions;
@@ -1547,10 +1608,12 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
     private class SyncAllSceneStateOperation implements Operation {
         private final State state;
         private final boolean reverseOrder;
+        private final boolean causeByActivityLifecycle;
 
-        private SyncAllSceneStateOperation(State state, boolean reverseOrder) {
+        private SyncAllSceneStateOperation(State state, boolean reverseOrder, boolean causeByActivityLifecycle) {
             this.state = state;
             this.reverseOrder = reverseOrder;
+            this.causeByActivityLifecycle = causeByActivityLifecycle;
         }
 
         @Override
@@ -1569,7 +1632,7 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
             for (int i = 0; i < recordList.size(); i++) {
                 Record record = recordList.get(i);
                 Scene scene = record.mScene;
-                moveState(mNavigationScene, scene, state, null, true, null);
+                moveState(mNavigationScene, scene, state, null, causeByActivityLifecycle, null);
             }
             operationEndAction.run();
         }
