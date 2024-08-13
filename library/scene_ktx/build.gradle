@@ -23,6 +23,7 @@ dependencies {
 
     implementation ANNOTATION_LIB
     implementation LIFECYCLE_VIEWMODEL_LIB
+    implementation LIFECYCLE_EXTENSIONS_LIB
     implementation KOTLIN_LIB
     implementation APPCOMPAT_LIB
 

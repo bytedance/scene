@@ -7,8 +7,12 @@ import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import com.bytedance.scene.*
+import androidx.lifecycle.ViewModelProviders
+import com.bytedance.scene.Scene
+import com.bytedance.scene.SceneComponentFactory
+import com.bytedance.scene.SceneLifecycleManager
+import com.bytedance.scene.SceneViewModelProviders
+import com.bytedance.scene.Scope
 import com.bytedance.scene.group.GroupScene
 import com.bytedance.scene.navigation.NavigationScene
 import com.bytedance.scene.navigation.NavigationSceneOptions
@@ -55,7 +59,7 @@ class SceneViewModelExtensionsTests {
             override fun onActivityCreated(savedInstanceState: Bundle?) {
                 super.onActivityCreated(savedInstanceState)
                 assertTrue(testViewModel.test())
-                assertSame(ViewModelProvider(requireActivity() as FragmentActivity).get(TestActivityModel::class.java), testViewModel)
+                assertSame(ViewModelProviders.of(requireActivity() as FragmentActivity).get(TestActivityModel::class.java), testViewModel)
             }
         }
         createFromSceneLifecycleManagerByFragmentActivity(scene)
