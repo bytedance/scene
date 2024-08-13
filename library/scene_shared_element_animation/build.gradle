@@ -12,6 +12,7 @@ android {
 }
 
 dependencies {
+    implementation KOTLIN_LIB
     implementation APPCOMPAT_LIB
     implementation TRANSITION_SUPPORT_LIB
     implementation LIFECYCLE_RUNTIME_LIB
