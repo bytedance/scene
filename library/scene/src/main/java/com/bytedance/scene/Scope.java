@@ -61,7 +61,7 @@ public class Scope {
     private final boolean validateScopeAndViewModelStoreSceneClassStrategy = SceneGlobalConfig.validateScopeAndViewModelStoreSceneClassStrategy;
 
     @NonNull
-    Scope buildScope(@NonNull final Scene scene, @Nullable Bundle bundle) {
+    public Scope buildScope(@NonNull final Scene scene, @Nullable Bundle bundle) {
         String scopeKey = null;
         if (bundle != null) {
             scopeKey = getScopeKeyFromBundle(bundle);
@@ -92,7 +92,7 @@ public class Scope {
         this.mChildrenScopes.remove(scopeKey);
     }
 
-    private Scope(Scope parentScope, @Nullable Class<? extends Scene> sceneClass, String scopeKey) {
+    public Scope(Scope parentScope, @Nullable Class<? extends Scene> sceneClass, String scopeKey) {
         this.mParentScope = parentScope;
         this.mSceneClass = sceneClass;
         this.mScopeKey = scopeKey;
@@ -161,7 +161,7 @@ public class Scope {
         bundle.putString(ParcelConstants.KEY_SCENE_SCOPE_KEY_TAG, mScopeKey);
     }
 
-    void destroy() {
+    public void destroy() {
         if (mParentScope != null) {
             mParentScope.removeChildScope(this.mScopeKey);
         }
