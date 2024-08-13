@@ -1,15 +1,25 @@
 package com.bytedance.scene.navigation.push;
 
+import android.os.Bundle;
+
+import androidx.annotation.NonNull;
+
 import com.bytedance.scene.Scene;
 import com.bytedance.scene.SceneTrace;
+import com.bytedance.scene.State;
+import com.bytedance.scene.interfaces.Function;
 import com.bytedance.scene.interfaces.PushOptions;
+import com.bytedance.scene.launchmode.LaunchModeBehavior;
 import com.bytedance.scene.navigation.NavigationManagerAbility;
 import com.bytedance.scene.navigation.NavigationScene;
 import com.bytedance.scene.navigation.NavigationSceneManager;
 import com.bytedance.scene.navigation.Operation;
 import com.bytedance.scene.navigation.Record;
+import com.bytedance.scene.navigation.pop.CoordinatePopCountOperation;
 import com.bytedance.scene.queue.NavigationMessageQueue;
 import com.bytedance.scene.queue.NavigationRunnable;
+
+import java.util.List;
 
 /**
  * Created by jiangqi on 2023/11/13
@@ -33,6 +43,7 @@ public class CoordinatePushOptionOperation implements Operation {
     private final NavigationMessageQueue mMessageQueue;
     private final Scene mScene;
     private final PushOptions mPushOptions;
+    private final LaunchModeBehavior mLaunchModeBehavior;
 
     public CoordinatePushOptionOperation(NavigationManagerAbility managerAbility,
                                          NavigationMessageQueue messageQueue,
@@ -42,6 +53,7 @@ public class CoordinatePushOptionOperation implements Operation {
         this.mMessageQueue = messageQueue;
         this.mScene = scene;
         this.mPushOptions = pushOptions;
+        this.mLaunchModeBehavior = pushOptions.provideLaunchModeBehavior(scene.getClass());
     }
 
     @Override
@@ -63,6 +75,46 @@ public class CoordinatePushOptionOperation implements Operation {
                 return;
             }
             throw new IllegalArgumentException("Scene already has a parent, parent " + mScene.getParentScene());
+        }
+
+        //for launchMode
+        if (this.mLaunchModeBehavior != null) {
+            final List<Scene> previousSceneList = mManagerAbility.getCurrentSceneList();
+            boolean isIntercepted = this.mLaunchModeBehavior.onInterceptPushOperation(previousSceneList);
+            if (isIntercepted) {
+                int popSceneCount = this.mLaunchModeBehavior.getPopSceneCount();
+                final Bundle newArguments = mScene.getArguments();
+                Function<Scene, Void> onNewIntentAction = new Function<Scene, Void>() {
+                    @Override
+                    public Void apply(@NonNull Scene scene) {
+                        mLaunchModeBehavior.sceneOnNewIntent(scene, newArguments);
+                        return null;
+                    }
+                };
+
+                if (popSceneCount > 0) {
+                    //fallback to pop
+                    if (popSceneCount >= previousSceneList.size()) {
+                        throw new IllegalArgumentException("LaunchModeBehavior getPopSceneCount count > current Scene count, LaunchModeBehavior type " + this.mLaunchModeBehavior.getClass());
+                    }
+                    new CoordinatePopCountOperation(mManagerAbility, mMessageQueue, this.mPushOptions.getNavigationAnimationFactory(), popSceneCount, null, onNewIntentAction).execute(operationEndAction);
+                }else {
+                    Scene dstScene = mManagerAbility.getCurrentScene();
+                    if (dstScene.getState() == State.RESUMED) {
+                        //Because Activity is onResume, so Scene is onResume too, pause then invoke onNewIntent, finally resume
+                        //onResume(current state) -> onPause -> onNewIntent -> onResume
+                        mManagerAbility.moveState(mNavigationScene, dstScene, State.STARTED, null, false, null);
+                        onNewIntentAction.apply(dstScene);
+                        mManagerAbility.moveState(mNavigationScene, dstScene, State.RESUMED, null, false, null);
+                    } else {
+                        //Because Activity is onPause or onStop, so Scene is onPause or onStop state, invoke onNewIntent directly
+                        //onPause/onStop(current state) -> onNewIntent
+                        onNewIntentAction.apply(dstScene);
+                    }
+                    operationEndAction.run();
+                }
+                return;
+            }
         }
 
         final Record currentRecord = mManagerAbility.getCurrentRecord();

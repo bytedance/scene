@@ -2,8 +2,11 @@ package com.bytedance.scene.navigation.pop;
 
 import android.os.Bundle;
 
+import androidx.annotation.Nullable;
+
 import com.bytedance.scene.Scene;
 import com.bytedance.scene.State;
+import com.bytedance.scene.interfaces.Function;
 import com.bytedance.scene.navigation.NavigationManagerAbility;
 import com.bytedance.scene.navigation.NavigationScene;
 import com.bytedance.scene.navigation.NavigationSceneManager;
@@ -22,12 +25,15 @@ public class PopResumeOperation implements Operation {
     private final NavigationScene mNavigationScene;
     private final Record currentRecord;
     private final Record returnRecord;
+    @Nullable
+    private final Function<Scene, Void> afterOnActivityCreatedAction;
 
-    public PopResumeOperation(NavigationManagerAbility navigationManagerAbility, Record currentRecord, Record returnRecord) {
+    public PopResumeOperation(NavigationManagerAbility navigationManagerAbility, Record currentRecord, Record returnRecord, Function<Scene, Void> afterOnActivityCreatedAction) {
         this.mManagerAbility = navigationManagerAbility;
         this.mNavigationScene = navigationManagerAbility.getNavigationScene();
         this.currentRecord = currentRecord;
         this.returnRecord = returnRecord;
+        this.afterOnActivityCreatedAction = afterOnActivityCreatedAction;
     }
 
     @Override
@@ -35,12 +41,24 @@ public class PopResumeOperation implements Operation {
         final Scene dstScene = returnRecord.mScene;
         final State dstState = mNavigationScene.getState();
 
-        if (mManagerAbility.isOnlyRestoreVisibleScene()) {
-            Bundle dstScenePreviousDstSavedState = returnRecord.mPreviousSavedState;
-            returnRecord.mPreviousSavedState = null;
-            mManagerAbility.moveState(mNavigationScene, dstScene, dstState, dstScenePreviousDstSavedState, false, null);
+        if (afterOnActivityCreatedAction != null) {
+            if (mManagerAbility.isOnlyRestoreVisibleScene() && dstScene.getState().value < State.ACTIVITY_CREATED.value) {
+                Bundle dstScenePreviousDstSavedState = returnRecord.mPreviousSavedState;
+                returnRecord.mPreviousSavedState = null;
+                //Scene is destroyed, so schedule onNewIntent after onActivityCreated
+                mManagerAbility.moveState(mNavigationScene, dstScene, dstState, dstScenePreviousDstSavedState, false, afterOnActivityCreatedAction, null);
+            } else {
+                afterOnActivityCreatedAction.apply(dstScene);
+                mManagerAbility.moveState(mNavigationScene, dstScene, dstState, null, false, null);
+            }
         } else {
-            mManagerAbility.moveState(mNavigationScene, dstScene, dstState, null, false, null);
+            if (mManagerAbility.isOnlyRestoreVisibleScene()) {
+                Bundle dstScenePreviousDstSavedState = returnRecord.mPreviousSavedState;
+                returnRecord.mPreviousSavedState = null;
+                mManagerAbility.moveState(mNavigationScene, dstScene, dstState, dstScenePreviousDstSavedState, false, null);
+            } else {
+                mManagerAbility.moveState(mNavigationScene, dstScene, dstState, null, false, null);
+            }
         }
 
         // Ensure that the requesting Scene is correct

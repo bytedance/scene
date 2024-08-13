@@ -42,9 +42,11 @@ import com.bytedance.scene.animation.AnimationInfo;
 import com.bytedance.scene.animation.NavigationAnimationExecutor;
 import com.bytedance.scene.animation.interaction.InteractionNavigationPopAnimationFactory;
 import com.bytedance.scene.group.ReuseGroupScene;
+import com.bytedance.scene.interfaces.Function;
 import com.bytedance.scene.interfaces.ActivityCompatibleBehavior;
 import com.bytedance.scene.interfaces.PopOptions;
 import com.bytedance.scene.interfaces.PushOptions;
+import com.bytedance.scene.launchmode.LaunchModeBehavior;
 import com.bytedance.scene.logger.LoggerManager;
 import com.bytedance.scene.navigation.pop.CoordinatePopOptionOperation;
 import com.bytedance.scene.navigation.push.CoordinatePushOptionOperation;
@@ -455,6 +457,7 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
         statusRecord.restore(activity);
     }
 
+    @Override
     public Scene getCurrentScene() {
         Record record = mBackStackList.getCurrentRecord();
         if (record != null) {
@@ -464,6 +467,7 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
         }
     }
 
+    @Override
     public List<Scene> getCurrentSceneList() {
         List<Record> recordList = mBackStackList.getCurrentRecordList();
         List<Scene> sceneList = new ArrayList<>();
@@ -510,10 +514,11 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
     }
 
     public static void moveStateNonSeparation(@NonNull NavigationScene navigationScene,
-                                 @NonNull Scene scene, @NonNull State to,
-                                 @Nullable Bundle bundle,
-                                 boolean causedByActivityLifeCycle,
-                                 @Nullable Runnable endAction) {
+                                              @NonNull Scene scene, @NonNull State to,
+                                              @Nullable Bundle bundle,
+                                              boolean causedByActivityLifeCycle,
+                                              @Nullable Function<Scene, Void> afterOnActivityCreatedAction,
+                                              @Nullable Runnable endAction) {
         State currentState = scene.getState();
         if (currentState == to) {
             if (endAction != null) {
@@ -556,20 +561,23 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
                         }
                     }
                     scene.getView().setVisibility(View.GONE);
-                    moveStateNonSeparation(navigationScene, scene, to, bundle, causedByActivityLifeCycle, endAction);
+                    moveStateNonSeparation(navigationScene, scene, to, bundle, causedByActivityLifeCycle, afterOnActivityCreatedAction, endAction);
                     break;
                 case VIEW_CREATED:
                     scene.dispatchActivityCreated(bundle);
-                    moveStateNonSeparation(navigationScene, scene, to, bundle, causedByActivityLifeCycle, endAction);
+                    if (afterOnActivityCreatedAction != null) {
+                        afterOnActivityCreatedAction.apply(scene);
+                    }
+                    moveStateNonSeparation(navigationScene, scene, to, bundle, causedByActivityLifeCycle, null, endAction);
                     break;
                 case ACTIVITY_CREATED:
                     scene.getView().setVisibility(View.VISIBLE);
                     scene.dispatchStart();
-                    moveStateNonSeparation(navigationScene, scene, to, bundle, causedByActivityLifeCycle, endAction);
+                    moveStateNonSeparation(navigationScene, scene, to, bundle, causedByActivityLifeCycle, null, endAction);
                     break;
                 case STARTED:
                     scene.dispatchResume();
-                    moveStateNonSeparation(navigationScene, scene, to, bundle, causedByActivityLifeCycle, endAction);
+                    moveStateNonSeparation(navigationScene, scene, to, bundle, causedByActivityLifeCycle, null, endAction);
                     break;
                 default:
                     throw new SceneInternalException("unreachable state case " + currentState.getName());
@@ -578,14 +586,14 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
             switch (currentState) {
                 case RESUMED:
                     scene.dispatchPause();
-                    moveStateNonSeparation(navigationScene, scene, to, bundle, causedByActivityLifeCycle, endAction);
+                    moveStateNonSeparation(navigationScene, scene, to, bundle, causedByActivityLifeCycle, null, endAction);
                     break;
                 case STARTED:
                     scene.dispatchStop();
                     if (!causedByActivityLifeCycle) {
                         scene.getView().setVisibility(View.GONE);
                     }
-                    moveStateNonSeparation(navigationScene, scene, to, bundle, causedByActivityLifeCycle, endAction);
+                    moveStateNonSeparation(navigationScene, scene, to, bundle, causedByActivityLifeCycle, null, endAction);
                     break;
                 case ACTIVITY_CREATED:
                     if (to == State.VIEW_CREATED) {
@@ -602,7 +610,7 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
                     scene.dispatchDestroy();
                     scene.dispatchDetachScene();
                     scene.dispatchDetachActivity();
-                    moveStateNonSeparation(navigationScene, scene, to, bundle, causedByActivityLifeCycle, endAction);
+                    moveStateNonSeparation(navigationScene, scene, to, bundle, causedByActivityLifeCycle, null,endAction);
                     break;
                 default:
                     throw new SceneInternalException("unreachable state case " + currentState.getName());
@@ -614,6 +622,7 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
                                   @NonNull Scene scene, @NonNull State to,
                                   @Nullable Bundle bundle,
                                   boolean causedByActivityLifeCycle,
+                                  @Nullable Function<Scene, Void> afterOnActivityCreatedAction,
                                   @Nullable Runnable endAction) {
         State currentState = scene.getState();
         if (currentState == to) {
@@ -629,7 +638,7 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
                     scene.dispatchAttachActivity(navigationScene.requireActivity());
                     scene.dispatchAttachScene(navigationScene);
                     scene.dispatchCreate(bundle);
-                    moveStateWithSeparation(navigationScene, scene, to, bundle, causedByActivityLifeCycle, endAction);
+                    moveStateWithSeparation(navigationScene, scene, to, bundle, causedByActivityLifeCycle, afterOnActivityCreatedAction, endAction);
                     break;
                 case CREATED:
                     ViewGroup containerView = navigationScene.getSceneContainer();
@@ -660,20 +669,23 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
                         }
                     }
                     scene.getView().setVisibility(View.GONE);
-                    moveStateWithSeparation(navigationScene, scene, to, bundle, causedByActivityLifeCycle, endAction);
+                    moveStateWithSeparation(navigationScene, scene, to, bundle, causedByActivityLifeCycle, afterOnActivityCreatedAction, endAction);
                     break;
                 case VIEW_CREATED:
                     scene.dispatchActivityCreated(bundle);
-                    moveStateWithSeparation(navigationScene, scene, to, bundle, causedByActivityLifeCycle, endAction);
+                    if (afterOnActivityCreatedAction != null) {
+                        afterOnActivityCreatedAction.apply(scene);
+                    }
+                    moveStateWithSeparation(navigationScene, scene, to, bundle, causedByActivityLifeCycle, null, endAction);
                     break;
                 case ACTIVITY_CREATED:
                     scene.getView().setVisibility(View.VISIBLE);
                     scene.dispatchStart();
-                    moveStateWithSeparation(navigationScene, scene, to, bundle, causedByActivityLifeCycle, endAction);
+                    moveStateWithSeparation(navigationScene, scene, to, bundle, causedByActivityLifeCycle, null, endAction);
                     break;
                 case STARTED:
                     scene.dispatchResume();
-                    moveStateWithSeparation(navigationScene, scene, to, bundle, causedByActivityLifeCycle, endAction);
+                    moveStateWithSeparation(navigationScene, scene, to, bundle, causedByActivityLifeCycle, null, endAction);
                     break;
                 default:
                     throw new SceneInternalException("unreachable state case " + currentState.getName());
@@ -682,14 +694,14 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
             switch (currentState) {
                 case RESUMED:
                     scene.dispatchPause();
-                    moveStateWithSeparation(navigationScene, scene, to, bundle, causedByActivityLifeCycle, endAction);
+                    moveStateWithSeparation(navigationScene, scene, to, bundle, causedByActivityLifeCycle, null, endAction);
                     break;
                 case STARTED:
                     scene.dispatchStop();
                     if (!causedByActivityLifeCycle) {
                         scene.getView().setVisibility(View.GONE);
                     }
-                    moveStateWithSeparation(navigationScene, scene, to, bundle, causedByActivityLifeCycle, endAction);
+                    moveStateWithSeparation(navigationScene, scene, to, bundle, causedByActivityLifeCycle, null, endAction);
                     break;
                 case ACTIVITY_CREATED:
                     if (to == State.VIEW_CREATED) {
@@ -703,13 +715,13 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
                     if (!causedByActivityLifeCycle) {
                         Utility.removeFromParentView(view);
                     }
-                    moveStateWithSeparation(navigationScene, scene, to, bundle, causedByActivityLifeCycle, endAction);
+                    moveStateWithSeparation(navigationScene, scene, to, bundle, causedByActivityLifeCycle, null, endAction);
                     break;
                 case CREATED:
                     scene.dispatchDestroy();
                     scene.dispatchDetachScene();
                     scene.dispatchDetachActivity();
-                    moveStateWithSeparation(navigationScene, scene, to, bundle, causedByActivityLifeCycle, endAction);
+                    moveStateWithSeparation(navigationScene, scene, to, bundle, causedByActivityLifeCycle, null, endAction);
                     break;
                 default:
                     throw new SceneInternalException("unreachable state case " + currentState.getName());
@@ -718,15 +730,21 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
     }
 
     @Override
+    public void moveState(@NonNull NavigationScene navigationScene, @NonNull Scene scene, @NonNull State to, @Nullable Bundle bundle, boolean causedByActivityLifeCycle, @Nullable Runnable endAction) {
+        this.moveState(navigationScene, scene, to, bundle, causedByActivityLifeCycle, null, endAction);
+    }
+
+    @Override
     public void moveState(@NonNull NavigationScene navigationScene,
                                  @NonNull Scene scene, @NonNull State to,
                                  @Nullable Bundle bundle,
                                  boolean causedByActivityLifeCycle,
+                                 @Nullable Function<Scene, Void> afterOnActivityCreatedAction,
                                  @Nullable Runnable endAction) {
         if (mIsSeparateCreateFromCreateView) {
-            moveStateWithSeparation(navigationScene, scene, to, bundle, causedByActivityLifeCycle, endAction);
+            moveStateWithSeparation(navigationScene, scene, to, bundle, causedByActivityLifeCycle, afterOnActivityCreatedAction, endAction);
         } else {
-            moveStateNonSeparation(navigationScene, scene, to, bundle, causedByActivityLifeCycle, endAction);
+            moveStateNonSeparation(navigationScene, scene, to, bundle, causedByActivityLifeCycle, afterOnActivityCreatedAction, endAction);
         }
     }
 
@@ -808,10 +826,17 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
     private class PopCountOperation implements Operation {
         private final NavigationAnimationExecutor animationFactory;
         private final int popCount;
+        @Nullable
+        private final Function<Scene, Void> afterOnActivityCreatedAction;
 
         private PopCountOperation(NavigationAnimationExecutor animationFactory, int popCount) {
+            this(animationFactory, popCount, null);
+        }
+
+        private PopCountOperation(NavigationAnimationExecutor animationFactory, int popCount, Function<Scene, Void> afterOnActivityCreatedAction) {
             this.animationFactory = animationFactory;
             this.popCount = popCount;
+            this.afterOnActivityCreatedAction = afterOnActivityCreatedAction;
         }
 
         @Override
@@ -869,12 +894,24 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
             final boolean isNavigationSceneInAnimationState = mNavigationScene.getState().value >= State.STARTED.value;
             final State dstState = mNavigationScene.getState();
 
-            if (mOnlyRestoreVisibleScene) {
-                Bundle dstScenePreviousDstSavedState = returnRecord.mPreviousSavedState;
-                returnRecord.mPreviousSavedState = null;
-                moveState(mNavigationScene, dstScene, dstState, dstScenePreviousDstSavedState, false, null);
+            if (afterOnActivityCreatedAction != null) {
+                if (mOnlyRestoreVisibleScene && dstScene.getState().value < State.ACTIVITY_CREATED.value) {
+                    //Scene is destroyed, so schedule onNewIntent after onActivityCreated
+                    Bundle dstScenePreviousDstSavedState = returnRecord.mPreviousSavedState;
+                    returnRecord.mPreviousSavedState = null;
+                    moveState(mNavigationScene, dstScene, dstState, dstScenePreviousDstSavedState, false, afterOnActivityCreatedAction, null);
+                } else {
+                    afterOnActivityCreatedAction.apply(dstScene);
+                    moveState(mNavigationScene, dstScene, dstState, null, false, null);
+                }
             } else {
-                moveState(mNavigationScene, dstScene, dstState, null, false, null);
+                if (mOnlyRestoreVisibleScene) {
+                    Bundle dstScenePreviousDstSavedState = returnRecord.mPreviousSavedState;
+                    returnRecord.mPreviousSavedState = null;
+                    moveState(mNavigationScene, dstScene, dstState, dstScenePreviousDstSavedState, false, null);
+                } else {
+                    moveState(mNavigationScene, dstScene, dstState, null, false, null);
+                }
             }
             // Ensure that the requesting Scene is correct
             if (currentRecord.mPushResultCallback != null) {
@@ -1443,11 +1480,13 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
         private final Scene scene;
         private final PushOptions pushOptions;
         private final boolean isSceneTranslucent;
+        private final LaunchModeBehavior mLaunchModeBehavior;
 
         private PushOptionOperation(Scene scene, PushOptions pushOptions) {
             this.scene = scene;
             this.pushOptions = pushOptions;
             this.isSceneTranslucent = pushOptions.isIsTranslucent() || scene instanceof SceneTranslucent;
+            this.mLaunchModeBehavior = pushOptions.provideLaunchModeBehavior(scene.getClass());
         }
 
         @Override
@@ -1472,6 +1511,43 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
                     return;
                 }
                 throw new IllegalArgumentException("Scene already has a parent, parent " + scene.getParentScene());
+            }
+
+            if (this.mLaunchModeBehavior != null) {
+                final List<Scene> previousSceneList = getCurrentSceneList();
+                boolean isIntercepted = this.mLaunchModeBehavior.onInterceptPushOperation(previousSceneList);
+                if (isIntercepted) {
+                    int popSceneCount = this.mLaunchModeBehavior.getPopSceneCount();
+                    final Bundle newArguments = scene.getArguments();
+                    Function<Scene, Void> onNewIntentAction = new Function<Scene, Void>() {
+                        @Override
+                        public Void apply(@NonNull Scene scene) {
+                            mLaunchModeBehavior.sceneOnNewIntent(scene, newArguments);
+                            return null;
+                        }
+                    };
+                    if (popSceneCount > 0) {
+                        //fallback to pop
+                        if (popSceneCount >= previousSceneList.size()) {
+                            throw new IllegalArgumentException("LaunchModeBehavior getPopSceneCount count > current Scene count, LaunchModeBehavior type " + this.mLaunchModeBehavior.getClass());
+                        }
+                        new PopCountOperation(this.pushOptions.getNavigationAnimationFactory(), popSceneCount, onNewIntentAction).execute(operationEndAction);
+                    } else {
+                        Scene dstScene = getCurrentScene();
+                        if (dstScene.getState() == State.RESUMED) {
+                            //onPause -> onNewIntent -> onResume
+                            moveState(mNavigationScene, dstScene, State.STARTED, null, false, null);
+                            onNewIntentAction.apply(dstScene);
+                            moveState(mNavigationScene, dstScene, State.RESUMED, null, false, null);
+                        } else {
+                            //onPause -> onNewIntent
+                            //onStop -> onNewIntent
+                            onNewIntentAction.apply(dstScene);
+                        }
+                        operationEndAction.run();
+                    }
+                    return;
+                }
             }
 
             Predicate<Scene> removePredicate = pushOptions.getRemovePredicate();

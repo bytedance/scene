@@ -10,6 +10,7 @@ import androidx.annotation.RestrictTo;
 
 import com.bytedance.scene.Scene;
 import com.bytedance.scene.State;
+import com.bytedance.scene.interfaces.Function;
 
 import java.util.List;
 
@@ -24,9 +25,13 @@ public interface NavigationManagerAbility {
 
     Record getCurrentRecord();
 
+    Scene getCurrentScene();
+
     boolean containsRecord(Record record);
 
     List<Record> getCurrentRecordList();
+
+    List<Scene> getCurrentSceneList();
 
     void pushRecord(Record record);
 
@@ -57,6 +62,15 @@ public interface NavigationManagerAbility {
             @NonNull Scene scene, @NonNull State to,
             @Nullable Bundle bundle,
             boolean causedByActivityLifeCycle,
+            @Nullable Runnable endAction
+    );
+
+    void moveState(
+            @NonNull NavigationScene navigationScene,
+            @NonNull Scene scene, @NonNull State to,
+            @Nullable Bundle bundle,
+            boolean causedByActivityLifeCycle,
+            @Nullable Function<Scene, Void> preSceneOnStartAction,
             @Nullable Runnable endAction
     );
 }

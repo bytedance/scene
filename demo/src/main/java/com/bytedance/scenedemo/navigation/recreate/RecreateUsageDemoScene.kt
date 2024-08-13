@@ -104,4 +104,8 @@ class RecreateUsageDemoScene : Scene(),
     override fun onConfigurationChanged(newConfig: Configuration) {
         Log.i("onConfigurationChanged", this.toString() + " $newConfig")
     }
+
+    override fun onNewIntent(arguments: Bundle?) {
+
+    }
 }

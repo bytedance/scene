@@ -19,6 +19,7 @@
     <string name="main_scene_title_other_library">Other Library</string>
 
     <string name="main_title_basic">Basic Usage</string>
+    <string name="main_title_launch_mode">LaunchMode</string>
     <string name="main_title_pro">Pro Usage</string>
     <string name="main_title_other">Other Usage</string>
     <string name="main_title_todo">Todo</string>
@@ -81,7 +82,7 @@
 
     <string name="nav_single_top_btn_root">Click to push PushSingleTopScene_0</string>
     <string name="nav_single_top_btn_0">Click to push PushSingleTopScene_1</string>
-    <string name="nav_single_top_btn_1">Click to push PushSingleTopScene_1</string>
+    <string name="nav_single_top_btn_1">Click to push PushSingleTopScene</string>
     <string name="nav_single_task_btn_0">Click to push SingleTaskDemoScene1</string>
     <string name="nav_single_task_btn_1">Click to push SingleTaskDemoScene</string>
     <string name="nav_remove_scene_in_task_0">Click to push RemoveDemoScene1, and Remove self after 3 seconds</string>

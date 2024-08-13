@@ -9,7 +9,6 @@ import com.bytedance.scenedemo.R
 import android.widget.TextView
 import com.bytedance.scene.Scene
 import com.bytedance.scene.ktx.navigationScene
-import com.bytedance.scenedemo.navigation.push_singletop.PushSingleTopScene_1
 import com.bytedance.scenedemo.utility.ColorUtil
 
 /**
@@ -29,6 +28,6 @@ class PushSingleTopScene_0 : Scene() {
         name.text = navigationScene!!.stackHistory
         val btn = view.findViewById<Button>(R.id.btn)
         btn.text = getString(R.string.nav_single_top_btn_0)
-        btn.setOnClickListener { navigationScene!!.push(PushSingleTopScene_1::class.java) }
+        btn.setOnClickListener { navigationScene!!.push(PushSingleTopScene::class.java) }
     }
 }

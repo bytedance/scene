@@ -15,15 +15,23 @@
  */
 package com.bytedance.scene.interfaces;
 
+import static androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP;
+
 import android.app.Activity;
 
 import androidx.annotation.AnimRes;
 import androidx.annotation.AnimatorRes;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.RestrictTo;
 
 import com.bytedance.scene.Scene;
 import com.bytedance.scene.animation.NavigationAnimationExecutor;
 import com.bytedance.scene.animation.animatorexecutor.AnimationOrAnimatorResourceExecutor;
+import com.bytedance.scene.launchmode.LaunchMode;
+import com.bytedance.scene.launchmode.LaunchModeBehavior;
+import com.bytedance.scene.launchmode.SingleTaskLaunchModeBehavior;
+import com.bytedance.scene.launchmode.SingleTopLaunchModeBehavior;
 import com.bytedance.scene.utlity.Predicate;
 
 /**
@@ -37,14 +45,18 @@ public class PushOptions {
     private final Predicate<Scene> mRemovePredicate;
     private final boolean mUsePost;
     private final boolean mUsePostWhenPause;
+    private final LaunchMode mLaunchMode;
+    private final LaunchModeBehavior mLaunchModeBehavior;
 
-    private PushOptions(Predicate<Scene> removePredicate, boolean isTranslucent, boolean usePost, boolean usePostWhenPause, PushResultCallback pushResultCallback, NavigationAnimationExecutor navigationAnimationExecutor) {
+    private PushOptions(Predicate<Scene> removePredicate, boolean isTranslucent, boolean usePost, boolean usePostWhenPause, PushResultCallback pushResultCallback, NavigationAnimationExecutor navigationAnimationExecutor, LaunchMode launchMode, LaunchModeBehavior launchModeBehavior) {
         this.mRemovePredicate = removePredicate;
         this.mIsTranslucent = isTranslucent;
         this.mUsePost = usePost;
         this.mUsePostWhenPause = usePostWhenPause;
         this.mPushResultCallback = pushResultCallback;
         this.mNavigationAnimationExecutor = navigationAnimationExecutor;
+        this.mLaunchMode = launchMode;
+        this.mLaunchModeBehavior = launchModeBehavior;
     }
 
     public Predicate<Scene> getRemovePredicate() {
@@ -71,6 +83,38 @@ public class PushOptions {
         return this.mPushResultCallback;
     }
 
+    public LaunchMode getLaunchMode(){
+        return this.mLaunchMode;
+    }
+
+    public LaunchModeBehavior getLaunchModeBehavior(){
+        return this.mLaunchModeBehavior;
+    }
+
+    /**
+     * @hide
+     */
+    @RestrictTo(LIBRARY_GROUP)
+    public LaunchModeBehavior provideLaunchModeBehavior(Class<?> sceneClass) {
+        LaunchModeBehavior launchModeBehavior = this.getLaunchModeBehavior();
+        if (launchModeBehavior == null) {
+            LaunchMode launchMode = this.getLaunchMode();
+            if (launchMode != null) {
+                switch (launchMode) {
+                    case STANDARD:
+                        break;
+                    case SINGLE_TOP:
+                        launchModeBehavior = new SingleTopLaunchModeBehavior(sceneClass);
+                        break;
+                    case SINGLE_TASK:
+                        launchModeBehavior = new SingleTaskLaunchModeBehavior(sceneClass);
+                        break;
+                }
+            }
+        }
+        return launchModeBehavior;
+    }
+
     public static class Builder {
         private boolean mIsTranslucent = false; // TODO: Translucent and clearTask cannot be together
         private PushResultCallback mPushResultCallback;
@@ -78,6 +122,8 @@ public class PushOptions {
         private Predicate<Scene> mRemovePredicate;
         private boolean mUsePost;
         private boolean mUsePostWhenPause = false;
+        private LaunchMode mLaunchMode;
+        private LaunchModeBehavior mLaunchModeBehavior;
 
         public Builder() {
         }
@@ -135,9 +181,28 @@ public class PushOptions {
             return this;
         }
 
+        public Builder setLaunchMode(@Nullable LaunchMode launchMode) {
+            if (this.mLaunchModeBehavior != null) {
+                throw new IllegalArgumentException("setLaunchModeBehavior is not null, please invoke setLaunchModeBehavior(null) at first");
+            }
+            this.mLaunchMode = launchMode;
+            return this;
+        }
+
+        /**
+         * similar to setLaunchMode, but you can use more advanced configuration
+         */
+        public Builder setLaunchModeBehavior(@Nullable LaunchModeBehavior launchModeBehavior) {
+            if (this.mLaunchMode != null && this.mLaunchMode != LaunchMode.STANDARD) {
+                throw new IllegalArgumentException("setLaunchMode is not null, please invoke setLaunchMode(null) or setLaunchMode(LaunchMode.STANDARD) at first");
+            }
+            this.mLaunchModeBehavior = launchModeBehavior;
+            return this;
+        }
+
         @NonNull
         public PushOptions build() {
-            return new PushOptions(this.mRemovePredicate, this.mIsTranslucent, this.mUsePost, this.mUsePostWhenPause, this.mPushResultCallback, this.mNavigationAnimationExecutor);
+            return new PushOptions(this.mRemovePredicate, this.mIsTranslucent, this.mUsePost, this.mUsePostWhenPause, this.mPushResultCallback, this.mNavigationAnimationExecutor, this.mLaunchMode, this.mLaunchModeBehavior);
         }
     }
 

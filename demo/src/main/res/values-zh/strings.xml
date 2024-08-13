@@ -17,6 +17,7 @@
     <string name="main_title_basic">基本用法</string>
     <string name="main_title_other">其他用法</string>
     <string name="main_title_pro">高级用法</string>
+    <string name="main_title_launch_mode">LaunchMode</string>
     <string name="main_title_todo">未完成</string>
     <string name="main_nav_btn_clear_task">Push 时清空 Task</string>
     <string name="main_nav_btn_remove">移除中间任意的 Scene</string>
@@ -28,7 +29,7 @@
     <string name="main_nav_btn_clear_current">Push 时关闭当前页面</string>
     <string name="nav_single_top_btn_root">点击跳到 PushSingleTopScene_0</string>
     <string name="nav_single_top_btn_0">点击跳到 PushSingleTopScene_1</string>
-    <string name="nav_single_top_btn_1">点击跳到 PushSingleTopScene_1</string>
+    <string name="nav_single_top_btn_1">点击跳到 PushSingleTopScene</string>
     <string name="nav_single_task_btn_0">点击跳到 SingleTaskDemoScene1</string>
     <string name="nav_single_task_btn_1">点击跳到 SingleTaskDemoScene</string>
     <string name="nav_remove_scene_in_task_0">点击跳到 RemoveDemoScene1，然后三秒后移除自己</string>

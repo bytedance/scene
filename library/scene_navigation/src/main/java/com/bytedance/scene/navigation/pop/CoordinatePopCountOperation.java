@@ -2,9 +2,12 @@ package com.bytedance.scene.navigation.pop;
 
 import android.view.View;
 
+import androidx.annotation.Nullable;
+
 import com.bytedance.scene.Scene;
 import com.bytedance.scene.SceneTrace;
 import com.bytedance.scene.animation.NavigationAnimationExecutor;
+import com.bytedance.scene.interfaces.Function;
 import com.bytedance.scene.interfaces.PopOptions;
 import com.bytedance.scene.navigation.NavigationManagerAbility;
 import com.bytedance.scene.navigation.NavigationScene;
@@ -33,16 +36,23 @@ public class CoordinatePopCountOperation implements Operation {
     private final PopOptions mPopOptions;
     private final int mPopCount;
     private final NavigationScene mNavigationScene;
+    @Nullable
+    private final Function<Scene, Void> mAfterOnActivityCreatedAction;
 
     public CoordinatePopCountOperation(NavigationManagerAbility navigationManagerAbility,
                                        NavigationMessageQueue messageQueue,
                                        NavigationAnimationExecutor animationFactory, int popCount, PopOptions popOptions) {
+        this(navigationManagerAbility, messageQueue, animationFactory, popCount, popOptions, null);
+    }
+
+    public CoordinatePopCountOperation(NavigationManagerAbility navigationManagerAbility, NavigationMessageQueue messageQueue, NavigationAnimationExecutor animationFactory, int popCount, PopOptions popOptions, Function<Scene, Void> afterOnActivityCreatedAction) {
         this.mManagerAbility = navigationManagerAbility;
         this.mMessageQueue = messageQueue;
         this.mAnimationFactory = animationFactory;
         this.mPopCount = popCount;
         this.mPopOptions = popOptions;
         this.mNavigationScene = navigationManagerAbility.getNavigationScene();
+        this.mAfterOnActivityCreatedAction = afterOnActivityCreatedAction;
     }
 
     @Override
@@ -90,7 +100,7 @@ public class CoordinatePopCountOperation implements Operation {
         PopPauseOperation popPauseOperation = new PopPauseOperation(this.mManagerAbility, destroyRecordList);
 
         //resume previous scene
-        final PopResumeOperation popResumeOperation = new PopResumeOperation(this.mManagerAbility, currentRecord, returnRecord);
+        final PopResumeOperation popResumeOperation = new PopResumeOperation(this.mManagerAbility, currentRecord, returnRecord, this.mAfterOnActivityCreatedAction);
 
         //destroy top scene
         final PopDestroyOperation popDestroyOperation = new PopDestroyOperation(this.mManagerAbility, mAnimationFactory, destroyRecordList, currentRecord, returnRecord, currentScene, currentSceneView);
