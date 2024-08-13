@@ -149,6 +149,95 @@ public class Push_Post_Lifecycle_Order {
     }
 
     /**
+     * non translucent Scene +  non translucent Scene
+     * push order
+     */
+    @LooperMode(PAUSED)
+    @Test
+    public void testPushOrder_NonTranslucent_NonTranslucent_With_UsePostWhenPause() {
+        final TestScene groupScene = new TestScene();
+
+        Pair<SceneLifecycleManager<NavigationScene>, NavigationScene> pair = NavigationSourceSupportPostUtility.createFromInitSceneLifecycleManager(groupScene);
+
+        SceneLifecycleManager sceneLifecycleManager = pair.first;
+        sceneLifecycleManager.onStart();
+        sceneLifecycleManager.onResume();
+
+        NavigationScene navigationScene = pair.second;
+        navigationScene.setDefaultNavigationAnimationExecutor(null);
+
+        final StringBuilder lifecycleLog = new StringBuilder();
+
+        navigationScene.push(new RandomLifecycleLogScene(lifecycleLog) {
+            @NonNull
+            @Override
+            public View onCreateView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container, @Nullable Bundle savedInstanceState) {
+                return new View(requireActivity());
+            }
+
+            @Override
+            public void onLogPause() {
+                lifecycleLog.append("0");
+            }
+
+            @Override
+            public void onLogStop() {
+                lifecycleLog.append("4");
+            }
+        });
+
+        LogUtility.clear(lifecycleLog);
+
+        assertEquals(2, navigationScene.getSceneList().size());
+
+        navigationScene.push(new RandomLifecycleLogScene(lifecycleLog) {
+            @NonNull
+            @Override
+            public View onCreateView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container, @Nullable Bundle savedInstanceState) {
+                return new View(requireActivity());
+            }
+
+            @Override
+            public void onLogActivityCreated() {
+                lifecycleLog.append("1");
+            }
+
+            @Override
+            public void onLogStart() {
+                lifecycleLog.append("2");
+            }
+
+            @Override
+            public void onLogResume() {
+                lifecycleLog.append("3");
+            }
+        }, new PushOptions.Builder().setUsePost(true).setUsePostWhenPause(true).build()); //setUsePostWhenPause(true)
+
+        assertEquals("", lifecycleLog.toString());
+        assertEquals(2, navigationScene.getSceneList().size());
+        assertEquals(State.ACTIVITY_CREATED, navigationScene.getSceneList().get(0).getState());
+        assertEquals(State.RESUMED, navigationScene.getCurrentScene().getState());
+        shadowOf(getMainLooper()).runOneTask();//execute Handler posted task
+
+        assertEquals("0", lifecycleLog.toString());
+        assertEquals(2, navigationScene.getSceneList().size());
+        assertEquals(State.ACTIVITY_CREATED, navigationScene.getSceneList().get(0).getState());
+        assertEquals(State.STARTED, navigationScene.getCurrentScene().getState());
+
+        shadowOf(getMainLooper()).runOneTask();//execute Handler posted task
+        assertEquals(3, navigationScene.getSceneList().size());
+        assertEquals("0123", lifecycleLog.toString());
+        assertEquals(State.STARTED, navigationScene.getSceneList().get(1).getState());
+        assertEquals(State.RESUMED, navigationScene.getCurrentScene().getState());
+
+        shadowOf(getMainLooper()).runOneTask();//execute Handler posted task
+        assertEquals(3, navigationScene.getSceneList().size());
+        assertEquals(State.ACTIVITY_CREATED, navigationScene.getSceneList().get(1).getState());
+        assertEquals(State.RESUMED, navigationScene.getCurrentScene().getState());
+        assertEquals("01234", lifecycleLog.toString());
+    }
+
+    /**
      * non translucent Scene + translucent Scene
      * push order
      */

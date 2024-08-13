@@ -36,11 +36,13 @@ public class PushOptions {
 
     private final Predicate<Scene> mRemovePredicate;
     private final boolean mUsePost;
+    private final boolean mUsePostWhenPause;
 
-    private PushOptions(Predicate<Scene> removePredicate, boolean isTranslucent, boolean usePost, PushResultCallback pushResultCallback, NavigationAnimationExecutor navigationAnimationExecutor) {
+    private PushOptions(Predicate<Scene> removePredicate, boolean isTranslucent, boolean usePost, boolean usePostWhenPause, PushResultCallback pushResultCallback, NavigationAnimationExecutor navigationAnimationExecutor) {
         this.mRemovePredicate = removePredicate;
         this.mIsTranslucent = isTranslucent;
         this.mUsePost = usePost;
+        this.mUsePostWhenPause = usePostWhenPause;
         this.mPushResultCallback = pushResultCallback;
         this.mNavigationAnimationExecutor = navigationAnimationExecutor;
     }
@@ -57,6 +59,10 @@ public class PushOptions {
         return this.mUsePost;
     }
 
+    public boolean isUsePostWhenPause() {
+        return this.mUsePostWhenPause;
+    }
+
     public NavigationAnimationExecutor getNavigationAnimationFactory() {
         return this.mNavigationAnimationExecutor;
     }
@@ -71,6 +77,7 @@ public class PushOptions {
         private NavigationAnimationExecutor mNavigationAnimationExecutor;
         private Predicate<Scene> mRemovePredicate;
         private boolean mUsePost;
+        private boolean mUsePostWhenPause = false;
 
         public Builder() {
         }
@@ -90,6 +97,12 @@ public class PushOptions {
         @NonNull
         public Builder setUsePost(boolean usePost) {
             this.mUsePost = usePost;
+            return this;
+        }
+
+        @NonNull
+        public Builder setUsePostWhenPause(boolean usePostWhenPause) {
+            this.mUsePostWhenPause = usePostWhenPause;
             return this;
         }
 
@@ -124,7 +137,7 @@ public class PushOptions {
 
         @NonNull
         public PushOptions build() {
-            return new PushOptions(this.mRemovePredicate, this.mIsTranslucent, this.mUsePost, this.mPushResultCallback, this.mNavigationAnimationExecutor);
+            return new PushOptions(this.mRemovePredicate, this.mIsTranslucent, this.mUsePost, this.mUsePostWhenPause, this.mPushResultCallback, this.mNavigationAnimationExecutor);
         }
     }
 

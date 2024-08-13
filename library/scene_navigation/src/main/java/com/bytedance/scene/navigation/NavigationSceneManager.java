@@ -200,6 +200,10 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
      * The only thing is that there may be some problems with Dialog.
      */
     private void scheduleToNextUIThreadLoop(@NonNull final Operation operation) {
+        this.scheduleToNextUIThreadLoop(operation, false);
+    }
+
+    private void scheduleToNextUIThreadLoop(@NonNull final Operation operation, boolean async) {
         if (canExecuteNavigationStackOperation()) {
             /**
              * when current Handler Message is executing a NavigationScene navigation stack operation or GroupScene operation,
@@ -244,7 +248,12 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
                         SceneTrace.endSection();
                     }
                 };
-                mSceneMessageQueue.postSync(task);
+
+                if (async) {
+                    mSceneMessageQueue.postAsync(task);
+                } else {
+                    mSceneMessageQueue.postSync(task);
+                }
             }
         } else {
             /**
@@ -339,7 +348,7 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
     public void pop(PopOptions popOptions) {
         LoggerManager.getInstance().i(TAG, "pop with PopOptions");
         if (popOptions.isUsePost()) {
-            scheduleToNextUIThreadLoop(new CoordinatePopOptionOperation(this, mSceneMessageQueue, popOptions));
+            scheduleToNextUIThreadLoop(new CoordinatePopOptionOperation(this, mSceneMessageQueue, popOptions), popOptions.isUsePostWhenPause());
         } else if (mActivityCompatibleLifecycleStrategyEnabled && popOptions.isUseActivityCompatibleLifecycle()) {
             scheduleToNextUIThreadLoop(new PopOptionActivityCompatibleLifecycleOperation(popOptions));
         } else {
@@ -362,7 +371,7 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
         if (scene == null) {
             throw new NullPointerException("rootScene can't be null");
         }
-        
+
         LoggerManager.getInstance().i(TAG, "pushRoot " + scene);
         executeOperationImmediately(new PushRootOperation(scene));
     }
@@ -373,7 +382,7 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
         }
         if (pushOptions.isUsePost()) {
             LoggerManager.getInstance().i(TAG, "push " + scene.toString() + " by post");
-            scheduleToNextUIThreadLoop(new CoordinatePushOptionOperation(this, mSceneMessageQueue, scene, pushOptions));
+            scheduleToNextUIThreadLoop(new CoordinatePushOptionOperation(this, mSceneMessageQueue, scene, pushOptions), pushOptions.isUsePostWhenPause());
         } else {
             LoggerManager.getInstance().i(TAG, "push " + scene.toString());
             scheduleToNextUIThreadLoop(new PushOptionOperation(scene, pushOptions));

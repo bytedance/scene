@@ -145,6 +145,103 @@ public class Pop_Post_Lifecycle_Order {
     }
 
     /**
+     * non translucent Scene +  non translucent Scene
+     * push order
+     */
+    @LooperMode(PAUSED)
+    @Test
+    public void testPopOrder_NonTranslucent_NonTranslucent_With_UsePostWhenPause() {
+        final TestScene groupScene = new TestScene();
+
+        Pair<SceneLifecycleManager<NavigationScene>, NavigationScene> pair = NavigationSourceSupportPostUtility.createFromInitSceneLifecycleManager(groupScene);
+
+        SceneLifecycleManager sceneLifecycleManager = pair.first;
+        sceneLifecycleManager.onStart();
+        sceneLifecycleManager.onResume();
+
+        NavigationScene navigationScene = pair.second;
+        navigationScene.setDefaultNavigationAnimationExecutor(null);
+
+        final StringBuilder lifecycleLog = new StringBuilder();
+
+        navigationScene.push(new RandomLifecycleLogScene(lifecycleLog) {
+            @NonNull
+            @Override
+            public View onCreateView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container, @Nullable Bundle savedInstanceState) {
+                return new View(requireActivity());
+            }
+
+            @Override
+            public void onLogStart() {
+                lifecycleLog.append("1");
+            }
+
+            @Override
+            public void onLogResume() {
+                lifecycleLog.append("2");
+            }
+        });
+
+        Scene topScene = new RandomLifecycleLogScene(lifecycleLog) {
+            @NonNull
+            @Override
+            public View onCreateView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container, @Nullable Bundle savedInstanceState) {
+                return new View(requireActivity());
+            }
+
+            @Override
+            public void onLogPause() {
+                lifecycleLog.append("0");
+            }
+
+            @Override
+            public void onLogStop() {
+                lifecycleLog.append("3");
+            }
+
+            @Override
+            public void onLogDestroyView() {
+                lifecycleLog.append("4");
+            }
+        };
+
+        navigationScene.push(topScene, new PushOptions.Builder().setUsePost(true).build());
+
+        assertEquals(2, navigationScene.getSceneList().size());
+
+        shadowOf(getMainLooper()).idle();
+        assertEquals(3, navigationScene.getSceneList().size());
+
+        LogUtility.clear(lifecycleLog);
+
+        navigationScene.pop(new PopOptions.Builder().setUsePost(true).setUsePostWhenPause(true).build()); //setUsePostWhenPause(true)
+
+        assertEquals(3, navigationScene.getSceneList().size());
+        assertEquals("", lifecycleLog.toString());
+        assertEquals(State.ACTIVITY_CREATED, navigationScene.getSceneList().get(1).getState());
+        assertEquals(State.RESUMED, topScene.getState());
+
+        shadowOf(getMainLooper()).runOneTask();
+
+        assertEquals(3, navigationScene.getSceneList().size());
+        assertEquals("0", lifecycleLog.toString());
+        assertEquals(State.ACTIVITY_CREATED, navigationScene.getSceneList().get(1).getState());
+        assertEquals(State.STARTED, topScene.getState());
+
+        shadowOf(getMainLooper()).runOneTask();
+        assertEquals(3, navigationScene.getSceneList().size());
+        assertEquals("012", lifecycleLog.toString());
+        assertEquals(State.RESUMED, navigationScene.getSceneList().get(1).getState());
+        assertEquals(State.STARTED, topScene.getState());
+
+        shadowOf(getMainLooper()).runOneTask();
+        assertEquals(2, navigationScene.getSceneList().size());
+        assertEquals("01234", lifecycleLog.toString());
+        assertEquals(State.RESUMED, navigationScene.getCurrentScene().getState());
+        assertEquals(State.NONE, topScene.getState());
+    }
+
+    /**
      * non translucent Scene + translucent Scene
      * push order
      */

@@ -34,12 +34,14 @@ public class PopOptions {
     private final Predicate<Scene> mPopUtilPredicate;
     private final boolean mUseActivityCompatibleLifecycle;
     private final boolean mUsePost;
+    private final boolean mUsePostWhenPause;
 
-    private PopOptions(NavigationAnimationExecutor navigationAnimatorExecutor, Predicate<Scene> popUtilPredicate, boolean useActivityCompatibleLifecycle, boolean usePost) {
+    private PopOptions(NavigationAnimationExecutor navigationAnimatorExecutor, Predicate<Scene> popUtilPredicate, boolean useActivityCompatibleLifecycle, boolean usePost, boolean usePostWhenPause) {
         this.mNavigationAnimationExecutor = navigationAnimatorExecutor;
         this.mPopUtilPredicate = popUtilPredicate;
         this.mUseActivityCompatibleLifecycle = useActivityCompatibleLifecycle;
         this.mUsePost = usePost;
+        this.mUsePostWhenPause = usePostWhenPause;
     }
 
     public NavigationAnimationExecutor getNavigationAnimationExecutor() {
@@ -58,11 +60,16 @@ public class PopOptions {
         return this.mUsePost;
     }
 
+    public boolean isUsePostWhenPause() {
+        return this.mUsePostWhenPause;
+    }
+
     public static class Builder {
         private NavigationAnimationExecutor mNavigationAnimationExecutor;
         private Predicate<Scene> mPopUtilPredicate;
         private boolean mUseActivityCompatibleLifecycle;
         private boolean mUsePost;
+        private boolean mUsePostWhenPause = false;
 
         public Builder() {
         }
@@ -98,8 +105,14 @@ public class PopOptions {
         }
 
         @NonNull
+        public PopOptions.Builder setUsePostWhenPause(boolean usePostWhenPause) {
+            this.mUsePostWhenPause = usePostWhenPause;
+            return this;
+        }
+
+        @NonNull
         public PopOptions build() {
-            return new PopOptions(this.mNavigationAnimationExecutor, this.mPopUtilPredicate, this.mUseActivityCompatibleLifecycle, this.mUsePost);
+            return new PopOptions(this.mNavigationAnimationExecutor, this.mPopUtilPredicate, this.mUseActivityCompatibleLifecycle, this.mUsePost, this.mUsePostWhenPause);
         }
     }
 
