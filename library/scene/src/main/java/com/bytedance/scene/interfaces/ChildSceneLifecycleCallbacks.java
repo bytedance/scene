@@ -25,6 +25,11 @@ import com.bytedance.scene.Scene;
 
 /**
  * Created by JiangQi on 8/1/18.
+ * <p>
+ * method invoke order:
+ * 1. onPreSceneMethod(invoke before Scene.onMethod)
+ * 2. onSuperSceneMethod(invoke in Scene.super.onMethod)
+ * 3. onSceneMethod(invoke after Scene.onMethod)
  */
 public interface ChildSceneLifecycleCallbacks {
 
@@ -47,6 +52,26 @@ public interface ChildSceneLifecycleCallbacks {
     void onPreSceneViewDestroyed(@NonNull Scene scene);
 
     void onPreSceneDestroyed(@NonNull Scene scene);
+
+    void onSuperSceneCreated(@NonNull Scene scene, @Nullable Bundle savedInstanceState);
+
+    void onSuperSceneViewCreated(@NonNull Scene scene, @Nullable Bundle savedInstanceState);
+
+    void onSuperSceneActivityCreated(@NonNull Scene scene, @Nullable Bundle savedInstanceState);
+
+    void onSuperSceneStarted(@NonNull Scene scene);
+
+    void onSuperSceneResumed(@NonNull Scene scene);
+
+    void onSuperSceneSaveInstanceState(@NonNull Scene scene, @NonNull Bundle outState);
+
+    void onSuperScenePaused(@NonNull Scene scene);
+
+    void onSuperSceneStopped(@NonNull Scene scene);
+
+    void onSuperSceneViewDestroyed(@NonNull Scene scene);
+
+    void onSuperSceneDestroyed(@NonNull Scene scene);
 
     /**
      * use {@link #onSceneActivityCreated(Scene, Bundle)} instead

@@ -90,6 +90,56 @@ public class ChildSceneLifecycleCallbacksTests {
             }
 
             @Override
+            public void onSuperSceneCreated(@NonNull Scene scene, @Nullable Bundle savedInstanceState) {
+
+            }
+
+            @Override
+            public void onSuperSceneViewCreated(@NonNull Scene scene, @Nullable Bundle savedInstanceState) {
+
+            }
+
+            @Override
+            public void onSuperSceneActivityCreated(@NonNull Scene scene, @Nullable Bundle savedInstanceState) {
+
+            }
+
+            @Override
+            public void onSuperSceneStarted(@NonNull Scene scene) {
+
+            }
+
+            @Override
+            public void onSuperSceneResumed(@NonNull Scene scene) {
+
+            }
+
+            @Override
+            public void onSuperSceneSaveInstanceState(@NonNull Scene scene, @NonNull Bundle outState) {
+
+            }
+
+            @Override
+            public void onSuperScenePaused(@NonNull Scene scene) {
+
+            }
+
+            @Override
+            public void onSuperSceneStopped(@NonNull Scene scene) {
+
+            }
+
+            @Override
+            public void onSuperSceneViewDestroyed(@NonNull Scene scene) {
+
+            }
+
+            @Override
+            public void onSuperSceneDestroyed(@NonNull Scene scene) {
+
+            }
+
+            @Override
             public void onSceneCreated(@NonNull Scene scene, @Nullable Bundle savedInstanceState) {
                 if (!isCreatedCalled.compareAndSet(false, true)) {
                     throw new IllegalStateException("crash");
@@ -342,6 +392,56 @@ public class ChildSceneLifecycleCallbacksTests {
             @Override
             public void onPreSceneSaveInstanceState(@NonNull Scene scene, @NonNull Bundle outState) {
                 //ignored
+            }
+
+            @Override
+            public void onSuperSceneCreated(@NonNull Scene scene, @Nullable Bundle savedInstanceState) {
+
+            }
+
+            @Override
+            public void onSuperSceneViewCreated(@NonNull Scene scene, @Nullable Bundle savedInstanceState) {
+
+            }
+
+            @Override
+            public void onSuperSceneActivityCreated(@NonNull Scene scene, @Nullable Bundle savedInstanceState) {
+
+            }
+
+            @Override
+            public void onSuperSceneStarted(@NonNull Scene scene) {
+
+            }
+
+            @Override
+            public void onSuperSceneResumed(@NonNull Scene scene) {
+
+            }
+
+            @Override
+            public void onSuperSceneSaveInstanceState(@NonNull Scene scene, @NonNull Bundle outState) {
+
+            }
+
+            @Override
+            public void onSuperScenePaused(@NonNull Scene scene) {
+
+            }
+
+            @Override
+            public void onSuperSceneStopped(@NonNull Scene scene) {
+
+            }
+
+            @Override
+            public void onSuperSceneViewDestroyed(@NonNull Scene scene) {
+
+            }
+
+            @Override
+            public void onSuperSceneDestroyed(@NonNull Scene scene) {
+
             }
 
             @Override

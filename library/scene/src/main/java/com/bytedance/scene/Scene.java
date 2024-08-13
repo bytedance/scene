@@ -657,6 +657,7 @@ public abstract class Scene implements LifecycleOwner, SavedStateRegistryOwner, 
     @CallSuper
     public void onCreate(@Nullable Bundle savedInstanceState) {
         mCalled = true;
+        dispatchOnSuperSceneCreated(this, savedInstanceState, false);
     }
 
     /**
@@ -695,6 +696,7 @@ public abstract class Scene implements LifecycleOwner, SavedStateRegistryOwner, 
     @CallSuper
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         mCalled = true;
+        dispatchOnSuperSceneViewCreated(this, savedInstanceState, false);
     }
 
     /**
@@ -706,6 +708,7 @@ public abstract class Scene implements LifecycleOwner, SavedStateRegistryOwner, 
     @MainThread
     public void onDestroyView() {
         mCalled = true;
+        dispatchOnSuperSceneViewDestroyed(this, false);
     }
 
     /**
@@ -718,6 +721,7 @@ public abstract class Scene implements LifecycleOwner, SavedStateRegistryOwner, 
     @CallSuper
     public void onDestroy() {
         mCalled = true;
+        dispatchOnSuperSceneDestroyed(this, false);
     }
 
     /**
@@ -936,6 +940,7 @@ public abstract class Scene implements LifecycleOwner, SavedStateRegistryOwner, 
         }
 
         mCalled = true;
+        dispatchOnSuperSceneActivityCreated(this, savedInstanceState, false);
     }
 
     /**
@@ -950,6 +955,7 @@ public abstract class Scene implements LifecycleOwner, SavedStateRegistryOwner, 
     @CallSuper
     public void onStart() {
         mCalled = true;
+        dispatchOnSuperSceneStarted(this, false);
     }
 
     @MainThread
@@ -985,6 +991,7 @@ public abstract class Scene implements LifecycleOwner, SavedStateRegistryOwner, 
     @CallSuper
     public void onResume() {
         mCalled = true;
+        dispatchOnSuperSceneResumed(this, false);
         executePendingActions();
     }
 
@@ -992,12 +999,14 @@ public abstract class Scene implements LifecycleOwner, SavedStateRegistryOwner, 
     @CallSuper
     public void onPause() {
         mCalled = true;
+        dispatchOnSuperScenePaused(this, false);
     }
 
     @MainThread
     @CallSuper
     public void onSaveInstanceState(@NonNull Bundle outState) {
         mCalled = true;
+        dispatchOnSuperSceneSaveInstanceState(this, outState, false);
 
         if (getArguments() != null) {
             outState.putBoolean(ParcelConstants.KEY_SCENE_HAS_ARGUMENT, true);
@@ -1021,6 +1030,7 @@ public abstract class Scene implements LifecycleOwner, SavedStateRegistryOwner, 
     @CallSuper
     public void onStop() {
         mCalled = true;
+        dispatchOnSuperSceneStopped(this, false);
         dispatchVisibleChanged();
     }
 
@@ -1322,6 +1332,87 @@ public abstract class Scene implements LifecycleOwner, SavedStateRegistryOwner, 
         }
     }
 
+    /** @hide */
+    @RestrictTo(LIBRARY_GROUP)
+    public void dispatchOnSuperSceneCreated(@NonNull Scene scene, @Nullable Bundle savedInstanceState, boolean directChild) {
+        Scene parentScene = getParentScene();
+        if (parentScene != null) {
+            parentScene.dispatchOnSuperSceneCreated(scene, savedInstanceState, scene == this);
+        }
+    }
+
+    /** @hide */
+    @RestrictTo(LIBRARY_GROUP)
+    public void dispatchOnSuperSceneViewCreated(@NonNull Scene scene, @Nullable Bundle savedInstanceState, boolean directChild) {
+        Scene parentScene = getParentScene();
+        if (parentScene != null) {
+            parentScene.dispatchOnSuperSceneViewCreated(scene, savedInstanceState, scene == this);
+        }
+    }
+
+    /** @hide */
+    @RestrictTo(LIBRARY_GROUP)
+    public void dispatchOnSuperSceneActivityCreated(@NonNull Scene scene, @Nullable Bundle savedInstanceState, boolean directChild) {
+        Scene parentScene = getParentScene();
+        if (parentScene != null) {
+            parentScene.dispatchOnSuperSceneActivityCreated(scene, savedInstanceState, scene == this);
+        }
+    }
+
+    /** @hide */
+    @RestrictTo(LIBRARY_GROUP)
+    public void dispatchOnSuperSceneStarted(@NonNull Scene scene, boolean directChild) {
+        Scene parentScene = getParentScene();
+        if (parentScene != null) {
+            parentScene.dispatchOnSuperSceneStarted(scene, scene == this);
+        }
+    }
+
+    /** @hide */
+    @RestrictTo(LIBRARY_GROUP)
+    public void dispatchOnSuperSceneResumed(@NonNull Scene scene, boolean directChild) {
+        Scene parentScene = getParentScene();
+        if (parentScene != null) {
+            parentScene.dispatchOnSuperSceneResumed(scene, scene == this);
+        }
+    }
+
+    /** @hide */
+    @RestrictTo(LIBRARY_GROUP)
+    public void dispatchOnSuperScenePaused(@NonNull Scene scene, boolean directChild) {
+        Scene parentScene = getParentScene();
+        if (parentScene != null) {
+            parentScene.dispatchOnSuperScenePaused(scene, scene == this);
+        }
+    }
+
+    /** @hide */
+    @RestrictTo(LIBRARY_GROUP)
+    public void dispatchOnSuperSceneStopped(@NonNull Scene scene, boolean directChild) {
+        Scene parentScene = getParentScene();
+        if (parentScene != null) {
+            parentScene.dispatchOnSuperSceneStopped(scene, scene == this);
+        }
+    }
+
+    /** @hide */
+    @RestrictTo(LIBRARY_GROUP)
+    public void dispatchOnSuperSceneViewDestroyed(@NonNull Scene scene, boolean directChild) {
+        Scene parentScene = getParentScene();
+        if (parentScene != null) {
+            parentScene.dispatchOnSuperSceneViewDestroyed(scene, scene == this);
+        }
+    }
+
+    /** @hide */
+    @RestrictTo(LIBRARY_GROUP)
+    public void dispatchOnSuperSceneDestroyed(@NonNull Scene scene, boolean directChild) {
+        Scene parentScene = getParentScene();
+        if (parentScene != null) {
+            parentScene.dispatchOnSuperSceneDestroyed(scene, scene == this);
+        }
+    }
+
     /**
      * @hide
      * Notify parent of its own life cycle trigger,
@@ -1395,6 +1486,15 @@ public abstract class Scene implements LifecycleOwner, SavedStateRegistryOwner, 
         Scene parentScene = getParentScene();
         if (parentScene != null) {
             parentScene.dispatchOnPreSceneSaveInstanceState(scene, outState, scene == this);
+        }
+    }
+
+    /** @hide */
+    @RestrictTo(LIBRARY_GROUP)
+    public void dispatchOnSuperSceneSaveInstanceState(@NonNull Scene scene, @NonNull Bundle outState, boolean directChild) {
+        Scene parentScene = getParentScene();
+        if (parentScene != null) {
+            parentScene.dispatchOnSuperSceneSaveInstanceState(scene, outState, scene == this);
         }
     }
 

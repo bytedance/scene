@@ -917,6 +917,216 @@ public abstract class GroupScene extends Scene implements SceneParent {
      */
     @RestrictTo(LIBRARY_GROUP)
     @Override
+    public void dispatchOnSuperSceneCreated(@NonNull Scene scene, @Nullable Bundle savedInstanceState, boolean directChild) {
+        if (scene != this) {
+            if (mSceneLifecycleCallbackObjectCreationOpt && mLifecycleCallbacks.size() == 0) {
+                //skip
+            } else {
+                List<NonNullPair<ChildSceneLifecycleCallbacks, Boolean>> list = new ArrayList<>(mLifecycleCallbacks);
+                for (NonNullPair<ChildSceneLifecycleCallbacks, Boolean> pair : list) {
+                    if (directChild || pair.second) {
+                        pair.first.onSuperSceneCreated(scene, savedInstanceState);
+                    }
+                }
+            }
+        }
+        super.dispatchOnSuperSceneCreated(scene, savedInstanceState, directChild);
+    }
+
+    /**
+     * @hide
+     */
+    @RestrictTo(LIBRARY_GROUP)
+    @Override
+    public void dispatchOnSuperSceneViewCreated(@NonNull Scene scene, @Nullable Bundle savedInstanceState, boolean directChild) {
+        if (scene != this) {
+            if (mSceneLifecycleCallbackObjectCreationOpt && mLifecycleCallbacks.size() == 0) {
+                //skip
+            } else {
+                List<NonNullPair<ChildSceneLifecycleCallbacks, Boolean>> list = new ArrayList<>(mLifecycleCallbacks);
+                for (NonNullPair<ChildSceneLifecycleCallbacks, Boolean> pair : list) {
+                    if (directChild || pair.second) {
+                        pair.first.onSuperSceneViewCreated(scene, savedInstanceState);
+                    }
+                }
+            }
+        }
+        super.dispatchOnSuperSceneViewCreated(scene, savedInstanceState, directChild);
+    }
+
+    /**
+     * @hide
+     */
+    @RestrictTo(LIBRARY_GROUP)
+    @Override
+    public void dispatchOnSuperSceneActivityCreated(@NonNull Scene scene, @Nullable Bundle savedInstanceState, boolean directChild) {
+        if (scene != this) {
+            if (mSceneLifecycleCallbackObjectCreationOpt && mLifecycleCallbacks.size() == 0) {
+                //skip
+            } else {
+                List<NonNullPair<ChildSceneLifecycleCallbacks, Boolean>> list = new ArrayList<>(mLifecycleCallbacks);
+                for (NonNullPair<ChildSceneLifecycleCallbacks, Boolean> pair : list) {
+                    if (directChild || pair.second) {
+                        pair.first.onSuperSceneActivityCreated(scene, savedInstanceState);
+                    }
+                }
+            }
+        }
+        super.dispatchOnSuperSceneActivityCreated(scene, savedInstanceState, directChild);
+    }
+
+    /**
+     * @hide
+     */
+    @RestrictTo(LIBRARY_GROUP)
+    @Override
+    public void dispatchOnSuperSceneStarted(@NonNull Scene scene, boolean directChild) {
+        if (scene != this) {
+            if (mSceneLifecycleCallbackObjectCreationOpt && mLifecycleCallbacks.size() == 0) {
+                //skip
+            } else {
+                List<NonNullPair<ChildSceneLifecycleCallbacks, Boolean>> list = new ArrayList<>(mLifecycleCallbacks);
+                for (NonNullPair<ChildSceneLifecycleCallbacks, Boolean> pair : list) {
+                    if (directChild || pair.second) {
+                        pair.first.onSuperSceneStarted(scene);
+                    }
+                }
+            }
+        }
+        super.dispatchOnSuperSceneStarted(scene, directChild);
+    }
+
+    /**
+     * @hide
+     */
+    @RestrictTo(LIBRARY_GROUP)
+    @Override
+    public void dispatchOnSuperSceneResumed(@NonNull Scene scene, boolean directChild) {
+        if (scene != this) {
+            if (mSceneLifecycleCallbackObjectCreationOpt && mLifecycleCallbacks.size() == 0) {
+                //skip
+            } else {
+                List<NonNullPair<ChildSceneLifecycleCallbacks, Boolean>> list = new ArrayList<>(mLifecycleCallbacks);
+                for (NonNullPair<ChildSceneLifecycleCallbacks, Boolean> pair : list) {
+                    if (directChild || pair.second) {
+                        pair.first.onSuperSceneResumed(scene);
+                    }
+                }
+            }
+        }
+        super.dispatchOnSuperSceneResumed(scene, directChild);
+    }
+
+    /**
+     * @hide
+     */
+    @RestrictTo(LIBRARY_GROUP)
+    @Override
+    public void dispatchOnSuperScenePaused(@NonNull Scene scene, boolean directChild) {
+        if (scene != this) {
+            if (mSceneLifecycleCallbackObjectCreationOpt && mLifecycleCallbacks.size() == 0) {
+                //skip
+            } else {
+                List<NonNullPair<ChildSceneLifecycleCallbacks, Boolean>> list = new ArrayList<>(mLifecycleCallbacks);
+                for (NonNullPair<ChildSceneLifecycleCallbacks, Boolean> pair : list) {
+                    if (directChild || pair.second) {
+                        pair.first.onSuperScenePaused(scene);
+                    }
+                }
+            }
+        }
+        super.dispatchOnSuperScenePaused(scene, directChild);
+    }
+
+    /**
+     * @hide
+     */
+    @RestrictTo(LIBRARY_GROUP)
+    @Override
+    public void dispatchOnSuperSceneStopped(@NonNull Scene scene, boolean directChild) {
+        if (scene != this) {
+            if (mSceneLifecycleCallbackObjectCreationOpt && mLifecycleCallbacks.size() == 0) {
+                //skip
+            } else {
+                List<NonNullPair<ChildSceneLifecycleCallbacks, Boolean>> list = new ArrayList<>(mLifecycleCallbacks);
+                for (NonNullPair<ChildSceneLifecycleCallbacks, Boolean> pair : list) {
+                    if (directChild || pair.second) {
+                        pair.first.onSuperSceneStopped(scene);
+                    }
+                }
+            }
+        }
+        super.dispatchOnSuperSceneStopped(scene, directChild);
+    }
+
+    /**
+     * @hide
+     */
+    @RestrictTo(LIBRARY_GROUP)
+    @Override
+    public void dispatchOnSuperSceneViewDestroyed(@NonNull Scene scene, boolean directChild) {
+        if (scene != this) {
+            if (mSceneLifecycleCallbackObjectCreationOpt && mLifecycleCallbacks.size() == 0) {
+                //skip
+            } else {
+                List<NonNullPair<ChildSceneLifecycleCallbacks, Boolean>> list = new ArrayList<>(mLifecycleCallbacks);
+                for (NonNullPair<ChildSceneLifecycleCallbacks, Boolean> pair : list) {
+                    if (directChild || pair.second) {
+                        pair.first.onSuperSceneViewDestroyed(scene);
+                    }
+                }
+            }
+        }
+        super.dispatchOnSuperSceneViewDestroyed(scene, directChild);
+    }
+
+    /**
+     * @hide
+     */
+    @RestrictTo(LIBRARY_GROUP)
+    @Override
+    public void dispatchOnSuperSceneDestroyed(@NonNull Scene scene, boolean directChild) {
+        if (scene != this) {
+            if (mSceneLifecycleCallbackObjectCreationOpt && mLifecycleCallbacks.size() == 0) {
+                //skip
+            } else {
+                List<NonNullPair<ChildSceneLifecycleCallbacks, Boolean>> list = new ArrayList<>(mLifecycleCallbacks);
+                for (NonNullPair<ChildSceneLifecycleCallbacks, Boolean> pair : list) {
+                    if (directChild || pair.second) {
+                        pair.first.onSuperSceneDestroyed(scene);
+                    }
+                }
+            }
+        }
+        super.dispatchOnSuperSceneDestroyed(scene, directChild);
+    }
+
+    /**
+     * @hide
+     */
+    @RestrictTo(LIBRARY_GROUP)
+    @Override
+    public void dispatchOnSuperSceneSaveInstanceState(@NonNull Scene scene, @NonNull Bundle outState, boolean directChild) {
+        if (scene != this) {
+            if (mSceneLifecycleCallbackObjectCreationOpt && mLifecycleCallbacks.size() == 0) {
+                //skip
+            } else {
+                List<NonNullPair<ChildSceneLifecycleCallbacks, Boolean>> list = new ArrayList<>(mLifecycleCallbacks);
+                for (NonNullPair<ChildSceneLifecycleCallbacks, Boolean> pair : list) {
+                    if (directChild || pair.second) {
+                        pair.first.onSuperSceneSaveInstanceState(scene, outState);
+                    }
+                }
+            }
+        }
+        super.dispatchOnSuperSceneSaveInstanceState(scene, outState, directChild);
+    }
+
+    /**
+     * @hide
+     */
+    @RestrictTo(LIBRARY_GROUP)
+    @Override
     public final void dispatchOnSceneCreated(@NonNull Scene scene, @Nullable Bundle savedInstanceState, boolean directChild) {
         if (scene != this) {
             if (mSceneLifecycleCallbackObjectCreationOpt && mLifecycleCallbacks.size() == 0) {

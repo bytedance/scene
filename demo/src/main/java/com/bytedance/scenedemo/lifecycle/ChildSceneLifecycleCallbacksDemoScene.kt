@@ -109,6 +109,46 @@ class ChildSceneLifecycleCallbacksDemoScene : GroupScene() {
             log("Scene", "$scene onPreSceneDestroyed")
         }
 
+        override fun onSuperSceneCreated(scene: Scene, savedInstanceState: Bundle?) {
+            log("Scene", "$scene onSuperSceneCreated")
+        }
+
+        override fun onSuperSceneViewCreated(scene: Scene, savedInstanceState: Bundle?) {
+            log("Scene", "$scene onSuperSceneViewCreated")
+        }
+
+        override fun onSuperSceneActivityCreated(scene: Scene, savedInstanceState: Bundle?) {
+            log("Scene", "$scene onSuperSceneActivityCreated")
+        }
+
+        override fun onSuperSceneStarted(scene: Scene) {
+            log("Scene", "$scene onSuperSceneStarted")
+        }
+
+        override fun onSuperSceneResumed(scene: Scene) {
+            log("Scene", "$scene onSuperSceneResumed")
+        }
+
+        override fun onSuperSceneSaveInstanceState(scene: Scene, outState: Bundle) {
+            log("Scene", "$scene onSuperSceneSaveInstanceState")
+        }
+
+        override fun onSuperScenePaused(scene: Scene) {
+            log("Scene", "$scene onSuperScenePaused")
+        }
+
+        override fun onSuperSceneStopped(scene: Scene) {
+            log("Scene", "$scene onSuperSceneStopped")
+        }
+
+        override fun onSuperSceneViewDestroyed(scene: Scene) {
+            log("Scene", "$scene onSuperSceneViewDestroyed")
+        }
+
+        override fun onSuperSceneDestroyed(scene: Scene) {
+            log("Scene", "$scene onSuperSceneDestroyed")
+        }
+
         override fun onSceneCreated(scene: Scene, savedInstanceState: Bundle?) {
             log("Scene", "$scene onSceneCreated")
         }
