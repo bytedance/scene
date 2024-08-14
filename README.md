@@ -60,7 +60,7 @@ allprojects {
 }
 ```
 
-Add it to your build.gradle:
+Add it to your build.gradle, [latest_version](https://github.com/bytedance/scene/releases) :
 ```gradle
 dependencies {
 	implementation 'com.github.bytedance.scene:scene:$latest_version'
