@@ -27,8 +27,7 @@
 
 Scene is designed to replace the use of Activity and Fragment on navigation and page segmentation.
 
-The main problems of Activity:
-
+The main problems of **Activity**:
 1. The stack management of Activity is weak, Intent and LaunchMode are confusing, even if various of hacks still can't completely avoid issues like black screen 
 2. The performance of Activity is poor, average startup time of an empty Activity is more than 60ms (on Samsung S9)
 3. Because the Activity is forced to support states recovery, it causes some problems:
@@ -37,8 +36,7 @@ The main problems of Activity:
     - Every time starting a new Activity, onSaveInstance() of the previous Activity must be executed completely first, which will lose much performance.
 4. Activity relies on the Manifest file to cause injection difficulties, which also result in that Activity dynamics requires a variety of hacks
 
-The main problems of Fragment:
-
+The main problems of **Fragment**:
 1. Google Navigation Component will destory Fragment' view when it is invisible
 2. There are many crashes that the Google official can't solve for a long time. Even if you don't use Fragment, it may still trigger a crash in the OnBackPressed() of AppCompatActivity.
 3. The add/remove/hide/show operation is not executed immediately. With nest Fragments even if you use commitNow(), the status update of the sub Fragments cannot be guaranteed.
