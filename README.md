@@ -17,7 +17,7 @@
 - [x] Compatible with Fragment framework
 - [x] Simple navigation stack management, support multi-navigation-stack
 - [x] Improved lifecycle management and distribution
-- [x] Easier to implement complex cross-page animation
+- [x] Easier to implement complex cross-page and shared-element animation
 - [x] Supports modification and automatic restoration of Activity and Window properties
 - [x] Support exchange data between Scenes, support request and grant permissions in Scene
 - [x] Support save and recovery parcable state of Scene
