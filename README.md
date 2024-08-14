@@ -39,11 +39,9 @@ The main problems of Activity:
 
 The main problems of Fragment:
 
-1. There are many crashes that the Google official can't solve for a long time. Even if you don't use Fragment, it may still trigger a crash in the OnBackPressed() of AppCompatActivity.
-2. The add/remove/hide/show operation is not executed immediately. With nest Fragments even if you use commitNow(), the status update of the sub Fragments cannot be guaranteed.
-3. The support of animation is poor, Z-axis order cannot be guaranteed when switching
-4. Navigation management is weak, there is no advanced stack management except for basic push and pop
-5. The lifecycle of Fragment in native Fragment and Support-v4 packages is not exactly the same
+1. Google Navigation Component will destory Fragment' view when it is invisible
+2. There are many crashes that the Google official can't solve for a long time. Even if you don't use Fragment, it may still trigger a crash in the OnBackPressed() of AppCompatActivity.
+3. The add/remove/hide/show operation is not executed immediately. With nest Fragments even if you use commitNow(), the status update of the sub Fragments cannot be guaranteed.
 
 The Scene framework tries to solve these problems of the Activity and Fragment mentioned above.
 
