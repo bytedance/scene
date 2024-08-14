@@ -52,11 +52,23 @@ At the same time, we provide a series of migration solutions to help developers 
 
 Add it to your root build.gradle at the end of repositories:
 ```gradle
+//build.gradle
 allprojects {
 	repositories {
 		...
 		maven { url 'https://jitpack.io' }
 	}
+}
+```
+
+```kotlin
+//or settings.gradle.kts
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        ...
+        maven { url = uri("https://jitpack.io") }
+    }
 }
 ```
 
