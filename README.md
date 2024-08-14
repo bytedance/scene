@@ -63,6 +63,8 @@ allprojects {
 Add it to your build.gradle, [latest_version](https://github.com/bytedance/scene/releases) :
 ```gradle
 dependencies {
+	implementation 'com.github.bytedance:scene:$latest_version'
+        //or
 	implementation 'com.github.bytedance.scene:scene:$latest_version'
 	implementation 'com.github.bytedance.scene:scene_navigation:$latest_version'
 	implementation 'com.github.bytedance.scene:scene_ui:$latest_version'
