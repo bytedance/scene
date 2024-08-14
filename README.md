@@ -10,7 +10,7 @@
 
 [![GitHub license](https://img.shields.io/github/license/bytedance/scene)](https://github.com/bytedance/scene/blob/master/LICENSE) 
 [![](https://jitpack.io/v/bytedance/scene.svg)](https://jitpack.io/#bytedance/scene)
-[![API](https://img.shields.io/badge/api-14%2B-green)](https://developer.android.com/about/dashboards)
+[![API](https://img.shields.io/badge/api-21%2B-green)](https://developer.android.com/about/dashboards)
 
 **Scene** is a lightweight library of navigation and ui composition based on view.
 
