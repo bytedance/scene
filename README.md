@@ -14,12 +14,13 @@
 
 **Scene** is a lightweight library of navigation and ui composition based on view.
 
-- [x] Simple and convenient navigation and stack management, support multi-stack
+- [x] Compatible with Fragment framework
+- [x] Simple navigation stack management, support multi-navigation-stack
 - [x] Improved lifecycle management and distribution
-- [x] Easier to implement complex cut-scenes animation 
-- [x] Support properties modification and recovery of Activity and Window 
-- [x] Support return value between Scenes, support request and grant permissions in Scene
-- [x] Support save and recovery state of Scene
+- [x] Easier to implement complex cross-page animation
+- [x] Supports modification and automatic restoration of Activity and Window properties
+- [x] Support exchange data between Scenes, support request and grant permissions in Scene
+- [x] Support save and recovery parcable state of Scene
 
 [Download the Demo](https://github.com/bytedance/scene/releases/download/v1.0.2/demo-debug.apk)
 
