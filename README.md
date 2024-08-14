@@ -149,7 +149,7 @@ https://github.com/bytedance/scene/wiki
 
 A normal Dialog's Window is independent and in front of the Activity's Window,
 so if try to push a Scene in a opening Dialog, it will cause the Scene to appear behind it. 
-You can close the dialog box when click, or use Scene to implement the dialog instead of a system Dialog.
+You can close the dialog box when click, or use transparent Scene to implement the dialog instead of a system Dialog.
 
 
 ## Apps using Scene
