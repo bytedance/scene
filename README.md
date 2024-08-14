@@ -146,6 +146,9 @@ class ChildScene : Scene() {
 ## Fragment
 
 
+## Document
+
+https://github.com/bytedance/scene/wiki
 
 ## Issues
 
