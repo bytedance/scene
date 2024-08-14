@@ -142,84 +142,9 @@ class ChildScene : Scene() {
 }
 ```
 
-## Migration to Scene
+## Fragment
 
-A new app can use Scene by directly inheriting the SceneActivity.
 
-But if your existing Activity is not convenient to change the inheritance relationship, you can directly using SceneDelegate to handle Scenes refer to the code of SceneActivity.
-
-Take the homepage migration plan of XiguaVideo as an example:
-
-First, declares a layout in the XML of the home Activity for storing the Scene: scene_container
-
-```xml
-<?xml version="1.0" encoding="utf-8"?>
-<merge xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
- 
-    <...>
-    
-    <...>
- 
-    <!-- The above is the existing layout of the Activity -->
- 
-    <FrameLayout
-        android:id="@+id/scene_container"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
- 
-</merge>
-```
-
-Then create a transparent Scene as the root Scene:
-
-```java
-public static class EmptyHolderScene extends Scene {
-    @NonNull
-    @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return new View(getActivity());
-    }
- 
-    @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        getView().setBackgroundColor(Color.TRANSPARENT);
-    }
- 
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        ArticleMainActivity activity = (ArticleMainActivity) requireActivity();
-        activity.createSceneLifecycleCallbacksToDispatchLifecycle(getNavigationScene());
-    }
-}
-```
-
-Bind this transparent Scene to R.id.scene_container:
-
-```java
-mSceneActivityDelegate = NavigationSceneUtility.setupWithActivity(this, R.id.scene_container, null,
-        new NavigationSceneOptions().setDrawWindowBackground(false)
-                .setFixSceneWindowBackgroundEnabled(true)
-                .setSceneBackground(R.color.material_default_window_bg)
-                .setRootScene(EmptyHolderScene.class, null), false);
-```
-
-In essence, there is a transparent Scene cover on the Activity, but it is not visually visible.
-
-Then provide the Push method in the Activity:
-
-```java
-public void push(@NonNull Scene scene, @Nullable PushOptions pushOptions) {
-    if (mSceneActivityDelegate != null) {
-        mSceneActivityDelegate.getNavigationScene().push(scene, pushOptions);
-    }
-}
-```
-
-This completes the basic migration, you can open a new Scene page directly in this Activity.
 
 ## Issues
 
@@ -229,11 +154,13 @@ A normal Dialog's Window is independent and in front of the Activity's Window,
 so if try to push a Scene in a opening Dialog, it will cause the Scene to appear behind it. 
 You can close the dialog box when click, or use Scene to implement the dialog instead of a system Dialog.
 
+
 ## Apps using Scene
 
 | <img src="misc/xigua.png" alt="xigua" width="100"/> | <img src="misc/douyin.png" alt="douyin" width="100"/> | <img src="misc/toutiao.png" alt="toutiao" width="100"/> |
 |:-----------:|:-------:|:-------:|
 | Xigua Video | Tik Tok |  Toutiao |
+
 
 ## License
 ~~~
