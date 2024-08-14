@@ -2,23 +2,14 @@
     <h1>Scene</h1>
     <p>TikTok Single Activity Framework.</p>
     <p>English&nbsp;&nbsp;|&nbsp;&nbsp;
-    <a target="_blank" href="https://github.com/Bytedance/scene/blob/main/README-zh-CN.md">简体中文</a>&nbsp;&nbsp;|&nbsp;&nbsp;
-    <a target="_blank" href="https://github.com/Bytedance/scene/blob/main/README-de.md">日本語</a>&nbsp;&nbsp;|&nbsp;&nbsp;
+    <a target="_blank" href="https://github.com/bytedance/scene/blob/master/README_cn.md">简体中文</a>&nbsp;&nbsp;|&nbsp;&nbsp;
+    <a target="_blank" href="https://github.com/bytedance/scene/blob/main/README_ja.md">日本語</a>&nbsp;&nbsp;
     <br/>
 </div>
 
-<div align="center">
-    <img alt="GitHub" src="https://img.shields.io/github/license/Bytedance/scene?color=c3e7ff&style=flat-square">
-    <a target="_blank" href="https://github.com/Bytedance/scene/releases">
-        <img alt="Version" src="https://img.shields.io/github/v/release/Bytedance/scene?color=c3e7ff&label=version&style=flat-square">
-    </a>
-    <img alt="GitHub last commit" src="https://img.shields.io/github/last-commit/Bytedance/scene?color=c3e7ff&style=flat-square">
-    <br>
-</div>
 
-
-# Features
-
+[![GitHub license](https://img.shields.io/github/license/bytedance/scene)](https://github.com/bytedance/scene/blob/master/LICENSE) 
+[![](https://jitpack.io/v/bytedance/scene.svg)](https://jitpack.io/#bytedance/scene)
 [![API](https://img.shields.io/badge/api-14%2B-green)](https://developer.android.com/about/dashboards)
 
 **Scene** is a lightweight library of navigation and ui composition based on view.
