@@ -72,15 +72,6 @@ dependencies {
 }
 ```
 
-Scene has 2 subclasses: NavigationScene and GroupScene:
-
-1. NavigationScene supports navigation
-2. GroupScene supports ui composition
-
-Scene             | NavigationScene             |  GroupScene 
-:-------------------------:|:-------------------------:|:-------------------------:
-<img src="http://p3.pstatp.com/origin/2dd480002cd0b8584730a" width="400">  | <img src="http://p3.pstatp.com/origin/2dd450002cc210965bb20" width="400">  |  <img src="http://p3.pstatp.com/origin/2dd450002cbd848281018" width="400">
-
 For simple usage, just let your Activity inherit from SceneActivity:
 
 ```kotlin
