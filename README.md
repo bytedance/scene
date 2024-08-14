@@ -164,7 +164,25 @@ class ChildScene : Scene() {
 ```
 
 ## Fragment
+copy FragmentScene from https://github.com/bytedance/scene/wiki/Scene-load-Fragment
 
+```kotlin
+class YourFragment : Fragment() {
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
+    ): View {
+        return View(requireContext())
+    }
+
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+    }
+}
+
+class YourFragmentScene : FragmentScene() {
+    override val fragmentClass = YourFragment::class.java
+}
+```
 
 ## Document
 
