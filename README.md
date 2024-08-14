@@ -164,7 +164,7 @@ class ChildScene : Scene() {
 ```
 
 ## Fragment
-copy FragmentScene from https://github.com/bytedance/scene/wiki/Scene-load-Fragment
+copy [FragmentScene](https://github.com/bytedance/scene/wiki/Scene-load-Fragment) to your project 
 
 ```kotlin
 class YourFragment : Fragment() {
