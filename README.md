@@ -21,6 +21,7 @@
 - [x] Supports modification and automatic restoration of Activity and Window properties
 - [x] Support exchange data between Scenes, support request and grant permissions in Scene
 - [x] Support save and recovery parcable state of Scene
+- [x] No R8 / Proguard configuration required
 
 [Download the Demo](https://github.com/bytedance/scene/releases/download/v1.0.2/demo-debug.apk)
 
