@@ -184,6 +184,10 @@ class YourFragmentScene : FragmentScene() {
 }
 ```
 
+## Compose
+
+https://github.com/bytedance/scene/wiki/Compose
+
 ## Document
 
 https://github.com/bytedance/scene/wiki
