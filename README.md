@@ -177,6 +177,7 @@ class YourFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+        val parentScene = ViewUtlity.findScene(this.view()) as YourFragmentScene
     }
 }
 
