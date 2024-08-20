@@ -21,6 +21,7 @@ dependencies {
     api project(path: ':library:scene')
     api project(path: ':library:scene_navigation')
 
+    implementation APPCOMPAT_LIB //unit test required
     implementation ANNOTATION_LIB
     implementation LIFECYCLE_VIEWMODEL_LIB
     implementation LIFECYCLE_EXTENSIONS_LIB
