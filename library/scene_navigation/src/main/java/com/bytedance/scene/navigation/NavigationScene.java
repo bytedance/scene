@@ -20,6 +20,7 @@ import static androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP;
 import static androidx.lifecycle.Lifecycle.State.DESTROYED;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Build;
@@ -947,6 +948,22 @@ public final class NavigationScene extends Scene implements NavigationListener, 
     public void recycleInvisibleScenes() {
         ThreadUtility.checkUIThread();
         mNavigationSceneManager.recycleInvisibleScenes();
+    }
+
+    @Override
+    protected LayoutInflater onGetLayoutInflater() {
+        if (mNavigationSceneOptions.getUseActivityContextAndLayoutInflater()) {
+            return requireActivity().getLayoutInflater().cloneInContext(requireSceneContext());
+        }
+        return super.onGetLayoutInflater();
+    }
+
+    @Override
+    protected Context onGetSceneContext() {
+        if (mNavigationSceneOptions.getUseActivityContextAndLayoutInflater()) {
+            return requireActivity();
+        }
+        return super.onGetSceneContext();
     }
 
     private InteractionNavigationPopAnimationFactory.InteractionCallback mInteractionCallback = new InteractionNavigationPopAnimationFactory.InteractionCallback() {

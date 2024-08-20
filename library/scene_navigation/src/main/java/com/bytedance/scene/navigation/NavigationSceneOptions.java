@@ -35,6 +35,7 @@ public class NavigationSceneOptions {
     private static final String EXTRA_ONLY_RESTORE_VISIBLE_SCENE = "extra_onlyRestoreVisibleScene";
     private static final String EXTRA_USE_POST_IN_LIFECYCLE = "extra_usePostInLifecycle";
     private static final String EXTRA_AUTO_RECYCLE_INVISIBLE_SCENES_THRESHOLD = "extra_autoRecycleInvisibleScenesThreshold";
+    private static final String EXTRA_USE_ACTIVITY_CONTEXT_AND_LAYOUT_INFLATER = "extra_useActivityContextAndLayoutInflater";
 
     @NonNull
     private final String mRootSceneClassName;
@@ -47,6 +48,7 @@ public class NavigationSceneOptions {
     private boolean mOnlyRestoreVisibleScene = false;
     private boolean mUsePostInLifecycle = false;
     private float mAutoRecycleInvisibleScenesThreshold = 0F;
+    private boolean mUseActivityContextAndLayoutInflater = false;
 
     public NavigationSceneOptions(@NonNull Class<? extends Scene> rootSceneClazz, @Nullable Bundle rootSceneArguments) {
         if (rootSceneClazz.isAssignableFrom(NavigationScene.class)) {
@@ -101,6 +103,19 @@ public class NavigationSceneOptions {
         return this;
     }
 
+    /**
+     * this is conflict with setDrawWindowBackground, if you use setUseActivityContextAndLayoutInflater(true),
+     * you should use setDrawWindowBackground(false) together
+     *
+     * @param useActivityContextAndLayoutInflater
+     * @return
+     */
+    @NonNull
+    public NavigationSceneOptions setUseActivityContextAndLayoutInflater(boolean useActivityContextAndLayoutInflater) {
+        this.mUseActivityContextAndLayoutInflater = useActivityContextAndLayoutInflater;
+        return this;
+    }
+
     @NonNull
     public String getRootSceneClassName() {
         return this.mRootSceneClassName;
@@ -135,6 +150,10 @@ public class NavigationSceneOptions {
         return this.mAutoRecycleInvisibleScenesThreshold;
     }
 
+    public boolean getUseActivityContextAndLayoutInflater(){
+        return this.mUseActivityContextAndLayoutInflater;
+    }
+
     /**
      * @hide
      */
@@ -153,6 +172,7 @@ public class NavigationSceneOptions {
         navigationSceneOptions.mOnlyRestoreVisibleScene = bundle.getBoolean(EXTRA_ONLY_RESTORE_VISIBLE_SCENE);
         navigationSceneOptions.mUsePostInLifecycle = bundle.getBoolean(EXTRA_USE_POST_IN_LIFECYCLE);
         navigationSceneOptions.mAutoRecycleInvisibleScenesThreshold = bundle.getFloat(EXTRA_AUTO_RECYCLE_INVISIBLE_SCENES_THRESHOLD);
+        navigationSceneOptions.mUseActivityContextAndLayoutInflater = bundle.getBoolean(EXTRA_USE_ACTIVITY_CONTEXT_AND_LAYOUT_INFLATER, false);
         return navigationSceneOptions;
     }
 
@@ -170,6 +190,7 @@ public class NavigationSceneOptions {
         bundle.putBoolean(EXTRA_ONLY_RESTORE_VISIBLE_SCENE, mOnlyRestoreVisibleScene);
         bundle.putBoolean(EXTRA_USE_POST_IN_LIFECYCLE, mUsePostInLifecycle);
         bundle.putFloat(EXTRA_AUTO_RECYCLE_INVISIBLE_SCENES_THRESHOLD, mAutoRecycleInvisibleScenesThreshold);
+        bundle.putBoolean(EXTRA_USE_ACTIVITY_CONTEXT_AND_LAYOUT_INFLATER, mUseActivityContextAndLayoutInflater);
         return bundle;
     }
 }
