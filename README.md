@@ -211,9 +211,9 @@ You can close the dialog box when click, or use transparent Scene to implement t
 
 Apps using Scene
 -------------
-| <img src="misc/douyin.png" alt="xigua" width="100"/> | <img src="misc/xigua.png" alt="douyin" width="100"/> | <img src="misc/toutiao.png" alt="toutiao" width="100"/> |
-|:-----------:|:-------:|:-------:|
-| TikTok | Xigua Video |  Toutiao |
+| <img src="misc/douyin.png" alt="xigua" width="100"/>| <img src="misc/douyin.png" alt="xigua" width="100"/> | <img src="misc/xigua.png" alt="douyin" width="100"/> | <img src="misc/toutiao.png" alt="toutiao" width="100"/> |
+|:-----------:|:-------:|:-------:|:-------:|
+| TikTok | Douyin | Xigua Video |  Toutiao |
 
 
 ## License
