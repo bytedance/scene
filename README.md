@@ -23,7 +23,7 @@
 - [x] Support save and recovery parcable state of Scene
 - [x] No R8 / Proguard configuration required
 
-[Download the latest Sample APK](https://github.com/bytedance/scene/blob/readme/misc/latest_sample.apk)
+[Download the latest Sample APK](https://github.com/bytedance/scene/blob/master/misc/latest_sample.apk)
 
 Introduction
 -------------
