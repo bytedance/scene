@@ -1,50 +1,47 @@
-# Scene
+<div align="center">
+    <h1>Scene</h1>
+    <p>TikTok Single Activity Framework.</p>
+    <p>English&nbsp;&nbsp;|&nbsp;&nbsp;
+    <a target="_blank" href="https://github.com/bytedance/scene/blob/master/README_cn.md">简体中文</a>&nbsp;&nbsp;|&nbsp;&nbsp;
+    <a target="_blank" href="https://github.com/bytedance/scene/blob/main/README_ja.md">日本語</a>&nbsp;&nbsp;
+    <br/>
+</div>
 
-[简体中文版说明 >>>](/README_cn.md)
-[日本語の説明 >>>](/README_ja.md)
 
-[![GitHub license](https://img.shields.io/github/license/bytedance/scene)](https://github.com/bytedance/scene/blob/master/LICENSE) 
+[![GitHub license](https://img.shields.io/github/license/bytedance/scene)](https://github.com/bytedance/scene/blob/master/LICENSE)
 [![](https://jitpack.io/v/bytedance/scene.svg)](https://jitpack.io/#bytedance/scene)
-[![API](https://img.shields.io/badge/api-14%2B-green)](https://developer.android.com/about/dashboards)
+[![API](https://img.shields.io/badge/api-21%2B-green)](https://developer.android.com/about/dashboards)
 
-Scene is a lightweight library of navigation and ui composition based on view.
+**Scene** is a lightweight library of navigation and ui composition based on view.
 
-1. Simple and convenient navigation and stack management, support multi-stack
-2. Improved lifecycle management and distribution
-3. Easier to implement complex cut-scenes animation 
-4. Support properties modification and recovery of Activity and Window 
-5. Support return value between Scenes, support request and grant permissions in Scene
-6. Support save and recovery state of Scene
+- [x] Compatible with Fragment framework
+- [x] Simple navigation stack management, support multi-navigation-stack
+- [x] Improved lifecycle management and distribution
+- [x] Easier to implement complex cross-page and shared-element animation
+- [x] Supports modification and automatic restoration of Activity and Window properties
+- [x] Support exchange data between Scenes, support request and grant permissions in Scene
+- [x] Support save and recovery parcable state of Scene
+- [x] No R8 / Proguard configuration required
 
-[Download the Demo](https://github.com/bytedance/scene/releases/download/v1.0.2/demo-debug.apk)
+[Download the latest Sample APK](https://github.com/bytedance/scene/blob/readme/misc/latest_sample.apk)
 
-## Apps using Scene
-
-| <img src="misc/xigua.png" alt="xigua" width="100"/> | <img src="misc/douyin.png" alt="douyin" width="100"/> | <img src="misc/toutiao.png" alt="toutiao" width="100"/> |
-|:-----------:|:-------:|:-------:|
-| Xigua Video | Tik Tok |  Toutiao |
-
-## Introduction
-
+Introduction
+-------------
 Scene is designed to replace the use of Activity and Fragment on navigation and page segmentation.
 
-The main problems of Activity:
-
-1. The stack management of Activity is weak, Intent and LaunchMode are confusing, even if various of hacks still can't completely avoid issues like black screen 
+The main problems of **Activity**:
+1. The stack management of Activity is weak, Intent and LaunchMode are confusing, even if various of hacks still can't completely avoid issues like black screen
 2. The performance of Activity is poor, average startup time of an empty Activity is more than 60ms (on Samsung S9)
 3. Because the Activity is forced to support states recovery, it causes some problems:
-    - Transition animation has limited ability, difficult to implement complex interactive animations.
-    - Shared-element animation is basically unavailable, and there are some crashes unresolved in Android Framework.
-    - Every time starting a new Activity, onSaveInstance() of the previous Activity must be executed completely first, which will lose much performance.
+   - Transition animation has limited ability, difficult to implement complex interactive animations.
+   - Shared-element animation is basically unavailable, and there are some crashes unresolved in Android Framework.
+   - Every time starting a new Activity, onSaveInstance() of the previous Activity must be executed completely first, which will lose much performance.
 4. Activity relies on the Manifest file to cause injection difficulties, which also result in that Activity dynamics requires a variety of hacks
 
-The main problems of Fragment:
-
-1. There are many crashes that the Google official can't solve for a long time. Even if you don't use Fragment, it may still trigger a crash in the OnBackPressed() of AppCompatActivity.
-2. The add/remove/hide/show operation is not executed immediately. With nest Fragments even if you use commitNow(), the status update of the sub Fragments cannot be guaranteed.
-3. The support of animation is poor, Z-axis order cannot be guaranteed when switching
-4. Navigation management is weak, there is no advanced stack management except for basic push and pop
-5. The lifecycle of Fragment in native Fragment and Support-v4 packages is not exactly the same
+The main problems of **Fragment**:
+1. Google Navigation Component will destory Fragment' view when it is invisible
+2. There are many crashes that the Google official can't solve for a long time. Even if you don't use Fragment, it may still trigger a crash in the OnBackPressed() of AppCompatActivity.
+3. The add/remove/hide/show operation is not executed immediately. With nest Fragments even if you use commitNow(), the status update of the sub Fragments cannot be guaranteed.
 
 The Scene framework tries to solve these problems of the Activity and Fragment mentioned above.
 
@@ -52,10 +49,11 @@ Provides a simple, reliable, and extensible API for a lightweight navigation and
 
 At the same time, we provide a series of migration solutions to help developers gradually migrate from Activity and Fragment to Scene.
 
-## Get Started
-
+Get Started
+-------------
 Add it to your root build.gradle at the end of repositories:
 ```gradle
+//build.gradle
 allprojects {
 	repositories {
 		...
@@ -64,9 +62,22 @@ allprojects {
 }
 ```
 
-Add it to your build.gradle:
+```kotlin
+//or settings.gradle.kts
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        ...
+        maven { url = uri("https://jitpack.io") }
+    }
+}
+```
+
+Add it to your build.gradle, [latest_version](https://github.com/bytedance/scene/releases) :
 ```gradle
 dependencies {
+	implementation 'com.github.bytedance:scene:$latest_version'
+        //or
 	implementation 'com.github.bytedance.scene:scene:$latest_version'
 	implementation 'com.github.bytedance.scene:scene_navigation:$latest_version'
 	implementation 'com.github.bytedance.scene:scene_ui:$latest_version'
@@ -76,14 +87,19 @@ dependencies {
 }
 ```
 
-Scene has 2 subclasses: NavigationScene and GroupScene:
-
-1. NavigationScene supports navigation
-2. GroupScene supports ui composition
-
-Scene             | NavigationScene             |  GroupScene 
-:-------------------------:|:-------------------------:|:-------------------------:
-<img src="http://p3.pstatp.com/origin/2dd480002cd0b8584730a" width="400">  | <img src="http://p3.pstatp.com/origin/2dd450002cc210965bb20" width="400">  |  <img src="http://p3.pstatp.com/origin/2dd450002cbd848281018" width="400">
+```kotlin
+//or build.gradle.kts
+dependencies {
+    implementation ("com.github.bytedance:scene:$latest_version")
+    //or
+    implementation ("com.github.bytedance.scene:scene:$latest_version")
+    implementation ("com.github.bytedance.scene:scene_navigation:$latest_version")
+    implementation ("com.github.bytedance.scene:scene_ui:$latest_version")
+    implementation ("com.github.bytedance.scene:scene_dialog:$latest_version")
+    implementation ("com.github.bytedance.scene:scene_shared_element_animation:$latest_version")
+    implementation ("com.github.bytedance.scene:scene_ktx:$latest_version")
+}
+```
 
 For simple usage, just let your Activity inherit from SceneActivity:
 
@@ -147,108 +163,58 @@ class ChildScene : Scene() {
 }
 ```
 
-## Migration to Scene
+Fragment
+-------------
+copy [FragmentScene](https://github.com/bytedance/scene/wiki/Scene-load-Fragment) to your project
 
-A new app can use Scene by directly inheriting the SceneActivity.
-
-But if your existing Activity is not convenient to change the inheritance relationship, you can directly using SceneDelegate to handle Scenes refer to the code of SceneActivity.
-
-Take the homepage migration plan of XiguaVideo as an example:
-
-First, declares a layout in the XML of the home Activity for storing the Scene: scene_container
-
-```xml
-<?xml version="1.0" encoding="utf-8"?>
-<merge xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
- 
-    <...>
-    
-    <...>
- 
-    <!-- The above is the existing layout of the Activity -->
- 
-    <FrameLayout
-        android:id="@+id/scene_container"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
- 
-</merge>
-```
-
-Then create a transparent Scene as the root Scene:
-
-```java
-public static class EmptyHolderScene extends Scene {
-    @NonNull
-    @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return new View(getActivity());
+```kotlin
+class YourFragment : Fragment() {
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
+    ): View {
+        return View(requireContext())
     }
- 
-    @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        getView().setBackgroundColor(Color.TRANSPARENT);
+
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        val parentScene = ViewUtlity.findScene(this.view()) as YourFragmentScene
     }
- 
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        ArticleMainActivity activity = (ArticleMainActivity) requireActivity();
-        activity.createSceneLifecycleCallbacksToDispatchLifecycle(getNavigationScene());
-    }
+}
+
+class YourFragmentScene : FragmentScene() {
+    override val fragmentClass = YourFragment::class.java
 }
 ```
 
-Bind this transparent Scene to R.id.scene_container:
+Compose
+-------------
+https://github.com/bytedance/scene/wiki/Compose
 
-```java
-mSceneActivityDelegate = NavigationSceneUtility.setupWithActivity(this, R.id.scene_container, null,
-        new NavigationSceneOptions().setDrawWindowBackground(false)
-                .setFixSceneWindowBackgroundEnabled(true)
-                .setSceneBackground(R.color.material_default_window_bg)
-                .setRootScene(EmptyHolderScene.class, null), false);
-```
+Sample
+--------
+Scene sample is built using Gradle. On Linux, simply run:
 
-In essence, there is a transparent Scene cover on the Activity, but it is not visually visible.
+    ./gradlew installDebug
 
-Then provide the Push method in the Activity:
+Document
+-------------
+https://github.com/bytedance/scene/wiki
 
-```java
-public void push(@NonNull Scene scene, @Nullable PushOptions pushOptions) {
-    if (mSceneActivityDelegate != null) {
-        mSceneActivityDelegate.getNavigationScene().push(scene, pushOptions);
-    }
-}
-```
-
-This completes the basic migration, you can open a new Scene page directly in this Activity.
-
-## Issues
-
+Issues
+-------------
 ### Dialog
 
 A normal Dialog's Window is independent and in front of the Activity's Window,
-so if try to push a Scene in a opening Dialog, it will cause the Scene to appear behind it. 
-You can close the dialog box when click, or use Scene to implement the dialog instead of a system Dialog.
+so if try to push a Scene in a opening Dialog, it will cause the Scene to appear behind it.
+You can close the dialog box when click, or use transparent Scene to implement the dialog instead of a system Dialog.
 
-### SurfaceView and TextureView
 
-When the Scene is popping, the animation will be executed after the Scene life cycle is executed.
-However, if there is a SurfaceView or a TextureView, this process will cause the SurfaceView/TextureView to turn to black.
+Apps using Scene
 
-You can get and re-assign the Surface before the animation end to avoid issues on TextureView, 
-and capture the last bitmap and set to a ImageView to avoid issues on SurfaceView.
+| <img src="misc/xigua.png" alt="xigua" width="100"/> | <img src="misc/douyin.png" alt="douyin" width="100"/> | <img src="misc/toutiao.png" alt="toutiao" width="100"/> |
+|:-----------:|:-------:|:-------:|
+| Xigua Video | Tik Tok |  Toutiao |
 
-### Status Bar related
-
-There is no official API of notch screen before Android P, and each vendor has its own implementation.
-
-If you try to hide the status bar with WindowFlag or View's UiVisibility, it will trigger the re-layout of the entire Activity.
-
-This may causes the layout change of the Scene inside, and the behaviors may be not as expected in some cases.
 
 ## License
 ~~~
