@@ -44,6 +44,14 @@ public class GroupSceneUIUtility {
                                                      @NonNull final GroupScene groupScene,
                                                      @IdRes final int containerId,
                                                      @NonNull final LinkedHashMap<Integer, Scene> children) {
+        setupWithBottomNavigationView(bottomNavigationView, groupScene, containerId, children, null);
+    }
+
+    public static void setupWithBottomNavigationView(@NonNull final BottomNavigationView bottomNavigationView,
+                                                     @NonNull final GroupScene groupScene,
+                                                     @IdRes final int containerId,
+                                                     @NonNull final LinkedHashMap<Integer, Scene> children,
+                                                     @Nullable final BottomNavigationView.OnNavigationItemSelectedListener onNavigationItemSelectedListener) {
         if (children.size() == 0) {
             throw new IllegalArgumentException("children can't be empty");
         }
@@ -58,6 +66,9 @@ public class GroupSceneUIUtility {
                 new BottomNavigationView.OnNavigationItemSelectedListener() {
                     @Override
                     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                        if (onNavigationItemSelectedListener != null) {
+                            onNavigationItemSelectedListener.onNavigationItemSelected(item);
+                        }
                         item.setChecked(true);
 
                         String tag = String.valueOf(item.getItemId());
