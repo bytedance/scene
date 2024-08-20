@@ -6,7 +6,7 @@ package com.bytedance.scene;
  * @author fengminchao@bytedance.com
  */
 public class SceneGlobalConfig {
-    public static volatile int genScopeStrategy = 1;
+    public static final int genScopeStrategy = 1;
     public static volatile boolean validateScopeAndViewModelStoreSceneClassStrategy = false;
     public static volatile boolean useActivityCompatibleLifecycleStrategy = false;
     public static volatile boolean sceneLifecycleCallbackObjectCreationOpt = false;
