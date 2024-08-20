@@ -39,7 +39,7 @@ The main problems of **Activity**:
 4. Activity relies on the Manifest file to cause injection difficulties, which also result in that Activity dynamics requires a variety of hacks
 
 The main problems of **Fragment**:
-1. Google Navigation Component will destory Fragment' view when it is invisible
+1. [Google Navigation Component](https://developer.android.com/guide/navigation) will destory Fragment' view when it is invisible
 2. There are many crashes that the Google official can't solve for a long time. Even if you don't use Fragment, it may still trigger a crash in the OnBackPressed() of AppCompatActivity.
 3. The add/remove/hide/show operation is not executed immediately. With nest Fragments even if you use commitNow(), the status update of the sub Fragments cannot be guaranteed.
 
