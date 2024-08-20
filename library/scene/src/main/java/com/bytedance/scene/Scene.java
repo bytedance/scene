@@ -23,8 +23,6 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.os.Parcelable;
 import android.util.Log;
 import android.util.SparseArray;
@@ -628,10 +626,6 @@ public abstract class Scene implements LifecycleOwner, SavedStateRegistryOwner, 
 
         if (!activity.isChangingConfigurations()) {
             this.mScope.destroy();
-            if (this.viewModelStore != null) {
-                this.viewModelStore.clear();
-                this.viewModelStore = null;
-            }
         }
         this.mScope = null;
         // Must be called last, in case someone do add in onDestroy/onDetach
@@ -1117,8 +1111,6 @@ public abstract class Scene implements LifecycleOwner, SavedStateRegistryOwner, 
         return this.mViewDestroyed;
     }
 
-    private ViewModelStore viewModelStore;
-    private final boolean createSceneViewModelStoreBySceneSelf = SceneGlobalConfig.createSceneViewModelStoreBySceneSelf;
     private final boolean validateScopeAndViewModelStoreSceneClassStrategy = SceneGlobalConfig.validateScopeAndViewModelStoreSceneClassStrategy;
 
     /**
@@ -1128,15 +1120,6 @@ public abstract class Scene implements LifecycleOwner, SavedStateRegistryOwner, 
     @NonNull
     @Override
     public final ViewModelStore getViewModelStore() {
-        if (createSceneViewModelStoreBySceneSelf) {
-            synchronized (this) {
-                if (viewModelStore == null) {
-                    viewModelStore = new ViewModelStore();
-                }
-                return viewModelStore;
-            }
-        }
-
         synchronized (this) {
             Scope scope = getScope();
             ViewModelStoreHolder viewModelStoreHolder = scope.getServiceInMyScope(ViewModelStoreHolder.class);
