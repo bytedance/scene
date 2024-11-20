@@ -22,6 +22,8 @@ import androidx.annotation.Nullable;
 import androidx.annotation.RestrictTo;
 import android.util.AttributeSet;
 import android.util.SparseArray;
+import android.view.MotionEvent;
+import android.widget.FrameLayout;
 
 import static androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP;
 
@@ -31,7 +33,9 @@ import static androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP;
  * @hide
  */
 @RestrictTo(LIBRARY_GROUP)
-public class NavigationFrameLayout extends NoneTouchFrameLayout {
+public class NavigationFrameLayout extends FrameLayout {
+    private boolean mIsTouchEnabled = true;
+
     private boolean mSupportRestore;
 
     public NavigationFrameLayout(@NonNull Context context) {
@@ -48,6 +52,18 @@ public class NavigationFrameLayout extends NoneTouchFrameLayout {
 
     public NavigationFrameLayout(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
+    }
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        if (!mIsTouchEnabled) {
+            return false;
+        }
+        return super.dispatchTouchEvent(ev);
+    }
+
+    public void setTouchEnabled(boolean enabled) {
+        this.mIsTouchEnabled = enabled;
     }
 
     /**
