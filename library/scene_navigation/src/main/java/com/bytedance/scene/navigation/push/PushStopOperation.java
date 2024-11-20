@@ -76,7 +76,7 @@ public class PushStopOperation implements Operation {
         if (navigationAnimationExecutor != null && navigationAnimationExecutor.isSupport(mPreviousRecord.mScene.getClass(), topRecord.mScene.getClass())) {
             final Scene finalCurrentScene = mPreviousRecord.mScene;
 
-            AnimatorUtility.bringToFrontIfNeeded(mNavigationScene.getSceneContainer());//保证Z轴正确
+            AnimatorUtility.bringSceneViewToFrontIfNeeded(mNavigationScene);//保证Z轴正确
             navigationAnimationExecutor.setAnimationViewGroup(mNavigationScene.getAnimationContainer());
 
             AnimationInfo fromInfo = new AnimationInfo(finalCurrentScene, mPreviousSceneView, finalCurrentScene.getState(), mPreviousRecord.mIsTranslucent);

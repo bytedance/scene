@@ -725,7 +725,7 @@ class NavigationSceneManagerV2 implements INavigationManager {
             if (!mDisableNavigationAnimation && isNavigationSceneInAnimationState && navigationAnimationExecutor != null && navigationAnimationExecutor.isSupport(currentRecord.mScene.getClass(), returnRecord.mScene.getClass())) {
                 ViewGroup animationContainer = mNavigationScene.getAnimationContainer();
                 // Ensure that the Z-axis is correct
-                AnimatorUtility.bringToFrontIfNeeded(animationContainer);
+                AnimatorUtility.bringAnimationViewToFrontIfNeeded(mNavigationScene);
                 navigationAnimationExecutor.setAnimationViewGroup(animationContainer);
 
                 final CancellationSignalList cancellationSignalList = new CancellationSignalList();
@@ -913,7 +913,7 @@ class NavigationSceneManagerV2 implements INavigationManager {
             if (!mDisableNavigationAnimation && isNavigationSceneInAnimationState && navigationAnimationExecutor != null && navigationAnimationExecutor.isSupport(currentRecord.mScene.getClass(), returnRecord.mScene.getClass())) {
                 ViewGroup animationContainer = mNavigationScene.getAnimationContainer();
                 // Ensure that the Z-axis is correct
-                AnimatorUtility.bringToFrontIfNeeded(animationContainer);
+                AnimatorUtility.bringAnimationViewToFrontIfNeeded(mNavigationScene);
                 navigationAnimationExecutor.setAnimationViewGroup(animationContainer);
 
                 final CancellationSignalList cancellationSignalList = new CancellationSignalList();
@@ -1318,7 +1318,7 @@ class NavigationSceneManagerV2 implements INavigationManager {
                 if (navigationAnimationExecutor != null && navigationAnimationExecutor.isSupport(currentRecord.mScene.getClass(), scene.getClass())) {
                     final Scene finalCurrentScene = currentRecord.mScene;
 
-                    AnimatorUtility.bringToFrontIfNeeded(mNavigationScene.getSceneContainer());//保证Z轴正确
+                    AnimatorUtility.bringSceneViewToFrontIfNeeded(mNavigationScene);//保证Z轴正确
                     navigationAnimationExecutor.setAnimationViewGroup(mNavigationScene.getAnimationContainer());
 
                     AnimationInfo fromInfo = new AnimationInfo(finalCurrentScene, currentView, finalCurrentScene.getState(), currentRecord.mIsTranslucent);

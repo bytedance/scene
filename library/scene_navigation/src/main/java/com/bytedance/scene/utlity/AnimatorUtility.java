@@ -19,6 +19,8 @@ import androidx.annotation.NonNull;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.bytedance.scene.navigation.NavigationScene;
+
 /**
  * Created by JiangQi on 8/2/18.
  */
@@ -58,13 +60,21 @@ public class AnimatorUtility {
         view.setAlpha(animatorInfo.alpha);
     }
 
-    public static void bringToFrontIfNeeded(@NonNull View view) {
+    private static void bringToFrontIfNeeded(@NonNull View view) {
         ViewGroup viewGroup = (ViewGroup) view.getParent();
         int childCount = viewGroup.getChildCount();
         int childIndex = viewGroup.indexOfChild(view);
         if (childIndex >= 0 && childIndex != childCount - 1) {
             view.bringToFront();
         }
+    }
+
+    public static void bringAnimationViewToFrontIfNeeded(@NonNull NavigationScene navigationScene) {
+        bringToFrontIfNeeded(navigationScene.getAnimationContainer());
+    }
+
+    public static void bringSceneViewToFrontIfNeeded(@NonNull NavigationScene navigationScene) {
+        bringToFrontIfNeeded(navigationScene.getSceneContainer());
     }
 
     public static class AnimatorInfo {

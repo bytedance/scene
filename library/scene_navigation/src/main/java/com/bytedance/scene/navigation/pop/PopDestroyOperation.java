@@ -83,7 +83,7 @@ public class PopDestroyOperation implements Operation {
         if (!this.mManagerAbility.isDisableNavigationAnimation() && isNavigationSceneInAnimationState && navigationAnimationExecutor != null && navigationAnimationExecutor.isSupport(mCurrentRecord.mScene.getClass(), mReturnRecord.mScene.getClass())) {
             ViewGroup animationContainer = mNavigationScene.getAnimationContainer();
             // Ensure that the Z-axis is correct
-            AnimatorUtility.bringToFrontIfNeeded(animationContainer);
+            AnimatorUtility.bringAnimationViewToFrontIfNeeded(mNavigationScene);
             navigationAnimationExecutor.setAnimationViewGroup(animationContainer);
 
             final CancellationSignalList cancellationSignalList = new CancellationSignalList();
