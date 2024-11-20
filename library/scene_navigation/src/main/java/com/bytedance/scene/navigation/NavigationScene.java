@@ -586,6 +586,13 @@ public final class NavigationScene extends Scene implements NavigationListener, 
      */
     @RestrictTo(LIBRARY_GROUP)
     public ViewGroup getAnimationContainer() {
+        if (this.mAnimationContainer == null) {
+            if (mNavigationSceneOptions.getLazyLoadNavigationSceneUnnecessaryView()) {
+                this.mAnimationContainer = addAnimationContainerToRootView((FrameLayout) getView(), requireSceneContext());
+            } else {
+                throw new IllegalStateException("Animation Container is null");
+            }
+        }
         return this.mAnimationContainer;
     }
 
@@ -695,17 +702,24 @@ public final class NavigationScene extends Scene implements NavigationListener, 
         }
         frameLayout.addView(mSceneContainer, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
 
-        AnimationContainerLayout animationContainerLayout = new AnimationContainerLayout(requireSceneContext());
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            animationContainerLayout.setOnApplyWindowInsetsListener(new DispatchWindowInsetsListener());
+        if (mNavigationSceneOptions.getLazyLoadNavigationSceneUnnecessaryView()) {
+            //skip
+        } else {
+            mAnimationContainer = addAnimationContainerToRootView(frameLayout, requireSceneContext());
         }
-        mAnimationContainer = animationContainerLayout;
-        frameLayout.addView(mAnimationContainer, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-
         if (mNavigationSceneOptions.drawWindowBackground()) {
             ViewCompat.setBackground(frameLayout, Utility.getWindowBackground(requireSceneContext()));
         }
         return frameLayout;
+    }
+
+    private static FrameLayout addAnimationContainerToRootView(FrameLayout frameLayout, Context context) {
+        AnimationContainerLayout animationContainerLayout = new AnimationContainerLayout(context);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            animationContainerLayout.setOnApplyWindowInsetsListener(new DispatchWindowInsetsListener());
+        }
+        frameLayout.addView(animationContainerLayout, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        return animationContainerLayout;
     }
 
     /**

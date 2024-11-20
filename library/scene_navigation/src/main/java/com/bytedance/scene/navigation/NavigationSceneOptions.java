@@ -36,6 +36,7 @@ public class NavigationSceneOptions {
     private static final String EXTRA_USE_POST_IN_LIFECYCLE = "extra_usePostInLifecycle";
     private static final String EXTRA_AUTO_RECYCLE_INVISIBLE_SCENES_THRESHOLD = "extra_autoRecycleInvisibleScenesThreshold";
     private static final String EXTRA_USE_ACTIVITY_CONTEXT_AND_LAYOUT_INFLATER = "extra_useActivityContextAndLayoutInflater";
+    private static final String EXTRA_LAZY_LOAD_NAVIGATION_SCENE_UNNECESSARY_VIEW = "extra_lazyLoadNavigationSceneUnnecessaryView";
 
     @NonNull
     private final String mRootSceneClassName;
@@ -49,6 +50,7 @@ public class NavigationSceneOptions {
     private boolean mUsePostInLifecycle = false;
     private float mAutoRecycleInvisibleScenesThreshold = 0F;
     private boolean mUseActivityContextAndLayoutInflater = false;
+    private boolean mLazyLoadNavigationSceneUnnecessaryView = false;
 
     public NavigationSceneOptions(@NonNull Class<? extends Scene> rootSceneClazz, @Nullable Bundle rootSceneArguments) {
         if (rootSceneClazz.isAssignableFrom(NavigationScene.class)) {
@@ -117,6 +119,12 @@ public class NavigationSceneOptions {
     }
 
     @NonNull
+    public NavigationSceneOptions setLazyLoadNavigationSceneUnnecessaryView(boolean lazyLoadNavigationSceneUnnecessaryView) {
+        this.mLazyLoadNavigationSceneUnnecessaryView = lazyLoadNavigationSceneUnnecessaryView;
+        return this;
+    }
+
+    @NonNull
     public String getRootSceneClassName() {
         return this.mRootSceneClassName;
     }
@@ -154,6 +162,10 @@ public class NavigationSceneOptions {
         return this.mUseActivityContextAndLayoutInflater;
     }
 
+    public boolean getLazyLoadNavigationSceneUnnecessaryView(){
+        return this.mLazyLoadNavigationSceneUnnecessaryView;
+    }
+
     /**
      * @hide
      */
@@ -173,6 +185,7 @@ public class NavigationSceneOptions {
         navigationSceneOptions.mUsePostInLifecycle = bundle.getBoolean(EXTRA_USE_POST_IN_LIFECYCLE);
         navigationSceneOptions.mAutoRecycleInvisibleScenesThreshold = bundle.getFloat(EXTRA_AUTO_RECYCLE_INVISIBLE_SCENES_THRESHOLD);
         navigationSceneOptions.mUseActivityContextAndLayoutInflater = bundle.getBoolean(EXTRA_USE_ACTIVITY_CONTEXT_AND_LAYOUT_INFLATER, false);
+        navigationSceneOptions.mLazyLoadNavigationSceneUnnecessaryView = bundle.getBoolean(EXTRA_LAZY_LOAD_NAVIGATION_SCENE_UNNECESSARY_VIEW, false);
         return navigationSceneOptions;
     }
 
@@ -191,6 +204,7 @@ public class NavigationSceneOptions {
         bundle.putBoolean(EXTRA_USE_POST_IN_LIFECYCLE, mUsePostInLifecycle);
         bundle.putFloat(EXTRA_AUTO_RECYCLE_INVISIBLE_SCENES_THRESHOLD, mAutoRecycleInvisibleScenesThreshold);
         bundle.putBoolean(EXTRA_USE_ACTIVITY_CONTEXT_AND_LAYOUT_INFLATER, mUseActivityContextAndLayoutInflater);
+        bundle.putBoolean(EXTRA_LAZY_LOAD_NAVIGATION_SCENE_UNNECESSARY_VIEW, mLazyLoadNavigationSceneUnnecessaryView);
         return bundle;
     }
 }
