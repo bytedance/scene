@@ -20,12 +20,8 @@ android {
 }
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation SAMPLE_APPCOMPAT_LIB
     implementation DESIGN_LIB
-    testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'com.android.support.test:runner:1.0.2'
-    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
 
     implementation project(path: ':library:scene')
     implementation project(path: ':library:scene_ui')

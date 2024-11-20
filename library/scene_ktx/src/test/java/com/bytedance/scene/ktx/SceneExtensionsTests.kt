@@ -8,7 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.bytedance.scene.Scene
 import com.bytedance.scene.ktx.utility.TestActivity
-import com.bytedance.scene.ktx.utility.TestAppCompatActivity
+import com.bytedance.scene.ktx.utility.TestFragmentActivity
 import org.junit.Assert.*
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -184,7 +184,7 @@ class SceneExtensionsTests {
                 return View(requireSceneContext())
             }
         }
-        val manager = createFromInitSceneLifecycleManager(TestAppCompatActivity::class.java, scene).first
+        val manager = createFromInitSceneLifecycleManager(TestFragmentActivity::class.java, scene).first
         assertNotNull(scene.fragmentActivity())
         assertNotNull(scene.requireFragmentActivity())
     }
