@@ -37,6 +37,7 @@ public class NavigationSceneOptions {
     private static final String EXTRA_AUTO_RECYCLE_INVISIBLE_SCENES_THRESHOLD = "extra_autoRecycleInvisibleScenesThreshold";
     private static final String EXTRA_USE_ACTIVITY_CONTEXT_AND_LAYOUT_INFLATER = "extra_useActivityContextAndLayoutInflater";
     private static final String EXTRA_LAZY_LOAD_NAVIGATION_SCENE_UNNECESSARY_VIEW = "extra_lazyLoadNavigationSceneUnnecessaryView";
+    private static final String EXTRA_MERGE_NAVIGATION_SCENE_VIEW = "extra_mergeNavigationSceneView";
 
     @NonNull
     private final String mRootSceneClassName;
@@ -51,6 +52,7 @@ public class NavigationSceneOptions {
     private float mAutoRecycleInvisibleScenesThreshold = 0F;
     private boolean mUseActivityContextAndLayoutInflater = false;
     private boolean mLazyLoadNavigationSceneUnnecessaryView = false;
+    private boolean mMergeNavigationSceneView = false;
 
     public NavigationSceneOptions(@NonNull Class<? extends Scene> rootSceneClazz, @Nullable Bundle rootSceneArguments) {
         if (rootSceneClazz.isAssignableFrom(NavigationScene.class)) {
@@ -125,6 +127,12 @@ public class NavigationSceneOptions {
     }
 
     @NonNull
+    public NavigationSceneOptions setMergeNavigationSceneView(boolean mergeNavigationSceneView) {
+        this.mMergeNavigationSceneView = mergeNavigationSceneView;
+        return this;
+    }
+
+    @NonNull
     public String getRootSceneClassName() {
         return this.mRootSceneClassName;
     }
@@ -166,6 +174,10 @@ public class NavigationSceneOptions {
         return this.mLazyLoadNavigationSceneUnnecessaryView;
     }
 
+    public boolean getMergeNavigationSceneView(){
+        return this.mMergeNavigationSceneView;
+    }
+
     /**
      * @hide
      */
@@ -186,6 +198,7 @@ public class NavigationSceneOptions {
         navigationSceneOptions.mAutoRecycleInvisibleScenesThreshold = bundle.getFloat(EXTRA_AUTO_RECYCLE_INVISIBLE_SCENES_THRESHOLD);
         navigationSceneOptions.mUseActivityContextAndLayoutInflater = bundle.getBoolean(EXTRA_USE_ACTIVITY_CONTEXT_AND_LAYOUT_INFLATER, false);
         navigationSceneOptions.mLazyLoadNavigationSceneUnnecessaryView = bundle.getBoolean(EXTRA_LAZY_LOAD_NAVIGATION_SCENE_UNNECESSARY_VIEW, false);
+        navigationSceneOptions.mMergeNavigationSceneView = bundle.getBoolean(EXTRA_MERGE_NAVIGATION_SCENE_VIEW, false);
         return navigationSceneOptions;
     }
 
@@ -205,6 +218,7 @@ public class NavigationSceneOptions {
         bundle.putFloat(EXTRA_AUTO_RECYCLE_INVISIBLE_SCENES_THRESHOLD, mAutoRecycleInvisibleScenesThreshold);
         bundle.putBoolean(EXTRA_USE_ACTIVITY_CONTEXT_AND_LAYOUT_INFLATER, mUseActivityContextAndLayoutInflater);
         bundle.putBoolean(EXTRA_LAZY_LOAD_NAVIGATION_SCENE_UNNECESSARY_VIEW, mLazyLoadNavigationSceneUnnecessaryView);
+        bundle.putBoolean(EXTRA_MERGE_NAVIGATION_SCENE_VIEW, mMergeNavigationSceneView);
         return bundle;
     }
 }

@@ -20,6 +20,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.bytedance.scene.navigation.NavigationScene;
+import com.bytedance.scene.view.NavigationFrameLayout;
 
 /**
  * Created by JiangQi on 8/2/18.
@@ -70,11 +71,19 @@ public class AnimatorUtility {
     }
 
     public static void bringAnimationViewToFrontIfNeeded(@NonNull NavigationScene navigationScene) {
-        bringToFrontIfNeeded(navigationScene.getAnimationContainer());
+        if (navigationScene.getNavigationSceneOptions().getMergeNavigationSceneView()) {
+            ((NavigationFrameLayout) navigationScene.getView()).setDrawAnimationViewToFront(true);
+        } else {
+            bringToFrontIfNeeded(navigationScene.getAnimationContainer());
+        }
     }
 
     public static void bringSceneViewToFrontIfNeeded(@NonNull NavigationScene navigationScene) {
-        bringToFrontIfNeeded(navigationScene.getSceneContainer());
+        if (navigationScene.getNavigationSceneOptions().getMergeNavigationSceneView()) {
+            ((NavigationFrameLayout) navigationScene.getView()).setDrawAnimationViewToFront(false);
+        } else {
+            bringToFrontIfNeeded(navigationScene.getSceneContainer());
+        }
     }
 
     public static class AnimatorInfo {

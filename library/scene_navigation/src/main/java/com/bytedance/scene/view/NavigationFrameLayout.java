@@ -15,17 +15,20 @@
  */
 package com.bytedance.scene.view;
 
+import static androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP;
+
 import android.content.Context;
 import android.os.Parcelable;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.annotation.RestrictTo;
 import android.util.AttributeSet;
 import android.util.SparseArray;
 import android.view.MotionEvent;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
-import static androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.RestrictTo;
 
 /**
  * Created by JiangQi on 7/30/18.
@@ -37,6 +40,9 @@ public class NavigationFrameLayout extends FrameLayout {
     private boolean mIsTouchEnabled = true;
 
     private boolean mSupportRestore;
+
+    private boolean mDrawAnimationViewToFront = false;
+    private boolean mAnimationContainerViewAdded = false;
 
     public NavigationFrameLayout(@NonNull Context context) {
         super(context);
@@ -78,5 +84,65 @@ public class NavigationFrameLayout extends FrameLayout {
     @Override
     protected void dispatchRestoreInstanceState(SparseArray<Parcelable> container) {
         dispatchThawSelfOnly(container);
+    }
+
+    @Override
+    public void setChildrenDrawingOrderEnabled(boolean enabled) {
+        super.setChildrenDrawingOrderEnabled(enabled);
+    }
+
+    public void setDrawAnimationViewToFront(boolean value) {
+        if (!isChildrenDrawingOrderEnabled()) {
+            throw new IllegalStateException("please invoke setChildrenDrawingOrderEnabled(true) first");
+        }
+        this.mDrawAnimationViewToFront = value;
+        this.invalidate();
+    }
+
+    @Override
+    protected int getChildDrawingOrder(int childCount, int drawingPosition) {
+        if (this.mDrawAnimationViewToFront && this.mAnimationContainerViewAdded) {
+            //AnimationContainerLayout should always located in first position
+            if (drawingPosition == childCount - 1) {
+                return 0;
+            } else {
+                return drawingPosition + 1;
+            }
+        } else {
+            return super.getChildDrawingOrder(childCount, drawingPosition);
+        }
+    }
+
+    @Override
+    public void addView(View child, int index, ViewGroup.LayoutParams params) {
+        super.addView(child, index, params);
+        if (!isChildrenDrawingOrderEnabled()) {
+            return;
+        }
+        if (child instanceof AnimationContainerLayout) {
+            if (index != 0) {
+                throw new IllegalArgumentException("AnimationContainerLayout should add to 0");
+            }
+            if (this.mAnimationContainerViewAdded) {
+                throw new IllegalStateException("AnimationContainerLayout is already added");
+            } else {
+                this.mAnimationContainerViewAdded = true;
+            }
+        } else {
+            if (this.mAnimationContainerViewAdded && index == 0) {
+                throw new IllegalArgumentException("only AnimationContainerLayout can be added to 0");
+            }
+        }
+    }
+
+    @Override
+    public void onViewRemoved(View child) {
+        super.onViewRemoved(child);
+        if (!isChildrenDrawingOrderEnabled()) {
+            return;
+        }
+        if (mAnimationContainerViewAdded && (child instanceof AnimationContainerLayout)) {
+            this.mAnimationContainerViewAdded = false;
+        }
     }
 }
