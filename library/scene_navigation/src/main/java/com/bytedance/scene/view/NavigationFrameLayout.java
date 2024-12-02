@@ -25,6 +25,8 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -119,7 +121,12 @@ public class NavigationFrameLayout extends FrameLayout {
         if (!isChildrenDrawingOrderEnabled()) {
             return;
         }
-        if (child instanceof AnimationContainerLayout) {
+
+        Class<? extends View> childClass = child.getClass();
+        //skip to load AnimationContainerLayout class to improve startup performance
+        boolean isSystemFrameworkView = childClass == FrameLayout.class || childClass == LinearLayout.class || childClass == RelativeLayout.class;
+
+        if (!isSystemFrameworkView && child instanceof AnimationContainerLayout) {
             if (index != 0) {
                 throw new IllegalArgumentException("AnimationContainerLayout should add to 0");
             }
