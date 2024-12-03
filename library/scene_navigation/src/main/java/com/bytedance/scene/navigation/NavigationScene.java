@@ -60,6 +60,9 @@ import com.bytedance.scene.interfaces.ChildSceneLifecycleCallbacks;
 import com.bytedance.scene.interfaces.PermissionResultCallback;
 import com.bytedance.scene.interfaces.PopOptions;
 import com.bytedance.scene.interfaces.PushOptions;
+import com.bytedance.scene.logger.LoggerManager;
+import com.bytedance.scene.queue.NavigationMessageQueue;
+import com.bytedance.scene.queue.NavigationRunnable;
 import com.bytedance.scene.utlity.DispatchWindowInsetsListener;
 import com.bytedance.scene.utlity.MemoryMonitor;
 import com.bytedance.scene.utlity.NonNullPair;
@@ -1054,6 +1057,28 @@ public final class NavigationScene extends Scene implements NavigationListener, 
         if (target != null) {
             this.mLifecycleCallbacks.remove(target);
         }
+    }
+
+    public static void preloadClasses() {
+        LoggerManager.getInstance();
+        NavigationSceneOptions.class.toString();
+        SceneInstanceUtility.class.toString();
+        SceneComponentFactory.class.toString();
+        NavigationFrameLayout.class.toString();
+        DispatchWindowInsetsListener.class.toString();
+        Record.class.toString();
+        RecordStack.class.toString();
+        NavigationMessageQueue.class.toString();
+        NavigationRunnable.class.toString();
+        INavigationManager.class.toString();
+        NavigationManagerAbility.class.toString();
+        NavigationSceneManager.class.toString();
+        Operation.class.toString();
+        NavigationListener.class.toString();
+        ActivityCompatibleInfoCollector.class.toString();
+        ActivityCompatibleInfoCollector.Holder.class.toString();
+        AnimationContainerLayout.class.toString();
+        NavigationSceneGetter.class.toString();
     }
 
     @Override
