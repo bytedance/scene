@@ -31,17 +31,19 @@ import androidx.annotation.RestrictTo;
 @RestrictTo(LIBRARY_GROUP)
 public class ThreadUtility {
     public static void checkUIThread() {
+        if (isMainThread()) {
+            return;
+        }
         ExceptionsUtility.invokeAndThrowExceptionToNextUILoop(new Runnable() {
             @Override
             public void run() {
-                if (!isMainThread()) {
-                    throw new IllegalStateException("This method must call on main thread");
-                }
+                throw new IllegalStateException("This method must call on main thread");
             }
         });
     }
 
     private static boolean isMainThread() {
-        return Looper.getMainLooper() == Looper.myLooper() && Looper.getMainLooper().getThread() == Thread.currentThread();
+        Looper mainLooper = Looper.getMainLooper();
+        return mainLooper == Looper.myLooper() && mainLooper.getThread() == Thread.currentThread();
     }
 }
