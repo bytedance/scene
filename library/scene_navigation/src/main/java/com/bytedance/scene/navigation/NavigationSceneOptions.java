@@ -38,6 +38,7 @@ public class NavigationSceneOptions {
     private static final String EXTRA_USE_ACTIVITY_CONTEXT_AND_LAYOUT_INFLATER = "extra_useActivityContextAndLayoutInflater";
     private static final String EXTRA_LAZY_LOAD_NAVIGATION_SCENE_UNNECESSARY_VIEW = "extra_lazyLoadNavigationSceneUnnecessaryView";
     private static final String EXTRA_MERGE_NAVIGATION_SCENE_VIEW = "extra_mergeNavigationSceneView";
+    private static final String EXTRA_USE_WINDOW_FOCUS_CHANGED_DISPATCH = "extra_useWindowFocusChangedDispatch";
 
     @NonNull
     private final String mRootSceneClassName;
@@ -53,6 +54,7 @@ public class NavigationSceneOptions {
     private boolean mUseActivityContextAndLayoutInflater = false;
     private boolean mLazyLoadNavigationSceneUnnecessaryView = false;
     private boolean mMergeNavigationSceneView = false;
+    private boolean mUseWindowFocusChangedDispatch = false;
 
     public NavigationSceneOptions(@NonNull Class<? extends Scene> rootSceneClazz, @Nullable Bundle rootSceneArguments) {
         if (rootSceneClazz.isAssignableFrom(NavigationScene.class)) {
@@ -133,6 +135,12 @@ public class NavigationSceneOptions {
     }
 
     @NonNull
+    public NavigationSceneOptions setUseWindowFocusChangeDispatch(boolean useWindowFocusChangedDispatch) {
+        this.mUseWindowFocusChangedDispatch = useWindowFocusChangedDispatch;
+        return this;
+    }
+
+    @NonNull
     public String getRootSceneClassName() {
         return this.mRootSceneClassName;
     }
@@ -178,6 +186,10 @@ public class NavigationSceneOptions {
         return this.mMergeNavigationSceneView;
     }
 
+    public boolean getUseWindowFocusChangedDispatch() {
+        return mUseWindowFocusChangedDispatch;
+    }
+
     /**
      * @hide
      */
@@ -199,6 +211,7 @@ public class NavigationSceneOptions {
         navigationSceneOptions.mUseActivityContextAndLayoutInflater = bundle.getBoolean(EXTRA_USE_ACTIVITY_CONTEXT_AND_LAYOUT_INFLATER, false);
         navigationSceneOptions.mLazyLoadNavigationSceneUnnecessaryView = bundle.getBoolean(EXTRA_LAZY_LOAD_NAVIGATION_SCENE_UNNECESSARY_VIEW, false);
         navigationSceneOptions.mMergeNavigationSceneView = bundle.getBoolean(EXTRA_MERGE_NAVIGATION_SCENE_VIEW, false);
+        navigationSceneOptions.mUseWindowFocusChangedDispatch = bundle.getBoolean(EXTRA_USE_WINDOW_FOCUS_CHANGED_DISPATCH, false);
         return navigationSceneOptions;
     }
 
@@ -219,6 +232,7 @@ public class NavigationSceneOptions {
         bundle.putBoolean(EXTRA_USE_ACTIVITY_CONTEXT_AND_LAYOUT_INFLATER, mUseActivityContextAndLayoutInflater);
         bundle.putBoolean(EXTRA_LAZY_LOAD_NAVIGATION_SCENE_UNNECESSARY_VIEW, mLazyLoadNavigationSceneUnnecessaryView);
         bundle.putBoolean(EXTRA_MERGE_NAVIGATION_SCENE_VIEW, mMergeNavigationSceneView);
+        bundle.putBoolean(EXTRA_USE_WINDOW_FOCUS_CHANGED_DISPATCH, mUseWindowFocusChangedDispatch);
         return bundle;
     }
 }

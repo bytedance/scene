@@ -685,6 +685,7 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
                     break;
                 case STARTED:
                     scene.dispatchResume();
+                    ((NavigationSceneManager)navigationScene.mNavigationSceneManager).onSceneResumedWindowFocusChanged(scene);
                     moveStateWithSeparation(navigationScene, scene, to, bundle, causedByActivityLifeCycle, null, endAction);
                     break;
                 default:
@@ -694,6 +695,7 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
             switch (currentState) {
                 case RESUMED:
                     scene.dispatchPause();
+                    ((NavigationSceneManager)navigationScene.mNavigationSceneManager).onScenePausedWindowFocusChanged(scene);
                     moveStateWithSeparation(navigationScene, scene, to, bundle, causedByActivityLifeCycle, null, endAction);
                     break;
                 case STARTED:
@@ -1969,5 +1971,98 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
                 recreate(record.mScene);
             }
         }
+    }
+
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        if (!this.mNavigationScene.mNavigationSceneOptions.getUseWindowFocusChangedDispatch()) {
+            return;
+        }
+        LoggerManager.getInstance().i(TAG, "onWindowFocusChanged " + hasFocus);
+
+        if (!mSceneMessageQueue.hasPendingTasks()) {
+            Scene scene = getCurrentScene();
+            if (ActivityCompatibleInfoCollector.isTargetSceneType(scene)) {
+                onSceneResumedWindowFocusChangedToTarget(scene, hasFocus);
+            } else {
+                //try to uninstall window focus listener if there are no ActivityCompatibleBehavior Scene
+                uninstallUselessWindowFocusChangeListener();
+            }
+        } else {
+            LoggerManager.getInstance().i(TAG, "sync window focus by SceneMessageQueue");
+
+            //sync focus after all pending tasks are finished
+            NavigationRunnable syncWindowFocusRunnable = new NavigationRunnable() {
+                @Override
+                public void run() {
+                    onWindowFocusChanged(hasFocus);
+                }
+            };
+            mSceneMessageQueue.postAsync(syncWindowFocusRunnable);
+        }
+    }
+
+    private void uninstallUselessWindowFocusChangeListener() {
+        List<Scene> sceneList = new ArrayList<>(getCurrentSceneList());
+        boolean found = false;
+        for (int i = sceneList.size() - 1; i >= 0; i--) {
+            Scene targetScene = sceneList.get(i);
+            if (ActivityCompatibleInfoCollector.isTargetSceneType(targetScene)) {
+                found = true;
+                break;
+            }
+        }
+        if (!found) {
+            LoggerManager.getInstance().i(TAG, "uninstall useless WindowFocusChangeListener");
+            mNavigationScene.uninstallWindowFocusChangeListenerIfNeeded();
+        }
+    }
+
+    private void onSceneResumedWindowFocusChangedToTarget(Scene scene, boolean hasFocus) {
+        if (!this.mNavigationScene.mNavigationSceneOptions.getUseWindowFocusChangedDispatch()) {
+            return;
+        }
+        if (!ActivityCompatibleInfoCollector.isTargetSceneType(scene)) {
+            return;
+        }
+        Record record = mNavigationScene.findRecordByScene(scene);
+        if (record.mLastSceneWindowFocused == hasFocus) {
+            return;
+        }
+        ActivityCompatibleBehavior activityCompatibleBehavior = (ActivityCompatibleBehavior) scene;
+        activityCompatibleBehavior.onWindowFocusChanged(hasFocus);
+        record.mLastSceneWindowFocused = hasFocus;
+    }
+
+    private void onSceneResumedWindowFocusChanged(Scene scene) {
+        if (!this.mNavigationScene.mNavigationSceneOptions.getUseWindowFocusChangedDispatch()) {
+            return;
+        }
+        if (!ActivityCompatibleInfoCollector.isTargetSceneType(scene)) {
+            return;
+        }
+        if (scene.getState() != State.RESUMED) {
+            return;
+        }
+        Activity activity = scene.requireActivity();
+        if (!activity.hasWindowFocus()) {
+            mNavigationScene.installWindowFocusChangeListenerIfNeeded();
+        } else {
+            onSceneResumedWindowFocusChangedToTarget(scene, true);
+            mNavigationScene.installWindowFocusChangeListenerIfNeeded();
+        }
+    }
+
+    private void onScenePausedWindowFocusChanged(Scene scene) {
+        if (!this.mNavigationScene.mNavigationSceneOptions.getUseWindowFocusChangedDispatch()) {
+            return;
+        }
+        if (!ActivityCompatibleInfoCollector.isTargetSceneType(scene)) {
+            return;
+        }
+        if (scene.getState() != State.STARTED) {
+            return;
+        }
+        onSceneResumedWindowFocusChangedToTarget(scene, false);
     }
 }

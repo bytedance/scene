@@ -108,4 +108,8 @@ class RecreateUsageDemoScene : Scene(),
     override fun onNewIntent(arguments: Bundle?) {
 
     }
+
+    override fun onWindowFocusChanged(hasFocus: Boolean) {
+
+    }
 }

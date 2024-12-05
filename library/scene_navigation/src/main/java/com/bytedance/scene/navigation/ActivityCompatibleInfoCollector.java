@@ -82,7 +82,7 @@ public class ActivityCompatibleInfoCollector {
         return holder != null && holder.configChanges != null;
     }
 
-    private static boolean isTargetSceneType(@NonNull Scene scene){
+    public static boolean isTargetSceneType(@NonNull Scene scene){
         return scene instanceof ActivityCompatibleBehavior;
     }
 }

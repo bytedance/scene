@@ -30,6 +30,7 @@ import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.FrameLayout;
 
 import androidx.annotation.MainThread;
@@ -122,7 +123,7 @@ public final class NavigationScene extends Scene implements NavigationListener, 
     SceneComponentFactory mRootSceneComponentFactory;   // Use this when destroying recovery
     NavigationSceneOptions mNavigationSceneOptions;
 
-    private INavigationManager mNavigationSceneManager;
+    INavigationManager mNavigationSceneManager;
     private FrameLayout mSceneContainer;
     private FrameLayout mAnimationContainer;
     private final Handler mHandler = new Handler(Looper.getMainLooper());
@@ -147,6 +148,8 @@ public final class NavigationScene extends Scene implements NavigationListener, 
     private boolean mIsInitRootSceneOnCreate = false;
 
     private final boolean mSceneLifecycleCallbackObjectCreationOpt = SceneGlobalConfig.sceneLifecycleCallbackObjectCreationOpt;
+    private boolean mWindowFocusChangedInstalled = false;
+    private SceneWindowFocusChangedDispatcher mSceneWindowFocusChangedDispatcher = null;
 
     @MainThread
     public void addNavigationListener(@NonNull final LifecycleOwner lifecycleOwner, @NonNull final NavigationListener listener) {
@@ -1079,6 +1082,43 @@ public final class NavigationScene extends Scene implements NavigationListener, 
         ActivityCompatibleInfoCollector.Holder.class.toString();
         AnimationContainerLayout.class.toString();
         NavigationSceneGetter.class.toString();
+    }
+
+    /**
+     * @hide
+     */
+    @RestrictTo(LIBRARY_GROUP)
+    public void installWindowFocusChangeListenerIfNeeded() {
+        if (!this.mNavigationSceneOptions.getUseWindowFocusChangedDispatch()) {
+            return;
+        }
+        if (!this.mWindowFocusChangedInstalled && this.getView() != null) {
+            this.mWindowFocusChangedInstalled = true;
+            this.mSceneWindowFocusChangedDispatcher = new SceneWindowFocusChangedDispatcher();
+            this.getView().getViewTreeObserver().addOnWindowFocusChangeListener(this.mSceneWindowFocusChangedDispatcher);
+        }
+    }
+
+    /**
+     * @hide
+     */
+    @RestrictTo(LIBRARY_GROUP)
+    public void uninstallWindowFocusChangeListenerIfNeeded() {
+        if (!this.mNavigationSceneOptions.getUseWindowFocusChangedDispatch()) {
+            return;
+        }
+        if (this.mWindowFocusChangedInstalled && this.getView() != null) {
+            this.mWindowFocusChangedInstalled = false;
+            this.getView().getViewTreeObserver().removeOnWindowFocusChangeListener(this.mSceneWindowFocusChangedDispatcher);
+            this.mSceneWindowFocusChangedDispatcher = null;
+        }
+    }
+
+    private class SceneWindowFocusChangedDispatcher implements ViewTreeObserver.OnWindowFocusChangeListener {
+        @Override
+        public void onWindowFocusChanged(boolean hasFocus) {
+            mNavigationSceneManager.onWindowFocusChanged(hasFocus);
+        }
     }
 
     @Override

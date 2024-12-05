@@ -64,12 +64,14 @@ public class Record implements Parcelable {
 
     @Nullable
     Configuration mConfiguration;
+    boolean mLastSceneWindowFocused = false;
 
     protected Record(Parcel in) {
         mActivityStatusRecord = in.readParcelable(ActivityStatusRecord.class.getClassLoader());
         mIsTranslucent = in.readByte() != 0;
         mSceneClassName = in.readString();
         mConfiguration = in.readParcelable(Configuration.class.getClassLoader());
+        mLastSceneWindowFocused = in.readByte() != 0;
     }
 
     public static final Creator<Record> CREATOR = new Creator<Record>() {
@@ -123,5 +125,6 @@ public class Record implements Parcelable {
         dest.writeByte((byte) (mIsTranslucent ? 1 : 0));
         dest.writeString(mSceneClassName);
         dest.writeParcelable(mConfiguration, flags);
+        dest.writeByte((byte) (mLastSceneWindowFocused ? 1 : 0));
     }
 }

@@ -56,4 +56,8 @@ class PushSingleTopScene : Scene(), ActivityCompatibleBehavior {
     override fun onNewIntent(arguments: Bundle?) {
         Toast.makeText(sceneContext, "onNewIntent", Toast.LENGTH_SHORT).show()
     }
+
+    override fun onWindowFocusChanged(hasFocus: Boolean) {
+
+    }
 }

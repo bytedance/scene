@@ -1390,4 +1390,9 @@ class NavigationSceneManagerV1 implements INavigationManager {
     public void onConfigurationChanged(@NonNull Configuration newConfig) {
         throw new IllegalStateException("onConfigurationChanged is not supported");
     }
+
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        throw new IllegalStateException("onWindowFocusChanged is not supported");
+    }
 }

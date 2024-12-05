@@ -1,9 +1,9 @@
 package com.bytedance.scene.interfaces;
 
-import android.os.Bundle;
 import android.content.res.Configuration;
-import androidx.annotation.NonNull;
+import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.bytedance.scene.Scene;
@@ -33,4 +33,6 @@ public interface ActivityCompatibleBehavior {
      * @see Scene#onResume
      */
     void onNewIntent(@Nullable Bundle arguments);
+
+    void onWindowFocusChanged(boolean hasFocus);
 }

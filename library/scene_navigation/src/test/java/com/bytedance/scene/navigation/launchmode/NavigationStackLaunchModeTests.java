@@ -188,6 +188,11 @@ public class NavigationStackLaunchModeTests {
             this.mOnNewIntentInvoked = true;
             this.mOnNewIntentArguments = arguments;
         }
+
+        @Override
+        public void onWindowFocusChanged(boolean hasFocus) {
+
+        }
     }
 
     public static class CountChildScene extends Scene {

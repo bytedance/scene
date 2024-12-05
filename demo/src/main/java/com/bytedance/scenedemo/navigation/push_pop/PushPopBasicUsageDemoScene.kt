@@ -1,5 +1,6 @@
 package com.bytedance.scenedemo.navigation.push_pop
 
+import android.content.res.Configuration
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -9,6 +10,7 @@ import android.widget.LinearLayout
 import android.widget.ScrollView
 import com.bytedance.scene.Scene
 import com.bytedance.scene.animation.animatorexecutor.DialogSceneAnimatorExecutor
+import com.bytedance.scene.interfaces.ActivityCompatibleBehavior
 import com.bytedance.scene.interfaces.PushOptions
 import com.bytedance.scene.ktx.requireNavigationScene
 import com.bytedance.scenedemo.R
@@ -21,7 +23,7 @@ import com.bytedance.scenedemo.utility.addTitle
 /**
  * Created by JiangQi on 7/30/18.
  */
-class PushPopBasicUsageDemoScene : Scene() {
+class PushPopBasicUsageDemoScene : Scene() ,ActivityCompatibleBehavior{
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup, savedInstanceState: Bundle?): View {
         val scrollView = ScrollView(requireSceneContext())
         scrollView.fitsSystemWindows = true
@@ -75,5 +77,17 @@ class PushPopBasicUsageDemoScene : Scene() {
         val value = argument?.getInt("1", 0) ?: 0
 
         Log.i("Lifecycle",this.toString() + " $value onDestroyView")
+    }
+
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        Log.i("PushPopBasicUsageDemoScene","Not yet implemented")
+    }
+
+    override fun onNewIntent(arguments: Bundle?) {
+        Log.i("PushPopBasicUsageDemoScene","Not yet implemented")
+    }
+
+    override fun onWindowFocusChanged(hasFocus: Boolean) {
+        Log.i("PushPopBasicUsageDemoScene","Not yet implemented")
     }
 }
