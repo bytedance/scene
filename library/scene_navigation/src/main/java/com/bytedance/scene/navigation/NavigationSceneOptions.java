@@ -135,7 +135,7 @@ public class NavigationSceneOptions {
     }
 
     @NonNull
-    public NavigationSceneOptions setUseWindowFocusChangeDispatch(boolean useWindowFocusChangedDispatch) {
+    public NavigationSceneOptions setUseWindowFocusChangedDispatch(boolean useWindowFocusChangedDispatch) {
         this.mUseWindowFocusChangedDispatch = useWindowFocusChangedDispatch;
         return this;
     }
