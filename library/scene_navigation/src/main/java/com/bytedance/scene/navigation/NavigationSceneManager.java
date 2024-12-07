@@ -577,6 +577,7 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
                     break;
                 case STARTED:
                     scene.dispatchResume();
+                    ((NavigationSceneManager)navigationScene.mNavigationSceneManager).onSceneResumedWindowFocusChanged(scene);
                     moveStateNonSeparation(navigationScene, scene, to, bundle, causedByActivityLifeCycle, null, endAction);
                     break;
                 default:
@@ -586,6 +587,7 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
             switch (currentState) {
                 case RESUMED:
                     scene.dispatchPause();
+                    ((NavigationSceneManager)navigationScene.mNavigationSceneManager).onScenePausedWindowFocusChanged(scene);
                     moveStateNonSeparation(navigationScene, scene, to, bundle, causedByActivityLifeCycle, null, endAction);
                     break;
                 case STARTED:
