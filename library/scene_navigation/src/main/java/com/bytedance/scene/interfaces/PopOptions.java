@@ -88,6 +88,20 @@ public class PopOptions {
             return this;
         }
 
+        /**
+         * setAnimation use reversePopAnimation == true as default
+         */
+        @NonNull
+        public PopOptions.Builder setAnimation(@NonNull Activity activity,
+                                               @AnimRes @AnimatorRes int enterAnim,
+                                               @AnimRes @AnimatorRes int exitAnim,
+                                               boolean reversePopAnimation) {
+            AnimationOrAnimatorResourceExecutor animationOrAnimatorResourceExecutor = new AnimationOrAnimatorResourceExecutor(activity, enterAnim, exitAnim);
+            animationOrAnimatorResourceExecutor.setReversePopAnimation(reversePopAnimation);
+            this.mNavigationAnimationExecutor = animationOrAnimatorResourceExecutor;
+            return this;
+        }
+
         public PopOptions.Builder setPopUtilPredicate(Predicate<Scene> predicate) {
             this.mPopUtilPredicate = predicate;
             return this;
