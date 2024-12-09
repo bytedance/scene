@@ -56,6 +56,7 @@ import com.bytedance.scene.animation.NavigationAnimationExecutor;
 import com.bytedance.scene.animation.animatorexecutor.Android8DefaultSceneAnimatorExecutor;
 import com.bytedance.scene.animation.interaction.InteractionNavigationPopAnimationFactory;
 import com.bytedance.scene.group.ReuseGroupScene;
+import com.bytedance.scene.interfaces.ActivityCompatibleBehavior;
 import com.bytedance.scene.interfaces.ActivityResultCallback;
 import com.bytedance.scene.interfaces.ChildSceneLifecycleCallbacks;
 import com.bytedance.scene.interfaces.PermissionResultCallback;
@@ -1082,6 +1083,7 @@ public final class NavigationScene extends Scene implements NavigationListener, 
         ActivityCompatibleInfoCollector.Holder.class.toString();
         AnimationContainerLayout.class.toString();
         NavigationSceneGetter.class.toString();
+        ActivityCompatibleBehavior.class.toString();
     }
 
     /**
