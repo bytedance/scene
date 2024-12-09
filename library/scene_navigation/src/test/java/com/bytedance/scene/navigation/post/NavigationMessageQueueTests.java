@@ -137,6 +137,38 @@ public class NavigationMessageQueueTests {
 
     @LooperMode(PAUSED)
     @Test
+    public void testMultiPostAtHead() {
+        final StringBuilder log = new StringBuilder();
+
+        NavigationMessageQueue messageQueue = new NavigationMessageQueue();
+
+        messageQueue.postAsyncAtHead(new NavigationRunnable() {
+            @Override
+            public void run() {
+                log.append("1");
+            }
+        });
+
+        messageQueue.postAsyncAtHead(new NavigationRunnable() {
+            @Override
+            public void run() {
+                log.append("2");
+            }
+        });
+
+        log.append("0");
+
+        Assert.assertEquals(log.toString(), "0");
+
+        shadowOf(getMainLooper()).runOneTask();//execute Handler posted task
+        Assert.assertEquals(log.toString(), "02");
+
+        shadowOf(getMainLooper()).runOneTask();
+        Assert.assertEquals(log.toString(), "021");
+    }
+
+    @LooperMode(PAUSED)
+    @Test
     public void testPostSyncAfterPostAsync() {
         final StringBuilder log = new StringBuilder();
 
