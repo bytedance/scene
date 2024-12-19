@@ -15,6 +15,8 @@
  */
 package com.bytedance.scene.animation;
 
+import static androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP;
+
 import android.animation.Animator;
 import android.animation.AnimatorInflater;
 import android.animation.AnimatorListenerAdapter;
@@ -32,9 +34,9 @@ import androidx.annotation.AnimatorRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.RestrictTo;
 
-import java.util.List;
+import com.bytedance.scene.utlity.AnimationUtilityKt;
 
-import static androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP;
+import java.util.List;
 
 @RestrictTo(LIBRARY_GROUP)
 public class AnimationOrAnimator {
@@ -179,6 +181,13 @@ public class AnimationOrAnimator {
             for (int i = 0; i < animationList.size(); i++) {
                 reverse(animationList.get(i));
             }
+        }
+    }
+
+    public void applySystemDurationScale(View view) {
+        if (this.animation != null) {
+            float durationScale = AnimationUtilityKt.getDurationScale(view);
+            this.animation.setDuration((long) (this.animation.getDuration() * durationScale));
         }
     }
 
