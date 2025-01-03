@@ -2,6 +2,7 @@ package com.bytedance.scene.utlity
 
 import android.provider.Settings
 import android.view.View
+import androidx.annotation.StringDef
 import kotlin.math.max
 
 /**
@@ -10,12 +11,22 @@ import kotlin.math.max
  */
 /**
  * if system > Build.VERSION_CODES.TIRAMISU, can use ValueAnimator.getDurationScale() instead
- *
- * Scene follow [Settings.Global.ANIMATOR_DURATION_SCALE] but Activity follow [Settings.Global.TRANSITION_ANIMATION_SCALE]
  */
 internal fun getDurationScale(view: View): Float {
+    return getDurationScale(view, Settings.Global.ANIMATOR_DURATION_SCALE)
+}
+
+@StringDef(
+    value = [Settings.Global.ANIMATOR_DURATION_SCALE, Settings.Global.TRANSITION_ANIMATION_SCALE, Settings.Global.WINDOW_ANIMATION_SCALE]
+)
+@Retention(
+    AnnotationRetention.SOURCE
+)
+annotation class DurationScaleType
+
+internal fun getDurationScale(view: View, @DurationScaleType durationScaleType: String): Float {
     val durationScale = Settings.Global.getFloat(
-        view.context.contentResolver, Settings.Global.ANIMATOR_DURATION_SCALE, 1.0f
+        view.context.contentResolver, durationScaleType, 1.0f
     )
     return max(0.0f, durationScale)
 }

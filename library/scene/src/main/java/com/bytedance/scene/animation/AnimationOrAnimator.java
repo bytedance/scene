@@ -23,6 +23,7 @@ import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.content.res.Resources;
+import android.provider.Settings;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationSet;
@@ -35,6 +36,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.RestrictTo;
 
 import com.bytedance.scene.utlity.AnimationUtilityKt;
+import com.bytedance.scene.utlity.DurationScaleType;
 
 import java.util.List;
 
@@ -184,9 +186,18 @@ public class AnimationOrAnimator {
         }
     }
 
+    /**
+     * Scene follow [Settings.Global.ANIMATOR_DURATION_SCALE] as default but Activity follow [Settings.Global.TRANSITION_ANIMATION_SCALE]
+     *
+     * @param view
+     */
     public void applySystemDurationScale(View view) {
+        this.applySystemDurationScale(view, Settings.Global.ANIMATOR_DURATION_SCALE);
+    }
+
+    public void applySystemDurationScale(View view, @DurationScaleType String durationScaleType) {
         if (this.animation != null) {
-            float durationScale = AnimationUtilityKt.getDurationScale(view);
+            float durationScale = AnimationUtilityKt.getDurationScale(view, durationScaleType);
             this.animation.setDuration((long) (this.animation.getDuration() * durationScale));
         }
     }
