@@ -38,15 +38,10 @@ import com.bytedance.scene.utlity.CancellationSignal;
 public final class AnimationOrAnimatorResourceExecutor extends NavigationAnimationExecutor {
     private AnimationOrAnimator mEnterAnimator;
     private AnimationOrAnimator mExitAnimator;
-    private boolean mReversePopAnimation = true;
 
     public AnimationOrAnimatorResourceExecutor(Activity activity, @AnimatorRes @AnimRes int enterResId, @AnimatorRes @AnimRes int exitResId) {
         mEnterAnimator = AnimationOrAnimator.loadAnimation(activity, enterResId);
         mExitAnimator = AnimationOrAnimator.loadAnimation(activity, exitResId);
-    }
-
-    public void setReversePopAnimation(boolean reversePopAnimation){
-        this.mReversePopAnimation = reversePopAnimation;
     }
 
     @Override
@@ -149,15 +144,11 @@ public final class AnimationOrAnimatorResourceExecutor extends NavigationAnimati
             }
         });
 
-        if (this.mReversePopAnimation) {
-            mEnterAnimator.reverse();
-        }
+        mEnterAnimator.reverse();
         mEnterAnimator.addEndAction(animationEndAction);
         mEnterAnimator.start(fromView);
 
-        if (this.mReversePopAnimation) {
-            mExitAnimator.reverse();
-        }
+        mExitAnimator.reverse();
         mExitAnimator.addEndAction(animationEndAction);
         mExitAnimator.start(toView);
         cancellationSignal.setOnCancelListener(new CancellationSignal.OnCancelListener() {
