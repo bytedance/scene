@@ -198,6 +198,10 @@ public class AnimationOrAnimator {
     public void applySystemDurationScale(View view, @DurationScaleType String durationScaleType) {
         if (this.animation != null) {
             float durationScale = AnimationUtilityKt.getDurationScale(view, durationScaleType);
+            if (durationScale == 1.0f) {
+                //not changed
+                return;
+            }
             this.animation.setDuration((long) (this.animation.getDuration() * durationScale));
         }
     }
