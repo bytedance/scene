@@ -202,7 +202,8 @@ public class AnimationOrAnimator {
                 //not changed
                 return;
             }
-            this.animation.setDuration((long) (this.animation.getDuration() * durationScale));
+            //see AppWindowAnimator.java#setAnimation
+            this.animation.scaleCurrentDuration(durationScale);
         }
     }
 
