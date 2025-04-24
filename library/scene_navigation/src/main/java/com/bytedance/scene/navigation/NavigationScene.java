@@ -129,7 +129,8 @@ public final class NavigationScene extends Scene implements NavigationListener, 
     private FrameLayout mAnimationContainer;
     private final Handler mHandler = new Handler(Looper.getMainLooper());
     @Nullable
-    private NavigationAnimationExecutor mDefaultNavigationAnimationExecutor = new Android8DefaultSceneAnimatorExecutor();
+    private NavigationAnimationExecutor mDefaultNavigationAnimationExecutor = null;
+    private boolean mDefaultNavigationAnimatorSetByUser = false;
     private final List<InteractionNavigationPopAnimationFactory.InteractionCallback> mInteractionListenerList = new ArrayList<>();
 
     private final LruCache<Class<? extends Scene>, ReuseGroupScene> mLruCache = new LruCache<>(3);
@@ -227,11 +228,15 @@ public final class NavigationScene extends Scene implements NavigationListener, 
     }
 
     public void setDefaultNavigationAnimationExecutor(@Nullable NavigationAnimationExecutor defaultNavigationAnimationExecutor) {
+        this.mDefaultNavigationAnimatorSetByUser = true;
         this.mDefaultNavigationAnimationExecutor = defaultNavigationAnimationExecutor;
     }
 
     @Nullable
     public NavigationAnimationExecutor getDefaultNavigationAnimationExecutor() {
+        if (this.mDefaultNavigationAnimationExecutor == null && !this.mDefaultNavigationAnimatorSetByUser) {
+            this.mDefaultNavigationAnimationExecutor = new Android8DefaultSceneAnimatorExecutor();
+        }
         return this.mDefaultNavigationAnimationExecutor;
     }
 
