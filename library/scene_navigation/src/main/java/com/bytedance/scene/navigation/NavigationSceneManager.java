@@ -82,7 +82,7 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
     private final NavigationScene mNavigationScene;
     private final RecordStack mBackStackList = new RecordStack();
     private final NavigationListener mNavigationListener;
-    private final AsyncHandler mHandler = new AsyncHandler(Looper.getMainLooper());
+    private AsyncHandler mThrowableHandler = null;
 
     /**
      * If it is paused, currently operations and subsequent operations will put into this queue.
@@ -757,7 +757,10 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
         try {
             operation.execute(operationEndAction);
         } catch (final Throwable throwable) {
-            mHandler.post(new Runnable() {
+            if (this.mThrowableHandler == null) {
+                this.mThrowableHandler = new AsyncHandler(Looper.getMainLooper());
+            }
+            this.mThrowableHandler.post(new Runnable() {
                 @Override
                 public void run() {
                     throw throwable;
