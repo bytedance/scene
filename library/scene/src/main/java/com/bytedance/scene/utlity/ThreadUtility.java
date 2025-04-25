@@ -30,9 +30,18 @@ import androidx.annotation.RestrictTo;
  */
 @RestrictTo(LIBRARY_GROUP)
 public class ThreadUtility {
+    private static final ThreadLocal<Boolean> sThreadLocal = new ThreadLocal<>();
+
     public static void checkUIThread() {
-        if (isMainThread()) {
+        Boolean value = sThreadLocal.get();
+        if (value == Boolean.TRUE) {
             return;
+        } else if (value == null) {
+            boolean isMainThread = isMainThread();
+            sThreadLocal.set(isMainThread);
+            if (isMainThread) {
+                return;
+            }
         }
         ExceptionsUtility.invokeAndThrowExceptionToNextUILoop(new Runnable() {
             @Override
