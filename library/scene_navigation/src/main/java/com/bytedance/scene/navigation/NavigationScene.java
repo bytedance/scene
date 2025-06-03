@@ -777,14 +777,16 @@ public final class NavigationScene extends Scene implements NavigationListener, 
             }
         }
 
-        NavigationScene parentSceneNavigation = NavigationSceneGetter.getNavigationScene(this);
-        if (parentSceneNavigation != null) {
-            parentSceneNavigation.addOnBackPressedListener(this, new OnBackPressedListener() {
-                @Override
-                public boolean onBackPressed() {
-                    return NavigationScene.this.onBackPressed();
-                }
-            });
+        if (getParentScene() != null) {
+            NavigationScene parentSceneNavigation = NavigationSceneGetter.getNavigationScene(this);
+            if (parentSceneNavigation != null) {
+                parentSceneNavigation.addOnBackPressedListener(this, new OnBackPressedListener() {
+                    @Override
+                    public boolean onBackPressed() {
+                        return NavigationScene.this.onBackPressed();
+                    }
+                });
+            }
         }
     }
 
