@@ -1455,7 +1455,7 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
         }
 
         @Override
-        public void execute(final Runnable operationEndAction) {
+        public void execute(@Nullable final Runnable operationEndAction) {
             final Record currentRecord = mBackStackList.getCurrentRecord();
 
             /*
@@ -1466,7 +1466,9 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
              */
             if (this.scene.getParentScene() != null) {
                 if (this.scene.getParentScene() == mNavigationScene) {
-                    operationEndAction.run();
+                    if (operationEndAction != null) {
+                        operationEndAction.run();
+                    }
                     return;
                 }
                 throw new IllegalArgumentException("Scene already has a parent, parent " + scene.getParentScene());
@@ -1479,7 +1481,9 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
 
             record.saveActivityCompatibleInfo();
             mNavigationListener.navigationChange(currentRecord != null ? currentRecord.mScene : null, scene, true);
-            operationEndAction.run();
+            if (operationEndAction != null) {
+                operationEndAction.run();
+            }
         }
     }
 
@@ -1718,9 +1722,11 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
         }
 
         @Override
-        public void execute(Runnable operationEndAction) {
+        public void execute(@Nullable Runnable operationEndAction) {
             if (getCurrentRecord() == null) {
-                operationEndAction.run();
+                if (operationEndAction != null) {
+                    operationEndAction.run();
+                }
                 return;
             }
 
@@ -1754,7 +1760,9 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
                 }
             }
 
-            operationEndAction.run();
+            if (operationEndAction != null) {
+                operationEndAction.run();
+            }
         }
     }
 
@@ -1770,9 +1778,11 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
         }
 
         @Override
-        public void execute(Runnable operationEndAction) {
+        public void execute(@Nullable Runnable operationEndAction) {
             if (getCurrentRecord() == null) {
-                operationEndAction.run();
+                if (operationEndAction != null) {
+                    operationEndAction.run();
+                }
                 return;
             }
 
@@ -1787,7 +1797,9 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
                 Scene scene = record.mScene;
                 moveState(mNavigationScene, scene, state, null, causeByActivityLifecycle, null);
             }
-            operationEndAction.run();
+            if (operationEndAction != null) {
+                operationEndAction.run();
+            }
         }
     }
 
