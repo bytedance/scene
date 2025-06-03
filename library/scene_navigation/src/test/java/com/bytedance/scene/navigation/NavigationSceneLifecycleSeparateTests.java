@@ -347,6 +347,7 @@ public class NavigationSceneLifecycleSeparateTests {
         options.setOnlyRestoreVisibleScene(true);
         options.setUsePostInLifecycle(true);
         navigationScene.setSeparateCreateFromCreateView(true);
+        navigationScene.setInitRootSceneOnCreate(false);
         navigationScene.setArguments(options.toBundle());
         Scope.RootScopeFactory rootScopeFactory = new Scope.RootScopeFactory() {
             @Override
@@ -382,10 +383,15 @@ public class NavigationSceneLifecycleSeparateTests {
         assertEquals(State.NONE, rootScene.getState());
 
         navigationScene.dispatchActivityCreated(null);
+
+        assertTrue(rootScene.isSeparateCreateFromCreateView());
+
         navigationScene.push(secondScene);
         assertEquals(secondScene.getState(), State.ACTIVITY_CREATED);
         assertEquals(rootScene.getState(), State.ACTIVITY_CREATED);
         assertNotNull(rootScene.getView());
+
+        assertTrue(secondScene.isSeparateCreateFromCreateView());
 
         View secondSceneView = secondScene.getView();
         navigationScene.pop();
@@ -521,11 +527,15 @@ public class NavigationSceneLifecycleSeparateTests {
         navigationScene.dispatchCreateView(null, testActivity.mFrameLayout);
         assertEquals(State.VIEW_CREATED, rootScene.getState());
         assertNotNull(rootScene.getView());
+        assertTrue(rootScene.isSeparateCreateFromCreateView());
 
         navigationScene.dispatchActivityCreated(null);
         navigationScene.push(secondScene);
         assertEquals(secondScene.getState(), State.ACTIVITY_CREATED);
         assertEquals(rootScene.getState(), State.ACTIVITY_CREATED);
+
+        assertTrue(secondScene.isSeparateCreateFromCreateView());
+
 
         View secondSceneView = secondScene.getView();
         navigationScene.pop();

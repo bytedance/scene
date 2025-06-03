@@ -196,7 +196,11 @@ public class ChildSceneLifecycleCallbacksTests {
                     throw new IllegalStateException("crash");
                 }
                 assertNotNull(scene.getView());
-                assertSame(State.NONE, scene.getState());
+                if (scene.isSeparateCreateFromCreateView()) {
+                    assertSame(State.CREATED, scene.getState());
+                } else {
+                    assertSame(State.NONE, scene.getState());
+                }
             }
 
             @Override
@@ -251,7 +255,11 @@ public class ChildSceneLifecycleCallbacksTests {
                     throw new IllegalStateException("crash");
                 }
                 assertNotNull(scene.getView());
-                assertSame(State.NONE, scene.getState());
+                if (scene.isSeparateCreateFromCreateView()) {
+                    assertSame(State.CREATED, scene.getState());
+                } else {
+                    assertSame(State.NONE, scene.getState());
+                }
             }
 
             @Override
