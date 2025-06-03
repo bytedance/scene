@@ -267,20 +267,6 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
         }
     }
 
-    private void executeOperationImmediately(@NonNull final Operation operation) {
-        NavigationRunnable task = new NavigationRunnable() {
-            @Override
-            public void run() {
-                SceneTrace.beginSection(TRACE_EXECUTE_OPERATION_TAG);
-                String suppressTag = beginSuppressStackOperation("NavigationManager execute operation immediately");
-                executeOperationSafely(operation, EMPTY_RUNNABLE);
-                endSuppressStackOperation(suppressTag);
-                SceneTrace.endSection();
-            }
-        };
-        mSceneMessageQueue.postSync(task);
-    }
-
     @NonNull
     public String beginSuppressStackOperation(@NonNull String tagPrefix) {
         String value = tagPrefix + "_" + mSuppressStackOperationId++;
@@ -375,7 +361,21 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
         }
 
         LoggerManager.getInstance().i(TAG, "pushRoot " + scene);
-        executeOperationImmediately(new PushRootOperation(scene));
+        executePushRootOperationImmediately(new PushRootOperation(scene));
+    }
+
+    private void executePushRootOperationImmediately(@NonNull final Operation operation) {
+        NavigationRunnable task = new NavigationRunnable() {
+            @Override
+            public void run() {
+                SceneTrace.beginSection(TRACE_EXECUTE_OPERATION_TAG);
+                String suppressTag = beginSuppressStackOperation("NavigationManager execute push root operation immediately");
+                executeOperationSafely(operation, EMPTY_RUNNABLE);
+                endSuppressStackOperation(suppressTag);
+                SceneTrace.endSection();
+            }
+        };
+        mSceneMessageQueue.postSync(task);
     }
 
     public void push(@NonNull final Scene scene, @NonNull PushOptions pushOptions) {
