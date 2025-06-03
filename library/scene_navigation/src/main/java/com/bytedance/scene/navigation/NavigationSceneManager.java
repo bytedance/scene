@@ -101,13 +101,26 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
 
     private boolean mAnySceneStateChanged = false;
 
-    private final NavigationMessageQueue mSceneMessageQueue = new NavigationMessageQueue();
+    private NavigationMessageQueue mSceneMessageQueue = null;
 
     NavigationSceneManager(NavigationScene scene) {
         this.mNavigationScene = scene;
         this.mNavigationListener = scene;
         this.mOnlyRestoreVisibleScene = scene.mNavigationSceneOptions.onlyRestoreVisibleScene();
         this.mIsSeparateCreateFromCreateView = scene.isSeparateCreateFromCreateView();
+    }
+
+    @NonNull
+    private NavigationMessageQueue requireMessageQueue() {
+        if (this.mSceneMessageQueue == null) {
+            this.mSceneMessageQueue = new NavigationMessageQueue();
+        }
+        return this.mSceneMessageQueue;
+    }
+
+    @Nullable
+    private NavigationMessageQueue getMessageQueue(){
+        return this.mSceneMessageQueue;
     }
 
     public void saveToBundle(Bundle bundle) {
@@ -237,7 +250,7 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
                     }
                 };
                 mCurrentScheduledStackOperationCount++;
-                mSceneMessageQueue.postAsync(task);
+                requireMessageQueue().postAsync(task);
             } else {
                 NavigationRunnable task = new NavigationRunnable() {
                     @Override
@@ -252,9 +265,9 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
                 };
 
                 if (async) {
-                    mSceneMessageQueue.postAsync(task);
+                    requireMessageQueue().postAsync(task);
                 } else {
-                    mSceneMessageQueue.postSync(task);
+                    requireMessageQueue().postSync(task);
                 }
             }
         } else {
@@ -287,7 +300,7 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
     }
 
     public void dispatchCurrentChildState(final State state) {
-        this.mSceneMessageQueue.postSync(new Runnable() {
+        this.requireMessageQueue().postSync(new Runnable() {
             @Override
             public void run() {
                 String suppressTag = beginSuppressStackOperation("NavigationManager dispatchCurrentChildState");
@@ -298,7 +311,7 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
     }
 
     public void dispatchChildrenState(final State state, final boolean reverseOrder, final boolean causeByActivityLifecycle) {
-        this.mSceneMessageQueue.postSync(new Runnable() {
+        this.requireMessageQueue().postSync(new Runnable() {
             @Override
             public void run() {
                 String suppressTag = beginSuppressStackOperation("NavigationManager dispatchChildrenState");
@@ -336,7 +349,7 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
     public void pop(PopOptions popOptions) {
         LoggerManager.getInstance().i(TAG, "pop with PopOptions");
         if (popOptions.isUsePost()) {
-            scheduleToNextUIThreadLoop(new CoordinatePopOptionOperation(this, mSceneMessageQueue, popOptions), popOptions.isUsePostWhenPause());
+            scheduleToNextUIThreadLoop(new CoordinatePopOptionOperation(this, requireMessageQueue(), popOptions), popOptions.isUsePostWhenPause());
         } else if (mActivityCompatibleLifecycleStrategyEnabled && popOptions.isUseActivityCompatibleLifecycle()) {
             scheduleToNextUIThreadLoop(new PopOptionActivityCompatibleLifecycleOperation(popOptions));
         } else {
@@ -375,7 +388,7 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
                 SceneTrace.endSection();
             }
         };
-        mSceneMessageQueue.postSync(task);
+        requireMessageQueue().postSync(task);
     }
 
     public void push(@NonNull final Scene scene, @NonNull PushOptions pushOptions) {
@@ -384,7 +397,7 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
         }
         if (pushOptions.isUsePost()) {
             LoggerManager.getInstance().i(TAG, "push " + scene.toString() + " by post");
-            scheduleToNextUIThreadLoop(new CoordinatePushOptionOperation(this, mSceneMessageQueue, scene, pushOptions), pushOptions.isUsePostWhenPause());
+            scheduleToNextUIThreadLoop(new CoordinatePushOptionOperation(this, requireMessageQueue(), scene, pushOptions), pushOptions.isUsePostWhenPause());
         } else {
             LoggerManager.getInstance().i(TAG, "push " + scene.toString());
             scheduleToNextUIThreadLoop(new PushOptionOperation(scene, pushOptions));
@@ -416,7 +429,7 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
         }
         LoggerManager.getInstance().i(TAG, "executePendingOperation");
 
-        this.mSceneMessageQueue.postSync(new Runnable() {
+        this.requireMessageQueue().postSync(new Runnable() {
             @Override
             public void run() {
                 SceneTrace.beginSection(TRACE_EXECUTE_PENDING_OPERATION_TAG);
@@ -1894,7 +1907,7 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
 
     @Override
     public void forceExecutePendingNavigationOperation() {
-        this.mSceneMessageQueue.postSync(new Runnable() {
+        this.requireMessageQueue().postSync(new Runnable() {
             @Override
             public void run() {
 
@@ -1910,7 +1923,7 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
         if (!this.mAnySceneStateChanged) {
             return;
         }
-        if (!mIsNavigationStateChangeInProgress.isEmpty() || !mPendingActionList.isEmpty() || mSceneMessageQueue.hasPendingTasks()) {
+        if (!mIsNavigationStateChangeInProgress.isEmpty() || !mPendingActionList.isEmpty() || requireMessageQueue().hasPendingTasks()) {
             return;
         }
 
@@ -1997,7 +2010,7 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
         }
         LoggerManager.getInstance().i(TAG, "onWindowFocusChanged " + hasFocus);
 
-        if (!mSceneMessageQueue.hasPendingTasks()) {
+        if (!requireMessageQueue().hasPendingTasks()) {
             Scene scene = getCurrentScene();
             if (ActivityCompatibleInfoCollector.isTargetSceneType(scene)) {
                 onSceneResumedWindowFocusChangedToTarget(scene, hasFocus);
@@ -2015,7 +2028,7 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
                     onWindowFocusChanged(hasFocus);
                 }
             };
-            mSceneMessageQueue.postAsync(syncWindowFocusRunnable);
+            requireMessageQueue().postAsync(syncWindowFocusRunnable);
         }
     }
 
