@@ -63,8 +63,10 @@ public class NavigationScenePerformanceTests {
         assertEquals(secondScene.getState(), State.RESUMED);
         assertEquals(groupScene.getState(), State.ACTIVITY_CREATED);
 
-        assertEquals(2, ((ViewGroup) navigationScene.getView()).getChildCount());
-        assertEquals(AnimationContainerLayout.class, ((ViewGroup) navigationScene.getView()).getChildAt(1).getClass());
+        if (!navigationScene.getNavigationSceneOptions().getOptimizedViewLayer()) {
+            assertEquals(2, ((ViewGroup) navigationScene.getView()).getChildCount());
+            assertEquals(AnimationContainerLayout.class, ((ViewGroup) navigationScene.getView()).getChildAt(1).getClass());
+        }
 
         View groupSceneView = groupScene.getView();
         sceneLifecycleManager.onPause();

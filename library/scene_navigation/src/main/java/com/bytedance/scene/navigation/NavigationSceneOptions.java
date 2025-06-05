@@ -40,6 +40,7 @@ public class NavigationSceneOptions {
     private static final String EXTRA_MERGE_NAVIGATION_SCENE_VIEW = "extra_mergeNavigationSceneView";
     private static final String EXTRA_USE_WINDOW_FOCUS_CHANGED_DISPATCH = "extra_useWindowFocusChangedDispatch";
     private static final String EXTRA_REDUCE_COLD_START_CALL_STACK = "extra_reduceColdStartCallStack";
+    private static final String EXTRA_OPTIMIZED_VIEW_LAYER = "extra_optimizedViewLayer";
 
     @NonNull
     private final String mRootSceneClassName;
@@ -57,6 +58,7 @@ public class NavigationSceneOptions {
     private boolean mMergeNavigationSceneView = false;
     private boolean mUseWindowFocusChangedDispatch = false;
     private boolean mReduceColdStartCallStack = false;
+    private boolean mOptimizedViewLayer = false;
 
     public NavigationSceneOptions(@NonNull Class<? extends Scene> rootSceneClazz, @Nullable Bundle rootSceneArguments) {
         if (rootSceneClazz.isAssignableFrom(NavigationScene.class)) {
@@ -149,6 +151,12 @@ public class NavigationSceneOptions {
     }
 
     @NonNull
+    public NavigationSceneOptions setOptimizedViewLayer(boolean optimizedViewLayer) {
+        this.mOptimizedViewLayer = optimizedViewLayer;
+        return this;
+    }
+
+    @NonNull
     public String getRootSceneClassName() {
         return this.mRootSceneClassName;
     }
@@ -202,6 +210,10 @@ public class NavigationSceneOptions {
         return this.mReduceColdStartCallStack;
     }
 
+    public boolean getOptimizedViewLayer(){
+        return this.mOptimizedViewLayer;
+    }
+
     /**
      * @hide
      */
@@ -225,6 +237,7 @@ public class NavigationSceneOptions {
         navigationSceneOptions.mMergeNavigationSceneView = bundle.getBoolean(EXTRA_MERGE_NAVIGATION_SCENE_VIEW, false);
         navigationSceneOptions.mUseWindowFocusChangedDispatch = bundle.getBoolean(EXTRA_USE_WINDOW_FOCUS_CHANGED_DISPATCH, false);
         navigationSceneOptions.mReduceColdStartCallStack = bundle.getBoolean(EXTRA_REDUCE_COLD_START_CALL_STACK, false);
+        navigationSceneOptions.mOptimizedViewLayer = bundle.getBoolean(EXTRA_OPTIMIZED_VIEW_LAYER, false);
         return navigationSceneOptions;
     }
 
@@ -247,6 +260,7 @@ public class NavigationSceneOptions {
         bundle.putBoolean(EXTRA_MERGE_NAVIGATION_SCENE_VIEW, mMergeNavigationSceneView);
         bundle.putBoolean(EXTRA_USE_WINDOW_FOCUS_CHANGED_DISPATCH, mUseWindowFocusChangedDispatch);
         bundle.putBoolean(EXTRA_REDUCE_COLD_START_CALL_STACK, mReduceColdStartCallStack);
+        bundle.putBoolean(EXTRA_OPTIMIZED_VIEW_LAYER, mOptimizedViewLayer);
         return bundle;
     }
 }

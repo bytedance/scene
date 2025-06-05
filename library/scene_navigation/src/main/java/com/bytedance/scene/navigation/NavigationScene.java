@@ -118,6 +118,7 @@ import java.util.List;
  *
  */
 public final class NavigationScene extends Scene implements NavigationListener, SceneParent, SuppressOperationAware {
+    private static final String TAG = "NavigationScene";
     private static final String KEY_NAVIGATION_SCENE_SUPPORT_RESTORE_ARGUMENT = "bd-scene-navigation:support_restore";
 
     private boolean mSupportRestore = true;//default support restore
@@ -542,6 +543,10 @@ public final class NavigationScene extends Scene implements NavigationListener, 
     }
 
     public void requestDisableTouchEvent(boolean disable) {
+        if (this.mNavigationSceneOptions.getOptimizedViewLayer()) {
+            LoggerManager.getInstance().v(TAG, "optimizedViewLayer don't support requestDisableTouchEvent");
+            return;
+        }
         ((NavigationFrameLayout) getView()).setTouchEnabled(!disable);
     }
 
@@ -600,7 +605,7 @@ public final class NavigationScene extends Scene implements NavigationListener, 
     public ViewGroup getAnimationContainer() {
         if (this.mAnimationContainer == null) {
             if (mNavigationSceneOptions.getLazyLoadNavigationSceneUnnecessaryView()) {
-                this.mAnimationContainer = addAnimationContainerToRootView((FrameLayout) getView(), requireSceneContext(), mNavigationSceneOptions.getMergeNavigationSceneView());
+                this.mAnimationContainer = addAnimationContainerToRootView((FrameLayout) getView(), requireSceneContext(), mNavigationSceneOptions.getMergeNavigationSceneView() || mNavigationSceneOptions.getOptimizedViewLayer());
             } else {
                 throw new IllegalStateException("Animation Container is null");
             }
@@ -710,41 +715,61 @@ public final class NavigationScene extends Scene implements NavigationListener, 
     @NonNull
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        NavigationFrameLayout frameLayout = new NavigationFrameLayout(requireSceneContext());
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        if (this.mNavigationSceneOptions.getOptimizedViewLayer()) {
+            //todo achieve requestDisableTouchEvent ability
+            FrameLayout frameLayout = new FrameLayout(requireSceneContext());
+            frameLayout.setSaveFromParentEnabled(false);
             frameLayout.setOnApplyWindowInsetsListener(new DispatchWindowInsetsListener());
-        }
-        frameLayout.setId(R.id.navigation_scene_content);
+            frameLayout.setId(R.id.navigation_scene_content);
 
-        if (mNavigationSceneOptions.getMergeNavigationSceneView()) {
             mSceneContainer = frameLayout;
-            frameLayout.setChildrenDrawingOrderEnabled(true);
-        } else {
-            mSceneContainer = new FrameLayout(requireSceneContext());
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                mSceneContainer.setOnApplyWindowInsetsListener(new DispatchWindowInsetsListener());
-            }
-            frameLayout.addView(mSceneContainer, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-        }
 
-        if (mNavigationSceneOptions.getLazyLoadNavigationSceneUnnecessaryView()) {
-            //skip
+            if (mNavigationSceneOptions.getLazyLoadNavigationSceneUnnecessaryView()) {
+                //skip
+            } else {
+                mAnimationContainer = addAnimationContainerToRootView(frameLayout, requireSceneContext(), true);
+            }
+            if (mNavigationSceneOptions.drawWindowBackground()) {
+                ViewCompat.setBackground(frameLayout, Utility.getWindowBackground(requireSceneContext()));
+            }
+            return frameLayout;
         } else {
-            mAnimationContainer = addAnimationContainerToRootView(frameLayout, requireSceneContext(), mNavigationSceneOptions.getMergeNavigationSceneView());
+            NavigationFrameLayout frameLayout = new NavigationFrameLayout(requireSceneContext());
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                frameLayout.setOnApplyWindowInsetsListener(new DispatchWindowInsetsListener());
+            }
+            frameLayout.setId(R.id.navigation_scene_content);
+
+            if (mNavigationSceneOptions.getMergeNavigationSceneView()) {
+                mSceneContainer = frameLayout;
+                frameLayout.setChildrenDrawingOrderEnabled(true);
+            } else {
+                mSceneContainer = new FrameLayout(requireSceneContext());
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    mSceneContainer.setOnApplyWindowInsetsListener(new DispatchWindowInsetsListener());
+                }
+                frameLayout.addView(mSceneContainer, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+            }
+
+            if (mNavigationSceneOptions.getLazyLoadNavigationSceneUnnecessaryView()) {
+                //skip
+            } else {
+                mAnimationContainer = addAnimationContainerToRootView(frameLayout, requireSceneContext(), mNavigationSceneOptions.getMergeNavigationSceneView());
+            }
+            if (mNavigationSceneOptions.drawWindowBackground()) {
+                ViewCompat.setBackground(frameLayout, Utility.getWindowBackground(requireSceneContext()));
+            }
+            return frameLayout;
         }
-        if (mNavigationSceneOptions.drawWindowBackground()) {
-            ViewCompat.setBackground(frameLayout, Utility.getWindowBackground(requireSceneContext()));
-        }
-        return frameLayout;
     }
 
-    private static FrameLayout addAnimationContainerToRootView(FrameLayout frameLayout, Context context, boolean mergeView) {
+    private static FrameLayout addAnimationContainerToRootView(FrameLayout frameLayout, Context context, boolean addToBack) {
         AnimationContainerLayout animationContainerLayout = new AnimationContainerLayout(context);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             animationContainerLayout.setOnApplyWindowInsetsListener(new DispatchWindowInsetsListener());
         }
         int index = -1;
-        if (mergeView) {
+        if (addToBack) {
             index = 0;
         }
         frameLayout.addView(animationContainerLayout, index, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));

@@ -336,8 +336,10 @@ public class OnlyRestoreVisibleSceneTests {
             View secondSceneView = navigationScene.getSceneList().get(1).getView();
 
             //check view index
-            assertEquals(0, parentContainer.indexOfChild(firstSceneView));
-            assertEquals(1, parentContainer.indexOfChild(secondSceneView));
+            if (!navigationScene.getNavigationSceneOptions().getOptimizedViewLayer()) {
+                assertEquals(0, parentContainer.indexOfChild(firstSceneView));
+                assertEquals(1, parentContainer.indexOfChild(secondSceneView));
+            }
         }
     }
 
@@ -438,9 +440,11 @@ public class OnlyRestoreVisibleSceneTests {
             View thirdSceneView = navigationScene.getSceneList().get(2).getView();
 
             //check view index
-            assertEquals(0, parentContainer.indexOfChild(firstSceneView));
-            assertEquals(1, parentContainer.indexOfChild(secondSceneView));
-            assertEquals(2, parentContainer.indexOfChild(thirdSceneView));
+            if (!navigationScene.getNavigationSceneOptions().getOptimizedViewLayer()) {
+                assertEquals(0, parentContainer.indexOfChild(firstSceneView));
+                assertEquals(1, parentContainer.indexOfChild(secondSceneView));
+                assertEquals(2, parentContainer.indexOfChild(thirdSceneView));
+            }
 
             navigationScene.pop();
             assertEquals(2, navigationScene.getSceneList().size());

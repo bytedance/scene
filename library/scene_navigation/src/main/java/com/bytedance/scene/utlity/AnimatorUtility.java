@@ -70,8 +70,20 @@ public class AnimatorUtility {
         }
     }
 
+    private static void sendToBackIfNeeded(@NonNull View view) {
+        ViewGroup viewGroup = (ViewGroup) view.getParent();
+        int childCount = viewGroup.getChildCount();
+        int childIndex = viewGroup.indexOfChild(view);
+        if (childCount > 1 && childIndex > 0 && childIndex != childCount - 1) {
+            viewGroup.removeView(view);
+            viewGroup.addView(view, 0);
+        }
+    }
+
     public static void bringAnimationViewToFrontIfNeeded(@NonNull NavigationScene navigationScene) {
-        if (navigationScene.getNavigationSceneOptions().getMergeNavigationSceneView()) {
+        if (navigationScene.getNavigationSceneOptions().getOptimizedViewLayer()) {
+            bringToFrontIfNeeded(navigationScene.getAnimationContainer());
+        } else if (navigationScene.getNavigationSceneOptions().getMergeNavigationSceneView()) {
             ((NavigationFrameLayout) navigationScene.getView()).setDrawAnimationViewToFront(true);
         } else {
             bringToFrontIfNeeded(navigationScene.getAnimationContainer());
@@ -79,7 +91,9 @@ public class AnimatorUtility {
     }
 
     public static void bringSceneViewToFrontIfNeeded(@NonNull NavigationScene navigationScene) {
-        if (navigationScene.getNavigationSceneOptions().getMergeNavigationSceneView()) {
+        if (navigationScene.getNavigationSceneOptions().getOptimizedViewLayer()) {
+            sendToBackIfNeeded(navigationScene.getAnimationContainer());
+        } else if (navigationScene.getNavigationSceneOptions().getMergeNavigationSceneView()) {
             ((NavigationFrameLayout) navigationScene.getView()).setDrawAnimationViewToFront(false);
         } else {
             bringToFrontIfNeeded(navigationScene.getSceneContainer());
