@@ -1469,34 +1469,38 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
 
         @Override
         public void execute(@Nullable final Runnable operationEndAction) {
-            final Record currentRecord = mBackStackList.getCurrentRecord();
+            pushRootOperationInternal(this.scene, isSceneTranslucent, operationEndAction);
+        }
+    }
 
-            /*
-             * It is possible to repeatedly push the same Scene object multiple times in multiple NavigationScene
-             * But as the Push operation is not necessarily executed immediately,
-             * the abnormal judgment in the Push method does not necessarily work.
-             * So we need to check this case here to throw an exception.
-             */
-            if (this.scene.getParentScene() != null) {
-                if (this.scene.getParentScene() == mNavigationScene) {
-                    if (operationEndAction != null) {
-                        operationEndAction.run();
-                    }
-                    return;
+    private void pushRootOperationInternal(Scene scene, boolean isSceneTranslucent, @Nullable final Runnable operationEndAction) {
+        final Record currentRecord = mBackStackList.getCurrentRecord();
+
+        /*
+         * It is possible to repeatedly push the same Scene object multiple times in multiple NavigationScene
+         * But as the Push operation is not necessarily executed immediately,
+         * the abnormal judgment in the Push method does not necessarily work.
+         * So we need to check this case here to throw an exception.
+         */
+        if (scene.getParentScene() != null) {
+            if (scene.getParentScene() == mNavigationScene) {
+                if (operationEndAction != null) {
+                    operationEndAction.run();
                 }
-                throw new IllegalArgumentException("Scene already has a parent, parent " + scene.getParentScene());
+                return;
             }
+            throw new IllegalArgumentException("Scene already has a parent, parent " + scene.getParentScene());
+        }
 
-            final Record record = Record.newInstance(scene, isSceneTranslucent, null);
-            mBackStackList.push(record);
+        final Record record = Record.newInstance(scene, isSceneTranslucent, null);
+        mBackStackList.push(record);
 
-            moveState(mNavigationScene, scene, mNavigationScene.getState(), null, false, null);
+        moveState(mNavigationScene, scene, mNavigationScene.getState(), null, false, null);
 
-            record.saveActivityCompatibleInfo();
-            mNavigationListener.navigationChange(currentRecord != null ? currentRecord.mScene : null, scene, true);
-            if (operationEndAction != null) {
-                operationEndAction.run();
-            }
+        record.saveActivityCompatibleInfo();
+        mNavigationListener.navigationChange(currentRecord != null ? currentRecord.mScene : null, scene, true);
+        if (operationEndAction != null) {
+            operationEndAction.run();
         }
     }
 
