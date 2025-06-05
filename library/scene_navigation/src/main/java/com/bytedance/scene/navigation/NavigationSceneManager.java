@@ -1800,27 +1800,31 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
 
         @Override
         public void execute(@Nullable Runnable operationEndAction) {
-            if (getCurrentRecord() == null) {
-                if (operationEndAction != null) {
-                    operationEndAction.run();
-                }
-                return;
-            }
+            syncAllSceneStateOperationInternal(this.state, this.reverseOrder, this.causeByActivityLifecycle, operationEndAction);
+        }
+    }
 
-            List<Record> recordList = mBackStackList.getCurrentRecordList();
-            if (reverseOrder) {
-                recordList = new ArrayList<>(recordList);
-                Collections.reverse(recordList);
-            }
-
-            for (int i = 0; i < recordList.size(); i++) {
-                Record record = recordList.get(i);
-                Scene scene = record.mScene;
-                moveState(mNavigationScene, scene, state, null, causeByActivityLifecycle, null);
-            }
+    private void syncAllSceneStateOperationInternal(State state, boolean reverseOrder, boolean causeByActivityLifecycle, Runnable operationEndAction) {
+        if (getCurrentRecord() == null) {
             if (operationEndAction != null) {
                 operationEndAction.run();
             }
+            return;
+        }
+
+        List<Record> recordList = mBackStackList.getCurrentRecordList();
+        if (reverseOrder) {
+            recordList = new ArrayList<>(recordList);
+            Collections.reverse(recordList);
+        }
+
+        for (int i = 0; i < recordList.size(); i++) {
+            Record record = recordList.get(i);
+            Scene scene = record.mScene;
+            moveState(mNavigationScene, scene, state, null, causeByActivityLifecycle, null);
+        }
+        if (operationEndAction != null) {
+            operationEndAction.run();
         }
     }
 
