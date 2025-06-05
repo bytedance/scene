@@ -162,6 +162,10 @@ class NavigationSceneManagerV2 implements INavigationManager {
         }
     }
 
+    @Override
+    public void restoreChildrenSceneState(Bundle bundle, State targetState, boolean causeByActivityLifecycle) {
+    }
+
     public String getStackHistory() {
         return mBackStackList.getStackHistory();
     }

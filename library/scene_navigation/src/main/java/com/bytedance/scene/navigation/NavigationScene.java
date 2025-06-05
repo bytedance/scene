@@ -708,7 +708,11 @@ public final class NavigationScene extends Scene implements NavigationListener, 
         super.dispatchCreateView(savedInstanceState, container);
         if (mIsInitRootSceneOnCreate) {
             // causeByActivityLifecycle = false to ensure Scene view is added to NavigationScene container
-            dispatchChildrenState(State.VIEW_CREATED, false, false);
+            if (savedInstanceState != null && isSupportRestore()) {
+                this.mNavigationSceneManager.restoreChildrenSceneState(savedInstanceState, State.VIEW_CREATED, false);
+            } else {
+                dispatchChildrenState(State.VIEW_CREATED, false, false);
+            }
         }
     }
 
@@ -784,7 +788,11 @@ public final class NavigationScene extends Scene implements NavigationListener, 
     public void dispatchActivityCreated(@Nullable Bundle savedInstanceState) {
         super.dispatchActivityCreated(savedInstanceState);
         if (mIsInitRootSceneOnCreate) {
-            dispatchChildrenState(State.ACTIVITY_CREATED, false, true);
+            if (savedInstanceState != null && isSupportRestore()) {
+                this.mNavigationSceneManager.restoreChildrenSceneState(savedInstanceState, State.ACTIVITY_CREATED, true);
+            } else {
+                dispatchChildrenState(State.ACTIVITY_CREATED, false, true);
+            }
         }
         this.mNavigationSceneManager.executePendingOperation();
     }

@@ -28,6 +28,8 @@ public interface INavigationManager {
 
     public void restoreFromBundle(Context context, Bundle bundle, SceneComponentFactory rootSceneComponentFactory, State targetState);
 
+    public void restoreChildrenSceneState(Bundle bundle, State targetState, boolean causeByActivityLifecycle);
+
     public String getStackHistory();
 
     @NonNull

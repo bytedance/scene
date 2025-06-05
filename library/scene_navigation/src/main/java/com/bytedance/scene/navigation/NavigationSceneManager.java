@@ -202,6 +202,29 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
         }
     }
 
+    @Override
+    public void restoreChildrenSceneState(Bundle bundle, State targetState, boolean causeByActivityLifecycle) {
+        ArrayList<Bundle> bundleList = bundle.getParcelableArrayList(ParcelConstants.KEY_NAVIGATION_SCENE_MANAGER_TAG);
+
+        List<Record> recordList = this.mBackStackList.getCurrentRecordList();
+
+        int index = 0;
+        if (this.mOnlyRestoreVisibleScene) {
+            for (int i = recordList.size() - 1; i >= 0; i--) {
+                Record record = recordList.get(i);
+                if (!record.mIsTranslucent) {
+                    index = i;
+                    break;
+                }
+            }
+        }
+        for (int i = index; i <= recordList.size() - 1; i++) {
+            Record record = recordList.get(i);
+            Bundle sceneBundle = bundleList.get(i);
+            moveState(this.mNavigationScene, record.mScene, targetState, sceneBundle, causeByActivityLifecycle, null);
+        }
+    }
+
     public String getStackHistory() {
         return mBackStackList.getStackHistory();
     }

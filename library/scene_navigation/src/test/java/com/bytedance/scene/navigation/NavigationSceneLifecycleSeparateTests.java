@@ -625,11 +625,114 @@ public class NavigationSceneLifecycleSeparateTests {
         assertNotNull(groupSceneView.getParent());
     }
 
+    @Test
+    public void testNavigationScene_separateCreateCall_initRootSceneOnCreate_onlyRestoreVisibleScene() {
+        final TestScene rootScene = new TestScene();
+        rootScene.customId = 1;
+
+        ActivityController<NavigationSourceUtility.TestActivity> controller = Robolectric.buildActivity(NavigationSourceUtility.TestActivity.class).create().start().resume();
+        NavigationSourceUtility.TestActivity testActivity = controller.get();
+        NavigationScene navigationScene = new NavigationScene();
+        NavigationSceneOptions options = new NavigationSceneOptions(rootScene.getClass());
+        SceneGlobalConfig.useActivityCompatibleLifecycleStrategy = true;
+        options.setOnlyRestoreVisibleScene(true);
+        options.setUsePostInLifecycle(true);
+        navigationScene.setSeparateCreateFromCreateView(true);
+        navigationScene.setInitRootSceneOnCreate(true);
+        navigationScene.setArguments(options.toBundle());
+        Scope.RootScopeFactory rootScopeFactory = new Scope.RootScopeFactory() {
+            @Override
+            public Scope getRootScope() {
+                return Scope.DEFAULT_ROOT_SCOPE_FACTORY.getRootScope();
+            }
+        };
+        navigationScene.setRootScopeFactory(rootScopeFactory);
+        SceneComponentFactory sceneComponentFactory = new SceneComponentFactory() {
+            @Override
+            public Scene instantiateScene(ClassLoader cl, String className, Bundle bundle) {
+                if (className.equals(rootScene.getClass().getName())) {
+                    return rootScene;
+                }
+                return null;
+            }
+        };
+        navigationScene.setRootSceneComponentFactory(sceneComponentFactory);
+        navigationScene.setDefaultNavigationAnimationExecutor(null);//make sure not be affected by animation
+
+        navigationScene.dispatchAttachActivity(testActivity);
+        navigationScene.dispatchAttachScene(null);
+        navigationScene.dispatchCreate(null);
+        navigationScene.dispatchCreateView(null, testActivity.mFrameLayout);
+        navigationScene.dispatchActivityCreated(null);
+        navigationScene.dispatchStart();
+        navigationScene.dispatchResume();
+
+        TestChildScene secondScene = new TestChildScene();
+        secondScene.customId = 2;
+        assertEquals(secondScene.getState(), State.NONE);
+
+        navigationScene.push(secondScene);
+        assertEquals(State.RESUMED, secondScene.getState());
+
+        Bundle bundle = new Bundle();
+        navigationScene.dispatchPause();
+        navigationScene.dispatchStop();
+        navigationScene.onSaveInstanceState(bundle);
+        navigationScene.dispatchDestroyView();
+        navigationScene.dispatchDestroy();
+        navigationScene.dispatchDetachScene();
+        navigationScene.dispatchDetachActivity();
+
+        /// start restore
+        NavigationScene navigationScene2 = new NavigationScene();
+        navigationScene2.setSeparateCreateFromCreateView(true);
+        navigationScene2.setInitRootSceneOnCreate(true);
+        navigationScene2.setArguments(options.toBundle());
+        navigationScene2.setRootScopeFactory(rootScopeFactory);
+        navigationScene2.setRootSceneComponentFactory(sceneComponentFactory);
+        navigationScene2.setDefaultNavigationAnimationExecutor(null);
+
+        navigationScene2.dispatchAttachActivity(testActivity);
+        navigationScene2.dispatchAttachScene(null);
+        navigationScene2.dispatchCreate(bundle);
+
+        assertEquals(2, navigationScene2.getSceneList().size());
+        Scene topScene = navigationScene2.getCurrentScene();
+        Scene restoreRootScene = navigationScene2.getSceneList().get(0);
+        assertTrue(topScene instanceof TestChildScene);
+        assertEquals(2, ((TestChildScene) topScene).customId);
+        assertTrue(restoreRootScene instanceof TestScene);
+        assertEquals(1, ((TestScene) restoreRootScene).customId);
+        assertEquals(State.CREATED, topScene.getState());
+        assertEquals(State.NONE, restoreRootScene.getState());
+
+        navigationScene2.dispatchCreateView(bundle, testActivity.mFrameLayout);
+        navigationScene2.dispatchActivityCreated(bundle);
+        navigationScene2.dispatchStart();
+        navigationScene2.dispatchResume();
+        assertEquals(State.RESUMED, topScene.getState());
+        assertEquals(State.NONE, restoreRootScene.getState());
+
+        navigationScene2.pop();
+        assertEquals(State.NONE, topScene.getState());
+        assertEquals(State.RESUMED, restoreRootScene.getState());
+    }
+
     public static class TestScene extends GroupScene {
         public final int mId;
 
+        public int customId = -1;
+
         public TestScene() {
             mId = ViewIdGenerator.generateViewId();
+        }
+
+        @Override
+        public void onCreate(@Nullable Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+            if (savedInstanceState != null) {
+                customId = savedInstanceState.getInt("customId", -1);
+            }
         }
 
         @NonNull
@@ -675,6 +778,12 @@ public class NavigationSceneLifecycleSeparateTests {
         }
 
         @Override
+        public void onSaveInstanceState(@NonNull Bundle outState) {
+            super.onSaveInstanceState(outState);
+            outState.putInt("customId", customId);
+        }
+
+        @Override
         public void onDestroyView() {
             super.onDestroyView();
             assertTrue(View.VISIBLE == getView().getVisibility() || View.GONE == getView().getVisibility());
@@ -683,6 +792,17 @@ public class NavigationSceneLifecycleSeparateTests {
 
 
     public static class TestChildScene extends Scene {
+
+        public int customId = -1;
+
+        @Override
+        public void onCreate(@Nullable Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+            if (savedInstanceState != null) {
+                customId = savedInstanceState.getInt("customId", -1);
+            }
+        }
+
         @NonNull
         @Override
         public View onCreateView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -717,6 +837,12 @@ public class NavigationSceneLifecycleSeparateTests {
         public void onStop() {
             super.onStop();
             assertEquals(View.VISIBLE, getView().getVisibility());
+        }
+
+        @Override
+        public void onSaveInstanceState(@NonNull Bundle outState) {
+            super.onSaveInstanceState(outState);
+            outState.putInt("customId", customId);
         }
 
         @Override
