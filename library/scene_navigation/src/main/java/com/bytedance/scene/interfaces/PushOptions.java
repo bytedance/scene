@@ -176,6 +176,16 @@ public class PushOptions {
             return this;
         }
 
+        @NonNull
+        public Builder setAnimation(@NonNull Activity activity,
+                                    @AnimatorRes @AnimRes int enterResId,
+                                    @AnimatorRes @AnimRes int exitResId,
+                                    @AnimatorRes @AnimRes int returnResId,
+                                    @AnimatorRes @AnimRes int reenterResId) {
+            this.mNavigationAnimationExecutor = new AnimationOrAnimatorResourceExecutor(activity, enterResId, exitResId, returnResId, reenterResId);
+            return this;
+        }
+
         public Builder setRemovePredicate(Predicate<Scene> predicate) {
             this.mRemovePredicate = predicate;
             return this;

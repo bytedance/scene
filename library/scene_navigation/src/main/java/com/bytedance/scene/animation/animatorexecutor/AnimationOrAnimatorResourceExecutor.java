@@ -17,6 +17,7 @@ package com.bytedance.scene.animation.animatorexecutor;
 
 import android.app.Activity;
 import android.os.Build;
+import android.provider.Settings;
 import android.view.View;
 
 import androidx.annotation.AnimRes;
@@ -38,10 +39,35 @@ import com.bytedance.scene.utlity.CancellationSignal;
 public final class AnimationOrAnimatorResourceExecutor extends NavigationAnimationExecutor {
     private AnimationOrAnimator mEnterAnimator;
     private AnimationOrAnimator mExitAnimator;
+    private AnimationOrAnimator mReturnAnimator;
+    private AnimationOrAnimator mReenterAnimator;
 
     public AnimationOrAnimatorResourceExecutor(Activity activity, @AnimatorRes @AnimRes int enterResId, @AnimatorRes @AnimRes int exitResId) {
-        mEnterAnimator = AnimationOrAnimator.loadAnimation(activity, enterResId);
-        mExitAnimator = AnimationOrAnimator.loadAnimation(activity, exitResId);
+        if (enterResId != 0) {
+            mEnterAnimator = AnimationOrAnimator.loadAnimation(activity, enterResId);
+            mReturnAnimator = AnimationOrAnimator.loadAnimation(activity, enterResId);
+            mReturnAnimator.reverse();
+        }
+        if (exitResId != 0) {
+            mExitAnimator = AnimationOrAnimator.loadAnimation(activity, exitResId);
+            mReenterAnimator = AnimationOrAnimator.loadAnimation(activity, exitResId);
+            mReenterAnimator.reverse();
+        }
+    }
+
+    public AnimationOrAnimatorResourceExecutor(Activity activity, @AnimatorRes @AnimRes int enterResId, @AnimatorRes @AnimRes int exitResId, @AnimatorRes @AnimRes int returnResId, @AnimatorRes @AnimRes int reenterResId) {
+        if (enterResId != 0) {
+            mEnterAnimator = AnimationOrAnimator.loadAnimation(activity, enterResId);
+        }
+        if (exitResId != 0) {
+            mExitAnimator = AnimationOrAnimator.loadAnimation(activity, exitResId);
+        }
+        if (returnResId != 0) {
+            mReturnAnimator = AnimationOrAnimator.loadAnimation(activity, returnResId);
+        }
+        if (reenterResId != 0) {
+            mReenterAnimator = AnimationOrAnimator.loadAnimation(activity, reenterResId);
+        }
     }
 
     @Override
@@ -51,6 +77,10 @@ public final class AnimationOrAnimatorResourceExecutor extends NavigationAnimati
 
     @Override
     public void executePushChangeCancelable(@NonNull final AnimationInfo fromInfo, @NonNull final AnimationInfo toInfo, @NonNull final Runnable endAction, @NonNull CancellationSignal cancellationSignal) {
+        if (mEnterAnimator == null && mExitAnimator == null) {
+            endAction.run();
+            return;
+        }
         // Cannot be placed in onAnimationStart, as there it a post interval, it will splash
         final View fromView = fromInfo.mSceneView;
         final View toView = toInfo.mSceneView;
@@ -97,23 +127,35 @@ public final class AnimationOrAnimatorResourceExecutor extends NavigationAnimati
                 endAction.run();
             }
         });
-
-        mEnterAnimator.addEndAction(animationEndAction);
-        mExitAnimator.addEndAction(animationEndAction);
-
-        mExitAnimator.start(fromView);
-        mEnterAnimator.start(toView);
-        cancellationSignal.setOnCancelListener(new CancellationSignal.OnCancelListener() {
-            @Override
-            public void onCancel() {
+        if (mEnterAnimator != null) {
+            mEnterAnimator.addEndAction(animationEndAction);
+            mEnterAnimator.applySystemDurationScale(toView, Settings.Global.TRANSITION_ANIMATION_SCALE);
+            mEnterAnimator.start(toView);
+        } else {
+            animationEndAction.run();
+        }
+        if (mExitAnimator != null) {
+            mExitAnimator.addEndAction(animationEndAction);
+            mExitAnimator.applySystemDurationScale(fromView, Settings.Global.TRANSITION_ANIMATION_SCALE);
+            mExitAnimator.start(fromView);
+        } else {
+            animationEndAction.run();
+        }
+        cancellationSignal.setOnCancelListener(() -> {
+            if (mEnterAnimator != null) {
                 mEnterAnimator.end();
+            }
+            if (mExitAnimator != null) {
                 mExitAnimator.end();
             }
         });
     }
-
     @Override
     public void executePopChangeCancelable(@NonNull AnimationInfo fromInfo, @NonNull AnimationInfo toInfo, @NonNull final Runnable endAction, @NonNull CancellationSignal cancellationSignal) {
+        if (mReturnAnimator == null && mReenterAnimator == null) {
+            endAction.run();
+            return;
+        }
         final View fromView = fromInfo.mSceneView;
         final View toView = toInfo.mSceneView;
 
@@ -143,19 +185,26 @@ public final class AnimationOrAnimatorResourceExecutor extends NavigationAnimati
                 endAction.run();
             }
         });
-
-        mEnterAnimator.reverse();
-        mEnterAnimator.addEndAction(animationEndAction);
-        mEnterAnimator.start(fromView);
-
-        mExitAnimator.reverse();
-        mExitAnimator.addEndAction(animationEndAction);
-        mExitAnimator.start(toView);
-        cancellationSignal.setOnCancelListener(new CancellationSignal.OnCancelListener() {
-            @Override
-            public void onCancel() {
-                mEnterAnimator.end();
-                mExitAnimator.end();
+        if (mReturnAnimator != null) {
+            mReturnAnimator.addEndAction(animationEndAction);
+            mReturnAnimator.applySystemDurationScale(fromView, Settings.Global.TRANSITION_ANIMATION_SCALE);
+            mReturnAnimator.start(fromView);
+        } else {
+            animationEndAction.run();
+        }
+        if (mReenterAnimator != null) {
+            mReenterAnimator.addEndAction(animationEndAction);
+            mReenterAnimator.applySystemDurationScale(toView, Settings.Global.TRANSITION_ANIMATION_SCALE);
+            mReenterAnimator.start(toView);
+        } else {
+            animationEndAction.run();
+        }
+        cancellationSignal.setOnCancelListener(() -> {
+            if (mReturnAnimator != null) {
+                mReturnAnimator.end();
+            }
+            if (mReenterAnimator != null) {
+                mReenterAnimator.end();
             }
         });
     }

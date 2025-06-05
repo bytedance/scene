@@ -88,6 +88,16 @@ public class PopOptions {
             return this;
         }
 
+        @NonNull
+        public PopOptions.Builder setAnimation(@NonNull Activity activity,
+                                               @AnimatorRes @AnimRes int enterResId,
+                                               @AnimatorRes @AnimRes int exitResId,
+                                               @AnimatorRes @AnimRes int returnResId,
+                                               @AnimatorRes @AnimRes int reenterResId) {
+            this.mNavigationAnimationExecutor = new AnimationOrAnimatorResourceExecutor(activity, enterResId, exitResId, returnResId, reenterResId);
+            return this;
+        }
+
         public PopOptions.Builder setPopUtilPredicate(Predicate<Scene> predicate) {
             this.mPopUtilPredicate = predicate;
             return this;
