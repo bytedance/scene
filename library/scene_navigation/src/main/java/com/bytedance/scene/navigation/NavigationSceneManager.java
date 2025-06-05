@@ -1740,46 +1740,50 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
 
         @Override
         public void execute(@Nullable Runnable operationEndAction) {
-            if (getCurrentRecord() == null) {
-                if (operationEndAction != null) {
-                    operationEndAction.run();
-                }
-                return;
-            }
+            syncCurrentSceneStateOperationInternal(this.state, operationEndAction);
+        }
+    }
 
-            // Translucent processing ensures that the correct method can be executed
-            List<Record> recordList = mBackStackList.getCurrentRecordList();
-            State targetState = this.state;
-            for (int i = recordList.size() - 1; i >= 0; i--) {
-                Record record = recordList.get(i);
-                if (i == recordList.size() - 1) {
-                    moveState(mNavigationScene, record.mScene, targetState, null, true, operationEndAction);
-                    // If the current one is opaque, there is no need to traverse it again.
-                    if (!record.mIsTranslucent) {
-                        break;
-                    }
-                } else {
-                    State fixDstState = null;
-                    if (targetState == State.RESUMED) {
-                        fixDstState = State.STARTED;
-                    } else if (targetState == State.STARTED) {
-                        fixDstState = State.STARTED;
-                    } else if (targetState == State.ACTIVITY_CREATED) {
-                        fixDstState = State.ACTIVITY_CREATED;
-                    } else if (targetState == State.VIEW_CREATED) {
-                        fixDstState = State.VIEW_CREATED;
-                    }
-
-                    moveState(mNavigationScene, record.mScene, fixDstState, null, true, operationEndAction);
-                    if (!record.mIsTranslucent) {
-                        break;
-                    }
-                }
-            }
-
+    private void syncCurrentSceneStateOperationInternal(State state, Runnable operationEndAction) {
+        if (getCurrentRecord() == null) {
             if (operationEndAction != null) {
                 operationEndAction.run();
             }
+            return;
+        }
+
+        // Translucent processing ensures that the correct method can be executed
+        List<Record> recordList = mBackStackList.getCurrentRecordList();
+        State targetState = state;
+        for (int i = recordList.size() - 1; i >= 0; i--) {
+            Record record = recordList.get(i);
+            if (i == recordList.size() - 1) {
+                moveState(mNavigationScene, record.mScene, targetState, null, true, operationEndAction);
+                // If the current one is opaque, there is no need to traverse it again.
+                if (!record.mIsTranslucent) {
+                    break;
+                }
+            } else {
+                State fixDstState = null;
+                if (targetState == State.RESUMED) {
+                    fixDstState = State.STARTED;
+                } else if (targetState == State.STARTED) {
+                    fixDstState = State.STARTED;
+                } else if (targetState == State.ACTIVITY_CREATED) {
+                    fixDstState = State.ACTIVITY_CREATED;
+                } else if (targetState == State.VIEW_CREATED) {
+                    fixDstState = State.VIEW_CREATED;
+                }
+
+                moveState(mNavigationScene, record.mScene, fixDstState, null, true, operationEndAction);
+                if (!record.mIsTranslucent) {
+                    break;
+                }
+            }
+        }
+
+        if (operationEndAction != null) {
+            operationEndAction.run();
         }
     }
 
