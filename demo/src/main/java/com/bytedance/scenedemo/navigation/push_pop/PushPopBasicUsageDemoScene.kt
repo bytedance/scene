@@ -1,11 +1,13 @@
 package com.bytedance.scenedemo.navigation.push_pop
 
 import android.content.res.Configuration
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowInsetsController
 import android.widget.LinearLayout
 import android.widget.ScrollView
 import com.bytedance.scene.Scene
@@ -68,6 +70,13 @@ class PushPopBasicUsageDemoScene : Scene() ,ActivityCompatibleBehavior{
         val value = argument?.getInt("1", 0) ?: 0
 
         Log.i("Lifecycle",this.toString() + " $value onActivityCreated")
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            requireActivity().window.insetsController?.setSystemBarsAppearance(
+                WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS,
+                WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS
+            )
+        }
     }
 
     override fun onDestroyView() {

@@ -21,6 +21,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.view.View;
 import android.view.Window;
+import android.view.WindowInsetsController;
 
 /**
  * Created by JiangQi on 7/30/18.
@@ -33,6 +34,7 @@ class ActivityStatusRecord implements Parcelable {
     private int mSoftInputMode;
     private int mWindowFlags;
     private int mRequestedOrientation;
+    private int mSystemBarsAppearance;
 
     private ActivityStatusRecord() {
 
@@ -45,6 +47,7 @@ class ActivityStatusRecord implements Parcelable {
         mSoftInputMode = in.readInt();
         mWindowFlags = in.readInt();
         mRequestedOrientation = in.readInt();
+        mSystemBarsAppearance = in.readInt();
     }
 
     @Override
@@ -60,6 +63,7 @@ class ActivityStatusRecord implements Parcelable {
         dest.writeInt(mSoftInputMode);
         dest.writeInt(mWindowFlags);
         dest.writeInt(mRequestedOrientation);
+        dest.writeInt(mSystemBarsAppearance);
     }
 
     @SuppressWarnings("unused")
@@ -87,6 +91,14 @@ class ActivityStatusRecord implements Parcelable {
         record.mSoftInputMode = window.getAttributes().softInputMode;
         record.mWindowFlags = window.getAttributes().flags;
         record.mRequestedOrientation = activity.getRequestedOrientation();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            WindowInsetsController windowInsetsController = window.getInsetsController();
+            if (windowInsetsController != null) {
+                record.mSystemBarsAppearance = windowInsetsController.getSystemBarsAppearance();
+            } else {
+                record.mSystemBarsAppearance = -1;
+            }
+        }
         return record;
     }
 
@@ -109,5 +121,31 @@ class ActivityStatusRecord implements Parcelable {
         window.clearFlags(addFlags);
 
         activity.setRequestedOrientation(mRequestedOrientation);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            int restoredSystemBarsAppearance = mSystemBarsAppearance;
+            if (restoredSystemBarsAppearance != -1) {
+                WindowInsetsController windowInsetsController = window.getInsetsController();
+                if (windowInsetsController != null) {
+                    int currentSystemBarsAppearance = windowInsetsController.getSystemBarsAppearance();
+                    if (currentSystemBarsAppearance != restoredSystemBarsAppearance) {
+                        if ((currentSystemBarsAppearance & WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS) != (restoredSystemBarsAppearance & WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS)) {
+                            if ((restoredSystemBarsAppearance & WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS) != 0) {
+                                windowInsetsController.setSystemBarsAppearance(WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS, WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS);
+                            } else {
+                                windowInsetsController.setSystemBarsAppearance(0, WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS);
+                            }
+                        }
+                        if ((currentSystemBarsAppearance & WindowInsetsController.APPEARANCE_LIGHT_NAVIGATION_BARS) != (restoredSystemBarsAppearance & WindowInsetsController.APPEARANCE_LIGHT_NAVIGATION_BARS)) {
+                            if ((restoredSystemBarsAppearance & WindowInsetsController.APPEARANCE_LIGHT_NAVIGATION_BARS) != 0) {
+                                windowInsetsController.setSystemBarsAppearance(WindowInsetsController.APPEARANCE_LIGHT_NAVIGATION_BARS, WindowInsetsController.APPEARANCE_LIGHT_NAVIGATION_BARS);
+                            } else {
+                                windowInsetsController.setSystemBarsAppearance(0, WindowInsetsController.APPEARANCE_LIGHT_NAVIGATION_BARS);
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 }
