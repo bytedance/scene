@@ -39,6 +39,7 @@ public class NavigationSceneOptions {
     private static final String EXTRA_LAZY_LOAD_NAVIGATION_SCENE_UNNECESSARY_VIEW = "extra_lazyLoadNavigationSceneUnnecessaryView";
     private static final String EXTRA_MERGE_NAVIGATION_SCENE_VIEW = "extra_mergeNavigationSceneView";
     private static final String EXTRA_USE_WINDOW_FOCUS_CHANGED_DISPATCH = "extra_useWindowFocusChangedDispatch";
+    private static final String EXTRA_REDUCE_COLD_START_CALL_STACK = "extra_reduceColdStartCallStack";
 
     @NonNull
     private final String mRootSceneClassName;
@@ -55,6 +56,7 @@ public class NavigationSceneOptions {
     private boolean mLazyLoadNavigationSceneUnnecessaryView = false;
     private boolean mMergeNavigationSceneView = false;
     private boolean mUseWindowFocusChangedDispatch = false;
+    private boolean mReduceColdStartCallStack = false;
 
     public NavigationSceneOptions(@NonNull Class<? extends Scene> rootSceneClazz, @Nullable Bundle rootSceneArguments) {
         if (rootSceneClazz.isAssignableFrom(NavigationScene.class)) {
@@ -141,6 +143,12 @@ public class NavigationSceneOptions {
     }
 
     @NonNull
+    public NavigationSceneOptions setReduceColdStartCallStack(boolean reduceColdStartCallStack) {
+        this.mReduceColdStartCallStack = reduceColdStartCallStack;
+        return this;
+    }
+
+    @NonNull
     public String getRootSceneClassName() {
         return this.mRootSceneClassName;
     }
@@ -190,6 +198,10 @@ public class NavigationSceneOptions {
         return mUseWindowFocusChangedDispatch;
     }
 
+    public boolean getReduceColdStartCallStack(){
+        return this.mReduceColdStartCallStack;
+    }
+
     /**
      * @hide
      */
@@ -212,6 +224,7 @@ public class NavigationSceneOptions {
         navigationSceneOptions.mLazyLoadNavigationSceneUnnecessaryView = bundle.getBoolean(EXTRA_LAZY_LOAD_NAVIGATION_SCENE_UNNECESSARY_VIEW, false);
         navigationSceneOptions.mMergeNavigationSceneView = bundle.getBoolean(EXTRA_MERGE_NAVIGATION_SCENE_VIEW, false);
         navigationSceneOptions.mUseWindowFocusChangedDispatch = bundle.getBoolean(EXTRA_USE_WINDOW_FOCUS_CHANGED_DISPATCH, false);
+        navigationSceneOptions.mReduceColdStartCallStack = bundle.getBoolean(EXTRA_REDUCE_COLD_START_CALL_STACK, false);
         return navigationSceneOptions;
     }
 
@@ -233,6 +246,7 @@ public class NavigationSceneOptions {
         bundle.putBoolean(EXTRA_LAZY_LOAD_NAVIGATION_SCENE_UNNECESSARY_VIEW, mLazyLoadNavigationSceneUnnecessaryView);
         bundle.putBoolean(EXTRA_MERGE_NAVIGATION_SCENE_VIEW, mMergeNavigationSceneView);
         bundle.putBoolean(EXTRA_USE_WINDOW_FOCUS_CHANGED_DISPATCH, mUseWindowFocusChangedDispatch);
+        bundle.putBoolean(EXTRA_REDUCE_COLD_START_CALL_STACK, mReduceColdStartCallStack);
         return bundle;
     }
 }

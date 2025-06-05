@@ -102,12 +102,19 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
     private boolean mAnySceneStateChanged = false;
 
     private NavigationMessageQueue mSceneMessageQueue = null;
+    private boolean mReduceColdStartCallStack = false;
 
     NavigationSceneManager(NavigationScene scene) {
         this.mNavigationScene = scene;
         this.mNavigationListener = scene;
         this.mOnlyRestoreVisibleScene = scene.mNavigationSceneOptions.onlyRestoreVisibleScene();
         this.mIsSeparateCreateFromCreateView = scene.isSeparateCreateFromCreateView();
+        this.mReduceColdStartCallStack = this.mNavigationScene.getNavigationSceneOptions().getReduceColdStartCallStack();
+        if (this.mReduceColdStartCallStack) {
+            mSceneMessageQueue = null;
+        } else {
+            mSceneMessageQueue = new NavigationMessageQueue();
+        }
     }
 
     @NonNull
@@ -300,25 +307,37 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
     }
 
     public void dispatchCurrentChildState(final State state) {
-        this.requireMessageQueue().postSync(new Runnable() {
-            @Override
-            public void run() {
-                String suppressTag = beginSuppressStackOperation("NavigationManager dispatchCurrentChildState");
-                executeOperationSafely(new SyncCurrentSceneStateOperation(state), EMPTY_RUNNABLE);
-                endSuppressStackOperation(suppressTag);
-            }
-        });
+        if (this.mReduceColdStartCallStack && getMessageQueue() == null) {
+            String suppressTag = beginSuppressStackOperation("NavigationManager dispatchCurrentChildState");
+            syncCurrentSceneStateOperationInternal(state, null);
+            endSuppressStackOperation(suppressTag);
+        } else {
+            this.requireMessageQueue().postSync(new Runnable() {
+                @Override
+                public void run() {
+                    String suppressTag = beginSuppressStackOperation("NavigationManager dispatchCurrentChildState");
+                    executeOperationSafely(new SyncCurrentSceneStateOperation(state), EMPTY_RUNNABLE);
+                    endSuppressStackOperation(suppressTag);
+                }
+            });
+        }
     }
 
     public void dispatchChildrenState(final State state, final boolean reverseOrder, final boolean causeByActivityLifecycle) {
-        this.requireMessageQueue().postSync(new Runnable() {
-            @Override
-            public void run() {
-                String suppressTag = beginSuppressStackOperation("NavigationManager dispatchChildrenState");
-                executeOperationSafely(new SyncAllSceneStateOperation(state, reverseOrder, causeByActivityLifecycle), EMPTY_RUNNABLE);
-                endSuppressStackOperation(suppressTag);
-            }
-        });
+        if (this.mReduceColdStartCallStack && getMessageQueue() == null) {
+            String suppressTag = beginSuppressStackOperation("NavigationManager dispatchChildrenState");
+            syncAllSceneStateOperationInternal(state, reverseOrder, causeByActivityLifecycle, null);
+            endSuppressStackOperation(suppressTag);
+        } else {
+            this.requireMessageQueue().postSync(new Runnable() {
+                @Override
+                public void run() {
+                    String suppressTag = beginSuppressStackOperation("NavigationManager dispatchChildrenState");
+                    executeOperationSafely(new SyncAllSceneStateOperation(state, reverseOrder, causeByActivityLifecycle), EMPTY_RUNNABLE);
+                    endSuppressStackOperation(suppressTag);
+                }
+            });
+        }
     }
 
     public void setResult(Scene scene, Object result) {
@@ -374,7 +393,15 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
         }
 
         LoggerManager.getInstance().i(TAG, "pushRoot " + scene);
-        executePushRootOperationImmediately(new PushRootOperation(scene));
+        if (this.mReduceColdStartCallStack && getMessageQueue() == null) {
+            SceneTrace.beginSection(TRACE_EXECUTE_OPERATION_TAG);
+            String suppressTag = beginSuppressStackOperation("NavigationManager execute push root operation immediately");
+            pushRootOperationInternal(scene, scene instanceof SceneTranslucent, null);
+            endSuppressStackOperation(suppressTag);
+            SceneTrace.endSection();
+        } else {
+            executePushRootOperationImmediately(new PushRootOperation(scene));
+        }
     }
 
     private void executePushRootOperationImmediately(@NonNull final Operation operation) {
