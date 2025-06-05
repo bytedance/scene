@@ -35,6 +35,12 @@ import com.bytedance.scene.utlity.CancellationSignal;
 
 /**
  * Created by JiangQi on 8/15/18.
+ * <p>
+ * A -> B
+ * A Exit, B Enter
+ * <p>
+ * B -> A
+ * B Return, A Reenter
  */
 public final class AnimationOrAnimatorResourceExecutor extends NavigationAnimationExecutor {
     private AnimationOrAnimator mEnterAnimator;
