@@ -15,6 +15,7 @@
  */
 package com.bytedance.scene.animation.animatorexecutor;
 
+import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.os.Build;
 import android.provider.Settings;
@@ -30,6 +31,7 @@ import com.bytedance.scene.State;
 import com.bytedance.scene.animation.AnimationInfo;
 import com.bytedance.scene.animation.AnimationOrAnimator;
 import com.bytedance.scene.animation.NavigationAnimationExecutor;
+import com.bytedance.scene.utlity.AnimationUtilityKt;
 import com.bytedance.scene.utlity.AnimatorUtility;
 import com.bytedance.scene.utlity.CancellationSignal;
 
@@ -43,6 +45,7 @@ import com.bytedance.scene.utlity.CancellationSignal;
  * B Return, A Reenter
  */
 public final class AnimationOrAnimatorResourceExecutor extends NavigationAnimationExecutor {
+    private static final String ANIMATION_SCALE_TYPE = Settings.Global.TRANSITION_ANIMATION_SCALE;
     private AnimationOrAnimator mEnterAnimator;
     private AnimationOrAnimator mExitAnimator;
     private AnimationOrAnimator mReturnAnimator;
@@ -91,6 +94,11 @@ public final class AnimationOrAnimatorResourceExecutor extends NavigationAnimati
         final View fromView = fromInfo.mSceneView;
         final View toView = toInfo.mSceneView;
 
+        if (!AnimationUtilityKt.areAnimationEnabled(fromView, ANIMATION_SCALE_TYPE)) {
+            endAction.run();
+            return;
+        }
+
         AnimatorUtility.resetViewStatus(fromView);
         AnimatorUtility.resetViewStatus(toView);
         fromView.setVisibility(View.VISIBLE);
@@ -135,14 +143,14 @@ public final class AnimationOrAnimatorResourceExecutor extends NavigationAnimati
         });
         if (mEnterAnimator != null) {
             mEnterAnimator.addEndAction(animationEndAction);
-            mEnterAnimator.applySystemDurationScale(toView, Settings.Global.TRANSITION_ANIMATION_SCALE);
+            mEnterAnimator.applySystemDurationScale(toView, ANIMATION_SCALE_TYPE);
             mEnterAnimator.start(toView);
         } else {
             animationEndAction.run();
         }
         if (mExitAnimator != null) {
             mExitAnimator.addEndAction(animationEndAction);
-            mExitAnimator.applySystemDurationScale(fromView, Settings.Global.TRANSITION_ANIMATION_SCALE);
+            mExitAnimator.applySystemDurationScale(fromView, ANIMATION_SCALE_TYPE);
             mExitAnimator.start(fromView);
         } else {
             animationEndAction.run();
@@ -164,6 +172,11 @@ public final class AnimationOrAnimatorResourceExecutor extends NavigationAnimati
         }
         final View fromView = fromInfo.mSceneView;
         final View toView = toInfo.mSceneView;
+
+        if (!AnimationUtilityKt.areAnimationEnabled(toView, ANIMATION_SCALE_TYPE)) {
+            endAction.run();
+            return;
+        }
 
         AnimatorUtility.resetViewStatus(fromView);
         AnimatorUtility.resetViewStatus(toView);
@@ -193,14 +206,14 @@ public final class AnimationOrAnimatorResourceExecutor extends NavigationAnimati
         });
         if (mReturnAnimator != null) {
             mReturnAnimator.addEndAction(animationEndAction);
-            mReturnAnimator.applySystemDurationScale(fromView, Settings.Global.TRANSITION_ANIMATION_SCALE);
+            mReturnAnimator.applySystemDurationScale(fromView, ANIMATION_SCALE_TYPE);
             mReturnAnimator.start(fromView);
         } else {
             animationEndAction.run();
         }
         if (mReenterAnimator != null) {
             mReenterAnimator.addEndAction(animationEndAction);
-            mReenterAnimator.applySystemDurationScale(toView, Settings.Global.TRANSITION_ANIMATION_SCALE);
+            mReenterAnimator.applySystemDurationScale(toView, ANIMATION_SCALE_TYPE);
             mReenterAnimator.start(toView);
         } else {
             animationEndAction.run();
