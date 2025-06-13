@@ -41,6 +41,7 @@
     <string name="main_nav_btn_ime">IME Problems</string>
     <string name="main_nav_btn_compare_activity">Compare performance with Activity</string>
     <string name="main_nav_btn_app_compat">AppCompatScene</string>
+    <string name="main_nav_btn_manage_lifecycle">Manage Lifecycle Manually</string>
     <string name="main_nav_btn_mutil_stack">MutilStack</string>
     <string name="main_nav_btn_theme">Theme</string>
     <string name="main_nav_btn_router">Router (Todo)</string>

@@ -63,6 +63,7 @@
     <string name="nav_result_scene_to_scene_btn_1">点击跳到 SceneResultScene_0（PushSingleTop）</string>
     <string name="nav_result_set_result_btn">点击设置 Result</string>
     <string name="main_nav_btn_app_compat">AppCompatScene  模版</string>
+    <string name="main_nav_btn_manage_lifecycle">手动管理生命周期</string>
     <string name="main_nav_btn_compare_activity">和 Activity 比较性能</string>
     <string name="main_nav_btn_deep_link">Deep Link（未完成）</string>
     <string name="main_nav_btn_ime">输入法问题</string>

@@ -55,6 +55,7 @@ import androidx.savedstate.ViewTreeSavedStateRegistryOwner;
 
 import com.bytedance.scene.parcel.ParcelConstants;
 import com.bytedance.scene.utlity.ExceptionsUtility;
+import com.bytedance.scene.utlity.Experimental;
 import com.bytedance.scene.utlity.SceneInternalException;
 import com.bytedance.scene.utlity.Utility;
 import com.bytedance.scene.utlity.ViewRefUtility;
@@ -399,6 +400,16 @@ public abstract class Scene implements LifecycleOwner, SavedStateRegistryOwner, 
 
     /**
      * @hide
+     * Warning, only framework can override this method!
+     */
+    @RestrictTo(LIBRARY_GROUP)
+    @Experimental
+    protected boolean isViewOwnedByOutside() {
+        return false;
+    }
+
+    /**
+     * @hide
      */
     @SuppressLint("WrongConstant")
     @RestrictTo(LIBRARY_GROUP)
@@ -412,7 +423,7 @@ public abstract class Scene implements LifecycleOwner, SavedStateRegistryOwner, 
             throw new IllegalArgumentException("onCreateView cant return null");
         }
 
-        if (view.getParent() != null) {
+        if (!this.isViewOwnedByOutside() && view.getParent() != null) {
             throw new IllegalArgumentException("onCreateView returned view already has a parent. You must call removeView() on the view's parent first.");
         }
 

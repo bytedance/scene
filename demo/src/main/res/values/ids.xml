@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="saa_container" type="id"/>
+    <item name="saf_scene_id" type="id"/>
+    <item name="saa_fragment_container" type="id"/>
+</resources>

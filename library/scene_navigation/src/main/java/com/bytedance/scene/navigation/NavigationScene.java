@@ -66,6 +66,7 @@ import com.bytedance.scene.logger.LoggerManager;
 import com.bytedance.scene.queue.NavigationMessageQueue;
 import com.bytedance.scene.queue.NavigationRunnable;
 import com.bytedance.scene.utlity.DispatchWindowInsetsListener;
+import com.bytedance.scene.utlity.Experimental;
 import com.bytedance.scene.utlity.MemoryMonitor;
 import com.bytedance.scene.utlity.NonNullPair;
 import com.bytedance.scene.utlity.SceneInstanceUtility;
@@ -128,6 +129,8 @@ public final class NavigationScene extends Scene implements NavigationListener, 
     INavigationManager mNavigationSceneManager;
     private FrameLayout mSceneContainer;
     private FrameLayout mAnimationContainer;
+    private FrameLayout mOutsideView = null;
+    private boolean mViewOwnedByOutside = false;
     private final Handler mHandler = new Handler(Looper.getMainLooper());
     @Nullable
     private NavigationAnimationExecutor mDefaultNavigationAnimationExecutor = null;
@@ -550,6 +553,33 @@ public final class NavigationScene extends Scene implements NavigationListener, 
         ((NavigationFrameLayout) getView()).setTouchEnabled(!disable);
     }
 
+    public void setOutsideView(@NonNull FrameLayout outsideView) {
+        if (getArguments() == null) {
+            throw new IllegalStateException("NavigationScene don't have any arguments, you should invoke after setArguments");
+        }
+        if (!this.getNavigationSceneOptions().getReuseOutsideView()) {
+            throw new IllegalStateException("You should invoke NavigationSceneOptions.setReuseOutsideView(true) at first");
+        }
+        if (getView() != null) {
+            throw new IllegalStateException("NavigationScene have created its view, you should invoke before onCreateView");
+        }
+        if (outsideView == null) {
+            throw new IllegalArgumentException("setOutsideView outsideView argument is null");
+        }
+        this.mOutsideView = outsideView;
+        this.mViewOwnedByOutside = true;
+    }
+
+    /**
+     * @hide
+     */
+    @RestrictTo(LIBRARY_GROUP)
+    @Experimental
+    @Override
+    public boolean isViewOwnedByOutside() {
+        return this.mViewOwnedByOutside;
+    }
+
     /**
      * Push animation priority:
      * 1.NavigationScene.overrideNavigationAnimationExecutor
@@ -719,7 +749,26 @@ public final class NavigationScene extends Scene implements NavigationListener, 
     @NonNull
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        if (this.mNavigationSceneOptions.getOptimizedViewLayer()) {
+        if (this.mNavigationSceneOptions.getReuseOutsideView()) {
+            //todo achieve requestDisableTouchEvent ability
+            FrameLayout frameLayout = this.mOutsideView;
+            if (frameLayout == null) {
+                throw new IllegalArgumentException("Please invoke setOutsideView at first");
+            }
+            frameLayout.setOnApplyWindowInsetsListener(new DispatchWindowInsetsListener());
+
+            mSceneContainer = frameLayout;
+
+            if (mNavigationSceneOptions.getLazyLoadNavigationSceneUnnecessaryView()) {
+                //skip
+            } else {
+                mAnimationContainer = addAnimationContainerToRootView(frameLayout, requireSceneContext(), true);
+            }
+            if (mNavigationSceneOptions.drawWindowBackground()) {
+                ViewCompat.setBackground(frameLayout, Utility.getWindowBackground(requireSceneContext()));
+            }
+            return frameLayout;
+        } else if (this.mNavigationSceneOptions.getOptimizedViewLayer()) {
             //todo achieve requestDisableTouchEvent ability
             FrameLayout frameLayout = new FrameLayout(requireSceneContext());
             frameLayout.setSaveFromParentEnabled(false);
@@ -905,6 +954,8 @@ public final class NavigationScene extends Scene implements NavigationListener, 
         if (!isSeparateCreateFromCreateView()) {
             dispatchChildrenState(State.NONE, true, true);
         }
+        this.mOutsideView = null;
+        this.mViewOwnedByOutside = false;
         super.onDestroyView();
     }
 

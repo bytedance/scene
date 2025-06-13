@@ -1,5 +1,6 @@
 package com.bytedance.scenedemo;
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -21,6 +22,7 @@ import com.bytedance.scenedemo.navigation.recreate.RecreateUsageDemoScene
 import com.bytedance.scenedemo.navigation.remove.RemoveDemoScene
 import com.bytedance.scenedemo.navigation.reuse.ReuseDemoScene
 import com.bytedance.scenedemo.navigation.singletask.SingleTaskDemoScene
+import com.bytedance.scenedemo.other.SAFActivity
 import com.bytedance.scenedemo.template.DefaultScene
 import com.bytedance.scenedemo.utility.addButton
 import com.bytedance.scenedemo.utility.addClassPathTitle
@@ -99,6 +101,10 @@ class NavigationListDemo : UserVisibleHintGroupScene() {
 
         addButton(layout, getString(R.string.main_nav_btn_app_compat), View.OnClickListener {
             requireNavigationScene().push(DefaultScene())
+        })
+
+        addButton(layout, getString(R.string.main_nav_btn_manage_lifecycle), View.OnClickListener {
+            requireNavigationScene().startActivity(Intent(requireActivity(), SAFActivity::class.java))
         })
 
         addTitle(layout, getString(R.string.main_title_todo))
