@@ -2,7 +2,6 @@ package com.bytedance.scene.utlity
 
 import android.provider.Settings
 import android.view.View
-import androidx.annotation.RestrictTo
 import androidx.annotation.StringDef
 import kotlin.math.max
 
@@ -30,15 +29,4 @@ internal fun getDurationScale(view: View, @DurationScaleType durationScaleType: 
         view.context.contentResolver, durationScaleType, 1.0f
     )
     return max(0.0f, durationScale)
-}
-
-/** @hide */
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-fun areAnimationEnabled(
-    view: View, @DurationScaleType durationScaleType: String
-): Boolean {
-    val durationScale = Settings.Global.getFloat(
-        view.context.contentResolver, durationScaleType, 1.0f
-    )
-    return durationScale != 0.0f
 }
