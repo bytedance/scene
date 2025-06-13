@@ -2056,6 +2056,7 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
                         LoggerManager.getInstance().i(TAG, "Configuration has been changed, Scene has suitable configChanges, so dispatch onConfigurationChanged to " + scene.toString());
                         if (scene instanceof ActivityCompatibleBehavior) {
                             ((ActivityCompatibleBehavior) scene).onConfigurationChanged(newConfig);
+                            record.saveActivityCompatibleInfo();
                             continue;
                         }
                     } else {
