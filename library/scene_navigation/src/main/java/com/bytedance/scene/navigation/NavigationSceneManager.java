@@ -1746,7 +1746,9 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
         public void execute(Runnable operationEndAction) {
             if (this.scene.getState() == State.NONE) {
                 //Target scene is destroyed, skip
-                operationEndAction.run();
+                if (operationEndAction != null) {
+                    operationEndAction.run();
+                }
                 return;
             }
 
@@ -1777,7 +1779,9 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
             moveState(mNavigationScene, newSceneInstance, targetState, savedInstanceState, false, null);
 
             record.saveActivityCompatibleInfo();
-            operationEndAction.run();
+            if (operationEndAction != null) {
+                operationEndAction.run();
+            }
         }
     }
 
