@@ -110,7 +110,14 @@ public class Record implements Parcelable {
     public void saveActivityCompatibleInfo() {
         //Only store Configuration when Scene has ActivityCompatibleManager
         if (ActivityCompatibleInfoCollector.containsConfigChanges(mScene)) {
-            mConfiguration = mScene.requireActivity().getResources().getConfiguration();
+            mConfiguration = new Configuration(mScene.requireActivity().getResources().getConfiguration());
+        }
+    }
+
+    public void saveActivityCompatibleInfo(Configuration newConfig) {
+        //Only store Configuration when Scene has ActivityCompatibleManager
+        if (ActivityCompatibleInfoCollector.containsConfigChanges(mScene)) {
+            mConfiguration = new Configuration(newConfig);
         }
     }
 

@@ -2049,6 +2049,9 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
                     //skip, default behavior, nothing will happen
                     continue;
                 }
+                if (newConfig.equals(record.mConfiguration)) {
+                    continue;
+                }
                 if (record.mConfiguration != null) {
                     Configuration sceneConfiguration = record.mConfiguration;
                     int diff = sceneConfiguration.diff(newConfig);
@@ -2056,7 +2059,7 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
                         LoggerManager.getInstance().i(TAG, "Configuration has been changed, Scene has suitable configChanges, so dispatch onConfigurationChanged to " + scene.toString());
                         if (scene instanceof ActivityCompatibleBehavior) {
                             ((ActivityCompatibleBehavior) scene).onConfigurationChanged(newConfig);
-                            record.saveActivityCompatibleInfo();
+                            record.saveActivityCompatibleInfo(newConfig);
                             continue;
                         }
                     } else {
