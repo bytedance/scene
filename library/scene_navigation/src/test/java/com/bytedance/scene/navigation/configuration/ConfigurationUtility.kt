@@ -1,6 +1,9 @@
 package com.bytedance.scene.navigation.configuration
 
 import android.content.res.Configuration
+import android.content.res.Configuration.UI_MODE_NIGHT_NO
+import android.content.res.Configuration.UI_MODE_NIGHT_YES
+import android.content.res.Configuration.UI_MODE_TYPE_NORMAL
 
 /**
  * Created by jiangqi on 2024/11/5
@@ -16,8 +19,8 @@ fun createConfigurationForDayNight(
 //    val configuration = Configuration()
 //    configuration.uiMode = newNightMode or (0 and Configuration.UI_MODE_NIGHT_MASK.inv())
     val newNightMode: Int = when (isNight) {
-        true -> 33
-        false -> 17
+        true -> UI_MODE_TYPE_NORMAL or UI_MODE_NIGHT_YES //33
+        false -> UI_MODE_TYPE_NORMAL or UI_MODE_NIGHT_NO //17
     }
     val configuration = Configuration()
     configuration.uiMode = newNightMode
