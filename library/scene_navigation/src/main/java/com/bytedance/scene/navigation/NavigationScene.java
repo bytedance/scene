@@ -430,6 +430,10 @@ public final class NavigationScene extends Scene implements NavigationListener, 
     }
 
     public boolean onBackPressed() {
+        return this.onBackPressed(null);
+    }
+
+    public boolean onBackPressed(@Nullable PopOptions popOptions) {
         ThreadUtility.checkUIThread();
 
         if (!Utility.isActivityStatusValid(getActivity())) {
@@ -438,7 +442,11 @@ public final class NavigationScene extends Scene implements NavigationListener, 
         if (mNavigationSceneManager.interceptOnBackPressed()) {
             return true;
         } else if (mNavigationSceneManager.canPop()) {
-            pop();
+            if (popOptions != null) {
+                pop(popOptions);
+            } else {
+                pop();
+            }
             return true;
         } else {
             return false;
