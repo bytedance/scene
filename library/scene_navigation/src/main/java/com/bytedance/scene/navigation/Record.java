@@ -62,6 +62,9 @@ public class Record implements Parcelable {
 
     String mSceneClassName;
 
+    /**
+     * this value should not be saved and restore, because it will be reset after onCreateView
+     */
     @Nullable
     Configuration mConfiguration;
     boolean mLastSceneWindowFocused = false;
@@ -70,7 +73,6 @@ public class Record implements Parcelable {
         mActivityStatusRecord = in.readParcelable(ActivityStatusRecord.class.getClassLoader());
         mIsTranslucent = in.readByte() != 0;
         mSceneClassName = in.readString();
-        mConfiguration = in.readParcelable(Configuration.class.getClassLoader());
         mLastSceneWindowFocused = in.readByte() != 0;
     }
 
@@ -131,7 +133,6 @@ public class Record implements Parcelable {
         dest.writeParcelable(mActivityStatusRecord, flags);
         dest.writeByte((byte) (mIsTranslucent ? 1 : 0));
         dest.writeString(mSceneClassName);
-        dest.writeParcelable(mConfiguration, flags);
         dest.writeByte((byte) (mLastSceneWindowFocused ? 1 : 0));
     }
 }

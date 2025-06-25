@@ -1397,6 +1397,11 @@ class NavigationSceneManagerV1 implements INavigationManager {
     }
 
     @Override
+    public void saveActivityCompatibleInfo(Record record) {
+        throw new IllegalStateException("saveActivityCompatibleInfo is not supported");
+    }
+
+    @Override
     public void onWindowFocusChanged(boolean hasFocus) {
         throw new IllegalStateException("onWindowFocusChanged is not supported");
     }

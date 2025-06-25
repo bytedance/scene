@@ -629,6 +629,23 @@ public final class NavigationScene extends Scene implements NavigationListener, 
     }
 
     /**
+     * return a clone version of target Scene's cached Configuration
+     * @param scene
+     * @return
+     */
+    @Nullable
+    public Configuration getConfiguration(@NonNull Scene scene) {
+        Record record = mNavigationSceneManager.findRecordByScene(scene);
+        if (record != null) {
+            Configuration cachedConfiguration = record.mConfiguration;
+            if (cachedConfiguration != null) {
+                return new Configuration(cachedConfiguration);
+            }
+        }
+        return null;
+    }
+
+    /**
      * @hide
      */
     @RestrictTo(LIBRARY_GROUP)

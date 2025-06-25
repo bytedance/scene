@@ -104,6 +104,8 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
     private NavigationMessageQueue mSceneMessageQueue = null;
     private boolean mReduceColdStartCallStack = false;
 
+    private Configuration mActivityConfiguration = null;
+
     NavigationSceneManager(NavigationScene scene) {
         this.mNavigationScene = scene;
         this.mNavigationListener = scene;
@@ -598,6 +600,10 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
                     scene.dispatchCreate(bundle);
                     ViewGroup containerView = navigationScene.getSceneContainer();
                     scene.dispatchCreateView(bundle, containerView);
+                    if (ActivityCompatibleInfoCollector.isTargetSceneType(scene)) {
+                        Record record = navigationScene.findRecordByScene(scene);
+                        navigationScene.mNavigationSceneManager.saveActivityCompatibleInfo(record);
+                    }
                     if (!causedByActivityLifeCycle) {
                         if (scene.getView().getBackground() == null) {
                             Record record = navigationScene.findRecordByScene(scene);
@@ -708,6 +714,10 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
                 case CREATED:
                     ViewGroup containerView = navigationScene.getSceneContainer();
                     scene.dispatchCreateView(bundle, containerView);
+                    if (ActivityCompatibleInfoCollector.isTargetSceneType(scene)) {
+                        Record record = navigationScene.findRecordByScene(scene);
+                        navigationScene.mNavigationSceneManager.saveActivityCompatibleInfo(record);
+                    }
                     if (!causedByActivityLifeCycle) {
                         if (scene.getView().getBackground() == null) {
                             Record record = navigationScene.findRecordByScene(scene);
@@ -1547,7 +1557,6 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
 
         moveState(mNavigationScene, scene, mNavigationScene.getState(), null, false, null);
 
-        record.saveActivityCompatibleInfo();
         mNavigationListener.navigationChange(currentRecord != null ? currentRecord.mScene : null, scene, true);
         if (operationEndAction != null) {
             operationEndAction.run();
@@ -1686,7 +1695,6 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
              *       Because of the destruction restore, it is impossible to go directly to RESUMED
              */
             moveState(mNavigationScene, scene, mNavigationScene.getState(), null, false, null);
-            record.saveActivityCompatibleInfo();
             mNavigationListener.navigationChange(currentRecord != null ? currentRecord.mScene : null, scene, true);
 
             //Navigation animation only execute when NavigationScene is visible, otherwise skip
@@ -1778,7 +1786,6 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
             LoggerManager.getInstance().i(TAG, "RecreateOperation new created Scene restore from previous data, new Scene instance " + newSceneInstance.toString());
             moveState(mNavigationScene, newSceneInstance, targetState, savedInstanceState, false, null);
 
-            record.saveActivityCompatibleInfo();
             if (operationEndAction != null) {
                 operationEndAction.run();
             }
@@ -2033,6 +2040,7 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
     public void onConfigurationChanged(@NonNull Configuration newConfig) {
         LoggerManager.getInstance().i(TAG, "onConfigurationChanged");
         executePendingOperation();//make sure all pending operations have finished
+        this.mActivityConfiguration = new Configuration(newConfig);
 
         List<Record> recordList = this.mBackStackList.getCurrentRecordList();
         for (int i = recordList.size() - 1; i >= 0; i--) {
@@ -2070,6 +2078,16 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
                 }
                 recreate(record.mScene);
             }
+        }
+    }
+
+    @Override
+    public void saveActivityCompatibleInfo(Record record) {
+        Configuration newConfig = this.mActivityConfiguration;
+        if (newConfig != null) {
+            record.saveActivityCompatibleInfo(newConfig);
+        } else {
+            record.saveActivityCompatibleInfo();
         }
     }
 

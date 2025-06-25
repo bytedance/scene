@@ -92,4 +92,6 @@ public interface INavigationManager {
     public void onConfigurationChanged(@NonNull Configuration newConfig);
 
     public void onWindowFocusChanged(boolean hasFocus);
+
+    public void saveActivityCompatibleInfo(Record record);
 }

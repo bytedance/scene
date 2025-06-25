@@ -33,7 +33,6 @@ public class PushStopOperation implements Operation {
     public void execute(final Runnable operationEndAction) {
         List<Record> currentRecordList = mManagerAbility.getCurrentRecordList();
         Record topRecord = currentRecordList.get(currentRecordList.size() - 1);
-        topRecord.saveActivityCompatibleInfo();
 
         if (mPreviousRecord == null) {
             mManagerAbility.getNavigationListener().navigationChange(null, topRecord.mScene, true);
