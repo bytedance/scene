@@ -18,7 +18,10 @@ package com.bytedance.scene.utlity;
 import static androidx.annotation.RestrictTo.Scope.LIBRARY;
 
 import android.content.pm.ActivityInfo;
+import android.os.Build;
+import android.text.TextUtils;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.RestrictTo;
 
 import java.util.ArrayList;
@@ -36,6 +39,17 @@ public class ConfigurationUtility {
     public static final int CONFIG_ASSETS_PATHS = 0x80000000;
     public static final int CONFIG_WINDOW_CONFIGURATION = 0x20000000;
 
+    public static final int CONFIG_FONT_WEIGHT_ADJUSTMENT = 0x10000000;
+
+    public static final int CONFIG_GRAMMATICAL_GENDER = 0x8000;
+
+    /**
+     * update to api 34
+     *
+     * @param diff
+     * @return
+     */
+    @NonNull
     public static String configurationDiffToString(int diff) {
         ArrayList<String> list = new ArrayList<>();
         if ((diff & ActivityInfo.CONFIG_MCC) != 0) {
@@ -65,8 +79,10 @@ public class ConfigurationUtility {
         if ((diff & ActivityInfo.CONFIG_SCREEN_LAYOUT) != 0) {
             list.add("CONFIG_SCREEN_LAYOUT");
         }
-        if ((diff & ActivityInfo.CONFIG_COLOR_MODE) != 0) {
-            list.add("CONFIG_COLOR_MODE");
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            if ((diff & ActivityInfo.CONFIG_COLOR_MODE) != 0) {
+                list.add("CONFIG_COLOR_MODE");
+            }
         }
         if ((diff & ActivityInfo.CONFIG_UI_MODE) != 0) {
             list.add("CONFIG_UI_MODE");
@@ -92,15 +108,21 @@ public class ConfigurationUtility {
         if ((diff & CONFIG_WINDOW_CONFIGURATION) != 0) {
             list.add("CONFIG_WINDOW_CONFIGURATION");
         }
-        StringBuilder builder = new StringBuilder("{");
-        for (int i = 0, n = list.size(); i < n; i++) {
-            builder.append(list.get(i));
-            if (i != n - 1) {
-                builder.append(", ");
+        if (Build.VERSION.SDK_INT >= 31) {
+            if ((diff & CONFIG_FONT_WEIGHT_ADJUSTMENT) != 0) {
+                list.add("CONFIG_AUTO_BOLD_TEXT");
             }
         }
-        builder.append("}");
-        return builder.toString();
+        if (Build.VERSION.SDK_INT >= 34) {
+            if ((diff & CONFIG_GRAMMATICAL_GENDER) != 0) {
+                list.add("CONFIG_GRAMMATICAL_GENDER");
+            }
+        }
+        if (list.size() > 0) {
+            return "{" + TextUtils.join(", ", list) + "}";
+        } else {
+            return "";
+        }
     }
 
     public static int removePrivateDiff(int diff) {

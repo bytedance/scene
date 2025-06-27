@@ -2126,7 +2126,18 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
                     throw new SceneInternalException("Impossible, Scene don't implement ActivityCompatibleBehavior but have configChanges " + scene.toString());
                 }
             } else {
-                LoggerManager.getInstance().i(TAG, "Configuration has been changed, recreate " + scene.toString());
+                if (TextUtils.isEmpty(diffString)) {
+                    LoggerManager.getInstance().i(TAG, "Configuration has been changed, skip because unknown diff " + diff);
+                    if (scene instanceof ActivityCompatibleBehavior) {
+                        ((ActivityCompatibleBehavior) scene).onConfigurationChanged(newConfig);
+                        record.saveActivityCompatibleInfo(newConfig);
+                        return false;
+                    } else {
+                        throw new SceneInternalException("Impossible, Scene don't implement ActivityCompatibleBehavior but have configChanges " + scene.toString());
+                    }
+                } else {
+                    LoggerManager.getInstance().i(TAG, "Configuration has been changed, recreate " + scene.toString());
+                }
             }
         } else {
             LoggerManager.getInstance().i(TAG, "Scene previous Configuration not found, recreate " + scene.toString());
