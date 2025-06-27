@@ -8,6 +8,7 @@ import androidx.annotation.RestrictTo;
 
 import com.bytedance.scene.Scene;
 import com.bytedance.scene.interfaces.ActivityCompatibleBehavior;
+import com.bytedance.scene.utlity.SceneInstanceUtility;
 import com.bytedance.scene.utlity.ThreadUtility;
 
 import java.util.WeakHashMap;
@@ -49,6 +50,11 @@ public class ActivityCompatibleInfoCollector {
         if (!isTargetSceneType(scene)) {
             throw new NullPointerException("Scene must implement ActivityCompatibleBehavior");
         }
+
+        if (!SceneInstanceUtility.isConstructorMethodSupportRestore(scene)) {
+            throw new IllegalArgumentException("Scene " + scene.getClass().getName() + " must be a public class or public static class, " + "and have only one parameterless constructor to be properly recreated to support Configuration changed.");
+        }
+
         ThreadUtility.checkUIThread();
         Holder holder = sSceneHolderWeakHashMap.get(scene);
         if (holder == null) {

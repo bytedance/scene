@@ -38,7 +38,12 @@ public class PopResumeOperation implements Operation {
 
     @Override
     public void execute(Runnable operationEndAction) {
-        final Scene dstScene = returnRecord.mScene;
+        Scene dstScene = returnRecord.mScene;
+        boolean recreated = mManagerAbility.dispatchOnConfigurationChangedToRecord(returnRecord, dstScene);
+        if (recreated) {
+            //new scene instance is created
+            dstScene = returnRecord.mScene;
+        }
         final State dstState = mNavigationScene.getState();
 
         if (afterOnActivityCreatedAction != null) {
@@ -70,6 +75,7 @@ public class PopResumeOperation implements Operation {
          * In case of multiple translucent overlays of an opaque Scene,
          * after returning, it is necessary to set the previous translucent Scene to STARTED
          */
+        //TODO other visible scenes should also deal with onConfigurationChanged
         if (returnRecord.mIsTranslucent) {
             final List<Record> currentRecordList = mManagerAbility.getCurrentRecordList();
             if (currentRecordList.size() > 1) {

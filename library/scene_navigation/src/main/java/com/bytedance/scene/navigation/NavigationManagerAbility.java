@@ -73,4 +73,6 @@ public interface NavigationManagerAbility {
             @Nullable Function<Scene, Void> preSceneOnStartAction,
             @Nullable Runnable endAction
     );
+
+    boolean dispatchOnConfigurationChangedToRecord(Record record, Scene scene);
 }

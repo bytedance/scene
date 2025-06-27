@@ -55,6 +55,7 @@ import com.bytedance.scene.queue.NavigationMessageQueue;
 import com.bytedance.scene.queue.NavigationRunnable;
 import com.bytedance.scene.utlity.AnimatorUtility;
 import com.bytedance.scene.utlity.CancellationSignalList;
+import com.bytedance.scene.utlity.ConfigurationUtility;
 import com.bytedance.scene.utlity.NavigationSceneViewUtility;
 import com.bytedance.scene.utlity.NonNullPair;
 import com.bytedance.scene.utlity.Predicate;
@@ -970,7 +971,13 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
                 }
             }
 
-            final Scene dstScene = returnRecord.mScene;
+            Scene dstScene = returnRecord.mScene;
+            boolean recreated = dispatchOnConfigurationChangedToRecord(returnRecord, dstScene);
+            if (recreated) {
+                //new scene instance is created
+                dstScene = returnRecord.mScene;
+            }
+
             final boolean isNavigationSceneInAnimationState = mNavigationScene.getState().value >= State.STARTED.value;
             final State dstState = mNavigationScene.getState();
 
@@ -1002,6 +1009,7 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
              * In case of multiple translucent overlays of an opaque Scene,
              * after returning, it is necessary to set the previous translucent Scene to STARTED
              */
+            //TODO other visible scenes should also deal with onConfigurationChanged
             if (returnRecord.mIsTranslucent) {
                 final List<Record> currentRecordList = mBackStackList.getCurrentRecordList();
                 if (currentRecordList.size() > 1) {
@@ -2036,49 +2044,54 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
 
     //this is a temporary simple version, just recreate all Scenes which has view
     //TODO only recreate visible Scenes, other Scenes should only be recreated once it is visible
+    //TODO dispatch to other visible Scenes
     @Override
     public void onConfigurationChanged(@NonNull Configuration newConfig) {
         LoggerManager.getInstance().i(TAG, "onConfigurationChanged");
         executePendingOperation();//make sure all pending operations have finished
         this.mActivityConfiguration = new Configuration(newConfig);
 
-        List<Record> recordList = this.mBackStackList.getCurrentRecordList();
-        for (int i = recordList.size() - 1; i >= 0; i--) {
-            Record record = recordList.get(i);
-            Scene scene = record.mScene;
-            if (scene.getView() != null) {
-                ActivityCompatibleInfoCollector.Holder holder = ActivityCompatibleInfoCollector.getHolder(scene);
-                if (holder == null) {
-                    //skip, default behavior, nothing will happen
-                    continue;
-                }
-                Integer configChanges = holder.configChanges;
-                if (holder.configChanges == null) {
-                    //skip, default behavior, nothing will happen
-                    continue;
-                }
-                if (newConfig.equals(record.mConfiguration)) {
-                    continue;
-                }
-                if (record.mConfiguration != null) {
-                    Configuration sceneConfiguration = record.mConfiguration;
-                    int diff = sceneConfiguration.diff(newConfig);
-                    if ((diff & configChanges) != 0) {
-                        LoggerManager.getInstance().i(TAG, "Configuration has been changed, Scene has suitable configChanges, so dispatch onConfigurationChanged to " + scene.toString());
-                        if (scene instanceof ActivityCompatibleBehavior) {
-                            ((ActivityCompatibleBehavior) scene).onConfigurationChanged(newConfig);
-                            record.saveActivityCompatibleInfo(newConfig);
-                            continue;
-                        }
-                    } else {
-                        LoggerManager.getInstance().i(TAG, "Configuration has been changed, recreate " + scene.toString());
-                    }
-                } else {
-                    LoggerManager.getInstance().i(TAG, "Scene previous Configuration not found, recreate " + scene.toString());
-                }
-                recreate(record.mScene);
-            }
+        Record record = this.mBackStackList.getCurrentRecord();
+        Scene scene = record.mScene;
+        if (scene.getView() == null) {
+            return;
         }
+        ActivityCompatibleInfoCollector.Holder holder = ActivityCompatibleInfoCollector.getHolder(scene);
+        if (holder == null) {
+            //skip, default behavior, nothing will happen
+            return;
+        }
+        Integer configChanges = holder.configChanges;
+        if (holder.configChanges == null) {
+            //skip, default behavior, nothing will happen
+            return;
+        }
+        if (newConfig.equals(record.mConfiguration)) {
+            return;
+        }
+        if (record.mConfiguration != null) {
+            Configuration sceneConfiguration = record.mConfiguration;
+            int diff = sceneConfiguration.diff(newConfig);
+            //remove private diff properties
+            diff = ConfigurationUtility.removePrivateDiff(diff);
+
+            String diffString = ConfigurationUtility.configurationDiffToString(diff);
+            LoggerManager.getInstance().i(TAG, "Configuration has been changed, diff " + diffString);
+
+            if ((diff & configChanges) != 0) {
+                LoggerManager.getInstance().i(TAG, "Configuration has been changed, Scene has suitable configChanges, so dispatch onConfigurationChanged to " + scene.toString());
+                if (scene instanceof ActivityCompatibleBehavior) {
+                    ((ActivityCompatibleBehavior) scene).onConfigurationChanged(newConfig);
+                    record.saveActivityCompatibleInfo(newConfig);
+                    return;
+                }
+            } else {
+                LoggerManager.getInstance().i(TAG, "Configuration has been changed, recreate " + scene.toString());
+            }
+        } else {
+            LoggerManager.getInstance().i(TAG, "Scene previous Configuration not found, recreate " + scene.toString());
+        }
+        recreate(record.mScene);
     }
 
     @Override
@@ -2089,6 +2102,54 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
         } else {
             record.saveActivityCompatibleInfo();
         }
+    }
+
+    //make sure Scene has invoked onActivityCreated, then dispatch onConfigurationChanged, finally invoke onStart onResume
+    public boolean dispatchOnConfigurationChangedToRecord(Record record, Scene scene) {
+        Configuration newConfig = this.mActivityConfiguration;
+        if (newConfig == null) {
+            return false;
+        }
+        if (scene.getView() == null) {
+            return false;
+        }
+        ActivityCompatibleInfoCollector.Holder holder = ActivityCompatibleInfoCollector.getHolder(scene);
+        if (holder == null) {
+            //skip, default behavior, nothing will happen
+            return false;
+        }
+        Integer configChanges = holder.configChanges;
+        if (holder.configChanges == null) {
+            //skip, default behavior, nothing will happen
+            return false;
+        }
+        if (newConfig.equals(record.mConfiguration)) {
+            return false;
+        }
+        if (record.mConfiguration != null) {
+            Configuration sceneConfiguration = record.mConfiguration;
+            int diff = sceneConfiguration.diff(newConfig);
+            //remove private diff properties
+            diff = ConfigurationUtility.removePrivateDiff(diff);
+
+            String diffString = ConfigurationUtility.configurationDiffToString(diff);
+            LoggerManager.getInstance().i(TAG, "Configuration has been changed, diff " + diffString);
+
+            if ((diff & configChanges) != 0) {
+                LoggerManager.getInstance().i(TAG, "Configuration has been changed, Scene has suitable configChanges, so dispatch onConfigurationChanged to " + scene.toString());
+                if (scene instanceof ActivityCompatibleBehavior) {
+                    ((ActivityCompatibleBehavior) scene).onConfigurationChanged(newConfig);
+                    record.saveActivityCompatibleInfo(newConfig);
+                    return false;
+                }
+            } else {
+                LoggerManager.getInstance().i(TAG, "Configuration has been changed, recreate " + scene.toString());
+            }
+        } else {
+            LoggerManager.getInstance().i(TAG, "Scene previous Configuration not found, recreate " + scene.toString());
+        }
+        new RecreateOperation(scene).execute(null);
+        return true;
     }
 
     @Override

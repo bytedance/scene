@@ -1,5 +1,6 @@
 package com.bytedance.scenedemo.other
 
+import android.content.res.Configuration
 import android.os.Bundle
 import android.widget.FrameLayout
 import androidx.appcompat.app.AppCompatActivity
@@ -125,5 +126,10 @@ class SAFActivity : AppCompatActivity() {
 
     protected fun dispatchSceneActivityCreated(savedInstanceState: Bundle?) {
         sceneLifecycleDispatcher?.onActivityCreated(this, savedInstanceState)
+    }
+
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+        navigationScene?.onConfigurationChanged(newConfig)
     }
 }

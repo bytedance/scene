@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.ScrollView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatDelegate
 import com.bytedance.scene.Scene
 import com.bytedance.scene.interfaces.ActivityCompatibleBehavior
@@ -30,9 +31,10 @@ class RecreateUsageDemoScene : Scene(),
 
     var isNightMode = false
 
+    //uiMode 的变化通常伴随着 screenSize 变化
     init {
         activityAttributes {
-            configChanges = ActivityInfo.CONFIG_UI_MODE
+            configChanges = ActivityInfo.CONFIG_UI_MODE or ActivityInfo.CONFIG_SCREEN_SIZE
         }
     }
 
@@ -103,6 +105,11 @@ class RecreateUsageDemoScene : Scene(),
 
     override fun onConfigurationChanged(newConfig: Configuration) {
         Log.i("onConfigurationChanged", this.toString() + " $newConfig")
+        Toast.makeText(
+            requireActivity(),
+            "uiMode ${newConfig.uiMode}, orientation ${newConfig.orientation}",
+            Toast.LENGTH_SHORT
+        ).show()
     }
 
     override fun onNewIntent(arguments: Bundle?) {

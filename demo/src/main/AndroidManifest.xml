@@ -34,7 +34,7 @@
         <activity android:name=".migrate.GroupSceneBindToActivitySample" />
         <activity android:name=".migrate.GroupSceneBindToFragmentSample"/>
         <activity android:name=".auto_recycle.AutoRecycleActivity" />
-        <activity android:name=".other.SAFActivity"/>
+        <activity android:name=".other.SAFActivity" android:configChanges="orientation|screenSize|keyboardHidden|uiMode"/>
     </application>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
