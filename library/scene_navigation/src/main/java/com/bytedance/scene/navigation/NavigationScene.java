@@ -64,6 +64,7 @@ import com.bytedance.scene.interfaces.PushOptions;
 import com.bytedance.scene.logger.LoggerManager;
 import com.bytedance.scene.queue.NavigationMessageQueue;
 import com.bytedance.scene.queue.NavigationRunnable;
+import com.bytedance.scene.utlity.AnimatorUtility;
 import com.bytedance.scene.utlity.DispatchWindowInsetsListener;
 import com.bytedance.scene.utlity.Experimental;
 import com.bytedance.scene.utlity.MemoryMonitor;
@@ -74,6 +75,7 @@ import com.bytedance.scene.utlity.SoftInputUtility;
 import com.bytedance.scene.utlity.ThreadUtility;
 import com.bytedance.scene.utlity.Utility;
 import com.bytedance.scene.view.AnimationContainerLayout;
+import com.bytedance.scene.view.BlockGestureView;
 import com.bytedance.scene.view.NavigationFrameLayout;
 
 import java.util.ArrayList;
@@ -128,6 +130,7 @@ public final class NavigationScene extends Scene implements NavigationListener, 
     INavigationManager mNavigationSceneManager;
     private FrameLayout mSceneContainer;
     private FrameLayout mAnimationContainer;
+    private BlockGestureView mBlockGestureView;
     private FrameLayout mOutsideView = null;
     private boolean mViewOwnedByOutside = false;
     private final Handler mHandler = new Handler(Looper.getMainLooper());
@@ -572,6 +575,21 @@ public final class NavigationScene extends Scene implements NavigationListener, 
     }
 
     public void requestDisableTouchEvent(boolean disable) {
+        if (this.mBlockGestureView == null && disable && this.mNavigationSceneOptions.getUseExtraViewToBlockGesture()) {
+            this.mBlockGestureView = new BlockGestureView(requireSceneContext());
+            this.mSceneContainer.addView(this.mBlockGestureView, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        }
+
+        if (this.mBlockGestureView != null) {
+            if (disable) {
+                this.mBlockGestureView.setVisibility(View.VISIBLE);
+                AnimatorUtility.adjustBlockGestureViewIndex(this.mBlockGestureView, true);
+            } else {
+                this.mBlockGestureView.setVisibility(View.GONE);
+                AnimatorUtility.adjustBlockGestureViewIndex(this.mBlockGestureView, false);
+            }
+        }
+
         if (this.mNavigationSceneOptions.getOptimizedViewLayer()) {
             LoggerManager.getInstance().v(TAG, "optimizedViewLayer don't support requestDisableTouchEvent");
             return;

@@ -100,6 +100,14 @@ public class AnimatorUtility {
         }
     }
 
+    public static void adjustBlockGestureViewIndex(View blockGestureView, boolean front) {
+        if (front) {
+            bringToFrontIfNeeded(blockGestureView);
+        } else {
+            sendToBackIfNeeded(blockGestureView);
+        }
+    }
+
     public static class AnimatorInfo {
         public final float translationX;
         public final float translationY;

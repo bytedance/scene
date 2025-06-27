@@ -43,6 +43,7 @@ public class NavigationSceneOptions {
     private static final String EXTRA_OPTIMIZED_VIEW_LAYER = "extra_optimizedViewLayer";
     private static final String EXTRA_REUSE_OUTSIDE_VIEW = "extra_reuseOutsideView";
     private static final String EXTRA_ONLY_DISPATCH_TO_TOP_SCENE_WINDOW_INSETS = "extra_onlyDispatchToTopSceneWindowInsets";
+    private static final String EXTRA_USE_EXTRA_VIEW_TO_BLOCK_GESTURE = "extra_useExtraViewToBlockGesture";
 
     @NonNull
     private final String mRootSceneClassName;
@@ -63,6 +64,7 @@ public class NavigationSceneOptions {
     private boolean mOptimizedViewLayer = false;
     private boolean mReuseOutsideView = false;
     private boolean mOnlyDispatchToTopSceneWindowInsets = false;
+    private boolean mUseExtraViewToBlockGesture = false;
 
     public NavigationSceneOptions(@NonNull Class<? extends Scene> rootSceneClazz, @Nullable Bundle rootSceneArguments) {
         if (rootSceneClazz.isAssignableFrom(NavigationScene.class)) {
@@ -173,6 +175,12 @@ public class NavigationSceneOptions {
     }
 
     @NonNull
+    public NavigationSceneOptions setUseExtraViewToBlockGesture(boolean useExtraViewToBlockGesture) {
+        this.mUseExtraViewToBlockGesture = useExtraViewToBlockGesture;
+        return this;
+    }
+
+    @NonNull
     public String getRootSceneClassName() {
         return this.mRootSceneClassName;
     }
@@ -238,6 +246,10 @@ public class NavigationSceneOptions {
         return this.mOnlyDispatchToTopSceneWindowInsets;
     }
 
+    public boolean getUseExtraViewToBlockGesture() {
+        return this.mUseExtraViewToBlockGesture;
+    }
+
     /**
      * @hide
      */
@@ -264,6 +276,7 @@ public class NavigationSceneOptions {
         navigationSceneOptions.mOptimizedViewLayer = bundle.getBoolean(EXTRA_OPTIMIZED_VIEW_LAYER, false);
         navigationSceneOptions.mReuseOutsideView = bundle.getBoolean(EXTRA_REUSE_OUTSIDE_VIEW, false);
         navigationSceneOptions.mOnlyDispatchToTopSceneWindowInsets = bundle.getBoolean(EXTRA_ONLY_DISPATCH_TO_TOP_SCENE_WINDOW_INSETS, false);
+        navigationSceneOptions.mUseExtraViewToBlockGesture = bundle.getBoolean(EXTRA_USE_EXTRA_VIEW_TO_BLOCK_GESTURE, false);
         return navigationSceneOptions;
     }
 
@@ -289,6 +302,7 @@ public class NavigationSceneOptions {
         bundle.putBoolean(EXTRA_OPTIMIZED_VIEW_LAYER, mOptimizedViewLayer);
         bundle.putBoolean(EXTRA_REUSE_OUTSIDE_VIEW, mReuseOutsideView);
         bundle.putBoolean(EXTRA_ONLY_DISPATCH_TO_TOP_SCENE_WINDOW_INSETS, mOnlyDispatchToTopSceneWindowInsets);
+        bundle.putBoolean(EXTRA_USE_EXTRA_VIEW_TO_BLOCK_GESTURE, mUseExtraViewToBlockGesture);
         return bundle;
     }
 }
