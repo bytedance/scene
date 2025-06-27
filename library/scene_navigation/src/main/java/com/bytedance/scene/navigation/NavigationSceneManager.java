@@ -30,6 +30,7 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RestrictTo;
+import androidx.core.util.Pair;
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleOwner;
 
@@ -1611,7 +1612,7 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
             }
 
             if (this.mLaunchModeBehavior != null) {
-                final List<Scene> previousSceneList = getCurrentSceneList();
+                final List<Pair<Scene, Bundle>> previousSceneList = getCurrentSceneAndArgumentsList();
                 boolean isIntercepted = this.mLaunchModeBehavior.onInterceptPushOperation(previousSceneList);
                 if (isIntercepted) {
                     int popSceneCount = this.mLaunchModeBehavior.getPopSceneCount();
@@ -1956,6 +1957,20 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
     @Override
     public List<Record> getCurrentRecordList() {
         return this.mBackStackList.getCurrentRecordList();
+    }
+
+    public List<Pair<Scene, Bundle>> getCurrentSceneAndArgumentsList() {
+        List<Pair<Scene, Bundle>> list = new ArrayList<>();
+        List<Record> previousRecordList = getCurrentRecordList();
+        for (int i = 0; i < previousRecordList.size(); i++) {
+            Record tmpRecord = previousRecordList.get(i);
+            Bundle tmpBundle = tmpRecord.mScene.getArguments();
+            if (tmpBundle == null && tmpRecord.mPreviousSavedState != null) {
+                tmpBundle = tmpRecord.mPreviousSavedState.getBundle(ParcelConstants.KEY_SCENE_ARGUMENT);
+            }
+            list.add(Pair.create(tmpRecord.mScene, tmpBundle));
+        }
+        return list;
     }
 
     @Override

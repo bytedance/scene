@@ -3,6 +3,7 @@ package com.bytedance.scene.navigation.push;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.core.util.Pair;
 
 import com.bytedance.scene.Scene;
 import com.bytedance.scene.SceneTrace;
@@ -79,7 +80,7 @@ public class CoordinatePushOptionOperation implements Operation {
 
         //for launchMode
         if (this.mLaunchModeBehavior != null) {
-            final List<Scene> previousSceneList = mManagerAbility.getCurrentSceneList();
+            final List<Pair<Scene, Bundle>> previousSceneList = mManagerAbility.getCurrentSceneAndArgumentsList();
             boolean isIntercepted = this.mLaunchModeBehavior.onInterceptPushOperation(previousSceneList);
             if (isIntercepted) {
                 int popSceneCount = this.mLaunchModeBehavior.getPopSceneCount();

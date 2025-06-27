@@ -4,6 +4,7 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.util.Pair;
 
 import com.bytedance.scene.Scene;
 import com.bytedance.scene.interfaces.ActivityCompatibleBehavior;
@@ -22,7 +23,7 @@ public final class SingleTopLaunchModeBehavior implements LaunchModeBehavior {
     public SingleTopLaunchModeBehavior(@NonNull final Class targetClass) {
         this.mTargetSceneFinder = new TargetSceneFinder() {
             @Override
-            public boolean isTargetScene(@NonNull Scene scene) {
+            public boolean isTargetScene(@NonNull Scene scene, @Nullable Bundle arguments) {
                 return scene.getClass() == targetClass;
             }
         };
@@ -33,11 +34,12 @@ public final class SingleTopLaunchModeBehavior implements LaunchModeBehavior {
     }
 
     @Override
-    public boolean onInterceptPushOperation(@NonNull List<Scene> sceneList) {
+    public boolean onInterceptPushOperation(@NonNull List<Pair<Scene,Bundle>> sceneList) {
         if (sceneList.size() <= 0) {
             return false;
         }
-        return this.mTargetSceneFinder.isTargetScene(sceneList.get(sceneList.size() - 1));
+        Pair<Scene, Bundle> pair = sceneList.get(sceneList.size() - 1);
+        return this.mTargetSceneFinder.isTargetScene(pair.first, pair.second);
     }
 
     @Override

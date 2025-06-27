@@ -7,6 +7,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RestrictTo;
+import androidx.core.util.Pair;
 
 import com.bytedance.scene.Scene;
 import com.bytedance.scene.State;
@@ -30,6 +31,8 @@ public interface NavigationManagerAbility {
     boolean containsRecord(Record record);
 
     List<Record> getCurrentRecordList();
+
+    List<Pair<Scene, Bundle>> getCurrentSceneAndArgumentsList();
 
     List<Scene> getCurrentSceneList();
 
