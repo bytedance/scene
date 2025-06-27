@@ -45,14 +45,16 @@ public class PushOptions {
     private final Predicate<Scene> mRemovePredicate;
     private final boolean mUsePost;
     private final boolean mUsePostWhenPause;
+    private final boolean mUseIdleWhenStop;
     private final LaunchMode mLaunchMode;
     private final LaunchModeBehavior mLaunchModeBehavior;
 
-    private PushOptions(Predicate<Scene> removePredicate, boolean isTranslucent, boolean usePost, boolean usePostWhenPause, PushResultCallback pushResultCallback, NavigationAnimationExecutor navigationAnimationExecutor, LaunchMode launchMode, LaunchModeBehavior launchModeBehavior) {
+    private PushOptions(Predicate<Scene> removePredicate, boolean isTranslucent, boolean usePost, boolean usePostWhenPause, boolean useIdleWhenStop, PushResultCallback pushResultCallback, NavigationAnimationExecutor navigationAnimationExecutor, LaunchMode launchMode, LaunchModeBehavior launchModeBehavior) {
         this.mRemovePredicate = removePredicate;
         this.mIsTranslucent = isTranslucent;
         this.mUsePost = usePost;
         this.mUsePostWhenPause = usePostWhenPause;
+        this.mUseIdleWhenStop = useIdleWhenStop;
         this.mPushResultCallback = pushResultCallback;
         this.mNavigationAnimationExecutor = navigationAnimationExecutor;
         this.mLaunchMode = launchMode;
@@ -73,6 +75,10 @@ public class PushOptions {
 
     public boolean isUsePostWhenPause() {
         return this.mUsePostWhenPause;
+    }
+
+    public boolean isUseIdleWhenStop() {
+        return this.mUseIdleWhenStop;
     }
 
     public NavigationAnimationExecutor getNavigationAnimationFactory() {
@@ -122,6 +128,7 @@ public class PushOptions {
         private Predicate<Scene> mRemovePredicate;
         private boolean mUsePost;
         private boolean mUsePostWhenPause = false;
+        private boolean mUseIdleWhenStop = false;
         private LaunchMode mLaunchMode;
         private LaunchModeBehavior mLaunchModeBehavior;
 
@@ -149,6 +156,12 @@ public class PushOptions {
         @NonNull
         public Builder setUsePostWhenPause(boolean usePostWhenPause) {
             this.mUsePostWhenPause = usePostWhenPause;
+            return this;
+        }
+
+        @NonNull
+        public Builder setUseIdleWhenStop(boolean useIdleWhenStop) {
+            this.mUseIdleWhenStop = useIdleWhenStop;
             return this;
         }
 
@@ -202,7 +215,7 @@ public class PushOptions {
 
         @NonNull
         public PushOptions build() {
-            return new PushOptions(this.mRemovePredicate, this.mIsTranslucent, this.mUsePost, this.mUsePostWhenPause, this.mPushResultCallback, this.mNavigationAnimationExecutor, this.mLaunchMode, this.mLaunchModeBehavior);
+            return new PushOptions(this.mRemovePredicate, this.mIsTranslucent, this.mUsePost, this.mUsePostWhenPause, this.mUseIdleWhenStop, this.mPushResultCallback, this.mNavigationAnimationExecutor, this.mLaunchMode, this.mLaunchModeBehavior);
         }
     }
 

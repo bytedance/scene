@@ -1,7 +1,26 @@
+/*
+ * Copyright (C) 2019 ByteDance Inc
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.bytedance.scene.queue;
+
+import static androidx.annotation.RestrictTo.Scope.LIBRARY;
 
 import android.os.Handler;
 import android.os.Looper;
+
+import androidx.annotation.RestrictTo;
 
 import com.bytedance.scene.logger.LoggerManager;
 import com.bytedance.scene.utlity.SceneInternalException;
@@ -26,21 +45,48 @@ import java.util.LinkedList;
  *
  * 其实 postAsyncAtHead 还是有点危险的
  */
+
+/**
+ * @hide
+ */
+@RestrictTo(LIBRARY)
 public class NavigationMessageQueue {
     private static final String TAG = "NavigationMessageQueue";
     private final Handler mHandler = new Handler(Looper.getMainLooper());
     private final LinkedList<NavigationRunnable> mPendingTask = new LinkedList<>();
     private boolean mIsRunningPostSync = false;
+    private IdleRunnable mIdleRunnable = null;
 
     public void postAsync(final NavigationRunnable runnable) {
         ThreadUtility.checkUIThread();
+        this.forceExecuteIdleTask();
         this.mPendingTask.add(runnable);
         this.mHandler.post(this.mSceneNavigationTask);
     }
 
     public void postAsyncAtHead(final NavigationRunnable runnable) {
+        this.forceExecuteIdleTask();
         this.mPendingTask.add(0, runnable);
         this.mHandler.post(this.mSceneNavigationTask);
+    }
+
+    private void forceExecuteIdleTask(){
+        if (this.mIdleRunnable != null && this.mIdleRunnable.hasStarted()) {
+            this.mIdleRunnable.forceExecute();
+            this.mIdleRunnable = null;
+        }
+    }
+
+    public void executeWhenIdleOrTimeLimit(final NavigationRunnable runnable, long timeOutMillis) {
+        this.forceExecuteIdleTask();
+
+        if (this.mIdleRunnable != null) {
+            throw new SceneInternalException("mIdleRunnable should be null");
+        }
+
+        this.mPendingTask.add(0, runnable);
+        this.mIdleRunnable = new IdleRunnable(this.mHandler, this.mSceneNavigationTask, timeOutMillis);
+        this.mIdleRunnable.start();
     }
 
     private final SceneMainRunnable mSceneNavigationTask = new SceneMainRunnable() {
@@ -79,6 +125,10 @@ public class NavigationMessageQueue {
             }
 
             this.mHandler.removeCallbacks(this.mSceneNavigationTask);
+            if (this.mIdleRunnable != null) {
+                this.mIdleRunnable.cancel();
+                this.mIdleRunnable = null;
+            }
 
             //then execute this task
             LoggerManager.getInstance().i(TAG, "run loop current task " + runnable.toString());

@@ -21,6 +21,7 @@ import com.bytedance.scene.queue.NavigationMessageQueue;
 import com.bytedance.scene.queue.NavigationRunnable;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by jiangqi on 2023/11/13
@@ -149,7 +150,11 @@ public class CoordinatePushOptionOperation implements Operation {
                 mManagerAbility.executeOperationSafely(createAndResumeNewSceneOperation, new Runnable() {
                     @Override
                     public void run() {
-                        mMessageQueue.postAsyncAtHead(stopPreviousSceneTask);
+                        if (mPushOptions.isUseIdleWhenStop()) {
+                            mMessageQueue.executeWhenIdleOrTimeLimit(stopPreviousSceneTask, TimeUnit.SECONDS.toMillis(10));
+                        } else {
+                            mMessageQueue.postAsyncAtHead(stopPreviousSceneTask);
+                        }
                     }
                 });
                 mManagerAbility.endSuppressStackOperation(suppressTag);
