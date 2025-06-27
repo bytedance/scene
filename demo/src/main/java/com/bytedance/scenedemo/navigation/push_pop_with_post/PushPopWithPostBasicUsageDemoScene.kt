@@ -1,10 +1,12 @@
 package com.bytedance.scenedemo.navigation.push_pop_with_post
 
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowInsetsController
 import android.widget.LinearLayout
 import android.widget.ScrollView
 import com.bytedance.scene.Scene
@@ -57,7 +59,7 @@ class PushPopWithPostBasicUsageDemoScene : Scene() {
         })
 
         addButton(layout, "Back", View.OnClickListener {
-            requireNavigationScene().pop(PopOptions.Builder().setUsePost(true).build())
+            requireNavigationScene().pop(PopOptions.Builder().setUsePost(true).setUseIdleWhenStop(true).build())
         })
 
         addSpace(layout, 100)
@@ -76,6 +78,13 @@ class PushPopWithPostBasicUsageDemoScene : Scene() {
         post(Runnable {
             Log.i("Lifecycle",this.toString() + " $value onActivityCreated by Post")
         })
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            requireActivity().window.insetsController?.setSystemBarsAppearance(
+                WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS,
+                WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS
+            )
+        }
     }
 
     override fun onDestroyView() {

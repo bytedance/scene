@@ -22,6 +22,7 @@ import android.os.Parcelable;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowInsetsController;
+import android.view.WindowManager;
 
 /**
  * Created by JiangQi on 7/30/18.
@@ -121,7 +122,10 @@ class ActivityStatusRecord implements Parcelable {
         window.clearFlags(addFlags);
 
         activity.setRequestedOrientation(mRequestedOrientation);
+        restoreSystemBarsAppearance(window);
+    }
 
+    private void restoreSystemBarsAppearance(Window window) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             int restoredSystemBarsAppearance = mSystemBarsAppearance;
             if (restoredSystemBarsAppearance != -1) {
@@ -147,5 +151,81 @@ class ActivityStatusRecord implements Parcelable {
                 }
             }
         }
+    }
+
+    public void restoreStatusBarNavigationBar(Activity activity){
+        Window window = activity.getWindow();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            window.setStatusBarColor(mStatusBarColor);
+            window.setNavigationBarColor(mNavigationBarColor);
+        }
+
+        View decorView = window.getDecorView();
+        int currentSystemUiVisibility = decorView.getSystemUiVisibility();
+        int cachedSystemUiVisibility = mSystemUiVisibility;
+
+        //some Android versions use SystemUiVisibility to modify StatusBar&NavigationBar icon color
+        if (currentSystemUiVisibility != cachedSystemUiVisibility) {
+            if ((currentSystemUiVisibility & View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR) != (cachedSystemUiVisibility & View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR)) {
+                if ((currentSystemUiVisibility & View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR) != 0) {
+                    unsetSystemUiFlag(decorView, View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+                } else {
+                    setSystemUiFlag(decorView, View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+                }
+            }
+            if ((currentSystemUiVisibility & View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR) != (cachedSystemUiVisibility & View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR)) {
+                if ((currentSystemUiVisibility & View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR) != 0) {
+                    unsetSystemUiFlag(decorView, View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR);
+                } else {
+                    setSystemUiFlag(decorView, View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR);
+                }
+            }
+        }
+
+        int currentFlags = window.getAttributes().flags;
+        int previousFlags = mWindowFlags;
+        if (currentFlags != previousFlags) {
+            if ((currentFlags & WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS) != (previousFlags & WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)) {
+                if ((currentFlags & WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS) == WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS) {
+                    unsetWindowFlag(window, WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+                } else {
+                    setWindowFlag(window, WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+                }
+            }
+
+            if ((currentFlags & WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION) != (previousFlags & WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION)) {
+                if ((currentFlags & WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION) == WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION) {
+                    unsetWindowFlag(window, WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
+                } else {
+                    setWindowFlag(window, WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
+                }
+            }
+
+            if ((currentFlags & WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS) != (previousFlags & WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)) {
+                if ((currentFlags & WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS) == WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS) {
+                    unsetWindowFlag(window, WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+                } else {
+                    setWindowFlag(window, WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+                }
+            }
+        }
+
+        restoreSystemBarsAppearance(window);
+    }
+
+    private void setSystemUiFlag(View decorView, int systemUiFlag) {
+        decorView.setSystemUiVisibility(decorView.getSystemUiVisibility() | systemUiFlag);
+    }
+
+    private void unsetSystemUiFlag(View decorView, int systemUiFlag) {
+        decorView.setSystemUiVisibility(decorView.getSystemUiVisibility() & ~systemUiFlag);
+    }
+
+    private void setWindowFlag(Window window, int windowFlag) {
+        window.addFlags(windowFlag);
+    }
+
+    private void unsetWindowFlag(Window window, int windowFlag) {
+        window.clearFlags(windowFlag);
     }
 }

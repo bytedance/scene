@@ -20,10 +20,13 @@ import static androidx.annotation.RestrictTo.Scope.LIBRARY;
 import android.os.Handler;
 import android.os.Looper;
 
+import androidx.annotation.Nullable;
 import androidx.annotation.RestrictTo;
 
 import com.bytedance.scene.logger.LoggerManager;
+import com.bytedance.scene.utlity.CancellationSignal;
 import com.bytedance.scene.utlity.SceneInternalException;
+import com.bytedance.scene.utlity.TaskStartSignal;
 import com.bytedance.scene.utlity.ThreadUtility;
 
 import java.util.LinkedList;
@@ -70,14 +73,24 @@ public class NavigationMessageQueue {
         this.mHandler.post(this.mSceneNavigationTask);
     }
 
-    private void forceExecuteIdleTask(){
-        if (this.mIdleRunnable != null && this.mIdleRunnable.hasStarted()) {
-            this.mIdleRunnable.forceExecute();
+    private void forceExecuteIdleTask() {
+        while (true) {
+            IdleRunnable tmp = this.mIdleRunnable;
             this.mIdleRunnable = null;
+
+            if (tmp != null && tmp.hasStarted()) {
+                tmp.forceExecute();
+            } else {
+                break;
+            }
         }
     }
 
     public void executeWhenIdleOrTimeLimit(final NavigationRunnable runnable, long timeOutMillis) {
+        this.executeWhenIdleOrTimeLimit(runnable, null, null, timeOutMillis);
+    }
+
+    public void executeWhenIdleOrTimeLimit(final NavigationRunnable runnable, @Nullable TaskStartSignal taskStartSignal, @Nullable CancellationSignal cancellationSignal, long timeOutMillis) {
         this.forceExecuteIdleTask();
 
         if (this.mIdleRunnable != null) {
@@ -85,7 +98,7 @@ public class NavigationMessageQueue {
         }
 
         this.mPendingTask.add(0, runnable);
-        this.mIdleRunnable = new IdleRunnable(this.mHandler, this.mSceneNavigationTask, timeOutMillis);
+        this.mIdleRunnable = new IdleRunnable(this.mHandler, this.mSceneNavigationTask, taskStartSignal, cancellationSignal, timeOutMillis);
         this.mIdleRunnable.start();
     }
 
@@ -113,6 +126,8 @@ public class NavigationMessageQueue {
         this.mIsRunningPostSync = true;
 
         try {
+            forceExecuteIdleTask();
+
             //execute all previous navigation tasks
             while (true) {
                 NavigationRunnable currentTask = this.mPendingTask.poll();
@@ -125,10 +140,6 @@ public class NavigationMessageQueue {
             }
 
             this.mHandler.removeCallbacks(this.mSceneNavigationTask);
-            if (this.mIdleRunnable != null) {
-                this.mIdleRunnable.cancel();
-                this.mIdleRunnable = null;
-            }
 
             //then execute this task
             LoggerManager.getInstance().i(TAG, "run loop current task " + runnable.toString());

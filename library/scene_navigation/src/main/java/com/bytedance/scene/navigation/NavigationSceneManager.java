@@ -526,6 +526,12 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
     }
 
     @Override
+    public void restoreActivityStatusBarNavigationBarStatus(ActivityStatusRecord activityStatusRecord) {
+        Activity activity = mNavigationScene.getActivity();
+        activityStatusRecord.restoreStatusBarNavigationBar(activity);
+    }
+
+    @Override
     public Scene getCurrentScene() {
         Record record = mBackStackList.getCurrentRecord();
         if (record != null) {
