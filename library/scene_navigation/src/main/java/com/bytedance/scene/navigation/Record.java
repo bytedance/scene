@@ -73,6 +73,7 @@ public class Record implements Parcelable {
         mActivityStatusRecord = in.readParcelable(ActivityStatusRecord.class.getClassLoader());
         mIsTranslucent = in.readByte() != 0;
         mSceneClassName = in.readString();
+        in.readParcelable(Configuration.class.getClassLoader()); //for compatibility
         mLastSceneWindowFocused = in.readByte() != 0;
     }
 
@@ -133,6 +134,7 @@ public class Record implements Parcelable {
         dest.writeParcelable(mActivityStatusRecord, flags);
         dest.writeByte((byte) (mIsTranslucent ? 1 : 0));
         dest.writeString(mSceneClassName);
+        dest.writeParcelable(null, flags); //for compatibility
         dest.writeByte((byte) (mLastSceneWindowFocused ? 1 : 0));
     }
 }
