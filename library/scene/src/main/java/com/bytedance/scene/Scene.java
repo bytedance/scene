@@ -57,6 +57,7 @@ import com.bytedance.scene.parcel.ParcelConstants;
 import com.bytedance.scene.utlity.ExceptionsUtility;
 import com.bytedance.scene.utlity.Experimental;
 import com.bytedance.scene.utlity.SceneInternalException;
+import com.bytedance.scene.utlity.ThreadUtility;
 import com.bytedance.scene.utlity.Utility;
 import com.bytedance.scene.utlity.ViewRefUtility;
 import com.bytedance.scene.view.SceneContextThemeWrapper;
@@ -1134,6 +1135,8 @@ public abstract class Scene implements LifecycleOwner, SavedStateRegistryOwner, 
             if (!this.isLifecycleAndSavedStateRegistryEnabled()) {
                 throw new IllegalStateException("Scene disable getLifecycle()");
             } else {
+                //make sure LifecycleRegistry is only created on UI thread
+                ThreadUtility.checkUIThread();
                 this.mLifecycleRegistry = new FixSceneReuseLifecycleAdapter(new LifecycleRegistry(this));
             }
         }
