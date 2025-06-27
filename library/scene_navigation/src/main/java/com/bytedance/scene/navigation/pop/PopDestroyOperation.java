@@ -94,6 +94,7 @@ public class PopDestroyOperation implements Operation {
                     if (mCurrentRecord.mScene instanceof ReuseGroupScene) {
                         mNavigationScene.addToReusePool((ReuseGroupScene) mCurrentRecord.mScene);
                     }
+                    mManagerAbility.notifyNavigationAnimationEnd(mCurrentScene, mReturnRecord.mScene, false);
                     operationEndAction.run();
                 }
             };

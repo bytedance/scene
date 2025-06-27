@@ -1062,6 +1062,7 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
                         if (currentRecord.mScene instanceof ReuseGroupScene) {
                             mNavigationScene.addToReusePool((ReuseGroupScene) currentRecord.mScene);
                         }
+                        notifyNavigationAnimationEnd(currentScene, returnRecord.mScene, false);
                         operationEndAction.run();
                     }
                 };
@@ -1250,6 +1251,7 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
                         if (currentRecord.mScene instanceof ReuseGroupScene) {
                             mNavigationScene.addToReusePool((ReuseGroupScene) currentRecord.mScene);
                         }
+                        notifyNavigationAnimationEnd(currentScene, returnRecord.mScene, false);
                         operationEndAction.run();
                     }
                 };
@@ -1742,6 +1744,7 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
                                 @Override
                                 public void run() {
                                     mCancellationSignalManager.remove(cancellationSignalList);
+                                    notifyNavigationAnimationEnd(finalCurrentScene, scene, true);
                                     operationEndAction.run();
                                 }
                             });
@@ -2252,5 +2255,10 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
             return;
         }
         onSceneResumedWindowFocusChangedToTarget(scene, false);
+    }
+
+    @Override
+    public void notifyNavigationAnimationEnd(@Nullable Scene from, @NonNull Scene to, boolean isPush) {
+        mNavigationScene.notifyNavigationAnimationEnd(from, to, isPush);
     }
 }

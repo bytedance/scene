@@ -90,6 +90,7 @@ public class PushStopOperation implements Operation {
                         @Override
                         public void run() {
                             mManagerAbility.getCancellationSignalManager().remove(cancellationSignalList);
+                            mManagerAbility.notifyNavigationAnimationEnd(finalCurrentScene, topRecord.mScene, true);
                             operationEndAction.run();
                         }
                     });

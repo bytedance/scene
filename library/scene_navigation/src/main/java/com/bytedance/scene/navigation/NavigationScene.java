@@ -140,6 +140,7 @@ public final class NavigationScene extends Scene implements NavigationListener, 
 
     private final List<NavigationListener> mNavigationListenerList = new ArrayList<>();
     private final List<NonNullPair<ChildSceneLifecycleCallbacks, Boolean>> mLifecycleCallbacks = new ArrayList<>();
+    private final List<NavigationAnimationCallback> mNavigationAnimationCallbackList = new ArrayList<>();
 
     @Nullable
     private MemoryMonitor mMemoryMonitor;
@@ -698,6 +699,26 @@ public final class NavigationScene extends Scene implements NavigationListener, 
         List<NavigationListener> listenerList = new ArrayList<>(mNavigationListenerList);
         for (NavigationListener listener : listenerList) {
             listener.navigationChange(from, to, isPush);
+        }
+    }
+
+    public void addNavigationAnimationCallback(@NonNull NavigationAnimationCallback callback) {
+        ThreadUtility.checkUIThread();
+        if (mNavigationAnimationCallbackList.contains(callback)) {
+            throw new IllegalArgumentException("NavigationAnimationCallback already exists");
+        }
+        mNavigationAnimationCallbackList.add(callback);
+    }
+
+    public void removeNavigationAnimationCallback(@NonNull NavigationAnimationCallback callback) {
+        ThreadUtility.checkUIThread();
+        mNavigationAnimationCallbackList.remove(callback);
+    }
+
+    void notifyNavigationAnimationEnd(@Nullable Scene from, @NonNull Scene to, boolean isPush) {
+        List<NavigationAnimationCallback> callbacks = new ArrayList<>(mNavigationAnimationCallbackList);
+        for (NavigationAnimationCallback callback : callbacks) {
+            callback.onAnimationEnd(from, to, isPush);
         }
     }
 

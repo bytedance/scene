@@ -78,4 +78,6 @@ public interface NavigationManagerAbility {
     );
 
     boolean dispatchOnConfigurationChangedToRecord(Record record, Scene scene);
+
+    void notifyNavigationAnimationEnd(@Nullable Scene from, @NonNull Scene to, boolean isPush);
 }
