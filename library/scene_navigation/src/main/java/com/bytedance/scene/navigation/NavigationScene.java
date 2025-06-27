@@ -155,6 +155,7 @@ public final class NavigationScene extends Scene implements NavigationListener, 
     private final boolean mSceneLifecycleCallbackObjectCreationOpt = SceneGlobalConfig.sceneLifecycleCallbackObjectCreationOpt;
     private boolean mWindowFocusChangedInstalled = false;
     private SceneWindowFocusChangedDispatcher mSceneWindowFocusChangedDispatcher = null;
+    private boolean mLifecycleAndSavedStateRegistryEnabled = true;
 
     @MainThread
     public void addNavigationListener(@NonNull final LifecycleOwner lifecycleOwner, @NonNull final NavigationListener listener) {
@@ -272,6 +273,19 @@ public final class NavigationScene extends Scene implements NavigationListener, 
             return threshold > 0 && threshold < 1;
         }
         return false;
+    }
+
+    @Override
+    protected boolean isLifecycleAndSavedStateRegistryEnabled() {
+        return this.mLifecycleAndSavedStateRegistryEnabled;
+    }
+
+    /**
+     * @hide
+     */
+    @RestrictTo(LIBRARY_GROUP)
+    public void setLifecycleAndSavedStateRegistryEnabled(boolean enable) {
+        this.mLifecycleAndSavedStateRegistryEnabled = enable;
     }
 
     private void createRootSceneIfNeeded(boolean usePushRoot) {

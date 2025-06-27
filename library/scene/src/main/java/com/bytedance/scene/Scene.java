@@ -158,7 +158,7 @@ public abstract class Scene implements LifecycleOwner, SavedStateRegistryOwner, 
 
     @StyleRes
     private int mThemeResource;
-    private final FixSceneReuseLifecycleAdapter mLifecycleRegistry = new FixSceneReuseLifecycleAdapter(new LifecycleRegistry(this));
+    private FixSceneReuseLifecycleAdapter mLifecycleRegistry;
     private SavedStateRegistryController mSavedStateRegistryController;
 
     private boolean mIsSeparateCreateFromCreateView = false;
@@ -268,8 +268,11 @@ public abstract class Scene implements LifecycleOwner, SavedStateRegistryOwner, 
     @RestrictTo(LIBRARY_GROUP)
     public void dispatchAttachActivity(@NonNull Activity activity) {
         this.mActivity = activity;
+        if (this.mLifecycleRegistry == null && isLifecycleAndSavedStateRegistryEnabled()) {
+            this.mLifecycleRegistry = new FixSceneReuseLifecycleAdapter(new LifecycleRegistry(this));
+        }
         // Scene need to reset status when reuse after been destroyed
-        if (this.mLifecycleRegistry.getCurrentState() != Lifecycle.State.INITIALIZED) {
+        if (this.mLifecycleRegistry != null && this.mLifecycleRegistry.getCurrentState() != Lifecycle.State.INITIALIZED) {
             this.mLifecycleRegistry.rest();
         }
         //reset other flags
@@ -366,8 +369,10 @@ public abstract class Scene implements LifecycleOwner, SavedStateRegistryOwner, 
         }
 
         mCalled = false;
-        mSavedStateRegistryController = SavedStateRegistryController.create(this);
-        mSavedStateRegistryController.performRestore(savedInstanceState);
+        if (isLifecycleAndSavedStateRegistryEnabled()) {
+            mSavedStateRegistryController = SavedStateRegistryController.create(this);
+            mSavedStateRegistryController.performRestore(savedInstanceState);
+        }
 
         dispatchOnPreSceneCreated(this, savedInstanceState, false);
         onCreate(savedInstanceState);
@@ -479,7 +484,9 @@ public abstract class Scene implements LifecycleOwner, SavedStateRegistryOwner, 
             dispatchViewStateRestored(savedInstanceState);
         }
         setState(State.ACTIVITY_CREATED);
-        mLifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_CREATE);
+        if (this.mLifecycleRegistry != null) {
+            this.mLifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_CREATE);
+        }
     }
 
     /** @hide */
@@ -495,7 +502,9 @@ public abstract class Scene implements LifecycleOwner, SavedStateRegistryOwner, 
         dispatchOnSceneStarted(this, false);
         setState(State.STARTED);
         dispatchVisibleChanged();
-        mLifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_START);
+        if (this.mLifecycleRegistry != null) {
+            this.mLifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_START);
+        }
     }
 
     /** @hide */
@@ -521,13 +530,17 @@ public abstract class Scene implements LifecycleOwner, SavedStateRegistryOwner, 
         }
         dispatchOnSceneResumed(this, false);
         setState(State.RESUMED);
-        mLifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_RESUME);
+        if (this.mLifecycleRegistry != null) {
+            this.mLifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_RESUME);
+        }
     }
 
     /** @hide */
     @RestrictTo(LIBRARY_GROUP)
     public void dispatchPause() {
-        mLifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_PAUSE);
+        if (this.mLifecycleRegistry != null) {
+            this.mLifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_PAUSE);
+        }
         setState(State.STARTED);
         mCalled = false;
         dispatchOnPreScenePaused(this, false);
@@ -549,14 +562,18 @@ public abstract class Scene implements LifecycleOwner, SavedStateRegistryOwner, 
             throw new SuperNotCalledException("Scene " + this
                     + " did not call through to super.onSaveInstanceState()");
         }
-        mSavedStateRegistryController.performSave(outState);
+        if (mSavedStateRegistryController != null) {
+            mSavedStateRegistryController.performSave(outState);
+        }
         dispatchOnSceneSaveInstanceState(this, outState, false);
     }
 
     /** @hide */
     @RestrictTo(LIBRARY_GROUP)
     public void dispatchStop() {
-        mLifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_STOP);
+        if (this.mLifecycleRegistry != null) {
+            this.mLifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_STOP);
+        }
         setState(State.ACTIVITY_CREATED);
         mCalled = false;
         dispatchOnPreSceneStopped(this, false);
@@ -579,7 +596,9 @@ public abstract class Scene implements LifecycleOwner, SavedStateRegistryOwner, 
         }
 
         this.mViewDestroyed = true;
-        mLifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_DESTROY);
+        if (this.mLifecycleRegistry != null) {
+            this.mLifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_DESTROY);
+        }
         if (mIsSeparateCreateFromCreateView) {
             setState(State.CREATED);
         } else {
@@ -1111,7 +1130,24 @@ public abstract class Scene implements LifecycleOwner, SavedStateRegistryOwner, 
     @NonNull
     @Override
     public final Lifecycle getLifecycle() {
-        return mLifecycleRegistry;
+        if (this.mLifecycleRegistry == null) {
+            if (!this.isLifecycleAndSavedStateRegistryEnabled()) {
+                throw new IllegalStateException("Scene disable getLifecycle()");
+            } else {
+                this.mLifecycleRegistry = new FixSceneReuseLifecycleAdapter(new LifecycleRegistry(this));
+            }
+        }
+        return this.mLifecycleRegistry;
+    }
+
+    /**
+     * @hide
+     * Warning, only framework can override this method!
+     */
+    @RestrictTo(LIBRARY_GROUP)
+    @Experimental
+    protected boolean isLifecycleAndSavedStateRegistryEnabled() {
+        return true;
     }
 
     /**
@@ -1178,7 +1214,11 @@ public abstract class Scene implements LifecycleOwner, SavedStateRegistryOwner, 
     @Override
     public final SavedStateRegistry getSavedStateRegistry() {
         if (mSavedStateRegistryController == null) {
-            throw new IllegalStateException("SavedStateRegistry is not created, you can't call before onCreate");
+            if (!this.isLifecycleAndSavedStateRegistryEnabled()) {
+                throw new IllegalStateException("Scene disable SavedStateRegistry");
+            } else {
+                throw new IllegalStateException("SavedStateRegistry is not created, you can't call before onCreate");
+            }
         }
         return mSavedStateRegistryController.getSavedStateRegistry();
     }
