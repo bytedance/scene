@@ -1110,7 +1110,7 @@ public final class NavigationScene extends Scene implements NavigationListener, 
     @Override
     protected LayoutInflater onGetLayoutInflater() {
         if (mNavigationSceneOptions.getUseActivityContextAndLayoutInflater()) {
-            return requireActivity().getLayoutInflater().cloneInContext(requireSceneContext());
+            return requireActivity().getLayoutInflater();
         }
         return super.onGetLayoutInflater();
     }
