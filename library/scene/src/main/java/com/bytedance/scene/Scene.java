@@ -450,11 +450,17 @@ public abstract class Scene implements LifecycleOwner, SavedStateRegistryOwner, 
             }
         }
 
-        ViewTreeLifecycleOwner.set(view, this);
-        ViewTreeViewModelStoreOwner.set(view, this);
-        ViewTreeSavedStateRegistryOwner.set(view, this);
+        if (isLifecycleAndSavedStateRegistryEnabled() && !this.isViewOwnedByOutside()) {
+            ViewTreeLifecycleOwner.set(view, this);
+            ViewTreeSavedStateRegistryOwner.set(view, this);
+        }
+
+        if (!this.isViewOwnedByOutside()) {
+            ViewTreeViewModelStoreOwner.set(view, this);
+            view.setSaveFromParentEnabled(false);
+        }
+
         view.setTag(R.id.bytedance_scene_view_scene_tag, this);
-        view.setSaveFromParentEnabled(false);
         mView = view;
         mCalled = false;
         dispatchOnPreSceneViewCreated(this, savedInstanceState, false);
