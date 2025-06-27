@@ -53,6 +53,7 @@ import androidx.savedstate.SavedStateRegistryController;
 import androidx.savedstate.SavedStateRegistryOwner;
 import androidx.savedstate.ViewTreeSavedStateRegistryOwner;
 
+import com.bytedance.scene.logger.LoggerManager;
 import com.bytedance.scene.parcel.ParcelConstants;
 import com.bytedance.scene.utlity.ExceptionsUtility;
 import com.bytedance.scene.utlity.Experimental;
@@ -340,6 +341,8 @@ public abstract class Scene implements LifecycleOwner, SavedStateRegistryOwner, 
                 throw new IllegalStateException("Scene must disable CREATE lifecycle state when it's parent is disabled");
             }
             this.mParentScene = parentScene;
+        } else {
+            LoggerManager.getInstance().v(TAG, "This Scene is the root Scene " + this);
         }
         mCalled = false;
         onAttach();
@@ -999,7 +1002,7 @@ public abstract class Scene implements LifecycleOwner, SavedStateRegistryOwner, 
             if (needsFocus != null) {
                 needsFocus.requestFocus();
             } else {
-                Log.w(TAG, "Previously focused view reported id " + focusedViewId
+                LoggerManager.getInstance().v(TAG, "Previously focused view reported id " + focusedViewId
                         + " during save, but can't be found during restore.");
             }
         }
