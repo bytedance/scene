@@ -39,6 +39,7 @@ public class PopResumeOperation implements Operation {
     @Override
     public void execute(Runnable operationEndAction) {
         Scene dstScene = returnRecord.mScene;
+        //When Scene has created View, compare its cached Configuration to the latest Configuration, if it is changed, recreate it
         boolean recreated = mManagerAbility.dispatchOnConfigurationChangedToRecord(returnRecord, dstScene);
         if (recreated) {
             //new scene instance is created

@@ -76,6 +76,31 @@ class ConfigurationChangedTests {
         navigationScene.onConfigurationChanged(createConfigurationForDayNight(false))
         Assert.assertEquals(2, scene.onConfigurationChangedCount)
     }
+
+    @Test
+    fun `test normal ActivityCompatibleBehavior, should not receive callback or recreate`() {
+        val scene = TestNormalActivityCompatibleBehaviorScene()
+        val pair = createFromInitSceneLifecycleManager(scene, true, false)
+
+        val sceneLifecycleManager: SceneLifecycleManager<*> = pair!!.first
+        val navigationScene = pair.second
+
+        Assert.assertEquals(0, scene.onConfigurationChangedCount)
+
+        navigationScene.onConfigurationChanged(createConfigurationForDayNight(true))
+
+        Assert.assertEquals(0, scene.onConfigurationChangedCount)
+        Assert.assertSame(scene, navigationScene.currentScene)
+
+        navigationScene.onConfigurationChanged(createConfigurationForDayNight(true))
+
+        Assert.assertEquals(0, scene.onConfigurationChangedCount)
+        Assert.assertSame(scene, navigationScene.currentScene)
+
+        navigationScene.onConfigurationChanged(createConfigurationForDayNight(false))
+        Assert.assertEquals(0, scene.onConfigurationChangedCount)
+        Assert.assertSame(scene, navigationScene.currentScene)
+    }
 }
 
 interface IActivity {
@@ -146,6 +171,35 @@ class TestOnConfigurationChangedScene : Scene(), ActivityCompatibleBehavior {
             throw IllegalArgumentException("activityAttributes can't invoke more than once")
         }
         data.configChanges = ActivityInfo.CONFIG_ORIENTATION or ActivityInfo.CONFIG_UI_MODE
+    }
+
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup, savedInstanceState: Bundle?
+    ): View {
+        return View(requireSceneContext())
+    }
+
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        onConfigurationChangedCount++
+    }
+
+    override fun onNewIntent(arguments: Bundle?) {
+
+    }
+
+    override fun onWindowFocusChanged(hasFocus: Boolean) {
+
+    }
+}
+
+class TestNormalActivityCompatibleBehaviorScene : Scene(), ActivityCompatibleBehavior {
+    var onConfigurationChangedCount = 0
+
+    init {
+        val data = ActivityCompatibleInfoCollector.getOrCreateHolder(this)
+        if (data.configChanges != null) {
+            throw IllegalArgumentException("activityAttributes can't invoke more than once")
+        }
     }
 
     override fun onCreateView(

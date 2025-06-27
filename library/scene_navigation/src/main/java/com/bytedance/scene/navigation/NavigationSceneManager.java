@@ -53,6 +53,7 @@ import com.bytedance.scene.navigation.push.CoordinatePushOptionOperation;
 import com.bytedance.scene.parcel.ParcelConstants;
 import com.bytedance.scene.queue.NavigationMessageQueue;
 import com.bytedance.scene.queue.NavigationRunnable;
+import com.bytedance.scene.utlity.Action1;
 import com.bytedance.scene.utlity.AnimatorUtility;
 import com.bytedance.scene.utlity.CancellationSignalList;
 import com.bytedance.scene.utlity.ConfigurationUtility;
@@ -972,6 +973,7 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
             }
 
             Scene dstScene = returnRecord.mScene;
+            //When Scene has created View, compare its cached Configuration to the latest Configuration, if it is changed, recreate it
             boolean recreated = dispatchOnConfigurationChangedToRecord(returnRecord, dstScene);
             if (recreated) {
                 //new scene instance is created
@@ -2047,51 +2049,19 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
     //TODO dispatch to other visible Scenes
     @Override
     public void onConfigurationChanged(@NonNull Configuration newConfig) {
-        LoggerManager.getInstance().i(TAG, "onConfigurationChanged");
+        LoggerManager.getInstance().i(TAG, "Activity dispatch onConfigurationChanged");
         executePendingOperation();//make sure all pending operations have finished
         this.mActivityConfiguration = new Configuration(newConfig);
 
         Record record = this.mBackStackList.getCurrentRecord();
         Scene scene = record.mScene;
-        if (scene.getView() == null) {
-            return;
-        }
-        ActivityCompatibleInfoCollector.Holder holder = ActivityCompatibleInfoCollector.getHolder(scene);
-        if (holder == null) {
-            //skip, default behavior, nothing will happen
-            return;
-        }
-        Integer configChanges = holder.configChanges;
-        if (holder.configChanges == null) {
-            //skip, default behavior, nothing will happen
-            return;
-        }
-        if (newConfig.equals(record.mConfiguration)) {
-            return;
-        }
-        if (record.mConfiguration != null) {
-            Configuration sceneConfiguration = record.mConfiguration;
-            int diff = sceneConfiguration.diff(newConfig);
-            //remove private diff properties
-            diff = ConfigurationUtility.removePrivateDiff(diff);
 
-            String diffString = ConfigurationUtility.configurationDiffToString(diff);
-            LoggerManager.getInstance().i(TAG, "Configuration has been changed, diff " + diffString);
-
-            if ((diff & configChanges) != 0) {
-                LoggerManager.getInstance().i(TAG, "Configuration has been changed, Scene has suitable configChanges, so dispatch onConfigurationChanged to " + scene.toString());
-                if (scene instanceof ActivityCompatibleBehavior) {
-                    ((ActivityCompatibleBehavior) scene).onConfigurationChanged(newConfig);
-                    record.saveActivityCompatibleInfo(newConfig);
-                    return;
-                }
-            } else {
-                LoggerManager.getInstance().i(TAG, "Configuration has been changed, recreate " + scene.toString());
+        dispatchOnConfigurationChangedToRecordInternal(record, scene, newConfig, new Action1<Scene>() {
+            @Override
+            public void execute(Scene value) {
+                new RecreateOperation(value).execute(null);
             }
-        } else {
-            LoggerManager.getInstance().i(TAG, "Scene previous Configuration not found, recreate " + scene.toString());
-        }
-        recreate(record.mScene);
+        });
     }
 
     @Override
@@ -2104,12 +2074,23 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
         }
     }
 
-    //make sure Scene has invoked onActivityCreated, then dispatch onConfigurationChanged, finally invoke onStart onResume
+    @Override
     public boolean dispatchOnConfigurationChangedToRecord(Record record, Scene scene) {
         Configuration newConfig = this.mActivityConfiguration;
         if (newConfig == null) {
             return false;
         }
+        LoggerManager.getInstance().i(TAG, "PopOperation dispatch onConfigurationChanged");
+        return dispatchOnConfigurationChangedToRecordInternal(record, scene, newConfig, new Action1<Scene>() {
+            @Override
+            public void execute(Scene value) {
+                new RecreateOperation(value).execute(null);
+            }
+        });
+    }
+
+    //make sure Scene has invoked onCreateView, then dispatch onConfigurationChanged
+    private static boolean dispatchOnConfigurationChangedToRecordInternal(@NonNull Record record, @NonNull Scene scene, @NonNull Configuration newConfig, @NonNull Action1<Scene> recreateAction) {
         if (scene.getView() == null) {
             return false;
         }
@@ -2141,6 +2122,8 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
                     ((ActivityCompatibleBehavior) scene).onConfigurationChanged(newConfig);
                     record.saveActivityCompatibleInfo(newConfig);
                     return false;
+                } else {
+                    throw new SceneInternalException("Impossible, Scene don't implement ActivityCompatibleBehavior but have configChanges " + scene.toString());
                 }
             } else {
                 LoggerManager.getInstance().i(TAG, "Configuration has been changed, recreate " + scene.toString());
@@ -2148,7 +2131,7 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
         } else {
             LoggerManager.getInstance().i(TAG, "Scene previous Configuration not found, recreate " + scene.toString());
         }
-        new RecreateOperation(scene).execute(null);
+        recreateAction.execute(scene);
         return true;
     }
 
