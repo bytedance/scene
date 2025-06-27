@@ -51,8 +51,8 @@ class RecordStack {
     }
 
     public Record getRecordByScene(Scene scene) {
-        Record dst = null;
-        for (Record record : mBackStackList) {
+        for (int i = 0; i < this.mBackStackList.size(); i++) {
+            Record record = this.mBackStackList.get(i);
             if (record.mScene == scene) {
                 return record;
             }
