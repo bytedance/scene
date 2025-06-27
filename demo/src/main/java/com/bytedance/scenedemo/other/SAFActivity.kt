@@ -81,6 +81,7 @@ class SAFActivity : AppCompatActivity() {
         navigationSceneOptions.optimizedViewLayer = true
         navigationSceneOptions.useWindowFocusChangedDispatch = true
         navigationSceneOptions.reuseOutsideView = true
+        navigationSceneOptions.onlyDispatchToTopSceneWindowInsets = true
 
         val navigationSceneArguments = navigationSceneOptions.toBundle()
         navigationSceneArguments.classLoader = this.classLoader

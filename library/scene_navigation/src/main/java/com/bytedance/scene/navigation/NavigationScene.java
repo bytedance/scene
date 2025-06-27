@@ -678,7 +678,7 @@ public final class NavigationScene extends Scene implements NavigationListener, 
     public ViewGroup getAnimationContainer() {
         if (this.mAnimationContainer == null) {
             if (mNavigationSceneOptions.getLazyLoadNavigationSceneUnnecessaryView()) {
-                this.mAnimationContainer = addAnimationContainerToRootView((FrameLayout) getView(), requireSceneContext(), mNavigationSceneOptions.getMergeNavigationSceneView() || mNavigationSceneOptions.getOptimizedViewLayer());
+                this.mAnimationContainer = addAnimationContainerToRootView((FrameLayout) getView(), requireSceneContext(), mNavigationSceneOptions.getMergeNavigationSceneView() || mNavigationSceneOptions.getOptimizedViewLayer(), mNavigationSceneOptions.getOnlyDispatchToTopSceneWindowInsets());
             } else {
                 throw new IllegalStateException("Animation Container is null");
             }
@@ -818,14 +818,14 @@ public final class NavigationScene extends Scene implements NavigationListener, 
             if (frameLayout == null) {
                 throw new IllegalArgumentException("Please invoke setOutsideView at first");
             }
-            frameLayout.setOnApplyWindowInsetsListener(new DispatchWindowInsetsListener());
+            frameLayout.setOnApplyWindowInsetsListener(new DispatchWindowInsetsListener(mNavigationSceneOptions.getOnlyDispatchToTopSceneWindowInsets()));
 
             mSceneContainer = frameLayout;
 
             if (mNavigationSceneOptions.getLazyLoadNavigationSceneUnnecessaryView()) {
                 //skip
             } else {
-                mAnimationContainer = addAnimationContainerToRootView(frameLayout, requireSceneContext(), true);
+                mAnimationContainer = addAnimationContainerToRootView(frameLayout, requireSceneContext(), true, mNavigationSceneOptions.getOnlyDispatchToTopSceneWindowInsets());
             }
             if (mNavigationSceneOptions.drawWindowBackground()) {
                 ViewCompat.setBackground(frameLayout, Utility.getWindowBackground(requireSceneContext()));
@@ -835,7 +835,7 @@ public final class NavigationScene extends Scene implements NavigationListener, 
             //todo achieve requestDisableTouchEvent ability
             FrameLayout frameLayout = new FrameLayout(requireSceneContext());
             frameLayout.setSaveFromParentEnabled(false);
-            frameLayout.setOnApplyWindowInsetsListener(new DispatchWindowInsetsListener());
+            frameLayout.setOnApplyWindowInsetsListener(new DispatchWindowInsetsListener(mNavigationSceneOptions.getOnlyDispatchToTopSceneWindowInsets()));
             frameLayout.setId(R.id.navigation_scene_content);
 
             mSceneContainer = frameLayout;
@@ -843,7 +843,7 @@ public final class NavigationScene extends Scene implements NavigationListener, 
             if (mNavigationSceneOptions.getLazyLoadNavigationSceneUnnecessaryView()) {
                 //skip
             } else {
-                mAnimationContainer = addAnimationContainerToRootView(frameLayout, requireSceneContext(), true);
+                mAnimationContainer = addAnimationContainerToRootView(frameLayout, requireSceneContext(), true, mNavigationSceneOptions.getOnlyDispatchToTopSceneWindowInsets());
             }
             if (mNavigationSceneOptions.drawWindowBackground()) {
                 ViewCompat.setBackground(frameLayout, Utility.getWindowBackground(requireSceneContext()));
@@ -862,7 +862,7 @@ public final class NavigationScene extends Scene implements NavigationListener, 
             } else {
                 mSceneContainer = new FrameLayout(requireSceneContext());
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    mSceneContainer.setOnApplyWindowInsetsListener(new DispatchWindowInsetsListener());
+                    mSceneContainer.setOnApplyWindowInsetsListener(new DispatchWindowInsetsListener(mNavigationSceneOptions.getOnlyDispatchToTopSceneWindowInsets()));
                 }
                 frameLayout.addView(mSceneContainer, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
             }
@@ -870,7 +870,7 @@ public final class NavigationScene extends Scene implements NavigationListener, 
             if (mNavigationSceneOptions.getLazyLoadNavigationSceneUnnecessaryView()) {
                 //skip
             } else {
-                mAnimationContainer = addAnimationContainerToRootView(frameLayout, requireSceneContext(), mNavigationSceneOptions.getMergeNavigationSceneView());
+                mAnimationContainer = addAnimationContainerToRootView(frameLayout, requireSceneContext(), mNavigationSceneOptions.getMergeNavigationSceneView(), mNavigationSceneOptions.getOnlyDispatchToTopSceneWindowInsets());
             }
             if (mNavigationSceneOptions.drawWindowBackground()) {
                 ViewCompat.setBackground(frameLayout, Utility.getWindowBackground(requireSceneContext()));
@@ -879,8 +879,11 @@ public final class NavigationScene extends Scene implements NavigationListener, 
         }
     }
 
-    private static FrameLayout addAnimationContainerToRootView(FrameLayout frameLayout, Context context, boolean addToBack) {
+    private static FrameLayout addAnimationContainerToRootView(FrameLayout frameLayout, Context context, boolean addToBack, boolean markAnimationView) {
         AnimationContainerLayout animationContainerLayout = new AnimationContainerLayout(context);
+        if (markAnimationView) {
+            DispatchWindowInsetsListener.markAnimationView(animationContainerLayout);
+        }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             animationContainerLayout.setOnApplyWindowInsetsListener(new DispatchWindowInsetsListener());
         }

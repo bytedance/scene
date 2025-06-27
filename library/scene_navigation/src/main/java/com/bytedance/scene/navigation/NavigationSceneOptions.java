@@ -42,6 +42,7 @@ public class NavigationSceneOptions {
     private static final String EXTRA_REDUCE_COLD_START_CALL_STACK = "extra_reduceColdStartCallStack";
     private static final String EXTRA_OPTIMIZED_VIEW_LAYER = "extra_optimizedViewLayer";
     private static final String EXTRA_REUSE_OUTSIDE_VIEW = "extra_reuseOutsideView";
+    private static final String EXTRA_ONLY_DISPATCH_TO_TOP_SCENE_WINDOW_INSETS = "extra_onlyDispatchToTopSceneWindowInsets";
 
     @NonNull
     private final String mRootSceneClassName;
@@ -61,6 +62,7 @@ public class NavigationSceneOptions {
     private boolean mReduceColdStartCallStack = false;
     private boolean mOptimizedViewLayer = false;
     private boolean mReuseOutsideView = false;
+    private boolean mOnlyDispatchToTopSceneWindowInsets = false;
 
     public NavigationSceneOptions(@NonNull Class<? extends Scene> rootSceneClazz, @Nullable Bundle rootSceneArguments) {
         if (rootSceneClazz.isAssignableFrom(NavigationScene.class)) {
@@ -165,6 +167,12 @@ public class NavigationSceneOptions {
     }
 
     @NonNull
+    public NavigationSceneOptions setOnlyDispatchToTopSceneWindowInsets(boolean onlyDispatchToTopSceneWindowInsets) {
+        this.mOnlyDispatchToTopSceneWindowInsets = onlyDispatchToTopSceneWindowInsets;
+        return this;
+    }
+
+    @NonNull
     public String getRootSceneClassName() {
         return this.mRootSceneClassName;
     }
@@ -226,6 +234,10 @@ public class NavigationSceneOptions {
         return this.mReuseOutsideView;
     }
 
+    public boolean getOnlyDispatchToTopSceneWindowInsets() {
+        return this.mOnlyDispatchToTopSceneWindowInsets;
+    }
+
     /**
      * @hide
      */
@@ -251,6 +263,7 @@ public class NavigationSceneOptions {
         navigationSceneOptions.mReduceColdStartCallStack = bundle.getBoolean(EXTRA_REDUCE_COLD_START_CALL_STACK, false);
         navigationSceneOptions.mOptimizedViewLayer = bundle.getBoolean(EXTRA_OPTIMIZED_VIEW_LAYER, false);
         navigationSceneOptions.mReuseOutsideView = bundle.getBoolean(EXTRA_REUSE_OUTSIDE_VIEW, false);
+        navigationSceneOptions.mOnlyDispatchToTopSceneWindowInsets = bundle.getBoolean(EXTRA_ONLY_DISPATCH_TO_TOP_SCENE_WINDOW_INSETS, false);
         return navigationSceneOptions;
     }
 
@@ -275,6 +288,7 @@ public class NavigationSceneOptions {
         bundle.putBoolean(EXTRA_REDUCE_COLD_START_CALL_STACK, mReduceColdStartCallStack);
         bundle.putBoolean(EXTRA_OPTIMIZED_VIEW_LAYER, mOptimizedViewLayer);
         bundle.putBoolean(EXTRA_REUSE_OUTSIDE_VIEW, mReuseOutsideView);
+        bundle.putBoolean(EXTRA_ONLY_DISPATCH_TO_TOP_SCENE_WINDOW_INSETS, mOnlyDispatchToTopSceneWindowInsets);
         return bundle;
     }
 }
