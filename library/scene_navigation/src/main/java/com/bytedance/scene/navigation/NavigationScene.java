@@ -1181,25 +1181,25 @@ public final class NavigationScene extends Scene implements NavigationListener, 
 
     public static void preloadClasses() {
         LoggerManager.getInstance();
-        NavigationSceneOptions.class.toString();
-        SceneInstanceUtility.class.toString();
-        SceneComponentFactory.class.toString();
-        NavigationFrameLayout.class.toString();
-        DispatchWindowInsetsListener.class.toString();
-        Record.class.toString();
-        RecordStack.class.toString();
-        NavigationMessageQueue.class.toString();
-        NavigationRunnable.class.toString();
-        INavigationManager.class.toString();
-        NavigationManagerAbility.class.toString();
-        NavigationSceneManager.class.toString();
-        Operation.class.toString();
-        NavigationListener.class.toString();
-        ActivityCompatibleInfoCollector.class.toString();
-        ActivityCompatibleInfoCollector.Holder.class.toString();
-        AnimationContainerLayout.class.toString();
-        NavigationSceneGetter.class.toString();
-        ActivityCompatibleBehavior.class.toString();
+        Object clazz = NavigationSceneOptions.class;
+        clazz = SceneInstanceUtility.class;
+        clazz = SceneComponentFactory.class;
+        clazz = NavigationFrameLayout.class;
+        clazz = DispatchWindowInsetsListener.class;
+        clazz = Record.class;
+        clazz = RecordStack.class;
+        clazz = NavigationMessageQueue.class;
+        clazz = NavigationRunnable.class;
+        clazz = INavigationManager.class;
+        clazz = NavigationManagerAbility.class;
+        clazz = NavigationSceneManager.class;
+        clazz = Operation.class;
+        clazz = NavigationListener.class;
+        clazz = ActivityCompatibleInfoCollector.class;
+        clazz = ActivityCompatibleInfoCollector.Holder.class;
+        clazz = AnimationContainerLayout.class;
+        clazz = NavigationSceneGetter.class;
+        clazz = ActivityCompatibleBehavior.class;
     }
 
     /**
