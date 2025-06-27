@@ -41,9 +41,8 @@ import androidx.annotation.RestrictTo;
 import androidx.collection.LruCache;
 import androidx.core.view.ViewCompat;
 import androidx.lifecycle.Lifecycle;
-import androidx.lifecycle.LifecycleObserver;
+import androidx.lifecycle.LifecycleEventObserver;
 import androidx.lifecycle.LifecycleOwner;
-import androidx.lifecycle.OnLifecycleEvent;
 
 import com.bytedance.scene.ActivityCompatibilityUtility;
 import com.bytedance.scene.Scene;
@@ -165,11 +164,13 @@ public final class NavigationScene extends Scene implements NavigationListener, 
             return;
         }
         this.mNavigationListenerList.add(listener);
-        lifecycleOwner.getLifecycle().addObserver(new LifecycleObserver() {
-            @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
-            void onDestroy() {
-                lifecycleOwner.getLifecycle().removeObserver(this);
-                mNavigationListenerList.remove(listener);
+        lifecycleOwner.getLifecycle().addObserver(new LifecycleEventObserver() {
+            @Override
+            public void onStateChanged(@NonNull LifecycleOwner source, @NonNull Lifecycle.Event event) {
+                if (event == Lifecycle.Event.ON_DESTROY) {
+                    lifecycleOwner.getLifecycle().removeObserver(this);
+                    mNavigationListenerList.remove(listener);
+                }
             }
         });
     }
@@ -188,11 +189,13 @@ public final class NavigationScene extends Scene implements NavigationListener, 
             return;
         }
         this.mNavigationSceneManager.addOnBackPressedListener(lifecycleOwner, onBackPressedListener);
-        lifecycleOwner.getLifecycle().addObserver(new LifecycleObserver() {
-            @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
-            void onDestroy() {
-                lifecycleOwner.getLifecycle().removeObserver(this);
-                mNavigationSceneManager.removeOnBackPressedListener(onBackPressedListener);
+        lifecycleOwner.getLifecycle().addObserver(new LifecycleEventObserver() {
+            @Override
+            public void onStateChanged(@NonNull LifecycleOwner source, @NonNull Lifecycle.Event event) {
+                if (event == Lifecycle.Event.ON_DESTROY) {
+                    lifecycleOwner.getLifecycle().removeObserver(this);
+                    mNavigationSceneManager.removeOnBackPressedListener(onBackPressedListener);
+                }
             }
         });
     }
