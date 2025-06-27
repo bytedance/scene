@@ -33,15 +33,8 @@ public class ThreadUtility {
     private static final ThreadLocal<Boolean> sThreadLocal = new ThreadLocal<>();
 
     public static void checkUIThread() {
-        Boolean value = sThreadLocal.get();
-        if (value == Boolean.TRUE) {
+        if (isMainThread()) {
             return;
-        } else if (value == null) {
-            boolean isMainThread = isMainThread();
-            sThreadLocal.set(isMainThread);
-            if (isMainThread) {
-                return;
-            }
         }
         ExceptionsUtility.invokeAndThrowExceptionToNextUILoop(new Runnable() {
             @Override
@@ -51,7 +44,21 @@ public class ThreadUtility {
         });
     }
 
-    private static boolean isMainThread() {
+    public static boolean isMainThread() {
+        Boolean value = sThreadLocal.get();
+        if (value == Boolean.TRUE) {
+            return true;
+        } else if (value == null) {
+            boolean isMainThread = isMainThreadInternal();
+            sThreadLocal.set(isMainThread);
+            if (isMainThread) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static boolean isMainThreadInternal() {
         Looper mainLooper = Looper.getMainLooper();
         return mainLooper == Looper.myLooper() && mainLooper.getThread() == Thread.currentThread();
     }
