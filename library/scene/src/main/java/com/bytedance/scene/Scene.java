@@ -39,6 +39,7 @@ import androidx.annotation.Nullable;
 import androidx.annotation.RestrictTo;
 import androidx.annotation.StringRes;
 import androidx.annotation.StyleRes;
+import androidx.annotation.VisibleForTesting;
 import androidx.core.view.ViewCompat;
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleObserver;
@@ -317,6 +318,10 @@ public abstract class Scene implements LifecycleOwner, SavedStateRegistryOwner, 
 
         void handleLifecycleEvent(@NonNull Lifecycle.Event event) {
             this.lifecycleRegistry.handleLifecycleEvent(event);
+        }
+
+        int getObserverCount() {
+            return lifecycleObservers.size();
         }
 
         void rest() {
@@ -1594,5 +1599,14 @@ public abstract class Scene implements LifecycleOwner, SavedStateRegistryOwner, 
     @NonNull
     public final String getDebugSceneHierarchy() {
         return Utility.getViewHierarchy(this);
+    }
+
+    /**
+     * @hide
+     */
+    @VisibleForTesting
+    @RestrictTo(LIBRARY_GROUP)
+    public final int getLifecycleObserverCount() {
+        return mLifecycleRegistry.getObserverCount();
     }
 }

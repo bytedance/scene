@@ -14,6 +14,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
+import org.robolectric.shadows.ShadowLooper
 
 
 @RunWith(RobolectricTestRunner::class)
@@ -50,5 +51,31 @@ class ScopeExtensionsTests {
         val value: String = childScene.scope["test"]
         Assert.assertEquals("Value", value)
         Assert.assertNull(childScene.scope["test_not_exists"])
+    }
+
+    @Test
+    fun testScenePost() {
+        val scene = TestChildScene()
+        val sceneLifecycleManager = createFromInitSceneLifecycleManager(scene).first
+        val observerCount = scene.lifecycleObserverCount
+        var a = 0
+        scene.post {
+            a = 1
+        }
+        Assert.assertEquals(observerCount + 1, scene.lifecycleObserverCount)
+
+        ShadowLooper.runUiThreadTasks()
+        Assert.assertEquals(1, a)
+        Assert.assertEquals(observerCount, scene.lifecycleObserverCount)
+
+        scene.post {
+            a = 2
+        }
+        Assert.assertEquals(observerCount + 1, scene.lifecycleObserverCount)
+
+        sceneLifecycleManager.onDestroyView()
+        ShadowLooper.runUiThreadTasks()
+        Assert.assertEquals(1, a)
+        Assert.assertEquals(observerCount, scene.lifecycleObserverCount)
     }
 }

@@ -24,8 +24,8 @@ import android.os.Looper
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleObserver
-import androidx.lifecycle.OnLifecycleEvent
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.LifecycleOwner
 import com.bytedance.scene.ActivityCompatibilityUtility
 import com.bytedance.scene.Scene
 import com.bytedance.scene.interfaces.ActivityResultCallback
@@ -39,26 +39,42 @@ fun Scene.post(runnable: Runnable) {
     if (this.lifecycle.currentState == Lifecycle.State.DESTROYED) {
         return
     }
-    HANDLER.post(runnable)
-    this.lifecycle.addObserver(object : LifecycleObserver {
-        @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
-        fun onDestroy() {
-            HANDLER.removeCallbacks(runnable)
-        }
-    })
+
+    val wrappedRunnable = wrapRunnable(runnable)
+    HANDLER.post(wrappedRunnable)
 }
 
 fun Scene.postDelayed(runnable: Runnable, delayMillis: Long) {
     if (this.lifecycle.currentState == Lifecycle.State.DESTROYED) {
         return
     }
-    HANDLER.postDelayed(runnable, delayMillis)
-    this.lifecycle.addObserver(object : LifecycleObserver {
-        @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
-        fun onDestroy() {
-            HANDLER.removeCallbacks(runnable)
+
+    val wrappedRunnable = wrapRunnable(runnable)
+    HANDLER.postDelayed(wrappedRunnable, delayMillis)
+}
+
+private fun Scene.wrapRunnable(runnable: Runnable): Runnable {
+    var removeCallback: (() -> Unit)? = null
+
+    val observer = object : LifecycleEventObserver {
+        override fun onStateChanged(source: LifecycleOwner, event: Lifecycle.Event) {
+            if (event == Lifecycle.Event.ON_DESTROY) {
+                this@wrapRunnable.lifecycle.removeObserver(this)
+                removeCallback?.invoke()
+            }
         }
-    })
+    }
+    this.lifecycle.addObserver(observer)
+
+    val wrappedRunnable = Runnable {
+        runnable.run()
+        this.lifecycle.removeObserver(observer)
+        removeCallback = null
+    }
+    removeCallback = {
+        HANDLER.removeCallbacks(wrappedRunnable)
+    }
+    return wrappedRunnable
 }
 
 /**
