@@ -96,11 +96,11 @@ public class SharedElementSceneTransitionExecutor extends NavigationAnimationExe
     @Override
     public final void executePushChangeCancelable(@NonNull final AnimationInfo fromInfo, @NonNull final AnimationInfo toInfo, @NonNull final Runnable endAction, @NonNull final CancellationSignal cancellationSignal) {
         if (fromInfo.mIsTranslucent) {
-            throw new IllegalArgumentException("SharedElement animation don't support translucent scene: " + fromInfo.mSceneClass);
+            throw new IllegalArgumentException("SharedElement push animation don't support translucent source scene: " + fromInfo.mSceneClass + ", destination scene: " + toInfo.mSceneClass);
         }
 
         if (toInfo.mIsTranslucent) {
-            throw new IllegalArgumentException("SharedElement animation don't support translucent scene: " + toInfo.mSceneClass);
+            throw new IllegalArgumentException("SharedElement push animation don't support translucent destination scene: " + toInfo.mSceneClass + ", source scene: " + fromInfo.mSceneClass);
         }
 
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
@@ -173,11 +173,11 @@ public class SharedElementSceneTransitionExecutor extends NavigationAnimationExe
                                                          fromInfo, @NonNull AnimationInfo toInfo, @NonNull final Runnable endAction,
                                                  @NonNull CancellationSignal cancellationSignal) {
         if (fromInfo.mIsTranslucent) {
-            throw new IllegalArgumentException("SharedElement animation don't support translucent scene: " + fromInfo.mSceneClass);
+            throw new IllegalArgumentException("SharedElement pop animation don't support translucent source scene: " + fromInfo.mSceneClass + ", destination scene: " + toInfo.mSceneClass);
         }
 
         if (toInfo.mIsTranslucent) {
-            throw new IllegalArgumentException("SharedElement animation don't support translucent scene: " + toInfo.mSceneClass);
+            throw new IllegalArgumentException("SharedElement pop animation don't support translucent destination scene: " + toInfo.mSceneClass + ", source scene: " + fromInfo.mSceneClass);
         }
 
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {

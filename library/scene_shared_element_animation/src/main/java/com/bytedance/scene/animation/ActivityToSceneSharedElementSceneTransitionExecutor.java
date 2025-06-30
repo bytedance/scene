@@ -91,8 +91,12 @@ public class ActivityToSceneSharedElementSceneTransitionExecutor extends Navigat
 
     @Override
     public final void executePushChangeCancelable(@NonNull AnimationInfo fromInfo, @NonNull final AnimationInfo toInfo, @NonNull final Runnable endAction, @NonNull CancellationSignal cancellationSignal) {
-        if (fromInfo.mIsTranslucent || toInfo.mIsTranslucent) {
-            throw new IllegalArgumentException("SharedElement animation don't support translucent scene");
+        if (fromInfo.mIsTranslucent) {
+            throw new IllegalArgumentException("SharedElement push animation don't support translucent source scene: " + fromInfo.mSceneClass + ", destination scene: " + toInfo.mSceneClass);
+        }
+
+        if (toInfo.mIsTranslucent) {
+            throw new IllegalArgumentException("SharedElement push animation don't support translucent destination scene: " + toInfo.mSceneClass + ", source scene: " + fromInfo.mSceneClass);
         }
 
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
@@ -160,8 +164,12 @@ public class ActivityToSceneSharedElementSceneTransitionExecutor extends Navigat
     public final void executePopChangeCancelable(@NonNull AnimationInfo
                                                          fromInfo, @NonNull AnimationInfo toInfo, @NonNull final Runnable endAction,
                                                  @NonNull CancellationSignal cancellationSignal) {
-        if (fromInfo.mIsTranslucent || toInfo.mIsTranslucent) {
-            throw new IllegalArgumentException("SharedElement animation don't support translucent scene");
+        if (fromInfo.mIsTranslucent) {
+            throw new IllegalArgumentException("SharedElement pop animation don't support translucent source scene: " + fromInfo.mSceneClass + ", destination scene: " + toInfo.mSceneClass);
+        }
+
+        if (toInfo.mIsTranslucent) {
+            throw new IllegalArgumentException("SharedElement pop animation don't support translucent destination scene: " + toInfo.mSceneClass + ", source scene: " + fromInfo.mSceneClass);
         }
 
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
