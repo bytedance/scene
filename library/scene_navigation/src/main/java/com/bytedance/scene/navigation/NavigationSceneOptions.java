@@ -54,7 +54,7 @@ public class NavigationSceneOptions {
     @DrawableRes
     private int mSceneBackgroundResId = 0;
     private boolean mOnlyRestoreVisibleScene = false;
-    private boolean mUsePostInLifecycle = false;
+    private boolean mUsePostInLifecycle = true;
     private float mAutoRecycleInvisibleScenesThreshold = 0F;
     private boolean mUseActivityContextAndLayoutInflater = false;
     private boolean mLazyLoadNavigationSceneUnnecessaryView = false;
