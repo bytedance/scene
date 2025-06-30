@@ -1799,8 +1799,18 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
             LoggerManager.getInstance().i(TAG, "RecreateOperation current Scene destroy itself, current Scene instance " + scene.toString());
             moveState(mNavigationScene, this.scene, State.NONE, null, false, null);
 
-            Class<?> sceneClass = scene.getClass();
-            Scene newSceneInstance = SceneInstanceUtility.getInstanceFromClass(sceneClass, null);
+            Scene newSceneInstance = null;
+            if (mBackStackList.isRootScene(this.scene) && mNavigationScene.mRootSceneComponentFactory != null) {
+                Scene sceneInstance = mNavigationScene.mRootSceneComponentFactory.instantiateScene(mNavigationScene.requireActivity().getClassLoader(), record.mSceneClassName, null);
+                if (sceneInstance != null && sceneInstance.getParentScene() != null) {
+                    throw new IllegalArgumentException("SceneComponentFactory instantiateScene return Scene already has a parent");
+                }
+                newSceneInstance = sceneInstance;
+            }
+            if (newSceneInstance == null) {
+                Class<?> sceneClass = scene.getClass();
+                newSceneInstance = SceneInstanceUtility.getInstanceFromClass(sceneClass, null);
+            }
             record.mScene = newSceneInstance;
 
             LoggerManager.getInstance().i(TAG, "RecreateOperation new created Scene restore from previous data, new Scene instance " + newSceneInstance.toString());

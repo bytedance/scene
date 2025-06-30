@@ -20,6 +20,8 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.view.View;
 
+import androidx.annotation.NonNull;
+
 import com.bytedance.scene.Scene;
 import com.bytedance.scene.SceneComponentFactory;
 import com.bytedance.scene.parcel.ParcelConstants;
@@ -65,6 +67,10 @@ class RecordStack {
             return null;
         }
         return mBackStackList.get(mBackStackList.size() - 2);
+    }
+
+    public boolean isRootScene(@NonNull Scene scene) {
+        return !mBackStackList.isEmpty() && mBackStackList.get(0).mScene == scene;
     }
 
     public boolean canPop() {
