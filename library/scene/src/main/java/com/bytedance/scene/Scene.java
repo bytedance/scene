@@ -24,7 +24,6 @@ import android.content.res.Resources;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
-import android.util.Log;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -1206,7 +1205,11 @@ public abstract class Scene implements LifecycleOwner, SavedStateRegistryOwner, 
         }
     }
 
-    private static class ViewModelStoreHolder implements Scope.Scoped {
+    /**
+     * @hide
+     */
+    @RestrictTo(LIBRARY_GROUP)
+    public static class ViewModelStoreHolder implements Scope.Scoped {
         private ViewModelStore mViewModelStore;
         private Class<? extends Scene> mSceneClass;
 
