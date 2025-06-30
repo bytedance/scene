@@ -520,13 +520,19 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
         return this.mBackStackList.canPop();
     }
 
-    public void restoreActivityStatus(ActivityStatusRecord statusRecord) {
+    public void restoreActivityStatus(@Nullable ActivityStatusRecord statusRecord) {
+        if (statusRecord == null) {
+            return;
+        }
         Activity activity = mNavigationScene.getActivity();
         statusRecord.restore(activity);
     }
 
     @Override
-    public void restoreActivityStatusBarNavigationBarStatus(ActivityStatusRecord activityStatusRecord) {
+    public void restoreActivityStatusBarNavigationBarStatus(@Nullable ActivityStatusRecord activityStatusRecord) {
+        if (activityStatusRecord == null) {
+            return;
+        }
         Activity activity = mNavigationScene.getActivity();
         activityStatusRecord.restoreStatusBarNavigationBar(activity);
     }
