@@ -2099,7 +2099,7 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
         dispatchOnConfigurationChangedToRecordInternal(record, scene, newConfig, new Action1<Scene>() {
             @Override
             public void execute(Scene value) {
-                new RecreateOperation(value).execute(null);
+                executeOperationSafely(new RecreateOperation(value), null);
             }
         });
     }
@@ -2124,7 +2124,7 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
         return dispatchOnConfigurationChangedToRecordInternal(record, scene, newConfig, new Action1<Scene>() {
             @Override
             public void execute(Scene value) {
-                new RecreateOperation(value).execute(null);
+                executeOperationSafely(new RecreateOperation(value), null);
             }
         });
     }
