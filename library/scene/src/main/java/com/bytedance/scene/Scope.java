@@ -62,13 +62,7 @@ public class Scope {
 
     @NonNull
     public Scope buildScope(@NonNull final Scene scene, @Nullable Bundle bundle) {
-        String scopeKey = null;
-        if (bundle != null) {
-            scopeKey = getScopeKeyFromBundle(bundle);
-        }
-        if (TextUtils.isEmpty(scopeKey)) {
-            scopeKey = generateScopeKey(scene);
-        }
+        String scopeKey = getOrGenerateScopeKey(scene, bundle);
         Scope scope = this.mChildrenScopes.get(scopeKey);
 
         if (scope != null) {
@@ -137,6 +131,17 @@ public class Scope {
     }
 
     private static final AtomicInteger SCENE_COUNT = new AtomicInteger(0);
+
+    public static String getOrGenerateScopeKey(@Nullable Scene scene, @Nullable Bundle bundle) {
+        String scopeKey = null;
+        if (bundle != null) {
+            scopeKey = getScopeKeyFromBundle(bundle);
+        }
+        if (TextUtils.isEmpty(scopeKey)) {
+            scopeKey = generateScopeKey(scene);
+        }
+        return scopeKey;
+    }
 
     private static String generateScopeKey(@Nullable Scene scene) {
         switch (SceneGlobalConfig.genScopeStrategy) {
