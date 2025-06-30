@@ -1255,8 +1255,12 @@ public abstract class Scene implements LifecycleOwner, SavedStateRegistryOwner, 
         }
         if (this.mThemeResource != resId) {
             this.mThemeResource = resId;
-            if (this.mSceneContext != null) {
-                this.mSceneContext.setTheme(this.mThemeResource);
+            Context sceneContext = this.mSceneContext;
+            if (sceneContext == null && this.mActivity != null) {
+                sceneContext = getSceneContext();
+            }
+            if (sceneContext != null) {
+                sceneContext.setTheme(this.mThemeResource);
             }
         }
     }
