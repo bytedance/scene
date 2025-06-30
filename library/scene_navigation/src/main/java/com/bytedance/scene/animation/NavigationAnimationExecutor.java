@@ -181,7 +181,9 @@ public abstract class NavigationAnimationExecutor {
             });
 
             if (!isFromViewReady) {
-                mAnimationViewGroup.addView(fromView);
+                if (fromView.getParent() == null) {
+                    mAnimationViewGroup.addView(fromView);
+                }
                 fromView.setVisibility(View.VISIBLE);
                 fromView.requestLayout();
             }
