@@ -1093,7 +1093,7 @@ public final class NavigationScene extends Scene implements NavigationListener, 
         ThreadUtility.checkUIThread();
         Record record = mNavigationSceneManager.findRecordByScene(scene);
         if (record == null) {
-            throw new IllegalArgumentException("Scene not found");
+            throw new IllegalArgumentException("Scene(" + scene + ") not found");
         }
         mNavigationSceneManager.changeTranslucent(scene, option == TranslucentOption.TO_TRANSLUCENT);
     }
@@ -1101,7 +1101,7 @@ public final class NavigationScene extends Scene implements NavigationListener, 
     public boolean isTranslucent(@NonNull Scene scene) {
         Record record = mNavigationSceneManager.findRecordByScene(scene);
         if (record == null) {
-            throw new IllegalArgumentException("Scene not found");
+            throw new IllegalArgumentException("Scene(" + scene + ") not found");
         }
         return record.mIsTranslucent;
     }
@@ -1305,7 +1305,7 @@ public final class NavigationScene extends Scene implements NavigationListener, 
             return null;
         }
         if (scene.getParentScene() != this) {
-            throw new IllegalArgumentException("Scene parent is incorrect");
+            throw new IllegalArgumentException("Scene(" + scene + ") parent is incorrect");
         }
         Lifecycle.State state = scene.getLifecycle().getCurrentState();
         String status = null;
