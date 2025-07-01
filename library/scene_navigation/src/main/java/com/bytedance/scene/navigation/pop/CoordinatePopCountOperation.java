@@ -98,6 +98,7 @@ public class CoordinatePopCountOperation implements Operation {
         }
 
         final Record returnRecord = recordList.get(recordList.size() - this.mPopCount - 1);
+        final Scene returnScene = returnRecord.mScene;
         final Record currentRecord = this.mManagerAbility.getCurrentRecord();
         final Scene currentScene = currentRecord.mScene;
         final View currentSceneView = currentScene.getView();
@@ -110,6 +111,12 @@ public class CoordinatePopCountOperation implements Operation {
 
         //destroy top scene
         NavigationRunnable popDestroyTask = null;
+
+        boolean disablePopAnimation = returnScene != null && returnScene.getView() == null && mNavigationScene.getNavigationSceneOptions().isSkipPopAnimationWhenTargetIsDestroyed();
+        if (disablePopAnimation) {
+            executeNoAnimationOperation(popPauseOperation, popResumeOperation, returnRecord, currentRecord, destroyRecordList, operationEndAction);
+            return;
+        }
 
         if (mPopOptions == null || !mPopOptions.isUseIdleWhenStop()) {
             final PopDestroyOperation popDestroyOperation = new PopDestroyOperation(this.mManagerAbility, mAnimationFactory, destroyRecordList, currentRecord, returnRecord, currentScene, currentSceneView);
@@ -186,5 +193,61 @@ public class CoordinatePopCountOperation implements Operation {
                 mMessageQueue.postAsyncAtHead(popResumeTask);
             }
         });
+    }
+
+    private void executeNoAnimationOperation(PopPauseOperation popPauseOperation, PopResumeOperation popResumeOperation, Record returnRecord, Record currentRecord, List<Record> destroyRecordList, final Runnable operationEndAction) {
+        final Scene currentScene = currentRecord.mScene;
+        final View currentSceneView = currentScene.getView();
+
+        final PopDestroyMiddlePageOperationV2 clearMiddlePageOperationV2 = new PopDestroyMiddlePageOperationV2(this.mManagerAbility, mAnimationFactory, destroyRecordList, currentRecord, returnRecord, currentScene, currentSceneView);
+        final PopDestroyOperationV2 popDestroyOperationV2 = new PopDestroyOperationV2(this.mManagerAbility, mAnimationFactory, destroyRecordList, currentRecord, returnRecord, currentScene, currentSceneView);
+
+        //skip animation if return target Scene is already destroyed and need to restore
+        SceneTrace.beginSection(NavigationSceneManager.TRACE_EXECUTE_OPERATION_TAG);
+        String suppressTag = mManagerAbility.beginSuppressStackOperation("NavigationManager SkipPopAnimation execute operation directly");
+        //mark top scene to onPause
+        mManagerAbility.executeOperationSafely(popPauseOperation, () -> {
+        });
+
+        //clear other useless scenes
+        mManagerAbility.executeOperationSafely(clearMiddlePageOperationV2, () -> {
+        });
+
+        //hide top scene and restore activity status to achieve better visual effect
+        currentScene.getView().setVisibility(View.GONE);
+        this.mManagerAbility.restoreActivityStatus(returnRecord.mActivityStatusRecord);
+
+        mMessageQueue.postAsyncAtHead(new NavigationRunnable() {
+            @Override
+            public void run() {
+                SceneTrace.beginSection(NavigationSceneManager.TRACE_EXECUTE_OPERATION_TAG);
+                String suppressTag = mManagerAbility.beginSuppressStackOperation("NavigationManager SkipPopAnimation execute popResumeOperation directly");
+                mManagerAbility.executeOperationSafely(popResumeOperation, () -> {
+
+                });
+                if (mPopOptions == null || !mPopOptions.isUseIdleWhenStop()) {
+                    mManagerAbility.executeOperationSafely(popDestroyOperationV2, operationEndAction);
+                    mManagerAbility.notifySceneStateChanged();
+                } else {
+                    final NavigationRunnable popDestroyOperationV2Task = new NavigationRunnable() {
+                        @Override
+                        public void run() {
+                            SceneTrace.beginSection(NavigationSceneManager.TRACE_EXECUTE_OPERATION_TAG);
+                            String suppressTag = mManagerAbility.beginSuppressStackOperation("NavigationManager SkipPopAnimation execute popDestroyOperationV2Task operation directly");
+                            mManagerAbility.executeOperationSafely(popDestroyOperationV2, operationEndAction);
+                            mManagerAbility.endSuppressStackOperation(suppressTag);
+                            mManagerAbility.notifySceneStateChanged();
+                            SceneTrace.endSection();
+                        }
+                    };
+                    mMessageQueue.executeWhenIdleOrTimeLimit(popDestroyOperationV2Task, null, null, TimeUnit.SECONDS.toMillis(Constants.SCENE_DESTROY_MAX_TIMEOUT_SECONDS));
+                }
+                mManagerAbility.endSuppressStackOperation(suppressTag);
+                SceneTrace.endSection();
+            }
+        });
+        mManagerAbility.endSuppressStackOperation(suppressTag);
+        SceneTrace.endSection();
+        return;
     }
 }

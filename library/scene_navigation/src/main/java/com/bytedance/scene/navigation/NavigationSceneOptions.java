@@ -20,6 +20,7 @@ import androidx.annotation.*;
 import android.text.TextUtils;
 
 import com.bytedance.scene.Scene;
+import com.bytedance.scene.interfaces.PopOptions;
 
 import static androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP;
 
@@ -43,6 +44,7 @@ public class NavigationSceneOptions {
     private static final String EXTRA_REUSE_OUTSIDE_VIEW = "extra_reuseOutsideView";
     private static final String EXTRA_ONLY_DISPATCH_TO_TOP_SCENE_WINDOW_INSETS = "extra_onlyDispatchToTopSceneWindowInsets";
     private static final String EXTRA_USE_EXTRA_VIEW_TO_BLOCK_GESTURE = "extra_useExtraViewToBlockGesture";
+    private static final String EXTRA_SKIP_POP_ANIMATION_WHEN_TARGET_IS_DESTROYED = "extra_skipPopAnimationWhenTargetIsDestroyed";
 
     @NonNull
     private final String mRootSceneClassName;
@@ -64,6 +66,7 @@ public class NavigationSceneOptions {
     private boolean mReuseOutsideView = false;
     private boolean mOnlyDispatchToTopSceneWindowInsets = false;
     private boolean mUseExtraViewToBlockGesture = false;
+    private boolean mSkipPopAnimationWhenTargetIsDestroyed = false;
 
     public NavigationSceneOptions(@NonNull Class<? extends Scene> rootSceneClazz, @Nullable Bundle rootSceneArguments) {
         if (rootSceneClazz.isAssignableFrom(NavigationScene.class)) {
@@ -106,6 +109,9 @@ public class NavigationSceneOptions {
         return this;
     }
 
+    /**
+     * Best used in combination with {@link #setSkipPopAnimationWhenTargetIsDestroyed(boolean)}
+     */
     @NonNull
     public NavigationSceneOptions setAutoRecycleInvisibleScenesThreshold(@FloatRange(from = 0.0, to = 1.0) float threshold) {
         this.mAutoRecycleInvisibleScenesThreshold = threshold;
@@ -170,6 +176,17 @@ public class NavigationSceneOptions {
     @NonNull
     public NavigationSceneOptions setUseExtraViewToBlockGesture(boolean useExtraViewToBlockGesture) {
         this.mUseExtraViewToBlockGesture = useExtraViewToBlockGesture;
+        return this;
+    }
+
+    /**
+     * Best used in combination with {@link #setAutoRecycleInvisibleScenesThreshold(float)}，require {@link PopOptions#isUsePost()}
+     * @param skipPopAnimationWhenTargetIsDestroyed
+     * @return
+     */
+    @NonNull
+    public NavigationSceneOptions setSkipPopAnimationWhenTargetIsDestroyed(boolean skipPopAnimationWhenTargetIsDestroyed) {
+        this.mSkipPopAnimationWhenTargetIsDestroyed = skipPopAnimationWhenTargetIsDestroyed;
         return this;
     }
 
@@ -243,6 +260,10 @@ public class NavigationSceneOptions {
         return this.mUseExtraViewToBlockGesture;
     }
 
+    public boolean isSkipPopAnimationWhenTargetIsDestroyed() {
+        return this.mSkipPopAnimationWhenTargetIsDestroyed;
+    }
+
     /**
      * @hide
      */
@@ -269,6 +290,7 @@ public class NavigationSceneOptions {
         navigationSceneOptions.mReuseOutsideView = bundle.getBoolean(EXTRA_REUSE_OUTSIDE_VIEW, false);
         navigationSceneOptions.mOnlyDispatchToTopSceneWindowInsets = bundle.getBoolean(EXTRA_ONLY_DISPATCH_TO_TOP_SCENE_WINDOW_INSETS, false);
         navigationSceneOptions.mUseExtraViewToBlockGesture = bundle.getBoolean(EXTRA_USE_EXTRA_VIEW_TO_BLOCK_GESTURE, false);
+        navigationSceneOptions.mSkipPopAnimationWhenTargetIsDestroyed = bundle.getBoolean(EXTRA_SKIP_POP_ANIMATION_WHEN_TARGET_IS_DESTROYED, false);
         return navigationSceneOptions;
     }
 
@@ -294,6 +316,7 @@ public class NavigationSceneOptions {
         bundle.putBoolean(EXTRA_REUSE_OUTSIDE_VIEW, mReuseOutsideView);
         bundle.putBoolean(EXTRA_ONLY_DISPATCH_TO_TOP_SCENE_WINDOW_INSETS, mOnlyDispatchToTopSceneWindowInsets);
         bundle.putBoolean(EXTRA_USE_EXTRA_VIEW_TO_BLOCK_GESTURE, mUseExtraViewToBlockGesture);
+        bundle.putBoolean(EXTRA_SKIP_POP_ANIMATION_WHEN_TARGET_IS_DESTROYED, mSkipPopAnimationWhenTargetIsDestroyed);
         return bundle;
     }
 }
