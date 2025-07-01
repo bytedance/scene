@@ -121,7 +121,8 @@ class ConfigurationChangedTopSceneTests {
 
         Shadows.shadowOf(Looper.getMainLooper()).idle() //execute Handler posted task
 
-        Assert.assertNotSame(navigationScene.currentScene, scene1)
+        // root scene is recreated by rootSceneComponentFactory
+        Assert.assertSame(navigationScene.currentScene, scene1)
 
         Assert.assertEquals(0, scene1.onConfigurationChangedCount)
     }
