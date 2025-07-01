@@ -102,7 +102,7 @@ public class CoordinatePopCountOperation implements Operation {
         final View currentSceneView = currentScene.getView();
 
         //pause current scene
-        PopPauseOperation popPauseOperation = new PopPauseOperation(this.mManagerAbility, destroyRecordList);
+        PopPauseOperation popPauseOperation = new PopPauseOperation(this.mManagerAbility, currentScene);
 
         //resume previous scene
         final PopResumeOperation popResumeOperation = new PopResumeOperation(this.mManagerAbility, currentRecord, returnRecord, this.mAfterOnActivityCreatedAction);

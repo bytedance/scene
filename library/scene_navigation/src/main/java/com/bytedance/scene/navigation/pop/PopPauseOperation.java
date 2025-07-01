@@ -17,12 +17,12 @@ import java.util.List;
 public class PopPauseOperation implements Operation {
     private final NavigationManagerAbility mManagerAbility;
     private final NavigationScene mNavigationScene;
-    private final List<Record> destroyRecordList;
+    private final Scene mCurrentScene;
 
-    public PopPauseOperation(NavigationManagerAbility navigationManagerAbility, List<Record> destroyRecordList) {
+    public PopPauseOperation(NavigationManagerAbility navigationManagerAbility, Scene currentScene) {
         this.mManagerAbility = navigationManagerAbility;
         this.mNavigationScene = navigationManagerAbility.getNavigationScene();
-        this.destroyRecordList = destroyRecordList;
+        this.mCurrentScene = currentScene;
     }
 
     @Override
@@ -31,9 +31,8 @@ public class PopPauseOperation implements Operation {
          * The practice here should be to remove those Scenes in the middle,
          * then animate the two Scenes.
          */
-        for (final Record record : destroyRecordList) {
-            Scene scene = record.mScene;
-            this.mManagerAbility.moveState(this.mNavigationScene, scene, State.STARTED, null, false, null);
+        if (mCurrentScene != null) {
+            this.mManagerAbility.moveState(this.mNavigationScene, mCurrentScene, State.STARTED, null, false, null);
         }
 
         operationEndAction.run();
