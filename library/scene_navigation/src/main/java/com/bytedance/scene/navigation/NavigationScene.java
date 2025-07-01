@@ -311,12 +311,8 @@ public final class NavigationScene extends Scene implements NavigationListener, 
         if (usePushRoot) {
             mNavigationSceneManager.pushRoot(rootScene);
         } else {
-            if (this.mNavigationSceneOptions.usePostInLifecycle()) {
-                //the root should not use post policy
-                mNavigationSceneManager.push(rootScene, new PushOptions.Builder().setUsePost(false).build());
-            } else {
-                mNavigationSceneManager.push(rootScene, new PushOptions.Builder().build());
-            }
+            //the root should not use post policy
+            mNavigationSceneManager.push(rootScene, new PushOptions.Builder().setUsePost(false).build());
         }
     }
 
@@ -786,14 +782,7 @@ public final class NavigationScene extends Scene implements NavigationListener, 
             throw new IllegalArgumentException("NavigationScene need NavigationSceneOptions bundle");
         }
         this.mNavigationSceneOptions = NavigationSceneOptions.fromBundle(getArguments());
-
-        if (this.mNavigationSceneOptions.usePostInLifecycle() || isSeparateCreateFromCreateView()) {
-            this.mNavigationSceneManager = new NavigationSceneManager(this);
-        } else if (this.mNavigationSceneOptions.onlyRestoreVisibleScene()) {
-            this.mNavigationSceneManager = new NavigationSceneManagerV2(this);
-        } else {
-            this.mNavigationSceneManager = new NavigationSceneManagerV1(this);
-        }
+        this.mNavigationSceneManager = new NavigationSceneManager(this);
 
         if (savedInstanceState != null) {
             boolean supportRestore = savedInstanceState.getBoolean(KEY_NAVIGATION_SCENE_SUPPORT_RESTORE_ARGUMENT, isSupportRestore());

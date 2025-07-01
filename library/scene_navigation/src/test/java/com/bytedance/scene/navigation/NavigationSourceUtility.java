@@ -44,7 +44,6 @@ public class NavigationSourceUtility {
         NavigationSceneOptions options = new NavigationSceneOptions(rootScene.getClass());
         SceneGlobalConfig.useActivityCompatibleLifecycleStrategy = true;
         options.setOnlyRestoreVisibleScene(true);
-        options.setUsePostInLifecycle(true);
         navigationScene.setSeparateCreateFromCreateView(separateCreate);
         navigationScene.setInitRootSceneOnCreate(separateCreate);
         navigationScene.setArguments(options.toBundle());

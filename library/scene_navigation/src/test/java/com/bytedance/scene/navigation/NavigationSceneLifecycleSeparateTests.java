@@ -345,7 +345,6 @@ public class NavigationSceneLifecycleSeparateTests {
         NavigationSceneOptions options = new NavigationSceneOptions(rootScene.getClass());
         SceneGlobalConfig.useActivityCompatibleLifecycleStrategy = true;
         options.setOnlyRestoreVisibleScene(true);
-        options.setUsePostInLifecycle(true);
         navigationScene.setSeparateCreateFromCreateView(true);
         navigationScene.setInitRootSceneOnCreate(false);
         navigationScene.setArguments(options.toBundle());
@@ -491,7 +490,6 @@ public class NavigationSceneLifecycleSeparateTests {
         NavigationSceneOptions options = new NavigationSceneOptions(rootScene.getClass());
         SceneGlobalConfig.useActivityCompatibleLifecycleStrategy = true;
         options.setOnlyRestoreVisibleScene(true);
-        options.setUsePostInLifecycle(true);
         navigationScene.setSeparateCreateFromCreateView(true);
         navigationScene.setInitRootSceneOnCreate(true);
         navigationScene.setArguments(options.toBundle());
@@ -636,7 +634,6 @@ public class NavigationSceneLifecycleSeparateTests {
         NavigationSceneOptions options = new NavigationSceneOptions(rootScene.getClass());
         SceneGlobalConfig.useActivityCompatibleLifecycleStrategy = true;
         options.setOnlyRestoreVisibleScene(true);
-        options.setUsePostInLifecycle(true);
         navigationScene.setSeparateCreateFromCreateView(true);
         navigationScene.setInitRootSceneOnCreate(true);
         navigationScene.setArguments(options.toBundle());

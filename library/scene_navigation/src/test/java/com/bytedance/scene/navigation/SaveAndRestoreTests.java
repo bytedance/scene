@@ -54,7 +54,6 @@ public class SaveAndRestoreTests {
             ActivityController<NavigationSourceUtility.TestActivity> controller = Robolectric.buildActivity(NavigationSourceUtility.TestActivity.class).create().start().resume();
             NavigationSourceUtility.TestActivity testActivity = controller.get();
             NavigationSceneOptions options = new NavigationSceneOptions(TestScene.class);
-            options.setUsePostInLifecycle(true);
             navigationScene.setArguments(options.toBundle());
 
             Scope.RootScopeFactory rootScopeFactory = new Scope.RootScopeFactory() {
@@ -91,7 +90,6 @@ public class SaveAndRestoreTests {
             ActivityController<NavigationSourceUtility.TestActivity> controller = Robolectric.buildActivity(NavigationSourceUtility.TestActivity.class).create().start().resume();
             NavigationSourceUtility.TestActivity testActivity = controller.get();
             NavigationSceneOptions options = new NavigationSceneOptions(TestScene.class);
-            options.setUsePostInLifecycle(true);
             NavigationScene navigationScene = new NavigationScene();
             navigationScene.setArguments(options.toBundle());
 
@@ -128,7 +126,6 @@ public class SaveAndRestoreTests {
             ActivityController<NavigationSourceUtility.TestActivity> controller = Robolectric.buildActivity(NavigationSourceUtility.TestActivity.class).create().start().resume();
             NavigationSourceUtility.TestActivity testActivity = controller.get();
             NavigationSceneOptions options = new NavigationSceneOptions(TestFixIdGroupScene.class);
-            options.setUsePostInLifecycle(true);
             navigationScene.setArguments(options.toBundle());
 
             Scope.RootScopeFactory rootScopeFactory = new Scope.RootScopeFactory() {
@@ -168,7 +165,6 @@ public class SaveAndRestoreTests {
             ActivityController<NavigationSourceUtility.TestActivity> controller = Robolectric.buildActivity(NavigationSourceUtility.TestActivity.class).create().start().resume();
             NavigationSourceUtility.TestActivity testActivity = controller.get();
             NavigationSceneOptions options = new NavigationSceneOptions(TestFixIdGroupScene.class);
-            options.setUsePostInLifecycle(true);
             NavigationScene navigationScene = new NavigationScene();
             navigationScene.setArguments(options.toBundle());
 
@@ -212,7 +208,6 @@ public class SaveAndRestoreTests {
             ActivityController<NavigationSourceUtility.TestActivity> controller = Robolectric.buildActivity(NavigationSourceUtility.TestActivity.class).create().start().resume();
             NavigationSourceUtility.TestActivity testActivity = controller.get();
             NavigationSceneOptions options = new NavigationSceneOptions(TestGroupScene.class);
-            options.setUsePostInLifecycle(true);
             navigationScene.setArguments(options.toBundle());
 
             Scope.RootScopeFactory rootScopeFactory = new Scope.RootScopeFactory() {
@@ -252,7 +247,6 @@ public class SaveAndRestoreTests {
             ActivityController<NavigationSourceUtility.TestActivity> controller = Robolectric.buildActivity(NavigationSourceUtility.TestActivity.class).create().start().resume();
             NavigationSourceUtility.TestActivity testActivity = controller.get();
             NavigationSceneOptions options = new NavigationSceneOptions(TestGroupScene.class);
-            options.setUsePostInLifecycle(true);
             NavigationScene navigationScene = new NavigationScene();
             navigationScene.setArguments(options.toBundle());
 
@@ -288,7 +282,6 @@ public class SaveAndRestoreTests {
         ActivityController<NavigationSourceUtility.TestActivity> controller = Robolectric.buildActivity(NavigationSourceUtility.TestActivity.class).create().start().resume();
         NavigationSourceUtility.TestActivity testActivity = controller.get();
         NavigationSceneOptions options = new NavigationSceneOptions(TestFixIdGroupScene.class);
-        options.setUsePostInLifecycle(true);
         navigationScene.setArguments(options.toBundle());
 
         Scope.RootScopeFactory rootScopeFactory = new Scope.RootScopeFactory() {
@@ -333,7 +326,6 @@ public class SaveAndRestoreTests {
         ActivityController<NavigationSourceUtility.TestActivity> controller = Robolectric.buildActivity(NavigationSourceUtility.TestActivity.class).create().start().resume();
         NavigationSourceUtility.TestActivity testActivity = controller.get();
         NavigationSceneOptions options = new NavigationSceneOptions(TestScene.class);
-        options.setUsePostInLifecycle(true);
         navigationScene.setArguments(options.toBundle());
 
         Scope.RootScopeFactory rootScopeFactory = new Scope.RootScopeFactory() {

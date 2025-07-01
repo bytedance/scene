@@ -63,7 +63,6 @@ public class UseActivityContextAndLayoutInflaterTests {
         NavigationScene navigationScene = new NavigationScene();
         NavigationSceneOptions options = new NavigationSceneOptions(TestScene.class);
         options.setOnlyRestoreVisibleScene(true);
-        options.setUsePostInLifecycle(true);
         options.setDrawWindowBackground(false);
         options.setUseActivityContextAndLayoutInflater(useActivityContextAndLayoutInflater);
         navigationScene.setArguments(options.toBundle());

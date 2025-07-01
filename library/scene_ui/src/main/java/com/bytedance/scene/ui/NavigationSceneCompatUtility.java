@@ -170,7 +170,6 @@ public final class NavigationSceneCompatUtility {
             navigationSceneOptions.setFixSceneWindowBackgroundEnabled(this.mFixSceneBackgroundEnabled);
             navigationSceneOptions.setSceneBackground(this.mSceneBackgroundResId);
             navigationSceneOptions.setAutoRecycleInvisibleScenesThreshold(this.mAutoRecycleInvisibleScenesThreshold);
-            navigationSceneOptions.setUsePostInLifecycle(this.mUsePostInLifecycle);
             navigationSceneOptions.setOnlyRestoreVisibleScene(this.mOnlyRestoreVisibleScene);
             return setupWithFragment(this.mFragment, this.mIdRes, navigationSceneOptions, this.mRootSceneComponentFactory, this.mSupportRestore, this.mTag, this.mImmediate);
         }

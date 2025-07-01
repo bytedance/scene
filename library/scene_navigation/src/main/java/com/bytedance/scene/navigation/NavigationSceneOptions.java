@@ -33,7 +33,6 @@ public class NavigationSceneOptions {
     private static final String EXTRA_FIX_SCENE_BACKGROUND_ENABLED = "extra_fixSceneBackground_enabled";
     private static final String EXTRA_SCENE_BACKGROUND = "extra_sceneBackground";
     private static final String EXTRA_ONLY_RESTORE_VISIBLE_SCENE = "extra_onlyRestoreVisibleScene";
-    private static final String EXTRA_USE_POST_IN_LIFECYCLE = "extra_usePostInLifecycle";
     private static final String EXTRA_AUTO_RECYCLE_INVISIBLE_SCENES_THRESHOLD = "extra_autoRecycleInvisibleScenesThreshold";
     private static final String EXTRA_USE_ACTIVITY_CONTEXT_AND_LAYOUT_INFLATER = "extra_useActivityContextAndLayoutInflater";
     private static final String EXTRA_LAZY_LOAD_NAVIGATION_SCENE_UNNECESSARY_VIEW = "extra_lazyLoadNavigationSceneUnnecessaryView";
@@ -104,12 +103,6 @@ public class NavigationSceneOptions {
     @NonNull
     public NavigationSceneOptions setOnlyRestoreVisibleScene(boolean onlyRestoreVisibleScene) {
         this.mOnlyRestoreVisibleScene = onlyRestoreVisibleScene;
-        return this;
-    }
-
-    @NonNull
-    public NavigationSceneOptions setUsePostInLifecycle(boolean usePostInLifecycle) {
-        this.mUsePostInLifecycle = usePostInLifecycle;
         return this;
     }
 
@@ -266,7 +259,6 @@ public class NavigationSceneOptions {
         navigationSceneOptions.mFixSceneBackgroundEnabled = bundle.getBoolean(EXTRA_FIX_SCENE_BACKGROUND_ENABLED);
         navigationSceneOptions.mSceneBackgroundResId = bundle.getInt(EXTRA_SCENE_BACKGROUND);
         navigationSceneOptions.mOnlyRestoreVisibleScene = bundle.getBoolean(EXTRA_ONLY_RESTORE_VISIBLE_SCENE);
-        navigationSceneOptions.mUsePostInLifecycle = bundle.getBoolean(EXTRA_USE_POST_IN_LIFECYCLE);
         navigationSceneOptions.mAutoRecycleInvisibleScenesThreshold = bundle.getFloat(EXTRA_AUTO_RECYCLE_INVISIBLE_SCENES_THRESHOLD);
         navigationSceneOptions.mUseActivityContextAndLayoutInflater = bundle.getBoolean(EXTRA_USE_ACTIVITY_CONTEXT_AND_LAYOUT_INFLATER, false);
         navigationSceneOptions.mLazyLoadNavigationSceneUnnecessaryView = bundle.getBoolean(EXTRA_LAZY_LOAD_NAVIGATION_SCENE_UNNECESSARY_VIEW, false);
@@ -292,7 +284,6 @@ public class NavigationSceneOptions {
         bundle.putBoolean(EXTRA_FIX_SCENE_BACKGROUND_ENABLED, mFixSceneBackgroundEnabled);
         bundle.putInt(EXTRA_SCENE_BACKGROUND, mSceneBackgroundResId);
         bundle.putBoolean(EXTRA_ONLY_RESTORE_VISIBLE_SCENE, mOnlyRestoreVisibleScene);
-        bundle.putBoolean(EXTRA_USE_POST_IN_LIFECYCLE, mUsePostInLifecycle);
         bundle.putFloat(EXTRA_AUTO_RECYCLE_INVISIBLE_SCENES_THRESHOLD, mAutoRecycleInvisibleScenesThreshold);
         bundle.putBoolean(EXTRA_USE_ACTIVITY_CONTEXT_AND_LAYOUT_INFLATER, mUseActivityContextAndLayoutInflater);
         bundle.putBoolean(EXTRA_LAZY_LOAD_NAVIGATION_SCENE_UNNECESSARY_VIEW, mLazyLoadNavigationSceneUnnecessaryView);

@@ -143,7 +143,6 @@ fun createFromInitSceneLifecycleManager(
     val navigationScene = NavigationScene()
     val options = NavigationSceneOptions(rootScene.javaClass)
     options.setOnlyRestoreVisibleScene(true)
-    options.setUsePostInLifecycle(true)
     navigationScene.isSeparateCreateFromCreateView = separateCreate
     navigationScene.setInitRootSceneOnCreate(separateCreate)
     navigationScene.setArguments(options.toBundle())

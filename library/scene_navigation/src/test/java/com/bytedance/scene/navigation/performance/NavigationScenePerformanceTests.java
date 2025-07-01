@@ -184,7 +184,6 @@ public class NavigationScenePerformanceTests {
         NavigationSceneOptions options = new NavigationSceneOptions(rootScene.getClass());
         SceneGlobalConfig.useActivityCompatibleLifecycleStrategy = true;
         options.setOnlyRestoreVisibleScene(true);
-        options.setUsePostInLifecycle(true);
         options.setLazyLoadNavigationSceneUnnecessaryView(true);
         navigationScene.setSeparateCreateFromCreateView(true);
         navigationScene.setInitRootSceneOnCreate(true);

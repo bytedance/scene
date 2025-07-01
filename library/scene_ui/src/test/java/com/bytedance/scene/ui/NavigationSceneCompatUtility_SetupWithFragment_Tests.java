@@ -59,7 +59,7 @@ public class NavigationSceneCompatUtility_SetupWithFragment_Tests {
                     public Scene instantiateScene(ClassLoader cl, String className, Bundle bundle) {
                         return scene;
                     }
-                }).usePostInLifecycle(true).build();
+                }).build();
         assertEquals(scene, sceneDelegate.getNavigationScene().getCurrentScene());
     }
 
@@ -75,7 +75,7 @@ public class NavigationSceneCompatUtility_SetupWithFragment_Tests {
 
         final TestScene scene = new TestScene();
         SceneDelegate sceneDelegate = NavigationSceneCompatUtility.setupWithFragment(testFragment, TestScene.class, testFragment.mId)
-                .rootScene(scene).usePostInLifecycle(true).usePostInLifecycle(true).build();
+                .rootScene(scene).build();
         assertEquals(scene, sceneDelegate.getNavigationScene().getCurrentScene());
     }
 
@@ -96,7 +96,7 @@ public class NavigationSceneCompatUtility_SetupWithFragment_Tests {
                     public View onCreateView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container, @Nullable Bundle savedInstanceState) {
                         return new View(requireSceneContext());
                     }
-                }).usePostInLifecycle(true).build();
+                }).build();
     }
 
     public static class TestNormalFragment_Add_In_Activity_OnCreate extends Fragment {
@@ -116,7 +116,7 @@ public class NavigationSceneCompatUtility_SetupWithFragment_Tests {
             super.onViewCreated(view, savedInstanceState);
             mMethodInvokedCount++;
 
-            SceneDelegate sceneDelegate = NavigationSceneCompatUtility.setupWithFragment(this, TestScene.class, mId).tag("onViewCreated").usePostInLifecycle(true).build();
+            SceneDelegate sceneDelegate = NavigationSceneCompatUtility.setupWithFragment(this, TestScene.class, mId).tag("onViewCreated").build();
             NavigationScene navigationScene = sceneDelegate.getNavigationScene();
             assertNotNull(navigationScene);
             assertEquals(State.NONE, navigationScene.getState());
@@ -127,7 +127,7 @@ public class NavigationSceneCompatUtility_SetupWithFragment_Tests {
             super.onActivityCreated(savedInstanceState);
             mMethodInvokedCount++;
 
-            SceneDelegate sceneDelegate = NavigationSceneCompatUtility.setupWithFragment(this, TestScene.class, mId).tag("onActivityCreated").usePostInLifecycle(true).build();
+            SceneDelegate sceneDelegate = NavigationSceneCompatUtility.setupWithFragment(this, TestScene.class, mId).tag("onActivityCreated").build();
             NavigationScene navigationScene = sceneDelegate.getNavigationScene();
             assertNotNull(navigationScene);
             assertEquals(State.NONE, navigationScene.getState());
@@ -138,7 +138,7 @@ public class NavigationSceneCompatUtility_SetupWithFragment_Tests {
             super.onStart();
             mMethodInvokedCount++;
 
-            SceneDelegate sceneDelegate = NavigationSceneCompatUtility.setupWithFragment(this, TestScene.class, mId).tag("onStart").usePostInLifecycle(true).build();
+            SceneDelegate sceneDelegate = NavigationSceneCompatUtility.setupWithFragment(this, TestScene.class, mId).tag("onStart").build();
             NavigationScene navigationScene = sceneDelegate.getNavigationScene();
             assertNotNull(navigationScene);
             assertEquals(State.ACTIVITY_CREATED, navigationScene.getState());
@@ -149,7 +149,7 @@ public class NavigationSceneCompatUtility_SetupWithFragment_Tests {
             super.onResume();
             mMethodInvokedCount++;
 
-            SceneDelegate sceneDelegate = NavigationSceneCompatUtility.setupWithFragment(this, TestScene.class, mId).tag("onResume").usePostInLifecycle(true).build();
+            SceneDelegate sceneDelegate = NavigationSceneCompatUtility.setupWithFragment(this, TestScene.class, mId).tag("onResume").build();
             NavigationScene navigationScene = sceneDelegate.getNavigationScene();
             assertNotNull(navigationScene);
             assertEquals(State.STARTED, navigationScene.getState());
@@ -160,7 +160,7 @@ public class NavigationSceneCompatUtility_SetupWithFragment_Tests {
             super.onPause();
             mMethodInvokedCount++;
 
-            SceneDelegate sceneDelegate = NavigationSceneCompatUtility.setupWithFragment(this, TestScene.class, mId).tag("onPause").usePostInLifecycle(true).build();
+            SceneDelegate sceneDelegate = NavigationSceneCompatUtility.setupWithFragment(this, TestScene.class, mId).tag("onPause").build();
             NavigationScene navigationScene = sceneDelegate.getNavigationScene();
             assertNotNull(navigationScene);
             assertEquals(State.STARTED, navigationScene.getState());
@@ -171,7 +171,7 @@ public class NavigationSceneCompatUtility_SetupWithFragment_Tests {
             super.onStop();
             mMethodInvokedCount++;
 
-            SceneDelegate sceneDelegate = NavigationSceneCompatUtility.setupWithFragment(this, TestScene.class, mId).tag("onStop").usePostInLifecycle(true).build();
+            SceneDelegate sceneDelegate = NavigationSceneCompatUtility.setupWithFragment(this, TestScene.class, mId).tag("onStop").build();
             NavigationScene navigationScene = sceneDelegate.getNavigationScene();
             assertNotNull(navigationScene);
             assertEquals(State.ACTIVITY_CREATED, navigationScene.getState());

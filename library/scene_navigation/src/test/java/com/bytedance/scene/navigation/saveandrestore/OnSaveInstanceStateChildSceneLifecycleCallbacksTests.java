@@ -362,7 +362,6 @@ public class OnSaveInstanceStateChildSceneLifecycleCallbacksTests {
         TestActivity testActivity = controller.get();
         NavigationScene navigationScene = new NavigationScene();
         NavigationSceneOptions options = new NavigationSceneOptions(rootScene.getClass());
-        options.setUsePostInLifecycle(true);
         navigationScene.setArguments(options.toBundle());
         navigationScene.registerChildSceneLifecycleCallbacks(callbacks, false);
 

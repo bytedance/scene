@@ -36,7 +36,6 @@ class AutoRecycleActivity : AppCompatActivity() {
         delegate = NavigationSceneUtility.setupWithActivity(this, FirstScene::class.java)
             .toView(R.id.scene_root)
             .supportRestore(true)
-            .usePostInLifecycle(true)
             .onlyRestoreVisibleScene(true)
             .autoRecycleInvisibleScenesThreshold(0.5F)
             .build()

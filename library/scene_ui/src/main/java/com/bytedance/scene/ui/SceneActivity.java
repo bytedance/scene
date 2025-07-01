@@ -47,7 +47,6 @@ public abstract class SceneActivity extends AppCompatActivity {
         this.mDelegate = NavigationSceneUtility.setupWithActivity(this, getHomeSceneClass())
                 .rootSceneArguments(arguments)
                 .supportRestore(supportRestore())
-                .usePostInLifecycle(getUsePostInLifecycle())
                 .onlyRestoreVisibleScene(true)
                 .separateCreateFromCreateView(true)
                 .build();
@@ -66,10 +65,6 @@ public abstract class SceneActivity extends AppCompatActivity {
         if (navigationScene != null) {
             navigationScene.onConfigurationChanged(newConfig);
         }
-    }
-
-    protected boolean getUsePostInLifecycle() {
-        return true;
     }
 
     @NonNull

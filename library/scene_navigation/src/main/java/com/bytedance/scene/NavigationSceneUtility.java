@@ -61,7 +61,6 @@ public final class NavigationSceneUtility {
         private String mTag = LIFE_CYCLE_FRAGMENT_TAG;
         private boolean mImmediate = true;
         private float mAutoRecycleInvisibleScenesThreshold = 0F;
-        private boolean mUsePostInLifecycle = false;
         private boolean mOnlyRestoreVisibleScene = false;
         private boolean mSeparateCreateFromCreateView = false;
 
@@ -147,12 +146,6 @@ public final class NavigationSceneUtility {
         }
 
         @NonNull
-        public Builder usePostInLifecycle(boolean usePostInLifecycle) {
-            this.mUsePostInLifecycle = usePostInLifecycle;
-            return this;
-        }
-
-        @NonNull
         public Builder onlyRestoreVisibleScene(boolean onlyRestoreVisibleScene) {
             this.mOnlyRestoreVisibleScene = onlyRestoreVisibleScene;
             return this;
@@ -171,7 +164,6 @@ public final class NavigationSceneUtility {
             navigationSceneOptions.setFixSceneWindowBackgroundEnabled(this.mFixSceneBackgroundEnabled);
             navigationSceneOptions.setSceneBackground(this.mSceneBackgroundResId);
             navigationSceneOptions.setAutoRecycleInvisibleScenesThreshold(this.mAutoRecycleInvisibleScenesThreshold);
-            navigationSceneOptions.setUsePostInLifecycle(this.mUsePostInLifecycle);
             navigationSceneOptions.setOnlyRestoreVisibleScene(this.mOnlyRestoreVisibleScene);
             return setupWithActivity(this.mActivity, this.mIdRes, navigationSceneOptions, this.mRootSceneComponentFactory, this.mSupportRestore, this.mTag, this.mImmediate, this.mSeparateCreateFromCreateView);
         }

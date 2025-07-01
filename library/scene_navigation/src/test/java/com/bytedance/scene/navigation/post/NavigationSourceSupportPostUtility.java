@@ -34,7 +34,6 @@ public class NavigationSourceSupportPostUtility {
         NavigationScene navigationScene = new NavigationScene();
         NavigationSceneOptions options = new NavigationSceneOptions(rootScene.getClass());
         options.setOnlyRestoreVisibleScene(true);
-        options.setUsePostInLifecycle(true);
         navigationScene.setArguments(options.toBundle());
 
         Scope.RootScopeFactory rootScopeFactory = new Scope.RootScopeFactory() {

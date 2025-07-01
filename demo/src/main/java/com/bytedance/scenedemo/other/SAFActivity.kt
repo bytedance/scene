@@ -73,7 +73,6 @@ class SAFActivity : AppCompatActivity() {
         navigationSceneOptions.setDrawWindowBackground(false)
         navigationSceneOptions.setFixSceneWindowBackgroundEnabled(false)
         navigationSceneOptions.setOnlyRestoreVisibleScene(true)
-        navigationSceneOptions.setUsePostInLifecycle(true)
         navigationSceneOptions.setSceneBackground(0)
         navigationSceneOptions.useActivityContextAndLayoutInflater = true
         navigationSceneOptions.lazyLoadNavigationSceneUnnecessaryView = true
