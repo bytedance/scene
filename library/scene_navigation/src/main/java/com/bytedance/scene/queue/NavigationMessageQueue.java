@@ -120,7 +120,7 @@ public class NavigationMessageQueue {
         ThreadUtility.checkUIThread();
 
         if (this.mIsRunningPostSync) {
-            throw new SceneInternalException("Can't postSync");
+            throw new SceneInternalException("Can't execute postSync nested.");
         }
 
         this.mIsRunningPostSync = true;
