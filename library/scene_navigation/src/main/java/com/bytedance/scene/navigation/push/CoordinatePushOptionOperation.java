@@ -142,27 +142,26 @@ public class CoordinatePushOptionOperation implements Operation {
             }
         };
 
-        final NavigationRunnable createAndResumeNewSceneTask = new NavigationRunnable() {
-            @Override
-            public void run() {
-                SceneTrace.beginSection(NavigationSceneManager.TRACE_EXECUTE_OPERATION_TAG);
-                String suppressTag = mManagerAbility.beginSuppressStackOperation("NavigationManager execute operation directly");
-                mManagerAbility.executeOperationSafely(createAndResumeNewSceneOperation, new Runnable() {
-                    @Override
-                    public void run() {
-                        if (mPushOptions.isUseIdleWhenStop()) {
-                            mMessageQueue.executeWhenIdleOrTimeLimit(stopPreviousSceneTask, TimeUnit.SECONDS.toMillis(10));
-                        } else {
-                            mMessageQueue.postAsyncAtHead(stopPreviousSceneTask);
-                        }
-                    }
-                });
-                mManagerAbility.endSuppressStackOperation(suppressTag);
-                SceneTrace.endSection();
-            }
-        };
-
         if (currentRecord != null) {
+            final NavigationRunnable createAndResumeNewSceneTask = new NavigationRunnable() {
+                @Override
+                public void run() {
+                    SceneTrace.beginSection(NavigationSceneManager.TRACE_EXECUTE_OPERATION_TAG);
+                    String suppressTag = mManagerAbility.beginSuppressStackOperation("NavigationManager execute operation directly");
+                    mManagerAbility.executeOperationSafely(createAndResumeNewSceneOperation, new Runnable() {
+                        @Override
+                        public void run() {
+                            if (mPushOptions.isUseIdleWhenStop()) {
+                                mMessageQueue.executeWhenIdleOrTimeLimit(stopPreviousSceneTask, TimeUnit.SECONDS.toMillis(10));
+                            } else {
+                                mMessageQueue.postAsyncAtHead(stopPreviousSceneTask);
+                            }
+                        }
+                    });
+                    mManagerAbility.endSuppressStackOperation(suppressTag);
+                    SceneTrace.endSection();
+                }
+            };
             pauseCurrentSceneOperation.execute(new Runnable() {
                 @Override
                 public void run() {
