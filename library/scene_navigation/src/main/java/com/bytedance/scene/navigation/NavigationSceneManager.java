@@ -71,6 +71,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Queue;
 import java.util.Set;
 
 /**
@@ -108,6 +109,8 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
     private boolean mReduceColdStartCallStack = false;
 
     private Configuration mActivityConfiguration = null;
+
+    private WindowFocusChangedPendingTask mPendingWindowFocusChangedPendingTask = null;
 
     NavigationSceneManager(NavigationScene scene) {
         this.mNavigationScene = scene;
@@ -2186,6 +2189,16 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
         return true;
     }
 
+    private void dispatchWindowFocusToTargetScene(boolean hasFocus) {
+        Scene scene = getCurrentScene();
+        if (ActivityCompatibleInfoCollector.isTargetSceneType(scene)) {
+            onSceneResumedWindowFocusChangedToTarget(scene, hasFocus);
+        } else {
+            //try to uninstall window focus listener if there are no ActivityCompatibleBehavior Scene
+            uninstallUselessWindowFocusChangeListener();
+        }
+    }
+
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
         if (!this.mNavigationScene.mNavigationSceneOptions.getUseWindowFocusChangedDispatch()) {
@@ -2194,24 +2207,49 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
         LoggerManager.getInstance().i(TAG, "onWindowFocusChanged " + hasFocus);
 
         if (!requireMessageQueue().hasPendingTasks()) {
-            Scene scene = getCurrentScene();
-            if (ActivityCompatibleInfoCollector.isTargetSceneType(scene)) {
-                onSceneResumedWindowFocusChangedToTarget(scene, hasFocus);
-            } else {
-                //try to uninstall window focus listener if there are no ActivityCompatibleBehavior Scene
-                uninstallUselessWindowFocusChangeListener();
-            }
+            dispatchWindowFocusToTargetScene(hasFocus);
         } else {
             LoggerManager.getInstance().i(TAG, "sync window focus by SceneMessageQueue");
 
             //sync focus after all pending tasks are finished
-            NavigationRunnable syncWindowFocusRunnable = new NavigationRunnable() {
-                @Override
-                public void run() {
-                    onWindowFocusChanged(hasFocus);
+            WindowFocusChangedPendingTask curWindowFocusChangedPendingTask = this.mPendingWindowFocusChangedPendingTask;
+            if (curWindowFocusChangedPendingTask == null) {
+                WindowFocusChangedPendingTask windowFocusChangedPendingTask = new WindowFocusChangedPendingTask(hasFocus);
+                this.mPendingWindowFocusChangedPendingTask = windowFocusChangedPendingTask;
+                requireMessageQueue().postAsync(windowFocusChangedPendingTask);
+            } else {
+                curWindowFocusChangedPendingTask.updateLatestHasFocus(hasFocus);
+            }
+        }
+    }
+
+    private final class WindowFocusChangedPendingTask extends NavigationRunnable {
+        private final Queue<Boolean> hasFocusQueue = new ArrayDeque<>();
+
+        private WindowFocusChangedPendingTask(boolean initHasFocus) {
+            this.hasFocusQueue.add(initHasFocus);
+        }
+
+        private void updateLatestHasFocus(boolean latestHasFocus) {
+            this.hasFocusQueue.add(latestHasFocus);
+        }
+
+        @Override
+        public void run() {
+            if (!requireMessageQueue().hasPendingTasks()) {
+                NavigationSceneManager.this.mPendingWindowFocusChangedPendingTask = null;
+                while (true) {
+                    Boolean curFocus = this.hasFocusQueue.poll();
+                    if (curFocus == null) {
+                        break;
+                    }
+
+                    LoggerManager.getInstance().i(TAG, "WindowFocusChangedPendingTask dispatch onWindowFocusChanged " + curFocus);
+                    dispatchWindowFocusToTargetScene(curFocus);
                 }
-            };
-            requireMessageQueue().postAsync(syncWindowFocusRunnable);
+            } else {
+                requireMessageQueue().postAsync(this);
+            }
         }
     }
 
