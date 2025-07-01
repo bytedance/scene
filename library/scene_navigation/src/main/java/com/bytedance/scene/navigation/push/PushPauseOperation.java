@@ -2,7 +2,6 @@ package com.bytedance.scene.navigation.push;
 
 import com.bytedance.scene.Scene;
 import com.bytedance.scene.State;
-import com.bytedance.scene.animation.NavigationAnimationExecutor;
 import com.bytedance.scene.interfaces.PushOptions;
 import com.bytedance.scene.navigation.NavigationManagerAbility;
 import com.bytedance.scene.navigation.NavigationScene;
@@ -16,17 +15,15 @@ import java.util.List;
 
 public class PushPauseOperation implements Operation {
     private final NavigationManagerAbility mManagerAbility;
-    private final Scene mScene;
     private final PushOptions mPushOptions;
-    private final boolean mIsSceneTranslucent;
+    private final boolean mIsPushSceneTranslucent;
     private final NavigationScene mNavigationScene;
 
     public PushPauseOperation(NavigationManagerAbility managerAbility, Scene scene, PushOptions pushOptions) {
         this.mManagerAbility = managerAbility;
         this.mNavigationScene = managerAbility.getNavigationScene();
-        this.mScene = scene;
         this.mPushOptions = pushOptions;
-        this.mIsSceneTranslucent = pushOptions.isIsTranslucent() || scene instanceof SceneTranslucent;
+        this.mIsPushSceneTranslucent = pushOptions.isIsTranslucent() || scene instanceof SceneTranslucent;
     }
 
     @Override
@@ -51,7 +48,7 @@ public class PushPauseOperation implements Operation {
         if (currentRecord != null && mManagerAbility.getCurrentRecordList().contains(currentRecord)) {
             currentRecord.saveActivityStatus();
             final Scene currentScene = currentRecord.mScene;
-            State dstState = mIsSceneTranslucent ? State.STARTED : State.ACTIVITY_CREATED;
+            State dstState = mIsPushSceneTranslucent ? State.STARTED : State.ACTIVITY_CREATED;
             dstState = NavigationSceneManager.findMinState(dstState, mNavigationScene.getState());
 
             if (dstState == State.STARTED || dstState == State.ACTIVITY_CREATED) {
