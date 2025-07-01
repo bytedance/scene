@@ -19,6 +19,7 @@ import com.bytedance.scene.navigation.pop.idle.PopDestroyMiddlePageOperationV2;
 import com.bytedance.scene.navigation.pop.idle.PopDestroyOperationV2;
 import com.bytedance.scene.queue.NavigationMessageQueue;
 import com.bytedance.scene.queue.NavigationRunnable;
+import com.bytedance.scene.utlity.Constants;
 import com.bytedance.scene.utlity.TaskStartSignal;
 
 import java.util.ArrayList;
@@ -155,7 +156,7 @@ public class CoordinatePopCountOperation implements Operation {
                         }
                     });
 
-                    mMessageQueue.executeWhenIdleOrTimeLimit(popDestroyOperationV2Task, taskStartSignal, animationOperationV2.cancellationSignalList, TimeUnit.SECONDS.toMillis(10));
+                    mMessageQueue.executeWhenIdleOrTimeLimit(popDestroyOperationV2Task, taskStartSignal, animationOperationV2.cancellationSignalList, TimeUnit.SECONDS.toMillis(Constants.SCENE_DESTROY_MAX_TIMEOUT_SECONDS));
                     mManagerAbility.endSuppressStackOperation(suppressTag);
                     SceneTrace.endSection();
                 }
