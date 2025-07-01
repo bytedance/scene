@@ -42,7 +42,7 @@ class IdleRunnable implements MessageQueue.IdleHandler, Runnable {
     private final Handler mHandler;
     private final long mTimeOutMillis;
     @Nullable
-    private final TaskStartSignal mTaskSelfStartSignal;
+    private final TaskStartSignal mAddIdleHandlerSignal;
     @Nullable
     private final CancellationSignal mCancellationOuterSignal;
     private final Runnable mTargetRunnable;
@@ -51,13 +51,13 @@ class IdleRunnable implements MessageQueue.IdleHandler, Runnable {
     private boolean isAddedToIdle = false;
     private boolean isAddedToQueue = false;
 
-    IdleRunnable(Handler handler, Runnable targetRunnable, @Nullable TaskStartSignal taskStartSignal, @Nullable CancellationSignal cancellationSignal, long timeOutMillis) {
+    IdleRunnable(Handler handler, Runnable targetRunnable, @Nullable TaskStartSignal addIdleHandlerSignal, @Nullable CancellationSignal cancellationSignal, long timeOutMillis) {
         this.mHandler = handler;
         this.mTargetRunnable = targetRunnable;
         if (timeOutMillis <= 0) {
             throw new IllegalArgumentException("timeOutMillis should >0");
         }
-        this.mTaskSelfStartSignal = taskStartSignal;
+        this.mAddIdleHandlerSignal = addIdleHandlerSignal;
         this.mCancellationOuterSignal = cancellationSignal;
         this.mTimeOutMillis = timeOutMillis;
     }
@@ -66,9 +66,9 @@ class IdleRunnable implements MessageQueue.IdleHandler, Runnable {
         if (this.isAddedSignalIdle || this.isAddedToIdle || this.isAddedToQueue) {
             throw new IllegalStateException("IdleRunnable is already started");
         }
-        if (this.mTaskSelfStartSignal != null && !this.mTaskSelfStartSignal.isStarted()) {
+        if (this.mAddIdleHandlerSignal != null && !this.mAddIdleHandlerSignal.isStarted()) {
             this.isAddedSignalIdle = true;
-            this.mTaskSelfStartSignal.setRunnable(mSignalRunnable);
+            this.mAddIdleHandlerSignal.setRunnable(mSignalRunnable);
         } else {
             this.isAddedToIdle = true;
             Looper.myQueue().addIdleHandler(this);
@@ -113,11 +113,11 @@ class IdleRunnable implements MessageQueue.IdleHandler, Runnable {
     void cancel() {
         if (this.isAddedSignalIdle) {
             this.isAddedSignalIdle = false;
-            if (this.mTaskSelfStartSignal == null) {
+            if (this.mAddIdleHandlerSignal == null) {
                 throw new SceneInternalException("mTaskStartSignal can't be null when isAddedSignalIdle is true");
             }
             //free relationship
-            this.mTaskSelfStartSignal.clearRunnable();
+            this.mAddIdleHandlerSignal.clearRunnable();
             //cancel animation
             if (this.mCancellationOuterSignal != null) {
                 this.mCancellationOuterSignal.cancel();

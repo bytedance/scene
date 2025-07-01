@@ -90,7 +90,7 @@ public class NavigationMessageQueue {
         this.executeWhenIdleOrTimeLimit(runnable, null, null, timeOutMillis);
     }
 
-    public void executeWhenIdleOrTimeLimit(final NavigationRunnable runnable, @Nullable TaskStartSignal taskStartSignal, @Nullable CancellationSignal cancellationSignal, long timeOutMillis) {
+    public void executeWhenIdleOrTimeLimit(final NavigationRunnable runnable, @Nullable TaskStartSignal addIdleHandlerSignal, @Nullable CancellationSignal cancellationSignal, long timeOutMillis) {
         this.forceExecuteIdleTask();
 
         if (this.mIdleRunnable != null) {
@@ -98,7 +98,7 @@ public class NavigationMessageQueue {
         }
 
         this.mPendingTask.add(0, runnable);
-        this.mIdleRunnable = new IdleRunnable(this.mHandler, this.mSceneNavigationTask, taskStartSignal, cancellationSignal, timeOutMillis);
+        this.mIdleRunnable = new IdleRunnable(this.mHandler, this.mSceneNavigationTask, addIdleHandlerSignal, cancellationSignal, timeOutMillis);
         this.mIdleRunnable.start();
     }
 
