@@ -1928,7 +1928,7 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
         }
 
         this.mAnySceneStateChanged = false;
-        LoggerManager.getInstance().i(TAG, "recycleInvisibleScenes");
+        LoggerManager.getInstance().i(TAG, "recycleInvisibleScenes start");
         List<Record> recordList = this.mBackStackList.getCurrentRecordList();
         int size = recordList.size();
         int lastIndex = size - 1;
@@ -1964,12 +1964,13 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
                 Utility.removeFromParentView(view);
                 //create a new Scene instance to replace previous one
                 record.mScene = this.mBackStackList.createNewSceneInstance(mNavigationScene.requireActivity(), i, record, mNavigationScene.mRootSceneComponentFactory);
-                LoggerManager.getInstance().i(TAG, "recycle scene " + scene + " from state " + sceneState.getName());
+                LoggerManager.getInstance().i(TAG, "recycle scene " + scene + " from state " + sceneState.getName() + " completed");
             } else {
                 //skip because Scene is visible or disable restore
                 LoggerManager.getInstance().i(TAG, "recycle scene skip " + scene.toString() + " because it is visible or disable restore");
             }
         }
+        LoggerManager.getInstance().i(TAG, "recycleInvisibleScenes finish");
     }
 
     //this is a temporary simple version, just recreate all Scenes which has view
