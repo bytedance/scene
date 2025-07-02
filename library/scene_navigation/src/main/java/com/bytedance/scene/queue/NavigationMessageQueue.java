@@ -135,15 +135,17 @@ public class NavigationMessageQueue {
                     break;
                 }
 
-                LoggerManager.getInstance().i(TAG, "postSync run loop previous task " + currentTask.toString());
+                LoggerManager.getInstance().i(TAG, "postSync run loop previous task start " + currentTask.toString());
                 currentTask.run();
+                LoggerManager.getInstance().i(TAG, "postSync run loop previous task finish " + currentTask.toString());
             }
 
             this.mHandler.removeCallbacks(this.mSceneNavigationTask);
 
             //then execute this task
-            LoggerManager.getInstance().i(TAG, "run loop current task " + runnable.toString());
+            LoggerManager.getInstance().i(TAG, "postSync run loop current task start " + runnable.toString());
             runnable.run();
+            LoggerManager.getInstance().i(TAG, "postSync run loop current task finish " + runnable.toString());
         } finally {
             this.mIsRunningPostSync = false;
         }

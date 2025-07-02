@@ -11,6 +11,7 @@ import com.bytedance.scene.State;
 import com.bytedance.scene.interfaces.Function;
 import com.bytedance.scene.interfaces.PushOptions;
 import com.bytedance.scene.launchmode.LaunchModeBehavior;
+import com.bytedance.scene.logger.LoggerManager;
 import com.bytedance.scene.navigation.NavigationManagerAbility;
 import com.bytedance.scene.navigation.NavigationScene;
 import com.bytedance.scene.navigation.NavigationSceneManager;
@@ -40,6 +41,8 @@ import java.util.concurrent.TimeUnit;
 //创建三个 Task，第一个，立刻执行，后面两个，经过 post
 
 public class CoordinatePushOptionOperation implements Operation {
+    private static final String TAG = "CoordinatePushOptionOperation";
+
     private final NavigationManagerAbility mManagerAbility;
     private final NavigationScene mNavigationScene;
     private final NavigationMessageQueue mMessageQueue;
@@ -100,6 +103,7 @@ public class CoordinatePushOptionOperation implements Operation {
                     if (popSceneCount >= previousSceneList.size()) {
                         throw new IllegalArgumentException("LaunchModeBehavior getPopSceneCount count > current Scene count, LaunchModeBehavior type " + this.mLaunchModeBehavior.getClass());
                     }
+                    LoggerManager.getInstance().i(TAG, "Push Operation is converted to Pop Operation because of launchMode");
                     new CoordinatePopCountOperation(mManagerAbility, mMessageQueue, this.mPushOptions.getNavigationAnimationFactory(), popSceneCount, null, onNewIntentAction).execute(operationEndAction);
                 }else {
                     Scene dstScene = mManagerAbility.getCurrentScene();

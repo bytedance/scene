@@ -24,6 +24,7 @@ import androidx.annotation.NonNull;
 
 import com.bytedance.scene.Scene;
 import com.bytedance.scene.SceneComponentFactory;
+import com.bytedance.scene.logger.LoggerManager;
 import com.bytedance.scene.parcel.ParcelConstants;
 import com.bytedance.scene.utlity.SceneInstanceUtility;
 
@@ -34,18 +35,22 @@ import java.util.List;
  * Created by JiangQi on 8/1/18.
  */
 class RecordStack {
+    private static final String TAG = "RecordStack";
     private List<Record> mBackStackList = new ArrayList<>();
 
     public void push(Record record) {
         this.mBackStackList.add(record);
+        LoggerManager.getInstance().i(TAG, "add new record to RecordStack, current stack size " + this.mBackStackList.size());
     }
 
     public void pop() {
         this.mBackStackList.remove(this.mBackStackList.size() - 1);
+        LoggerManager.getInstance().i(TAG, "remove old record from RecordStack, current stack size " + this.mBackStackList.size());
     }
 
     public void remove(Record record) {
         this.mBackStackList.remove(record);
+        LoggerManager.getInstance().i(TAG, "remove old record from RecordStack, current stack size " + this.mBackStackList.size());
     }
 
     public Record getCurrentRecord() {
