@@ -106,7 +106,8 @@ public class CoordinatePushOptionOperation implements Operation {
                     LoggerManager.getInstance().i(TAG, "Push Operation is converted to Pop Operation because of launchMode");
                     new CoordinatePopCountOperation(mManagerAbility, mMessageQueue, this.mPushOptions.getNavigationAnimationFactory(), popSceneCount, null, onNewIntentAction).execute(operationEndAction);
                 }else {
-                    Scene dstScene = mManagerAbility.getCurrentScene();
+                    Record dstRecord = mManagerAbility.getCurrentRecord();
+                    Scene dstScene = dstRecord.mScene;
                     if (dstScene.getState() == State.RESUMED) {
                         //Because Activity is onResume, so Scene is onResume too, pause then invoke onNewIntent, finally resume
                         //onResume(current state) -> onPause -> onNewIntent -> onResume
@@ -116,6 +117,11 @@ public class CoordinatePushOptionOperation implements Operation {
                     } else {
                         //Because Activity is onPause or onStop, so Scene is onPause or onStop state, invoke onNewIntent directly
                         //onPause/onStop(current state) -> onNewIntent
+                        if (dstScene.getState().value < State.ACTIVITY_CREATED.value) {
+                            //restore target Scene if it has been destroyed
+                            LoggerManager.getInstance().d(TAG, "Target Scene has been destroyed, restore it firstly, then dispatch onNewIntent");
+                            mManagerAbility.moveState(mNavigationScene, dstScene, State.ACTIVITY_CREATED, dstRecord.consumeSavedInstanceState(), false, null);
+                        }
                         onNewIntentAction.apply(dstScene);
                     }
                     operationEndAction.run();
