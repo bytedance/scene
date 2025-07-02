@@ -118,7 +118,10 @@ public class CoordinatePopCountOperation implements Operation {
             return;
         }
 
-        if (mPopOptions == null || !mPopOptions.isUseIdleWhenStop()) {
+        boolean delayStopToIdle = mPopOptions != null && mPopOptions.isUseIdleWhenStop();
+        boolean delayStopToAnimEnd =  mPopOptions != null && mPopOptions.isStopAfterAnimation();
+        boolean delayed = delayStopToIdle || delayStopToAnimEnd;
+        if (mPopOptions == null || !delayed) {
             final PopDestroyOperation popDestroyOperation = new PopDestroyOperation(this.mManagerAbility, mAnimationFactory, destroyRecordList, currentRecord, returnRecord, currentScene, currentSceneView);
             final NavigationRunnable tmpPopDestroyTask = new NavigationRunnable() {
                 @Override
@@ -134,7 +137,7 @@ public class CoordinatePopCountOperation implements Operation {
             popDestroyTask = tmpPopDestroyTask;
         } else {
             final PopDestroyMiddlePageOperationV2 clearMiddlePageOperationV2 = new PopDestroyMiddlePageOperationV2(this.mManagerAbility, mAnimationFactory, destroyRecordList, currentRecord, returnRecord, currentScene, currentSceneView);
-            final PopAnimationOperationV2 animationOperationV2 = new PopAnimationOperationV2(this.mManagerAbility, mAnimationFactory, destroyRecordList, currentRecord, returnRecord, currentScene, currentSceneView);
+            final PopAnimationOperationV2 animationOperationV2 = new PopAnimationOperationV2(this.mManagerAbility, mAnimationFactory, destroyRecordList, currentRecord, returnRecord, currentScene, currentSceneView, delayStopToAnimEnd);
             final PopDestroyOperationV2 popDestroyOperationV2 = new PopDestroyOperationV2(this.mManagerAbility, mAnimationFactory, destroyRecordList, currentRecord, returnRecord, currentScene, currentSceneView);
 
             final NavigationRunnable popDestroyOperationV2Task = new NavigationRunnable() {
@@ -149,7 +152,19 @@ public class CoordinatePopCountOperation implements Operation {
                 }
             };
 
-            popDestroyTask = new NavigationRunnable() {
+            if (delayStopToAnimEnd) popDestroyTask = new NavigationRunnable() {
+                @Override
+                public void run() {
+                    SceneTrace.beginSection(NavigationSceneManager.TRACE_EXECUTE_OPERATION_TAG);
+                    String suppressTag = mManagerAbility.beginSuppressStackOperation("NavigationManager execute operation directly");
+                    mManagerAbility.executeOperationSafely(clearMiddlePageOperationV2, null);
+                    mManagerAbility.executeOperationSafely(animationOperationV2, () -> mMessageQueue.postAsyncAtHead(popDestroyOperationV2Task));
+                    mManagerAbility.endSuppressStackOperation(suppressTag);
+                    SceneTrace.endSection();
+                }
+            };
+
+            if (delayStopToIdle) popDestroyTask = new NavigationRunnable() {
                 @Override
                 public void run() {
                     SceneTrace.beginSection(NavigationSceneManager.TRACE_EXECUTE_OPERATION_TAG);

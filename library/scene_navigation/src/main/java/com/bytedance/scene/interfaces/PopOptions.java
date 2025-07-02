@@ -36,14 +36,16 @@ public class PopOptions {
     private final boolean mUsePost;
     private final boolean mUsePostWhenPause;
     private final boolean mUseIdleWhenStop;
+    private final boolean mStopAfterAnimation;
 
-    private PopOptions(NavigationAnimationExecutor navigationAnimatorExecutor, Predicate<Scene> popUtilPredicate, boolean useActivityCompatibleLifecycle, boolean usePost, boolean usePostWhenPause, boolean useIdleWhenStop) {
+    private PopOptions(NavigationAnimationExecutor navigationAnimatorExecutor, Predicate<Scene> popUtilPredicate, boolean useActivityCompatibleLifecycle, boolean usePost, boolean usePostWhenPause, boolean useIdleWhenStop, boolean mStopAfterAnimation) {
         this.mNavigationAnimationExecutor = navigationAnimatorExecutor;
         this.mPopUtilPredicate = popUtilPredicate;
         this.mUseActivityCompatibleLifecycle = useActivityCompatibleLifecycle;
         this.mUsePost = usePost;
         this.mUsePostWhenPause = usePostWhenPause;
         this.mUseIdleWhenStop = useIdleWhenStop;
+        this.mStopAfterAnimation = mStopAfterAnimation;
     }
 
     public NavigationAnimationExecutor getNavigationAnimationExecutor() {
@@ -70,6 +72,8 @@ public class PopOptions {
         return this.mUseIdleWhenStop;
     }
 
+    public boolean isStopAfterAnimation() { return this.mStopAfterAnimation; }
+
     public static class Builder {
         private NavigationAnimationExecutor mNavigationAnimationExecutor;
         private Predicate<Scene> mPopUtilPredicate;
@@ -77,6 +81,7 @@ public class PopOptions {
         private boolean mUsePost;
         private boolean mUsePostWhenPause = false;
         private boolean mUseIdleWhenStop = false;
+        private boolean mStopAfterAnimation = false;
 
         public Builder() {
         }
@@ -124,8 +129,14 @@ public class PopOptions {
         }
 
         @NonNull
+        public Builder setStopAfterAnimation(boolean stopAfterAnimation) {
+            this.mStopAfterAnimation = stopAfterAnimation;
+            return this;
+        }
+
+        @NonNull
         public PopOptions build() {
-            return new PopOptions(this.mNavigationAnimationExecutor, this.mPopUtilPredicate, this.mUseActivityCompatibleLifecycle, this.mUsePost, this.mUsePostWhenPause, this.mUseIdleWhenStop);
+            return new PopOptions(this.mNavigationAnimationExecutor, this.mPopUtilPredicate, this.mUseActivityCompatibleLifecycle, this.mUsePost, this.mUsePostWhenPause, this.mUseIdleWhenStop, this.mStopAfterAnimation);
         }
     }
 

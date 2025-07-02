@@ -29,10 +29,11 @@ public class PopAnimationOperationV2 implements Operation {
     private final Record mReturnRecord;
     private final Scene mCurrentScene;
     private final View mCurrentSceneView;
+    private final boolean mNotRemoveView;
 
     public final CancellationSignalList cancellationSignalList = new CancellationSignalList();
 
-    public PopAnimationOperationV2(NavigationManagerAbility navigationManagerAbility, NavigationAnimationExecutor animationFactory, List<Record> destroyRecordList, Record currentRecord, Record returnRecord, Scene currentScene, View currentSceneView) {
+    public PopAnimationOperationV2(NavigationManagerAbility navigationManagerAbility, NavigationAnimationExecutor animationFactory, List<Record> destroyRecordList, Record currentRecord, Record returnRecord, Scene currentScene, View currentSceneView, boolean notRemoveView) {
         this.mManagerAbility = navigationManagerAbility;
         this.mAnimationFactory = animationFactory;
         this.mNavigationScene = navigationManagerAbility.getNavigationScene();
@@ -40,6 +41,7 @@ public class PopAnimationOperationV2 implements Operation {
         this.mReturnRecord = returnRecord;
         this.mCurrentScene = currentScene;
         this.mCurrentSceneView = currentSceneView;
+        this.mNotRemoveView = notRemoveView;
     }
 
     @Override
@@ -66,6 +68,7 @@ public class PopAnimationOperationV2 implements Operation {
             ViewGroup animationContainer = mNavigationScene.getAnimationContainer();
             // Ensure that the Z-axis is correct
             AnimatorUtility.bringAnimationViewToFrontIfNeeded(mNavigationScene);
+            navigationAnimationExecutor.setDisableRemoveView(mNotRemoveView);
             navigationAnimationExecutor.setAnimationViewGroup(animationContainer);
             final Runnable endAction = new Runnable() {
                 @Override
