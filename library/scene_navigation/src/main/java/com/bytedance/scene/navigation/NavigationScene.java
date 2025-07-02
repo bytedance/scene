@@ -273,10 +273,10 @@ public final class NavigationScene extends Scene implements NavigationListener, 
     }
 
     @RestrictTo(LIBRARY_GROUP)
-    public boolean isEnableAutoRecycleInvisibleScenes() {
+    public boolean isFixOnResultTiming() {
         if (this.mNavigationSceneOptions != null) {
             float threshold = this.mNavigationSceneOptions.getAutoRecycleInvisibleSceneThreshold();
-            return threshold > 0 && threshold < 1;
+            return this.mNavigationSceneOptions.isFixOnResultTiming() || (threshold > 0 && threshold < 1);
         }
         return false;
     }

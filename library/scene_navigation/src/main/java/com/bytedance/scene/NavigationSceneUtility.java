@@ -63,6 +63,7 @@ public final class NavigationSceneUtility {
         private float mAutoRecycleInvisibleScenesThreshold = 0F;
         private boolean mOnlyRestoreVisibleScene = false;
         private boolean mSeparateCreateFromCreateView = false;
+        private boolean mFixOnResultTiming = false;
 
         private Builder(@NonNull Activity activity, @NonNull Class<? extends Scene> rootSceneClazz) {
             this.mActivity = Utility.requireNonNull(activity, "Activity can't be null");
@@ -158,6 +159,12 @@ public final class NavigationSceneUtility {
         }
 
         @NonNull
+        public Builder setFixOnResultTiming(boolean mFixOnResultTiming) {
+            this.mFixOnResultTiming = mFixOnResultTiming;
+            return this;
+        }
+
+        @NonNull
         public SceneDelegate build() {
             NavigationSceneOptions navigationSceneOptions = new NavigationSceneOptions(this.mRootSceneClazz, this.mRootSceneArguments);
             navigationSceneOptions.setDrawWindowBackground(this.mDrawWindowBackground);
@@ -165,6 +172,7 @@ public final class NavigationSceneUtility {
             navigationSceneOptions.setSceneBackground(this.mSceneBackgroundResId);
             navigationSceneOptions.setAutoRecycleInvisibleScenesThreshold(this.mAutoRecycleInvisibleScenesThreshold);
             navigationSceneOptions.setOnlyRestoreVisibleScene(this.mOnlyRestoreVisibleScene);
+            navigationSceneOptions.setFixOnResultTiming(this.mFixOnResultTiming);
             return setupWithActivity(this.mActivity, this.mIdRes, navigationSceneOptions, this.mRootSceneComponentFactory, this.mSupportRestore, this.mTag, this.mImmediate, this.mSeparateCreateFromCreateView);
         }
     }

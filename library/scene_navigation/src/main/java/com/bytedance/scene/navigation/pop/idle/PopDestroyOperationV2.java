@@ -38,7 +38,7 @@ public class PopDestroyOperationV2 implements Operation {
         this.mManagerAbility.removeRecord(mCurrentRecord);
 
         // Ensure that the requesting Scene is correct
-        if (mCurrentRecord.mPushResultCallback != null && mNavigationScene.isEnableAutoRecycleInvisibleScenes()) {
+        if (mCurrentRecord.mPushResultCallback != null && mNavigationScene.isFixOnResultTiming()) {
             mCurrentRecord.mPushResultCallback.onResult(mCurrentRecord.mPushResult);
         }
 
