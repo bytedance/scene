@@ -130,8 +130,6 @@ public class Scope {
         }
     }
 
-    private static final AtomicInteger SCENE_COUNT = new AtomicInteger(0);
-
     public static String getOrGenerateScopeKey(@Nullable Scene scene, @Nullable Bundle bundle) {
         String scopeKey = null;
         if (bundle != null) {
@@ -144,17 +142,10 @@ public class Scope {
     }
 
     private static String generateScopeKey(@Nullable Scene scene) {
-        switch (SceneGlobalConfig.genScopeStrategy) {
-            case 1: {
-                if (scene == null) {
-                    return "Scene_" + UUID.randomUUID();
-                } else {
-                    return scene.getClass().getName() + "_" + UUID.randomUUID();
-                }
-            }
-            default: {
-                return "Scene #" + SCENE_COUNT.getAndIncrement();
-            }
+        if (scene == null) {
+            return "Scene_" + UUID.randomUUID();
+        } else {
+            return scene.getClass().getName() + "_" + UUID.randomUUID();
         }
     }
 
