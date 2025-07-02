@@ -2202,7 +2202,11 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
         dispatchOnConfigurationChangedToRecordInternal(record, scene, newConfig, mConfigurationChangesAllowList, new Action1<Scene>() {
             @Override
             public void execute(Scene value) {
-                executeOperationSafely(new RecreateOperation(value), null);
+                if (mNavigationScene.mNavigationSceneOptions.isRecreateSceneOnNextLoopAfterConfigurationChanged()) {
+                    recreate(value);
+                } else {
+                    executeOperationSafely(new RecreateOperation(value), null);
+                }
             }
         });
         LoggerManager.getInstance().i(TAG, "Activity dispatch onConfigurationChanged finish");

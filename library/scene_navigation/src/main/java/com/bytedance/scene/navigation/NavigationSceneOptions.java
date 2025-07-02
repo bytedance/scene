@@ -46,6 +46,7 @@ public class NavigationSceneOptions {
     private static final String EXTRA_USE_EXTRA_VIEW_TO_BLOCK_GESTURE = "extra_useExtraViewToBlockGesture";
     private static final String EXTRA_SKIP_POP_ANIMATION_WHEN_TARGET_IS_DESTROYED = "extra_skipPopAnimationWhenTargetIsDestroyed";
     private static final String EXTRA_FIX_ON_RESULT_TIMING = "extra_fixOnResultTiming";
+    private static final String EXTRA_FIX_RECREATE_AFTER_CONFIG_CHANGED = "extra_recreateSceneOnNextLoopAfterConfigurationChanged";
 
     @NonNull
     private final String mRootSceneClassName;
@@ -69,6 +70,7 @@ public class NavigationSceneOptions {
     private boolean mUseExtraViewToBlockGesture = false;
     private boolean mSkipPopAnimationWhenTargetIsDestroyed = false;
     private boolean mFixOnResultTiming = false;
+    private boolean mRecreateSceneOnNextLoopAfterConfigurationChanged = false;
 
     public NavigationSceneOptions(@NonNull Class<? extends Scene> rootSceneClazz, @Nullable Bundle rootSceneArguments) {
         if (rootSceneClazz.isAssignableFrom(NavigationScene.class)) {
@@ -199,6 +201,12 @@ public class NavigationSceneOptions {
     }
 
     @NonNull
+    public NavigationSceneOptions setRecreateSceneOnNextLoopAfterConfigurationChanged(boolean recreateSceneOnNextLoopAfterConfigurationChanged) {
+        this.mRecreateSceneOnNextLoopAfterConfigurationChanged = recreateSceneOnNextLoopAfterConfigurationChanged;
+        return this;
+    }
+
+    @NonNull
     public String getRootSceneClassName() {
         return this.mRootSceneClassName;
     }
@@ -276,6 +284,8 @@ public class NavigationSceneOptions {
         return this.mFixOnResultTiming;
     }
 
+    public boolean isRecreateSceneOnNextLoopAfterConfigurationChanged() { return this.mRecreateSceneOnNextLoopAfterConfigurationChanged; }
+
     /**
      * @hide
      */
@@ -304,6 +314,7 @@ public class NavigationSceneOptions {
         navigationSceneOptions.mUseExtraViewToBlockGesture = bundle.getBoolean(EXTRA_USE_EXTRA_VIEW_TO_BLOCK_GESTURE, false);
         navigationSceneOptions.mSkipPopAnimationWhenTargetIsDestroyed = bundle.getBoolean(EXTRA_SKIP_POP_ANIMATION_WHEN_TARGET_IS_DESTROYED, false);
         navigationSceneOptions.mFixOnResultTiming = bundle.getBoolean(EXTRA_FIX_ON_RESULT_TIMING, false);
+        navigationSceneOptions.mRecreateSceneOnNextLoopAfterConfigurationChanged = bundle.getBoolean(EXTRA_FIX_RECREATE_AFTER_CONFIG_CHANGED, false);
         return navigationSceneOptions;
     }
 
@@ -331,6 +342,7 @@ public class NavigationSceneOptions {
         bundle.putBoolean(EXTRA_USE_EXTRA_VIEW_TO_BLOCK_GESTURE, mUseExtraViewToBlockGesture);
         bundle.putBoolean(EXTRA_SKIP_POP_ANIMATION_WHEN_TARGET_IS_DESTROYED, mSkipPopAnimationWhenTargetIsDestroyed);
         bundle.putBoolean(EXTRA_FIX_ON_RESULT_TIMING, mFixOnResultTiming);
+        bundle.putBoolean(EXTRA_FIX_RECREATE_AFTER_CONFIG_CHANGED, mRecreateSceneOnNextLoopAfterConfigurationChanged);
         return bundle;
     }
 }
