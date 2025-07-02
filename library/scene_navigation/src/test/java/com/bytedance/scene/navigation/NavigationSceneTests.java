@@ -91,6 +91,7 @@ public class NavigationSceneTests {
         }, new PushOptions.Builder().setPushResultCallback(new PushResultCallback() {
             @Override
             public void onResult(@Nullable Object result) {
+                assertEquals(rootScene, navigationScene.getCurrentScene());
                 called.set((String) result);
             }
         }).build());
@@ -120,6 +121,7 @@ public class NavigationSceneTests {
         }, new PushOptions.Builder().setPushResultCallback(new PushResultCallback() {
             @Override
             public void onResult(@Nullable Object result) {
+                assertEquals(rootScene, navigationScene.getCurrentScene());
                 called.set((String) result);
             }
         }).build());
