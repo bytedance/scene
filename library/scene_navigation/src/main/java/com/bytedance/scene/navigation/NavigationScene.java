@@ -1969,4 +1969,27 @@ public final class NavigationScene extends Scene implements NavigationListener, 
     public int getConfigurationChangesAllowList() {
         return this.mConfigurationChangesAllowList;
     }
+
+    /**
+     * Maybe current Scene is already recycled because of low memory when Activity is in onStop state,
+     * and user need use its ability before it is restored by NavigationScene sync onStart lifecycle operation, for example, in onActivityResult callback
+     */
+    public void restoreCurrentSceneIfNeeded() {
+        if (!isRestoreStateInLifecycle()) {
+            return;
+        }
+        Scene currentScene = this.getCurrentScene();
+        if (currentScene == null) {
+            return;
+        }
+        State currentSceneState = currentScene.getState();
+        if (currentSceneState != State.NONE) {
+            return;
+        }
+        State curNavigationSceneState = this.getState();
+        if (curNavigationSceneState == State.NONE) {
+            return;
+        }
+        dispatchCurrentChildState(curNavigationSceneState);
+    }
 }
