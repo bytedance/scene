@@ -343,7 +343,6 @@ public class NavigationSceneLifecycleSeparateTests {
         NavigationSourceUtility.TestActivity testActivity = controller.get();
         NavigationScene navigationScene = new NavigationScene();
         NavigationSceneOptions options = new NavigationSceneOptions(rootScene.getClass());
-        SceneGlobalConfig.useActivityCompatibleLifecycleStrategy = true;
         options.setOnlyRestoreVisibleScene(true);
         navigationScene.setSeparateCreateFromCreateView(true);
         navigationScene.setInitRootSceneOnCreate(false);
@@ -488,7 +487,6 @@ public class NavigationSceneLifecycleSeparateTests {
         NavigationSourceUtility.TestActivity testActivity = controller.get();
         NavigationScene navigationScene = new NavigationScene();
         NavigationSceneOptions options = new NavigationSceneOptions(rootScene.getClass());
-        SceneGlobalConfig.useActivityCompatibleLifecycleStrategy = true;
         options.setOnlyRestoreVisibleScene(true);
         navigationScene.setSeparateCreateFromCreateView(true);
         navigationScene.setInitRootSceneOnCreate(true);
@@ -632,7 +630,6 @@ public class NavigationSceneLifecycleSeparateTests {
         NavigationSourceUtility.TestActivity testActivity = controller.get();
         NavigationScene navigationScene = new NavigationScene();
         NavigationSceneOptions options = new NavigationSceneOptions(rootScene.getClass());
-        SceneGlobalConfig.useActivityCompatibleLifecycleStrategy = true;
         options.setOnlyRestoreVisibleScene(true);
         navigationScene.setSeparateCreateFromCreateView(true);
         navigationScene.setInitRootSceneOnCreate(true);

@@ -114,7 +114,6 @@ public class NavigationSourceUtility {
         NavigationScene navigationScene = new NavigationScene();
         NavigationSceneOptions options = new NavigationSceneOptions(rootScene.getClass());
 
-        SceneGlobalConfig.useActivityCompatibleLifecycleStrategy = true;
         options.setOnlyRestoreVisibleScene(true);
 
         navigationScene.setSeparateCreateFromCreateView(separateCreate);

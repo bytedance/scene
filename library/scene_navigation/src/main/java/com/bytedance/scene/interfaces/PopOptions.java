@@ -32,16 +32,14 @@ import com.bytedance.scene.utlity.Predicate;
 public class PopOptions {
     private final NavigationAnimationExecutor mNavigationAnimationExecutor;
     private final Predicate<Scene> mPopUtilPredicate;
-    private final boolean mUseActivityCompatibleLifecycle;
     private final boolean mUsePost;
     private final boolean mUsePostWhenPause;
     private final boolean mUseIdleWhenStop;
     private final boolean mStopAfterAnimation;
 
-    private PopOptions(NavigationAnimationExecutor navigationAnimatorExecutor, Predicate<Scene> popUtilPredicate, boolean useActivityCompatibleLifecycle, boolean usePost, boolean usePostWhenPause, boolean useIdleWhenStop, boolean mStopAfterAnimation) {
+    private PopOptions(NavigationAnimationExecutor navigationAnimatorExecutor, Predicate<Scene> popUtilPredicate, boolean usePost, boolean usePostWhenPause, boolean useIdleWhenStop, boolean mStopAfterAnimation) {
         this.mNavigationAnimationExecutor = navigationAnimatorExecutor;
         this.mPopUtilPredicate = popUtilPredicate;
-        this.mUseActivityCompatibleLifecycle = useActivityCompatibleLifecycle;
         this.mUsePost = usePost;
         this.mUsePostWhenPause = usePostWhenPause;
         this.mUseIdleWhenStop = useIdleWhenStop;
@@ -54,10 +52,6 @@ public class PopOptions {
 
     public Predicate<Scene> getPopUtilPredicate() {
         return mPopUtilPredicate;
-    }
-
-    public boolean isUseActivityCompatibleLifecycle(){
-        return this.mUseActivityCompatibleLifecycle;
     }
 
     public boolean isUsePost() {
@@ -77,7 +71,6 @@ public class PopOptions {
     public static class Builder {
         private NavigationAnimationExecutor mNavigationAnimationExecutor;
         private Predicate<Scene> mPopUtilPredicate;
-        private boolean mUseActivityCompatibleLifecycle;
         private boolean mUsePost;
         private boolean mUsePostWhenPause = false;
         private boolean mUseIdleWhenStop = false;
@@ -102,11 +95,6 @@ public class PopOptions {
 
         public PopOptions.Builder setPopUtilPredicate(Predicate<Scene> predicate) {
             this.mPopUtilPredicate = predicate;
-            return this;
-        }
-
-        public PopOptions.Builder setUseActivityCompatibleLifecycle(boolean useActivityCompatibleLifecycle){
-            this.mUseActivityCompatibleLifecycle = useActivityCompatibleLifecycle;
             return this;
         }
 
@@ -136,7 +124,7 @@ public class PopOptions {
 
         @NonNull
         public PopOptions build() {
-            return new PopOptions(this.mNavigationAnimationExecutor, this.mPopUtilPredicate, this.mUseActivityCompatibleLifecycle, this.mUsePost, this.mUsePostWhenPause, this.mUseIdleWhenStop, this.mStopAfterAnimation);
+            return new PopOptions(this.mNavigationAnimationExecutor, this.mPopUtilPredicate, this.mUsePost, this.mUsePostWhenPause, this.mUseIdleWhenStop, this.mStopAfterAnimation);
         }
     }
 

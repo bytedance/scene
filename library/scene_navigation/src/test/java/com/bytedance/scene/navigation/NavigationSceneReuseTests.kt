@@ -205,13 +205,6 @@ class NavigationSceneReuseTests {
     }
 
     @Test
-    fun testReuseSceneLifecycleWithUseActivityCompatibleLifeyclce() {
-        testReuseSceneLifecycle(
-            PopOptions.Builder().setUseActivityCompatibleLifecycle(true).build()
-        )
-    }
-
-    @Test
     fun testReuseSceneNavigationAbility() {
         val rootScene: Scene = object : Scene() {
             override fun onCreateView(
