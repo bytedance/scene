@@ -461,13 +461,17 @@ public final class NavigationScene extends Scene implements NavigationListener, 
 
         // Check reuse pool if enabled in pushOptions
         if (scene == null && pushOptions != null && pushOptions.getSceneFromReusePool()) {
-            ReuseBehavior reuseBehavior = pushOptions.getReuseBehavior();
-            if (reuseBehavior == null) {
-                reuseBehavior = new DefaultReuseBehavior(clazz);
-            }
-            Scene reuseScene = mReuseManager.reuseFromPool(reuseBehavior);
-            if (reuseScene != null) {
-                scene = reuseScene;
+            NavigationReuseManager reuseManager = obtainReuseManager();
+            if (reuseManager != null) {
+                ReuseBehavior reuseBehavior = pushOptions.getReuseBehavior();
+                if (reuseBehavior == null) {
+                    reuseBehavior = new DefaultReuseBehavior(clazz);
+                }
+
+                Scene reuseScene = reuseManager.reuseFromPool(reuseBehavior);
+                if (reuseScene != null) {
+                    scene = reuseScene;
+                }
             }
         }
 

@@ -472,6 +472,49 @@ open class NavigationSceneReuseTests {
         Assert.assertNotSame(reuseScene2, navigationScene.currentScene)
     }
 
+    /**
+     * Test case for NPE fix when ReuseManager is null
+     * This test ensures that using setUseSceneFromReusePool(true)
+     * doesn't cause NPE when ReuseManager is not properly initialized
+     */
+    @Test
+    fun testAcquireSceneWithNullReuseManager() {
+        val rootScene: Scene = object : Scene() {
+            override fun onCreateView(
+                inflater: LayoutInflater,
+                container: ViewGroup,
+                savedInstanceState: Bundle?
+            ): View {
+                return View(requireSceneContext())
+            }
+        }
+
+        // Create NavigationScene without setting a ReusePool
+        // This may result in mReuseManager being null in some initialization scenarios
+        val navigationScene = NavigationSourceUtility.createFromSceneLifecycleManager(rootScene)
+        navigationScene.defaultNavigationAnimationExecutor = null
+        val pushOptions = PushOptions.Builder()
+            .setUseSceneFromReusePool(true)
+            .build()
+
+        try {
+            // Before the fix, this would cause NPE when mReuseManager is null
+            // After the fix, it should gracefully handle the null case and create a new scene
+            val targetScene = navigationScene.acquireScene(
+                ReuseScene::class.java,
+                null,
+                pushOptions
+            )
+            navigationScene.push(targetScene)
+
+            Assert.assertNotNull("Current scene should not be null", navigationScene.currentScene)
+            Assert.assertTrue("Current scene should be instance of ReuseScene",
+                navigationScene.currentScene is ReuseScene)
+
+        } catch (e: NullPointerException) {
+            Assert.fail("Should not throw NPE when ReuseManager is null, but got: ${e.message}")
+        }
+    }
 
     private fun flushUI() {
         Robolectric.flushForegroundThreadScheduler()
