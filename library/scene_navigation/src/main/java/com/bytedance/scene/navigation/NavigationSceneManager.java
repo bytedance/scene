@@ -610,6 +610,14 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
         return false;
     }
 
+    /**
+     * Ensures a reused scene's view is properly attached to the view hierarchy
+     * and calls onPrepare only when the view needs to be re-attached.
+     *
+     * @param navigationScene The parent NavigationScene
+     * @param scene The Scene being reused
+     * @param bundle The saved state bundle, if any
+     */
     static void doAttachWhenReuse(@NonNull NavigationScene navigationScene, @NonNull Scene scene, @Nullable Bundle bundle) {
         View sceneView = scene.getView();
         boolean isAttached = sceneView.isAttachedToWindow();
@@ -624,6 +632,11 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
             } else {
                 container.addView(sceneView);
             }
+
+            if (!(scene instanceof IReuseScene)) {
+                throw new SceneInternalException("This Scene should implement IReuseScene");
+            }
+            ((IReuseScene) scene).onPrepare(bundle);
         }
     }
 
@@ -692,9 +705,8 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
                     scene.getView().setVisibility(View.VISIBLE);
                     if (navigationScene.isReusing(scene)) {
                         // The view may have been removed by NavigationAnimationExecutor in the reuse process,
-                        // so we need to re-attach it to the view tree
+                        // so we need to re-attach it to the view tree and prepare it for reuse if necessary.
                         doAttachWhenReuse(navigationScene, scene, bundle);
-                        ((IReuseScene) scene).onPrepare(bundle);
                     }
                     scene.dispatchStart();
                     moveStateNonSeparation(navigationScene, scene, to, bundle, causedByActivityLifeCycle, null, endAction);
@@ -812,9 +824,8 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
                     scene.getView().setVisibility(View.VISIBLE);
                     if (navigationScene.isReusing(scene)) {
                         // The view may have been removed by NavigationAnimationExecutor in the reuse process,
-                        // so we need to re-attach it to the view tree
+                        // so we need to re-attach it to the view tree and prepare it for reuse if necessary.
                         doAttachWhenReuse(navigationScene, scene, bundle);
-                        ((IReuseScene) scene).onPrepare(bundle);
                     }
                     scene.dispatchStart();
                     moveStateWithSeparation(navigationScene, scene, to, bundle, causedByActivityLifeCycle, null, endAction);

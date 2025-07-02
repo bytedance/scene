@@ -268,8 +268,8 @@ class NavigationSceneReuseTests {
         )
         Assert.assertSame(reuseScene, navigationScene.currentScene)
         verifyOrder {
-            reuseScene.onPrepare(any())
             reuseScene.onStart()
+            reuseScene.onResume()
         }
         navigationScene.remove(reuseScene)
         verify(exactly = 0) {
