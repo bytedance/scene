@@ -82,4 +82,12 @@ public interface NavigationManagerAbility {
     boolean dispatchOnConfigurationChangedToRecord(Record record, Scene scene);
 
     void notifyNavigationAnimationEnd(@Nullable Scene from, @NonNull Scene to, boolean isPush);
+
+    /**
+     * Destroy a scene by record
+     *
+     * @param record The record containing the scene to destroy
+     * @param currentRecord The current active record
+     */
+    void destroyByRecord(Record record, Record currentRecord);
 }

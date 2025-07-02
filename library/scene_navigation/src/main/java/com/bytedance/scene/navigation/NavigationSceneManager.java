@@ -42,7 +42,6 @@ import com.bytedance.scene.State;
 import com.bytedance.scene.animation.AnimationInfo;
 import com.bytedance.scene.animation.NavigationAnimationExecutor;
 import com.bytedance.scene.animation.interaction.InteractionNavigationPopAnimationFactory;
-import com.bytedance.scene.group.ReuseGroupScene;
 import com.bytedance.scene.interfaces.Function;
 import com.bytedance.scene.interfaces.ActivityCompatibleBehavior;
 import com.bytedance.scene.interfaces.PopOptions;
@@ -55,6 +54,7 @@ import com.bytedance.scene.navigation.push.CoordinatePushOptionOperation;
 import com.bytedance.scene.parcel.ParcelConstants;
 import com.bytedance.scene.queue.NavigationMessageQueue;
 import com.bytedance.scene.queue.NavigationRunnable;
+import com.bytedance.scene.navigation.reuse.IReuseScene;
 import com.bytedance.scene.utlity.Action1;
 import com.bytedance.scene.utlity.AnimatorUtility;
 import com.bytedance.scene.utlity.CancellationSignalList;
@@ -610,6 +610,23 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
         return false;
     }
 
+    static void doAttachWhenReuse(@NonNull NavigationScene navigationScene, @NonNull Scene scene, @Nullable Bundle bundle) {
+        View sceneView = scene.getView();
+        boolean isAttached = sceneView.isAttachedToWindow();
+        boolean hasParent = sceneView.getParent() != null;
+        ViewGroup container = navigationScene.getSceneContainer();
+
+        if (!isAttached && !hasParent && (container != null)) {
+            //The view is removed and needs to be added back to the container
+            if (bundle != null) {
+                int viewIndex = NavigationSceneViewUtility.targetViewIndexOfScene(navigationScene, navigationScene.mNavigationSceneOptions, scene);
+                container.addView(sceneView, viewIndex);
+            } else {
+                container.addView(sceneView);
+            }
+        }
+    }
+
     public static void moveStateNonSeparation(@NonNull NavigationScene navigationScene,
                                               @NonNull Scene scene, @NonNull State to,
                                               @Nullable Bundle bundle,
@@ -673,6 +690,12 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
                     break;
                 case ACTIVITY_CREATED:
                     scene.getView().setVisibility(View.VISIBLE);
+                    if (navigationScene.isReusing(scene)) {
+                        // The view may have been removed by NavigationAnimationExecutor in the reuse process,
+                        // so we need to re-attach it to the view tree
+                        doAttachWhenReuse(navigationScene, scene, bundle);
+                        ((IReuseScene) scene).onPrepare(bundle);
+                    }
                     scene.dispatchStart();
                     moveStateNonSeparation(navigationScene, scene, to, bundle, causedByActivityLifeCycle, null, endAction);
                     break;
@@ -787,6 +810,12 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
                     break;
                 case ACTIVITY_CREATED:
                     scene.getView().setVisibility(View.VISIBLE);
+                    if (navigationScene.isReusing(scene)) {
+                        // The view may have been removed by NavigationAnimationExecutor in the reuse process,
+                        // so we need to re-attach it to the view tree
+                        doAttachWhenReuse(navigationScene, scene, bundle);
+                        ((IReuseScene) scene).onPrepare(bundle);
+                    }
                     scene.dispatchStart();
                     moveStateWithSeparation(navigationScene, scene, to, bundle, causedByActivityLifeCycle, null, endAction);
                     break;
@@ -998,13 +1027,7 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
              * then animate the two Scenes.
              */
             for (final Record record : destroyRecordList) {
-                Scene scene = record.mScene;
-                moveState(mNavigationScene, scene, State.NONE, null, false, null);
-                mBackStackList.remove(record);
-                // If it is a reusable Scene, save it
-                if (record != currentRecord && scene instanceof ReuseGroupScene) {
-                    mNavigationScene.addToReusePool((ReuseGroupScene) scene);
-                }
+                destroyByRecord(record, currentRecord);
             }
 
             Scene dstScene = returnRecord.mScene;
@@ -1093,9 +1116,7 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
                     @Override
                     public void run() {
                         mCancellationSignalManager.remove(cancellationSignalList);
-                        if (currentRecord.mScene instanceof ReuseGroupScene) {
-                            mNavigationScene.addToReusePool((ReuseGroupScene) currentRecord.mScene);
-                        }
+                        mNavigationScene.addToReuseCache(currentRecord.mScene);
                         notifyNavigationAnimationEnd(currentScene, returnRecord.mScene, false);
                         operationEndAction.run();
                     }
@@ -1115,9 +1136,7 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
                         mNavigationScene.getView().getRootView(),
                         fromInfo, toInfo, cancellationSignalList, endAction);
             } else {
-                if (currentRecord.mScene instanceof ReuseGroupScene) {
-                    mNavigationScene.addToReusePool((ReuseGroupScene) currentRecord.mScene);
-                }
+                mNavigationScene.addToReuseCache(currentRecord.mScene);
                 operationEndAction.run();
             }
         }
@@ -1197,13 +1216,7 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
                 @Override
                 public void run() {
                     for (final Record record : destroyRecordList) {
-                        Scene scene = record.mScene;
-                        moveState(mNavigationScene, scene, State.NONE, null, false, null);
-                        mBackStackList.remove(record);
-                        // If it is a reusable Scene, save it
-                        if (record != currentRecord && scene instanceof ReuseGroupScene) {
-                            mNavigationScene.addToReusePool((ReuseGroupScene) scene);
-                        }
+                        destroyByRecord(record, currentRecord);
                     }
                 }
             };
@@ -1282,9 +1295,7 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
                     @Override
                     public void run() {
                         mCancellationSignalManager.remove(cancellationSignalList);
-                        if (currentRecord.mScene instanceof ReuseGroupScene) {
-                            mNavigationScene.addToReusePool((ReuseGroupScene) currentRecord.mScene);
-                        }
+                        mNavigationScene.addToReuseCache(currentRecord.mScene);
                         notifyNavigationAnimationEnd(currentScene, returnRecord.mScene, false);
                         operationEndAction.run();
                     }
@@ -1304,9 +1315,7 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
                         mNavigationScene.getView().getRootView(),
                         fromInfo, toInfo, cancellationSignalList, endAction);
             } else {
-                if (currentRecord.mScene instanceof ReuseGroupScene) {
-                    mNavigationScene.addToReusePool((ReuseGroupScene) currentRecord.mScene);
-                }
+                mNavigationScene.addToReuseCache(currentRecord.mScene);
                 operationEndAction.run();
             }
         }
@@ -1639,7 +1648,8 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
              * the abnormal judgment in the Push method does not necessarily work.
              * So we need to check this case here to throw an exception.
              */
-            if (this.scene.getParentScene() != null) {
+            boolean isFromReuse = mNavigationScene.isReusing(this.scene);
+            if (!isFromReuse && this.scene.getParentScene() != null) {
                 if (this.scene.getParentScene() == mNavigationScene) {
                     operationEndAction.run();
                     return;
@@ -2175,6 +2185,21 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
         }
     }
 
+    /**
+     * Destroys scenes removed from the reuse pool
+     *
+     * This method handles the complete destruction of IReuseScene instances
+     * that have been removed from the reuse pool, ensuring proper cleanup
+     * by moving their state to NONE.
+     *
+     * @param reuseScenes The list of IReuseScene instances to be destroyed
+     */
+    @Override public void destroyReuseCache(List<IReuseScene> reuseScenes) {
+        for (IReuseScene scene: reuseScenes) {
+            moveState(mNavigationScene, (Scene) scene, State.NONE, null, true, null);
+        }
+    }
+
     @Override
     public boolean dispatchOnConfigurationChangedToRecord(Record record, Scene scene) {
         Configuration newConfig = this.mActivityConfiguration;
@@ -2384,5 +2409,22 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
     @Override
     public void notifyNavigationAnimationEnd(@Nullable Scene from, @NonNull Scene to, boolean isPush) {
         mNavigationScene.notifyNavigationAnimationEnd(from, to, isPush);
+    }
+
+    /**
+     * Method to properly destroy and handle scene reuse
+     */
+    @Override public void destroyByRecord(Record record, Record currentRecord) {
+        Scene scene = record.mScene;
+        State to = State.NONE;
+        if (scene instanceof IReuseScene && ((IReuseScene) scene).isReusable()) {
+            to = State.ACTIVITY_CREATED;
+        }
+        this.moveState(this.getNavigationScene(), scene, to, null, false, null);
+        this.removeRecord(record);
+
+        if (record != currentRecord) {
+            this.getNavigationScene().addToReuseCache(scene);
+        }
     }
 }

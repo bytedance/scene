@@ -7,7 +7,6 @@ import com.bytedance.scene.Scene;
 import com.bytedance.scene.State;
 import com.bytedance.scene.animation.AnimationInfo;
 import com.bytedance.scene.animation.NavigationAnimationExecutor;
-import com.bytedance.scene.group.ReuseGroupScene;
 import com.bytedance.scene.navigation.NavigationManagerAbility;
 import com.bytedance.scene.navigation.NavigationScene;
 import com.bytedance.scene.navigation.Operation;
@@ -47,13 +46,7 @@ public class PopDestroyOperation implements Operation {
     @Override
     public void execute(final Runnable operationEndAction) {
         for (final Record record : this.mDestroyRecordList) {
-            Scene scene = record.mScene;
-            this.mManagerAbility.moveState(this.mManagerAbility.getNavigationScene(), scene, State.NONE, null, false, null);
-            this.mManagerAbility.removeRecord(record);
-            // If it is a reusable Scene, save it
-            if (record != mCurrentRecord && scene instanceof ReuseGroupScene) {
-                this.mManagerAbility.getNavigationScene().addToReusePool((ReuseGroupScene) scene);
-            }
+            this.mManagerAbility.destroyByRecord(record, mCurrentRecord);
         }
 
         // Ensure that the requesting Scene is correct
@@ -91,9 +84,7 @@ public class PopDestroyOperation implements Operation {
                 @Override
                 public void run() {
                     mManagerAbility.getCancellationSignalManager().remove(cancellationSignalList);
-                    if (mCurrentRecord.mScene instanceof ReuseGroupScene) {
-                        mNavigationScene.addToReusePool((ReuseGroupScene) mCurrentRecord.mScene);
-                    }
+                    mNavigationScene.addToReuseCache(mCurrentRecord.mScene);
                     mManagerAbility.notifyNavigationAnimationEnd(mCurrentScene, mReturnRecord.mScene, false);
                     operationEndAction.run();
                 }
@@ -113,9 +104,7 @@ public class PopDestroyOperation implements Operation {
                     mNavigationScene.getView().getRootView(),
                     fromInfo, toInfo, cancellationSignalList, endAction);
         } else {
-            if (mCurrentRecord.mScene instanceof ReuseGroupScene) {
-                mNavigationScene.addToReusePool((ReuseGroupScene) mCurrentRecord.mScene);
-            }
+            mNavigationScene.addToReuseCache(mCurrentRecord.mScene);
             operationEndAction.run();
         }
     }

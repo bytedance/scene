@@ -71,7 +71,8 @@ public class CoordinatePushOptionOperation implements Operation {
          * the abnormal judgment in the Push method does not necessarily work.
          * So we need to check this case here to throw an exception.
          */
-        if (this.mScene.getParentScene() != null) {
+        boolean isFromReuse = mNavigationScene.isReusing(this.mScene);
+        if (!isFromReuse && (this.mScene.getParentScene() != null)) {
             if (this.mScene.getParentScene() == mManagerAbility.getNavigationScene()) {
                 operationEndAction.run();
                 return;

@@ -29,6 +29,8 @@ dependencies {
     api project(path: ':library:scene')
 
     testImplementation ROBOLECTRIC
+    testImplementation MOCKK
+
     testImplementation JUNIT
     testImplementation project(':library:scene_navigation')
     testAnnotationProcessor AUTO_SERVICE

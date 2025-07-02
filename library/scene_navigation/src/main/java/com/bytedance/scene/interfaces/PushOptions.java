@@ -32,6 +32,7 @@ import com.bytedance.scene.launchmode.LaunchMode;
 import com.bytedance.scene.launchmode.LaunchModeBehavior;
 import com.bytedance.scene.launchmode.SingleTaskLaunchModeBehavior;
 import com.bytedance.scene.launchmode.SingleTopLaunchModeBehavior;
+import com.bytedance.scene.navigation.reuse.ReuseBehavior;
 import com.bytedance.scene.utlity.Predicate;
 
 /**
@@ -49,8 +50,10 @@ public class PushOptions {
     private final boolean mUseAnimationBeforePause;
     private final LaunchMode mLaunchMode;
     private final LaunchModeBehavior mLaunchModeBehavior;
+    private final boolean mUseSceneFromReusePool;
+    private final ReuseBehavior mReuseBehavior;
 
-    private PushOptions(Predicate<Scene> removePredicate, boolean isTranslucent, boolean usePost, boolean usePostWhenPause, boolean useIdleWhenStop, boolean useAnimationBeforePause, PushResultCallback pushResultCallback, NavigationAnimationExecutor navigationAnimationExecutor, LaunchMode launchMode, LaunchModeBehavior launchModeBehavior) {
+    private PushOptions(Predicate<Scene> removePredicate, boolean isTranslucent, boolean usePost, boolean usePostWhenPause, boolean useIdleWhenStop, boolean useAnimationBeforePause, PushResultCallback pushResultCallback, NavigationAnimationExecutor navigationAnimationExecutor, LaunchMode launchMode, LaunchModeBehavior launchModeBehavior, boolean useSceneFromReusePool, ReuseBehavior reuseBehavior) {
         this.mRemovePredicate = removePredicate;
         this.mIsTranslucent = isTranslucent;
         this.mUsePost = usePost;
@@ -61,6 +64,8 @@ public class PushOptions {
         this.mNavigationAnimationExecutor = navigationAnimationExecutor;
         this.mLaunchMode = launchMode;
         this.mLaunchModeBehavior = launchModeBehavior;
+        this.mUseSceneFromReusePool = useSceneFromReusePool;
+        this.mReuseBehavior = reuseBehavior;
     }
 
     public Predicate<Scene> getRemovePredicate() {
@@ -103,6 +108,14 @@ public class PushOptions {
         return this.mLaunchModeBehavior;
     }
 
+    public boolean getSceneFromReusePool(){
+        return this.mUseSceneFromReusePool;
+    }
+
+    public ReuseBehavior getReuseBehavior(){
+        return this.mReuseBehavior;
+    }
+
     /**
      * @hide
      */
@@ -138,8 +151,19 @@ public class PushOptions {
         private boolean mUseAnimationBeforePause = false;
         private LaunchMode mLaunchMode;
         private LaunchModeBehavior mLaunchModeBehavior;
+        private boolean mUseSceneFromReusePool = false;
+        private ReuseBehavior mReuseBehavior = null;
 
         public Builder() {
+        }
+
+        public Builder setUseSceneFromReusePool(boolean useSceneFromReusePool) {
+            this.mUseSceneFromReusePool = useSceneFromReusePool;
+            return this;
+        }
+        public Builder setReuseBehavior(ReuseBehavior reuseBehavior) {
+            this.mReuseBehavior = reuseBehavior;
+            return this;
         }
 
         @NonNull
@@ -232,7 +256,7 @@ public class PushOptions {
 
         @NonNull
         public PushOptions build() {
-            return new PushOptions(this.mRemovePredicate, this.mIsTranslucent, this.mUsePost, this.mUsePostWhenPause, this.mUseIdleWhenStop, this.mUseAnimationBeforePause, this.mPushResultCallback, this.mNavigationAnimationExecutor, this.mLaunchMode, this.mLaunchModeBehavior);
+            return new PushOptions(this.mRemovePredicate, this.mIsTranslucent, this.mUsePost, this.mUsePostWhenPause, this.mUseIdleWhenStop, this.mUseAnimationBeforePause, this.mPushResultCallback, this.mNavigationAnimationExecutor, this.mLaunchMode, this.mLaunchModeBehavior, this.mUseSceneFromReusePool, this.mReuseBehavior);
         }
     }
 

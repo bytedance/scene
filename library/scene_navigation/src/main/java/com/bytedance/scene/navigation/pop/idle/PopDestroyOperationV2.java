@@ -5,7 +5,6 @@ import android.view.View;
 import com.bytedance.scene.Scene;
 import com.bytedance.scene.State;
 import com.bytedance.scene.animation.NavigationAnimationExecutor;
-import com.bytedance.scene.group.ReuseGroupScene;
 import com.bytedance.scene.navigation.NavigationManagerAbility;
 import com.bytedance.scene.navigation.NavigationScene;
 import com.bytedance.scene.navigation.Operation;
@@ -33,9 +32,7 @@ public class PopDestroyOperationV2 implements Operation {
 
     @Override
     public void execute(final Runnable operationEndAction) {
-        Scene scene = mCurrentRecord.mScene;
-        this.mManagerAbility.moveState(this.mManagerAbility.getNavigationScene(), scene, State.NONE, null, false, null);
-        this.mManagerAbility.removeRecord(mCurrentRecord);
+        mManagerAbility.destroyByRecord(mCurrentRecord, mCurrentRecord);
 
         // Ensure that the requesting Scene is correct
         if (mCurrentRecord.mPushResultCallback != null && mNavigationScene.isFixOnResultTiming()) {
@@ -44,9 +41,6 @@ public class PopDestroyOperationV2 implements Operation {
 
         this.mManagerAbility.restoreActivityStatus(mReturnRecord.mActivityStatusRecord);
         this.mManagerAbility.getNavigationListener().navigationChange(mCurrentRecord.mScene, mReturnRecord.mScene, false);
-
-        if (mCurrentRecord.mScene instanceof ReuseGroupScene) {
-            mNavigationScene.addToReusePool((ReuseGroupScene) mCurrentRecord.mScene);
-        }
+        mNavigationScene.addToReuseCache(mCurrentRecord.mScene);
     }
 }

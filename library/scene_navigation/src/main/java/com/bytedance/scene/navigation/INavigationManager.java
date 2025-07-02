@@ -15,6 +15,7 @@ import com.bytedance.scene.animation.NavigationAnimationExecutor;
 import com.bytedance.scene.animation.interaction.InteractionNavigationPopAnimationFactory;
 import com.bytedance.scene.interfaces.PopOptions;
 import com.bytedance.scene.interfaces.PushOptions;
+import com.bytedance.scene.navigation.reuse.IReuseScene;
 
 import java.util.List;
 
@@ -95,4 +96,6 @@ public interface INavigationManager {
     public void onWindowFocusChanged(boolean hasFocus);
 
     public void saveActivityCompatibleInfo(Record record);
+
+    public void destroyReuseCache(List<IReuseScene> reuseScenes);
 }

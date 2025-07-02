@@ -62,8 +62,14 @@ import com.bytedance.scene.interfaces.PermissionResultCallback;
 import com.bytedance.scene.interfaces.PopOptions;
 import com.bytedance.scene.interfaces.PushOptions;
 import com.bytedance.scene.logger.LoggerManager;
+import com.bytedance.scene.navigation.reuse.DefaultReuseBehavior;
+import com.bytedance.scene.navigation.reuse.IReusePool;
+import com.bytedance.scene.navigation.reuse.NavigationReuseManager;
+import com.bytedance.scene.navigation.reuse.ReuseBehavior;
 import com.bytedance.scene.queue.NavigationMessageQueue;
 import com.bytedance.scene.queue.NavigationRunnable;
+import com.bytedance.scene.navigation.reuse.IReuseScene;
+import com.bytedance.scene.navigation.reuse.ReuseState;
 import com.bytedance.scene.utlity.AnimatorUtility;
 import com.bytedance.scene.utlity.DispatchWindowInsetsListener;
 import com.bytedance.scene.utlity.Experimental;
@@ -140,6 +146,8 @@ public final class NavigationScene extends Scene implements NavigationListener, 
     private final List<InteractionNavigationPopAnimationFactory.InteractionCallback> mInteractionListenerList = new ArrayList<>();
 
     private final LruCache<Class<? extends Scene>, ReuseGroupScene> mLruCache = new LruCache<>(3);
+    private NavigationReuseManager mReuseManager = null;
+    private IReusePool mReusePool = null;
 
     private final List<NavigationListener> mNavigationListenerList = new ArrayList<>();
     private final List<NonNullPair<ChildSceneLifecycleCallbacks, Boolean>> mLifecycleCallbacks = new ArrayList<>();
@@ -272,6 +280,111 @@ public final class NavigationScene extends Scene implements NavigationListener, 
         this.mIsInitRootSceneOnCreate = initRootSceneOnCreate;
     }
 
+    /**
+     * Set a custom reuse pool implementation
+     *
+     * @param reusePool The IReusePool implementation to use
+     * @throws IllegalArgumentException if a reuse pool has already been set
+     */
+    public void setReusePool(@NonNull IReusePool reusePool) {
+        if (mReusePool != null) {
+            throw new IllegalArgumentException("ReusePool has been setup");
+        }
+
+        this.mReusePool = reusePool;
+    }
+
+    /**
+     * Get the currently set reuse pool
+     *
+     * @return The current reuse pool, or null if none is set
+     */
+    @Nullable
+    public IReusePool getReusePool() {
+        return mReusePool;
+    }
+
+    /**
+     * Gets or creates the NavigationReuseManager instance if the NavigationScene is in a valid state.
+     * Returns null if the NavigationScene has been destroyed.
+     *
+     * @return The NavigationReuseManager instance, or null if the scene is destroyed
+     */
+    @Nullable
+    private NavigationReuseManager obtainReuseManager() {
+        if (getState() == State.NONE) {
+            return null;
+        }
+
+        if (this.mReuseManager == null) {
+            this.mReuseManager = new NavigationReuseManager(this.mNavigationSceneManager, mReusePool);
+        }
+        return this.mReuseManager;
+    }
+
+    /**
+     * Add a scene to the reuse cache
+     *
+     * @param scene The scene to add to the cache
+     */
+    @RestrictTo(LIBRARY_GROUP)
+    public void addToReuseCache(@Nullable Scene scene) {
+        if (scene == null) {
+            return;
+        }
+        if (scene instanceof ReuseGroupScene) {
+            addToReusePool((ReuseGroupScene) scene);
+        }
+
+        if (scene instanceof IReuseScene) {
+            NavigationReuseManager reuseManager = obtainReuseManager();
+            if (reuseManager != null) {
+                boolean success = reuseManager.releaseIReuseScene((IReuseScene)scene);
+                if (success) {
+                    ((IReuseScene) scene).onRelease();
+                }
+            }
+        }
+    }
+
+    /**
+     * Check if a scene has been released to the reuse pool
+     *
+     * @param scene The scene to check
+     * @return true if the scene is in RELEASED state
+     */
+    @RestrictTo(LIBRARY_GROUP)
+    public boolean isReleased(@NonNull IReuseScene scene) {
+        NavigationReuseManager reuseManager = obtainReuseManager();
+        if (reuseManager == null) {
+            return false;
+        } else {
+            return reuseManager.getReuseSceneState(scene) == ReuseState.RELEASED;
+        }
+    }
+
+    /**
+     * Check if a scene is currently being reused
+     *
+     * @param scene The scene to check
+     * @return true if the scene is currently being reused
+     */
+    public boolean isReusing(@NonNull Scene scene) {
+        if (!(scene instanceof IReuseScene)) {
+            return false;
+        }
+        if (!((IReuseScene) scene).isReusable()) {
+            return false;
+        }
+
+        NavigationReuseManager reuseManager = obtainReuseManager();
+        if (reuseManager == null) {
+            return false;
+        } else {
+            return reuseManager.getReuseSceneState((IReuseScene)scene) == ReuseState.REUSED;
+        }
+    }
+
     @RestrictTo(LIBRARY_GROUP)
     public boolean isFixOnResultTiming() {
         if (this.mNavigationSceneOptions != null) {
@@ -355,6 +468,21 @@ public final class NavigationScene extends Scene implements NavigationListener, 
             scene = mLruCache.get(clazz);
         }
 
+        if (scene == null && pushOptions != null && pushOptions.getSceneFromReusePool()) {
+            NavigationReuseManager reuseManager = obtainReuseManager();
+            if (reuseManager != null) {
+                ReuseBehavior reuseBehavior = pushOptions.getReuseBehavior();
+                if (reuseBehavior == null) {
+                    reuseBehavior = new DefaultReuseBehavior(clazz);
+                }
+
+                Scene reuseScene = reuseManager.reuseFromPool(reuseBehavior);
+                if (reuseScene != null) {
+                    scene = reuseScene;
+                }
+            }
+        }
+
         if (scene == null) {
             scene = SceneInstanceUtility.getInstanceFromClass(clazz, argument);
         } else {
@@ -384,7 +512,7 @@ public final class NavigationScene extends Scene implements NavigationListener, 
             return;
         }
 
-        if (scene.getParentScene() != null) {
+        if (!isReusing(scene) && scene.getParentScene() != null) {
             if (scene.getParentScene() == this) {
                 throw new IllegalArgumentException("Scene is already pushed");
             }
@@ -1031,6 +1159,14 @@ public final class NavigationScene extends Scene implements NavigationListener, 
         }
         this.mOutsideView = null;
         this.mViewOwnedByOutside = false;
+
+        // CleanUp reuse related resources
+        if (mReuseManager != null) {
+            mReuseManager.clear();
+            mReuseManager = null;
+        }
+        mReusePool = null;
+
         super.onDestroyView();
     }
 
