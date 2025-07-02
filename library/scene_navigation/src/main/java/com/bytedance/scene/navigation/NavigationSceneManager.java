@@ -840,6 +840,11 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
 
     @Override
     public void moveState(@NonNull NavigationScene navigationScene, @NonNull Scene scene, @NonNull State to, @Nullable Bundle bundle, boolean causedByActivityLifeCycle, @Nullable Runnable endAction) {
+        if (bundle != null) {
+            LoggerManager.getInstance().i(TAG, "Sync Scene Lifecycle [" + scene.getState().name + " -> " + to.name + "] with previous saved State");
+        } else {
+            LoggerManager.getInstance().i(TAG, "Sync Scene Lifecycle [" + scene.getState().name + " -> " + to.name + "] without saved State");
+        }
         this.moveState(navigationScene, scene, to, bundle, causedByActivityLifeCycle, null, endAction);
     }
 
@@ -1951,6 +1956,7 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
                       at this time, recreate scene is useless
                      */
                     //todo maybe we should invoke record.consumeSavedInstanceState() to clear previous saved state too
+                    LoggerManager.getInstance().i(TAG, "Sync Scene Lifecycle skip because target Scene is already destroyed");
                     continue;
                 }
                 previousSavedState = record.consumeSavedInstanceState();
