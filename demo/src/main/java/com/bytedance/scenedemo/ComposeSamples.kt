@@ -1,7 +1,5 @@
 package com.bytedance.scenedemo
 
-import android.os.Bundle
-import android.view.View
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -10,12 +8,10 @@ import androidx.compose.ui.unit.dp
 import com.google.accompanist.appcompattheme.AppCompatTheme
 
 class ComposeSamples : ComposeScene() {
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        requireComposeView().setContent {
-            AppCompatTheme { // or AppCompatTheme
-                Greeting()
-            }
+    @Composable
+    override fun Content() {
+        AppCompatTheme { // or AppCompatTheme
+            Greeting()
         }
     }
 
