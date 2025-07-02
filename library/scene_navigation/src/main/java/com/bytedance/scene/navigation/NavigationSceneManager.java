@@ -180,6 +180,7 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
         List<Record> recordList = this.mBackStackList.getCurrentRecordList();
 
         if (this.mOnlyRestoreVisibleScene) {
+            LoggerManager.getInstance().i(TAG, "restoreFromBundle restore visible Scenes");
             int nonTranslucentIndex = 0;
             for (int i = recordList.size() - 1; i >= 0; i--) {
                 Record record = recordList.get(i);
@@ -189,6 +190,7 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
                 }
             }
 
+            int restoredSceneCount = 0;
             for (int i = nonTranslucentIndex; i <= recordList.size() - 1; i++) {
                 Record record = recordList.get(i);
                 Bundle sceneBundle = bundleList.get(i);
@@ -198,7 +200,10 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
                 if (i == recordList.size() - 1) {
                     restoreActivityStatus(record.mActivityStatusRecord);
                 }
+                restoredSceneCount++;
             }
+
+            LoggerManager.getInstance().i(TAG, "restoreFromBundle has restored " + restoredSceneCount + " Scenes, total " + recordList.size() + " Scenes");
 
             for (int i = 0; i < nonTranslucentIndex; i++) {
                 Record record = recordList.get(i);
@@ -206,6 +211,7 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
                 record.mPreviousSavedState = bundleList.get(i);
             }
         } else {
+            LoggerManager.getInstance().i(TAG, "restoreFromBundle restore all Scenes");
             for (int i = 0; i <= recordList.size() - 1; i++) {
                 Record record = recordList.get(i);
                 Bundle sceneBundle = bundleList.get(i);
