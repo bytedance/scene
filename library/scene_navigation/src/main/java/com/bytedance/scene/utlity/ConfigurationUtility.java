@@ -17,7 +17,10 @@ package com.bytedance.scene.utlity;
 
 import static androidx.annotation.RestrictTo.Scope.LIBRARY;
 
+import android.app.Activity;
+import android.content.ComponentName;
 import android.content.pm.ActivityInfo;
+import android.content.pm.PackageManager;
 import android.os.Build;
 import android.text.TextUtils;
 
@@ -129,5 +132,22 @@ public class ConfigurationUtility {
         //remove private diff ActivityInfo.CONFIG_WINDOW_CONFIGURATION
         diff = (diff & ~ConfigurationUtility.CONFIG_WINDOW_CONFIGURATION);
         return diff;
+    }
+
+
+    public static int getConfigChanges(Activity activity) {
+        try {
+            PackageManager pm = activity.getPackageManager();
+            ActivityInfo activityInfo = pm.getActivityInfo(getComponentName(activity, activity.getClass().getName()), 0);
+            return activityInfo.configChanges;
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    private static ComponentName getComponentName(Activity activity, String activityName) {
+        String pkgName = activity.getPackageName();
+        return new ComponentName(pkgName, activityName);
     }
 }

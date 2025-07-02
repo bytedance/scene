@@ -113,6 +113,7 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
 
     private WindowFocusChangedPendingTask mPendingWindowFocusChangedPendingTask = null;
     private boolean mRestoreStateInLifecycle = false;
+    private int mConfigurationChangesAllowList = 0;
 
     NavigationSceneManager(NavigationScene scene) {
         this.mNavigationScene = scene;
@@ -126,6 +127,7 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
             mSceneMessageQueue = new NavigationMessageQueue();
         }
         this.mRestoreStateInLifecycle = this.mNavigationScene.isRestoreStateInLifecycle();
+        this.mConfigurationChangesAllowList = this.mNavigationScene.getConfigurationChangesAllowList();
     }
 
     @NonNull
@@ -2143,7 +2145,7 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
         Record record = this.mBackStackList.getCurrentRecord();
         Scene scene = record.mScene;
 
-        dispatchOnConfigurationChangedToRecordInternal(record, scene, newConfig, new Action1<Scene>() {
+        dispatchOnConfigurationChangedToRecordInternal(record, scene, newConfig, mConfigurationChangesAllowList, new Action1<Scene>() {
             @Override
             public void execute(Scene value) {
                 executeOperationSafely(new RecreateOperation(value), null);
@@ -2168,7 +2170,7 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
             return false;
         }
         LoggerManager.getInstance().i(TAG, "PopOperation dispatch onConfigurationChanged");
-        return dispatchOnConfigurationChangedToRecordInternal(record, scene, newConfig, new Action1<Scene>() {
+        return dispatchOnConfigurationChangedToRecordInternal(record, scene, newConfig, mConfigurationChangesAllowList, new Action1<Scene>() {
             @Override
             public void execute(Scene value) {
                 executeOperationSafely(new RecreateOperation(value), null);
@@ -2177,7 +2179,7 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
     }
 
     //make sure Scene has invoked onCreateView, then dispatch onConfigurationChanged
-    private static boolean dispatchOnConfigurationChangedToRecordInternal(@NonNull Record record, @NonNull Scene scene, @NonNull Configuration newConfig, @NonNull Action1<Scene> recreateAction) {
+    private static boolean dispatchOnConfigurationChangedToRecordInternal(@NonNull Record record, @NonNull Scene scene, @NonNull Configuration newConfig, int configurationChangesAllowList, @NonNull Action1<Scene> recreateAction) {
         if (scene.getView() == null) {
             return false;
         }
@@ -2197,8 +2199,14 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
         if (record.mConfiguration != null) {
             Configuration sceneConfiguration = record.mConfiguration;
             int diff = sceneConfiguration.diff(newConfig);
+            LoggerManager.getInstance().i(TAG, "Configuration has been changed, raw diff " + diff);
+
             //remove private diff properties
             diff = ConfigurationUtility.removePrivateDiff(diff);
+            if (configurationChangesAllowList != 0) {
+                diff = (diff & configurationChangesAllowList);
+                LoggerManager.getInstance().i(TAG, "clean diff not include in configurationChangesAllowList, result diff " + diff);
+            }
 
             String diffString = ConfigurationUtility.configurationDiffToString(diff);
             LoggerManager.getInstance().i(TAG, "Configuration has been changed, diff " + diffString);

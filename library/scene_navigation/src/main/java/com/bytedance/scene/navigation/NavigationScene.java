@@ -161,6 +161,7 @@ public final class NavigationScene extends Scene implements NavigationListener, 
     private SceneWindowFocusChangedDispatcher mSceneWindowFocusChangedDispatcher = null;
     private boolean mLifecycleAndSavedStateRegistryEnabled = true;
     private boolean mRestoreStateInLifecycle = false;
+    private int mConfigurationChangesAllowList = 0;
 
     @MainThread
     public void addNavigationListener(@NonNull final LifecycleOwner lifecycleOwner, @NonNull final NavigationListener listener) {
@@ -1955,5 +1956,17 @@ public final class NavigationScene extends Scene implements NavigationListener, 
             throw new IllegalStateException("setRestoreStateInLifecycle has already setup");
         }
         this.mRestoreStateInLifecycle = restoreStateInLifecycle;
+    }
+
+    /**
+     * {@link com.bytedance.scene.utlity.ConfigurationUtility#getConfigChanges(Activity)}
+     * @param allowList
+     */
+    public void setConfigurationChangesAllowList(int allowList) {
+        this.mConfigurationChangesAllowList = allowList;
+    }
+
+    public int getConfigurationChangesAllowList() {
+        return this.mConfigurationChangesAllowList;
     }
 }
