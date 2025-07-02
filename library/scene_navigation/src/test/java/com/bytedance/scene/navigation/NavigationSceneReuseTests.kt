@@ -32,7 +32,7 @@ import java.util.concurrent.ConcurrentHashMap
  */
 @RunWith(RobolectricTestRunner::class)
 @Config(manifest = Config.NONE)
-class NavigationSceneReuseTests {
+open class NavigationSceneReuseTests {
     internal class ReuseScene : Scene(), IReuseScene {
         var reuse = false
 
@@ -76,12 +76,13 @@ class NavigationSceneReuseTests {
         navigationScene.remove(reuseScene)
         Assert.assertTrue(reuseScene.isReleased()) // Should be released after removal
 
-        navigationScene.push(
-            ReuseScene::class.java,
-            null,
-            PushOptions.Builder().setUseSceneFromReusePool(true).build()
+        val pushOption = PushOptions.Builder().setUseSceneFromReusePool(true).build()
+        val scene = navigationScene.acquireScene(
+            ReuseScene::class.java, null, pushOption
         )
+        navigationScene.push(scene, pushOption)
 
+        Assert.assertNotNull("pushAndGet should return non-null scene", pushOption)
         Assert.assertSame(reuseScene, navigationScene.currentScene)
         Assert.assertFalse(reuseScene.isReleased())  // Should be not released after reuse
     }
@@ -107,17 +108,15 @@ class NavigationSceneReuseTests {
         navigationScene.remove(reuseScene)
         Assert.assertTrue(reuseScene.isReleased()) // Should be released after removal
 
-        navigationScene.push(
-            ReuseScene::class.java,
-            null,
-            PushOptions.Builder()
-                .setUseSceneFromReusePool(true)
-                .setUsePost(true)
-                .build()
+        val pushOption = PushOptions.Builder().setUseSceneFromReusePool(true).build()
+        val scene = navigationScene.acquireScene(
+            ReuseScene::class.java, null, pushOption
         )
+        navigationScene.push(scene, pushOption)
 
         flushUI()
 
+        Assert.assertNotNull("pushAndGet should return non-null scene", scene)
         Assert.assertSame(reuseScene, navigationScene.currentScene)
         Assert.assertFalse(reuseScene.isReleased())  // Should be not released after reuse
     }
@@ -143,12 +142,13 @@ class NavigationSceneReuseTests {
         navigationScene.remove(reuseScene)
         Assert.assertTrue(reuseScene.isReleased()) // Should be released after removal
 
-        navigationScene.push(
-            ReuseScene::class.java,
-            null,
-            PushOptions.Builder().setUseSceneFromReusePool(true).build()
+        val pushOption = PushOptions.Builder().setUseSceneFromReusePool(true).build()
+        val scene = navigationScene.acquireScene(
+            ReuseScene::class.java, null, pushOption
         )
+        navigationScene.push(scene, pushOption)
 
+        Assert.assertNotNull("pushAndGet should return non-null scene", scene)
         Assert.assertNotSame(reuseScene, navigationScene.currentScene)
         Assert.assertTrue(reuseScene.isReleased())  // not reuse，original scene should keep released
     }
@@ -174,17 +174,15 @@ class NavigationSceneReuseTests {
         navigationScene.remove(reuseScene)
         Assert.assertTrue(reuseScene.isReleased())
 
-        navigationScene.push(
-            ReuseScene::class.java,
-            null,
-            PushOptions.Builder()
-                .setUseSceneFromReusePool(true)
-                .setUsePost(true)
-                .build()
+        val pushOption = PushOptions.Builder().setUseSceneFromReusePool(true).build()
+        val scene = navigationScene.acquireScene(
+            ReuseScene::class.java, null, pushOption
         )
+        navigationScene.push(scene, pushOption)
 
         flushUI()
 
+        Assert.assertNotNull("pushAndGet should return non-null scene", scene)
         Assert.assertNotSame(reuseScene, navigationScene.currentScene)
         Assert.assertTrue(reuseScene.isReleased())
     }
@@ -220,17 +218,20 @@ class NavigationSceneReuseTests {
         val reuseScene = ReuseScene().apply { reuse = true }
         navigationScene.push(reuseScene)
         navigationScene.remove(reuseScene)
-        navigationScene.push(
-            ReuseScene::class.java,
-            null,
-            PushOptions
-                .Builder()
-                .setUseSceneFromReusePool(true)
-                .setReuseBehavior { candidate ->
-                    candidate.javaClass == ReuseScene::class.java
-                }
-                .build()
+
+        val pushOption = PushOptions
+            .Builder()
+            .setUseSceneFromReusePool(true)
+            .setReuseBehavior { candidate ->
+                candidate.javaClass == ReuseScene::class.java
+            }
+            .build()
+        val scene = navigationScene.acquireScene(
+            ReuseScene::class.java, null, pushOption
         )
+        navigationScene.push(scene, pushOption)
+
+        Assert.assertNotNull("pushAndGet should return non-null scene", scene)
         Assert.assertSame(reuseScene, navigationScene.currentScene)
     }
 
@@ -254,11 +255,14 @@ class NavigationSceneReuseTests {
             reuseScene.onStop()
             reuseScene.onRelease()
         }
-        navigationScene.push(
-            ReuseScene::class.java,
-            null,
-            PushOptions.Builder().setUseSceneFromReusePool(true).build()
+
+        val pushOption = PushOptions.Builder().setUseSceneFromReusePool(true).build()
+        val scene = navigationScene.acquireScene(
+            ReuseScene::class.java, null, pushOption
         )
+        navigationScene.push(scene, pushOption)
+
+        Assert.assertNotNull("pushAndGet should return non-null scene", scene)
         Assert.assertSame(reuseScene, navigationScene.currentScene)
         verifyOrder {
             reuseScene.onStart()
@@ -355,13 +359,14 @@ class NavigationSceneReuseTests {
         Assert.assertTrue(trackingPool.reusePool.contains(reuseScene))
 
         // Obtain from the reuse pool
-        navigationScene.push(
-            ReuseScene::class.java,
-            null,
-            PushOptions.Builder().setUseSceneFromReusePool(true).build()
+        val pushOption = PushOptions.Builder().setUseSceneFromReusePool(true).build()
+        val scene = navigationScene.acquireScene(
+            ReuseScene::class.java, null, pushOption
         )
+        navigationScene.push(scene, pushOption)
 
         // Verify that the scene is reused
+        Assert.assertNotNull("pushAndGet should return non-null scene", scene)
         Assert.assertSame(reuseScene, navigationScene.currentScene)
         Assert.assertTrue(trackingPool.reusePool.isEmpty())
     }
@@ -447,21 +452,20 @@ class NavigationSceneReuseTests {
         Assert.assertFalse(navigationScene.isReleased(reuseScene2))
 
         // Test reuse
-        navigationScene.push(
-            ReuseScene::class.java,
-            null,
-            PushOptions.Builder().setUseSceneFromReusePool(true).build()
+        val pushOption = PushOptions.Builder().setUseSceneFromReusePool(true).build()
+        val scene = navigationScene.acquireScene(
+            ReuseScene::class.java, null, pushOption
         )
+        navigationScene.push(scene, pushOption)
 
         // Reuse should be the first scene
+        Assert.assertNotNull("pushAndGet should return non-null scene", scene)
         Assert.assertSame(reuseScene1, navigationScene.currentScene)
 
         // The reuse pool should be empty
-        navigationScene.push(
-            ReuseScene::class.java,
-            null,
-            PushOptions.Builder().setUseSceneFromReusePool(true).build()
-        )
+        navigationScene.push(navigationScene.acquireScene(
+            ReuseScene::class.java, null, pushOption
+        ), pushOption)
 
         // New scenarios should be created, not reused
         Assert.assertNotSame(reuseScene1, navigationScene.currentScene)
@@ -469,7 +473,7 @@ class NavigationSceneReuseTests {
     }
 
 
-    protected fun flushUI() {
+    private fun flushUI() {
         Robolectric.flushForegroundThreadScheduler()
     }
 }

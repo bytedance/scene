@@ -440,6 +440,51 @@ public final class NavigationScene extends Scene implements NavigationListener, 
     }
 
     /**
+     * Acquire a Scene instance, handling reuse logic if applicable.
+     * This method will first check for reusable scenes from various pools,
+     * then create a new instance if no reusable scene is found.
+     *
+     * @param clazz the Scene class to instantiate
+     * @param argument optional arguments for the Scene
+     * @param pushOptions push configuration options (used for reuse behavior)
+     * @return the Scene instance that was acquired (either reused or newly created)
+     */
+    @NonNull
+    public Scene acquireScene(@NonNull Class<? extends Scene> clazz,
+                              @Nullable Bundle argument,
+                              @Nullable PushOptions pushOptions) {
+        Scene scene = null;
+        // Check ReuseGroupScene LRU cache first
+        if (ReuseGroupScene.class.isAssignableFrom(clazz)) {
+            scene = mLruCache.get(clazz);
+        }
+
+        // Check reuse pool if enabled in pushOptions
+        if (scene == null && pushOptions != null && pushOptions.getSceneFromReusePool()) {
+            ReuseBehavior reuseBehavior = pushOptions.getReuseBehavior();
+            if (reuseBehavior == null) {
+                reuseBehavior = new DefaultReuseBehavior(clazz);
+            }
+            Scene reuseScene = mReuseManager.reuseFromPool(reuseBehavior);
+            if (reuseScene != null) {
+                scene = reuseScene;
+            }
+        }
+
+        // Create new instance if no reusable scene found
+        if (scene == null) {
+            scene = SceneInstanceUtility.getInstanceFromClass(clazz, argument);
+        } else {
+            // Set arguments for reused scene
+            if (argument != null) {
+                scene.setArguments(argument);
+            }
+        }
+
+        return scene;
+    }
+
+    /**
      * @deprecated Use {@link #push(Scene)}.
      */
     @Deprecated
