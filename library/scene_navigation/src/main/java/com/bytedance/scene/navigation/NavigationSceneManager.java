@@ -47,6 +47,7 @@ import com.bytedance.scene.interfaces.Function;
 import com.bytedance.scene.interfaces.ActivityCompatibleBehavior;
 import com.bytedance.scene.interfaces.PopOptions;
 import com.bytedance.scene.interfaces.PushOptions;
+import com.bytedance.scene.interfaces.SceneMemoryRecyclePolicy;
 import com.bytedance.scene.launchmode.LaunchModeBehavior;
 import com.bytedance.scene.logger.LoggerManager;
 import com.bytedance.scene.navigation.pop.CoordinatePopOptionOperation;
@@ -344,6 +345,7 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
             String suppressTag = beginSuppressStackOperation("NavigationManager dispatchCurrentChildState");
             syncCurrentSceneStateOperationInternal(state, null);
             endSuppressStackOperation(suppressTag);
+            notifySceneStateChanged();
         } else {
             this.requireMessageQueue().postSync(new Runnable() {
                 @Override
@@ -351,6 +353,7 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
                     String suppressTag = beginSuppressStackOperation("NavigationManager dispatchCurrentChildState");
                     executeOperationSafely(new SyncCurrentSceneStateOperation(state), EMPTY_RUNNABLE);
                     endSuppressStackOperation(suppressTag);
+                    notifySceneStateChanged();
                 }
             });
         }
@@ -2075,9 +2078,11 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
             return;
         }
         if (!this.mAnySceneStateChanged) {
+            LoggerManager.getInstance().i(TAG, "recycleInvisibleScenes skip because of mAnySceneStateChanged false");
             return;
         }
         if (!mIsNavigationStateChangeInProgress.isEmpty() || !mPendingActionList.isEmpty() || requireMessageQueue().hasPendingTasks()) {
+            LoggerManager.getInstance().i(TAG, "recycleInvisibleScenes skip because of navigation operation is in progress");
             return;
         }
 
@@ -2104,6 +2109,10 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
         for (int i = recycleStartIndex; i >= 0; i--) {
             Record record = recordList.get(i);
             Scene scene = record.mScene;
+            if (this.mRestoreStateInLifecycle && scene instanceof SceneMemoryRecyclePolicy && ((SceneMemoryRecyclePolicy) scene).followActivityLifecycle()) {
+                LoggerManager.getInstance().i(TAG, "recycle scene skip " + scene.toString() + " because it followActivityLifecycle");
+                continue;
+            }
             State sceneState = scene.getState();
             if ((sceneState == State.ACTIVITY_CREATED || sceneState == State.VIEW_CREATED) && scene.isSceneRestoreEnabled()) {
                 Bundle sceneBundle = new Bundle();
@@ -2114,9 +2123,10 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
                 Utility.removeFromParentView(view);
                 //create a new Scene instance to replace previous one
                 record.mScene = this.mBackStackList.createNewSceneInstance(mNavigationScene.requireActivity(), i, record, mNavigationScene.mRootSceneComponentFactory);
-                LoggerManager.getInstance().i(TAG, "recycle scene " + scene + " " + sceneState.getName());
+                LoggerManager.getInstance().i(TAG, "recycle scene " + scene + " from state " + sceneState.getName());
             } else {
                 //skip because Scene is visible or disable restore
+                LoggerManager.getInstance().i(TAG, "recycle scene skip " + scene.toString() + " because it is visible or disable restore");
             }
         }
     }
