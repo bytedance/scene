@@ -3,7 +3,7 @@
 [![](https://jitpack.io/v/bytedance/scene.svg)](https://jitpack.io/#bytedance/scene)
 [![API](https://img.shields.io/badge/api-14%2B-green)](https://developer.android.com/about/dashboards)
 
-Scene是一个基于View的轻量级导航和页面切分组件库，主要特性：
+Scene Framework 是一个基于View的轻量级导航和页面切分组件库，主要特性：
 
 1. 简单方便的页面导航和栈管理，支持MultiStack
 2. 完善的生命周期的管理和分发

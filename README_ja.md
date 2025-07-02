@@ -6,7 +6,7 @@
 [![](https://jitpack.io/v/bytedance/scene.svg)](https://jitpack.io/#bytedance/scene)
 [![API](https://img.shields.io/badge/api-14%2B-green)](https://developer.android.com/about/dashboards)
 
-Sceneは、ビューに基づいた軽量のナビゲーションおよびUIコンポジションライブラリです。
+Scene Framework は、ビューに基づいた軽量のナビゲーションおよびUIコンポジションライブラリです。
 
 1. シンプルで便利なナビゲーションとスタック管理、マルチスタック対応
 2. 改善されたライフサイクル管理と配信

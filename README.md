@@ -1,5 +1,5 @@
 <div align="center">
-    <h1>Scene</h1>
+    <h1>Scene Framework</h1>
     <p>TikTok Single Activity Framework.</p>
     <p>English&nbsp;&nbsp;|&nbsp;&nbsp;
     <a target="_blank" href="https://github.com/bytedance/scene/blob/master/README_cn.md">简体中文</a>&nbsp;&nbsp;|&nbsp;&nbsp;
