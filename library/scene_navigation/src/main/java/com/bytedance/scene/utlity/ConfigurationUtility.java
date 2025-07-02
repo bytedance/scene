@@ -42,8 +42,6 @@ public class ConfigurationUtility {
     public static final int CONFIG_ASSETS_PATHS = 0x80000000;
     public static final int CONFIG_WINDOW_CONFIGURATION = 0x20000000;
 
-    public static final int CONFIG_FONT_WEIGHT_ADJUSTMENT = 0x10000000;
-
     public static final int CONFIG_GRAMMATICAL_GENDER = 0x8000;
 
     /**
@@ -111,8 +109,8 @@ public class ConfigurationUtility {
         if ((diff & CONFIG_WINDOW_CONFIGURATION) != 0) {
             list.add("CONFIG_WINDOW_CONFIGURATION");
         }
-        if (Build.VERSION.SDK_INT >= 31) {
-            if ((diff & CONFIG_FONT_WEIGHT_ADJUSTMENT) != 0) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            if ((diff & ActivityInfo.CONFIG_FONT_WEIGHT_ADJUSTMENT) != 0) {
                 list.add("CONFIG_AUTO_BOLD_TEXT");
             }
         }
