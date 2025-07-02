@@ -336,7 +336,7 @@ public final class NavigationScene extends Scene implements NavigationListener, 
             addToReusePool((ReuseGroupScene) scene);
         }
 
-        if (scene instanceof IReuseScene) {
+        if (scene instanceof IReuseScene && ((IReuseScene) scene).isReusable()) {
             NavigationReuseManager reuseManager = obtainReuseManager();
             if (reuseManager != null) {
                 boolean success = reuseManager.releaseIReuseScene((IReuseScene)scene);

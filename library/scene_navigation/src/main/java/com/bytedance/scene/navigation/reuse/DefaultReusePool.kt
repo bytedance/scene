@@ -28,11 +28,9 @@ class DefaultReusePool : IReusePool {
     private val reuseStates = HashMap<IReuseScene, ReuseState>()
 
     override fun releaseScene(scene: IReuseScene): Boolean {
-        if (!scene.isReusable()) {
+        if (!scene.isReusable() || reusePool.contains(scene)) {
             return false
         }
-
-        check(!reusePool.contains(scene)) { "Scene already in reuse pool" }
 
         reusePool.addLast(scene)
         reuseStates[scene] = ReuseState.RELEASED
