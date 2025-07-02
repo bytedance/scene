@@ -138,10 +138,12 @@ public abstract class NavigationAnimatorExecutor extends NavigationAnimationExec
 
         fromView.setVisibility(View.VISIBLE);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
-            mAnimationViewGroup.getOverlay().add(fromView);
-        } else {
-            mAnimationViewGroup.addView(fromView);
+        if (!mDisableRemoveView) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+                mAnimationViewGroup.getOverlay().add(fromView);
+            } else {
+                mAnimationViewGroup.addView(fromView);
+            }
         }
 
         final Animator animator = onPopAnimator(fromInfo, toInfo);
@@ -154,6 +156,15 @@ public abstract class NavigationAnimatorExecutor extends NavigationAnimationExec
             @Override
             public void onAnimationEnd(Animator animation) {
                 super.onAnimationEnd(animation);
+                if (mDisableRemoveView) {
+                    if (toInfo.mIsTranslucent) {
+                        AnimatorUtility.resetViewStatus(toView, finalToViewAnimatorInfo);
+                    } else {
+                        AnimatorUtility.resetViewStatus(toView);
+                    }
+                    endAction.run();
+                    return;
+                }
                 // Todo: children also has to reset
                 if (fromInfo.mIsTranslucent) {
                     AnimatorUtility.resetViewStatus(fromView, finalFromViewAnimatorInfo);

@@ -65,11 +65,13 @@ public final class AnimationOrAnimatorResourceExecutor extends NavigationAnimati
         }
 
         // In the case of pushAndClear, it is possible that the Scene come from has been destroyed.
-        if (fromInfo.mSceneState.value < State.VIEW_CREATED.value) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
-                mAnimationViewGroup.getOverlay().add(fromView);
-            } else {
-                mAnimationViewGroup.addView(fromView);
+        if (!mDisableRemoveView) {
+            if (fromInfo.mSceneState.value < State.VIEW_CREATED.value) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+                    mAnimationViewGroup.getOverlay().add(fromView);
+                } else {
+                    mAnimationViewGroup.addView(fromView);
+                }
             }
         }
 
@@ -87,11 +89,13 @@ public final class AnimationOrAnimatorResourceExecutor extends NavigationAnimati
                 AnimatorUtility.resetViewStatus(fromView);
                 AnimatorUtility.resetViewStatus(toView);
 
-                if (fromInfo.mSceneState.value < State.VIEW_CREATED.value) {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
-                        mAnimationViewGroup.getOverlay().remove(fromView);
-                    } else {
-                        mAnimationViewGroup.removeView(fromView);
+                if (!mDisableRemoveView) {
+                    if (fromInfo.mSceneState.value < State.VIEW_CREATED.value) {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+                            mAnimationViewGroup.getOverlay().remove(fromView);
+                        } else {
+                            mAnimationViewGroup.removeView(fromView);
+                        }
                     }
                 }
                 endAction.run();
@@ -122,10 +126,12 @@ public final class AnimationOrAnimatorResourceExecutor extends NavigationAnimati
 
         fromView.setVisibility(View.VISIBLE);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
-            mAnimationViewGroup.getOverlay().add(fromView);
-        } else {
-            mAnimationViewGroup.addView(fromView);
+        if (!mDisableRemoveView) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+                mAnimationViewGroup.getOverlay().add(fromView);
+            } else {
+                mAnimationViewGroup.addView(fromView);
+            }
         }
 
         Runnable animationEndAction = new CountRunnable(2, new Runnable() {
@@ -135,10 +141,12 @@ public final class AnimationOrAnimatorResourceExecutor extends NavigationAnimati
                 AnimatorUtility.resetViewStatus(fromView);
                 AnimatorUtility.resetViewStatus(toView);
 
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
-                    mAnimationViewGroup.getOverlay().remove(fromView);
-                } else {
-                    mAnimationViewGroup.removeView(fromView);
+                if (!mDisableRemoveView) {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+                        mAnimationViewGroup.getOverlay().remove(fromView);
+                    } else {
+                        mAnimationViewGroup.removeView(fromView);
+                    }
                 }
                 endAction.run();
             }
