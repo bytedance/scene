@@ -128,14 +128,26 @@ public class CoordinatePushOptionOperation implements Operation {
         final PushCreateOperation createAndResumeNewSceneOperation = new PushCreateOperation(mManagerAbility, mScene, mPushOptions);
 
         //stop previous scene and execute animation if needed
-        final PushStopOperation stopPreviousSceneOperation = new PushStopOperation(mManagerAbility, currentRecord);
+        Operation stopPreviousSceneOperation = null;
+        PushAnimationOperation pushAnimationOperation = null;
 
+        if (mPushOptions.isUseAnimationBeforePause()) {
+            //stop previous scene
+            stopPreviousSceneOperation = new PushStopOperation(mManagerAbility, currentRecord);
+
+            //execute animation if needed
+            pushAnimationOperation = new PushAnimationOperation(mManagerAbility, currentRecord);
+        } else {
+            stopPreviousSceneOperation = new LegacyPushStopOperation(mManagerAbility, currentRecord);
+        }
+
+        Operation finalStopPreviousSceneOperation = stopPreviousSceneOperation;
         final NavigationRunnable stopPreviousSceneTask = new NavigationRunnable() {
             @Override
             public void run() {
                 SceneTrace.beginSection(NavigationSceneManager.TRACE_EXECUTE_OPERATION_TAG);
                 String suppressTag = mManagerAbility.beginSuppressStackOperation("NavigationManager execute operation directly");
-                mManagerAbility.executeOperationSafely(stopPreviousSceneOperation, operationEndAction);
+                mManagerAbility.executeOperationSafely(finalStopPreviousSceneOperation, operationEndAction);
                 mManagerAbility.endSuppressStackOperation(suppressTag);
                 mManagerAbility.notifySceneStateChanged();
                 SceneTrace.endSection();
@@ -143,6 +155,7 @@ public class CoordinatePushOptionOperation implements Operation {
         };
 
         if (currentRecord != null) {
+            PushAnimationOperation finalPushAnimationOperation = pushAnimationOperation;
             final NavigationRunnable createAndResumeNewSceneTask = new NavigationRunnable() {
                 @Override
                 public void run() {
@@ -151,10 +164,24 @@ public class CoordinatePushOptionOperation implements Operation {
                     mManagerAbility.executeOperationSafely(createAndResumeNewSceneOperation, new Runnable() {
                         @Override
                         public void run() {
-                            if (mPushOptions.isUseIdleWhenStop()) {
-                                mMessageQueue.executeWhenIdleOrTimeLimit(stopPreviousSceneTask, TimeUnit.SECONDS.toMillis(10));
+                            if (finalPushAnimationOperation != null) {
+                                //first execute animation, then execute stop
+                                mManagerAbility.executeOperationSafely(finalPushAnimationOperation, new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        if (mPushOptions.isUseIdleWhenStop()) {
+                                            mMessageQueue.executeWhenIdleOrTimeLimit(stopPreviousSceneTask, TimeUnit.SECONDS.toMillis(10));
+                                        } else {
+                                            mMessageQueue.postAsyncAtHead(stopPreviousSceneTask);
+                                        }
+                                    }
+                                });
                             } else {
-                                mMessageQueue.postAsyncAtHead(stopPreviousSceneTask);
+                                if (mPushOptions.isUseIdleWhenStop()) {
+                                    mMessageQueue.executeWhenIdleOrTimeLimit(stopPreviousSceneTask, TimeUnit.SECONDS.toMillis(10));
+                                } else {
+                                    mMessageQueue.postAsyncAtHead(stopPreviousSceneTask);
+                                }
                             }
                         }
                     });
