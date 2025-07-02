@@ -356,17 +356,18 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
         }
     }
 
-    public void dispatchChildrenState(final State state, final boolean reverseOrder, final boolean causeByActivityLifecycle) {
+    @Override
+    public void dispatchChildrenState(@NonNull final State state, @Nullable final State nextStageStateHint, final boolean reverseOrder, final boolean causeByActivityLifecycle) {
         if (this.mReduceColdStartCallStack && getMessageQueue() == null) {
             String suppressTag = beginSuppressStackOperation("NavigationManager dispatchChildrenState");
-            syncAllSceneStateOperationInternal(state, reverseOrder, causeByActivityLifecycle, null);
+            syncAllSceneStateOperationInternal(state, nextStageStateHint, reverseOrder, causeByActivityLifecycle, null);
             endSuppressStackOperation(suppressTag);
         } else {
             this.requireMessageQueue().postSync(new Runnable() {
                 @Override
                 public void run() {
                     String suppressTag = beginSuppressStackOperation("NavigationManager dispatchChildrenState");
-                    executeOperationSafely(new SyncAllSceneStateOperation(state, reverseOrder, causeByActivityLifecycle), EMPTY_RUNNABLE);
+                    executeOperationSafely(new SyncAllSceneStateOperation(state, nextStageStateHint, reverseOrder, causeByActivityLifecycle), EMPTY_RUNNABLE);
                     endSuppressStackOperation(suppressTag);
                 }
             });
@@ -1896,22 +1897,24 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
 
     private class SyncAllSceneStateOperation implements Operation {
         private final State state;
+        private final State nextStageStateHint;
         private final boolean reverseOrder;
         private final boolean causeByActivityLifecycle;
 
-        private SyncAllSceneStateOperation(State state, boolean reverseOrder, boolean causeByActivityLifecycle) {
+        private SyncAllSceneStateOperation(State state, State nextStageStateHint, boolean reverseOrder, boolean causeByActivityLifecycle) {
             this.state = state;
+            this.nextStageStateHint = nextStageStateHint;
             this.reverseOrder = reverseOrder;
             this.causeByActivityLifecycle = causeByActivityLifecycle;
         }
 
         @Override
         public void execute(@Nullable Runnable operationEndAction) {
-            syncAllSceneStateOperationInternal(this.state, this.reverseOrder, this.causeByActivityLifecycle, operationEndAction);
+            syncAllSceneStateOperationInternal(this.state, this.nextStageStateHint, this.reverseOrder, this.causeByActivityLifecycle, operationEndAction);
         }
     }
 
-    private void syncAllSceneStateOperationInternal(State state, boolean reverseOrder, boolean causeByActivityLifecycle, Runnable operationEndAction) {
+    private void syncAllSceneStateOperationInternal(@NonNull State state, @Nullable State nextStageStateHint, boolean reverseOrder, boolean causeByActivityLifecycle, Runnable operationEndAction) {
         if (getCurrentRecord() == null) {
             if (operationEndAction != null) {
                 operationEndAction.run();
@@ -1930,6 +1933,15 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
             Scene scene = record.mScene;
             Bundle previousSavedState = null;
             if (mRestoreStateInLifecycle) {
+                if (nextStageStateHint == State.NONE && state != nextStageStateHint && scene.getState() == State.NONE) {
+                    /*
+                      current state is none, latest state is not none, but the following state is none, so just skip,
+                      normally this happen when scene is already recycled and NavigationScene start to destroy because of user exit,
+                      at this time, recreate scene is useless
+                     */
+                    //todo maybe we should invoke record.consumeSavedInstanceState() to clear previous saved state too
+                    continue;
+                }
                 previousSavedState = record.consumeSavedInstanceState();
             }
             boolean modifyViewHierarchy = !causeByActivityLifecycle;

@@ -812,7 +812,7 @@ public final class NavigationScene extends Scene implements NavigationListener, 
             if (savedInstanceState != null && isSupportRestore()) {
                 this.mNavigationSceneManager.restoreChildrenSceneState(savedInstanceState, State.VIEW_CREATED, false);
             } else {
-                dispatchChildrenState(State.VIEW_CREATED, false, false);
+                dispatchChildrenState(State.VIEW_CREATED, null, false, false);
             }
         }
     }
@@ -914,7 +914,7 @@ public final class NavigationScene extends Scene implements NavigationListener, 
             if (savedInstanceState != null && isSupportRestore()) {
                 this.mNavigationSceneManager.restoreChildrenSceneState(savedInstanceState, State.ACTIVITY_CREATED, true);
             } else {
-                dispatchChildrenState(State.ACTIVITY_CREATED, false, true);
+                dispatchChildrenState(State.ACTIVITY_CREATED, null, false, true);
             }
         }
         this.mNavigationSceneManager.executePendingOperation();
@@ -1013,7 +1013,7 @@ public final class NavigationScene extends Scene implements NavigationListener, 
     @Override
     public void dispatchDestroyView() {
         if (isSeparateCreateFromCreateView()) {
-            dispatchChildrenState(State.CREATED, true, true);
+            dispatchChildrenState(State.CREATED, State.NONE, true, true);
         }
         super.dispatchDestroyView();
     }
@@ -1026,7 +1026,7 @@ public final class NavigationScene extends Scene implements NavigationListener, 
         }
         // TODO should be move to dispatchDestroyView
         if (!isSeparateCreateFromCreateView()) {
-            dispatchChildrenState(State.NONE, true, true);
+            dispatchChildrenState(State.NONE, null, true, true);
         }
         this.mOutsideView = null;
         this.mViewOwnedByOutside = false;
@@ -1037,7 +1037,7 @@ public final class NavigationScene extends Scene implements NavigationListener, 
     @Override
     public void dispatchDestroy() {
         if (isSeparateCreateFromCreateView()) {
-            dispatchChildrenState(State.NONE, true, true);
+            dispatchChildrenState(State.NONE, null, true, true);
         }
         super.dispatchDestroy();
     }
@@ -1055,8 +1055,8 @@ public final class NavigationScene extends Scene implements NavigationListener, 
      * @param causeByActivityLifecycle if set to false, child Scene view will be attached to NavigationScene when onCreateView,
      *                                 gone when onStop and removed from NavigationScene when onDestroyView
      */
-    private void dispatchChildrenState(@NonNull State state, boolean reverseOrder, boolean causeByActivityLifecycle) {
-        mNavigationSceneManager.dispatchChildrenState(state, reverseOrder, causeByActivityLifecycle);
+    private void dispatchChildrenState(@NonNull State state, @Nullable State nextStageStateHint, boolean reverseOrder, boolean causeByActivityLifecycle) {
+        mNavigationSceneManager.dispatchChildrenState(state, nextStageStateHint, reverseOrder, causeByActivityLifecycle);
     }
 
     Record findRecordByScene(Scene scene) {

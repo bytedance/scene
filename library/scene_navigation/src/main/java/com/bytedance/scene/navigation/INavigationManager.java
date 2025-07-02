@@ -5,6 +5,7 @@ import android.content.res.Configuration;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.lifecycle.LifecycleOwner;
 
 import com.bytedance.scene.Scene;
@@ -39,7 +40,7 @@ public interface INavigationManager {
 
     public void dispatchCurrentChildState(State state);
 
-    public void dispatchChildrenState(State state, boolean reverseOrder, boolean causeByActivityLifecycle);
+    public void dispatchChildrenState(@NonNull State state, @Nullable State nextStageStateHint, boolean reverseOrder, boolean causeByActivityLifecycle);
 
     public void setResult(Scene scene, Object result);
 
