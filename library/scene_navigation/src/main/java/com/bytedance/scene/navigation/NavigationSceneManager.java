@@ -886,11 +886,6 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
 
     @Override
     public void moveState(@NonNull NavigationScene navigationScene, @NonNull Scene scene, @NonNull State to, @Nullable Bundle bundle, boolean causedByActivityLifeCycle, @Nullable Runnable endAction) {
-        if (bundle != null) {
-            LoggerManager.getInstance().i(TAG, "Sync Scene Lifecycle [" + scene.getState().name + " -> " + to.name + "] with previous saved State");
-        } else {
-            LoggerManager.getInstance().i(TAG, "Sync Scene Lifecycle [" + scene.getState().name + " -> " + to.name + "] without saved State");
-        }
         this.moveState(navigationScene, scene, to, bundle, causedByActivityLifeCycle, null, endAction);
     }
 
@@ -901,6 +896,11 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
                                  boolean causedByActivityLifeCycle,
                                  @Nullable Function<Scene, Void> afterOnActivityCreatedAction,
                                  @Nullable Runnable endAction) {
+        if (bundle != null) {
+            LoggerManager.getInstance().i(TAG, "Sync Scene " + scene.toString() + " Lifecycle [" + scene.getState().name + " -> " + to.name + "] with previous saved State");
+        } else {
+            LoggerManager.getInstance().i(TAG, "Sync Scene " + scene.toString() + " Lifecycle [" + scene.getState().name + " -> " + to.name + "] without saved State");
+        }
         if (mIsSeparateCreateFromCreateView) {
             moveStateWithSeparation(navigationScene, scene, to, bundle, causedByActivityLifeCycle, afterOnActivityCreatedAction, endAction);
         } else {
