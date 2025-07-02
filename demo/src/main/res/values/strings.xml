@@ -27,6 +27,7 @@
     <string name="main_title_case">Extreme Cases</string>
 
     <string name="main_nav_btn_push_pop">Push and Pop</string>
+    <string name="main_nav_btn_push_pop_fragment">Push and Pop Fragment</string>
     <string name="main_nav_btn_push_pop_with_post">Push and Pop(with post)</string>
     <string name="main_nav_btn_single_top">Push with SingleTop</string>
     <string name="main_nav_btn_single_task">Push with SingleTask</string>

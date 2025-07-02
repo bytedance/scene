@@ -1,0 +1,64 @@
+apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+
+android {
+    compileSdkVersion rootProject.ext.compileSdkVersion
+
+    defaultConfig {
+        minSdkVersion rootProject.ext.miniSdkVersion
+    }
+    resourcePrefix 'scene_'
+
+    testOptions {
+        unitTests {
+            includeAndroidResources = true
+        }
+    }
+}
+
+dependencies {
+    api project(path: ':library:scene')
+    api project(path: ':library:scene_navigation')
+    implementation project(path: ':library:scene_ktx')
+
+    implementation APPCOMPAT_LIB //unit test required
+    implementation ANNOTATION_LIB
+    implementation LIFECYCLE_VIEWMODEL_LIB
+    implementation LIFECYCLE_EXTENSIONS_LIB
+    implementation KOTLIN_LIB
+
+    testImplementation project(':library:scene_ktx')
+    testImplementation ROBOLECTRIC
+    testImplementation JUNIT
+    testAnnotationProcessor AUTO_SERVICE
+}
+
+tasks.withType(Test) {
+    testLogging {
+        events "failed"
+    }
+
+    afterSuite { desc, result ->
+        if (!desc.parent)
+            println("${result.resultType} " +
+                    "(${result.testCount} tests, " +
+                    "${result.successfulTestCount} successes, " +
+                    "${result.failedTestCount} failures, " +
+                    "${result.skippedTestCount} skipped)")
+    }
+}
+
+task javadoc(type: Javadoc) {
+    source = android.sourceSets.main.java.srcDirs
+    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+    destinationDir = file("../javadoc/scene_ktx/")
+    failOnError false
+    title = null
+
+    options {
+        doclet = "com.google.doclava.Doclava"
+        docletpath(new File(project.rootDir, "tools/doclava-1.0.6.jar"))
+        locale "en_US"
+        encoding "UTF-8"
+    }
+}

@@ -8,9 +8,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.ScrollView
+import com.bytedance.scene.fragment.push
 import com.bytedance.scene.group.UserVisibleHintGroupScene
 import com.bytedance.scene.ktx.requireNavigationScene
 import com.bytedance.scenedemo.navigation.forresult.SceneResultScene_0
+import com.bytedance.scenedemo.navigation.fragment.PushPopBasicUsageDemoFragment
 import com.bytedance.scenedemo.navigation.popinterupt.PopInterruptScene
 import com.bytedance.scenedemo.navigation.popto.PopToScene
 import com.bytedance.scenedemo.navigation.push_clear_current.PushClearCurrentDemoScene
@@ -47,6 +49,10 @@ class NavigationListDemo : UserVisibleHintGroupScene() {
 
         addButton(layout, getString(R.string.main_nav_btn_push_pop), View.OnClickListener {
             requireNavigationScene().push(PushPopBasicUsageDemoScene())
+        })
+
+        addButton(layout, getString(R.string.main_nav_btn_push_pop_fragment), View.OnClickListener {
+            requireNavigationScene().push(PushPopBasicUsageDemoFragment())
         })
 
         addButton(layout, getString(R.string.main_nav_btn_push_pop_with_post), View.OnClickListener {

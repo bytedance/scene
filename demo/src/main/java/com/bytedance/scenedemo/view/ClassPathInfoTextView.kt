@@ -8,10 +8,10 @@ import com.bytedance.scene.ktx.requireScene
 
 
 class ClassPathInfoTextView @JvmOverloads constructor(
-        context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
+    context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 ) : TextView(context, attrs, defStyleAttr) {
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
-        this.text = requireScene().javaClass.name
+        this.text = requireScene().javaClass.name + "\n" + requireScene().toString()
     }
 }

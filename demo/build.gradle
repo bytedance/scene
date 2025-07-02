@@ -45,6 +45,7 @@ dependencies {
     implementation project(path: ':library:scene_shared_element_animation')
     implementation project(path: ':library:scene_ktx')
     implementation project(path: ':library:scene_dialog')
+    implementation project(path: ':library:scene_fragment')
 
     // Compose Material Design
     implementation 'androidx.compose.material:material:1.1.1'
