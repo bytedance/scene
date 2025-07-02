@@ -160,6 +160,7 @@ public final class NavigationScene extends Scene implements NavigationListener, 
     private boolean mWindowFocusChangedInstalled = false;
     private SceneWindowFocusChangedDispatcher mSceneWindowFocusChangedDispatcher = null;
     private boolean mLifecycleAndSavedStateRegistryEnabled = true;
+    private boolean mRestoreStateInLifecycle = false;
 
     @MainThread
     public void addNavigationListener(@NonNull final LifecycleOwner lifecycleOwner, @NonNull final NavigationListener listener) {
@@ -1943,5 +1944,16 @@ public final class NavigationScene extends Scene implements NavigationListener, 
         }
 
         super.dispatchOnSceneDestroyed(scene, directChild);
+    }
+
+    public boolean isRestoreStateInLifecycle() {
+        return this.mRestoreStateInLifecycle;
+    }
+
+    public void setRestoreStateInLifecycle(boolean restoreStateInLifecycle) {
+        if (this.mRestoreStateInLifecycle) {
+            throw new IllegalStateException("setRestoreStateInLifecycle has already setup");
+        }
+        this.mRestoreStateInLifecycle = restoreStateInLifecycle;
     }
 }

@@ -137,4 +137,11 @@ public class Record implements Parcelable {
         dest.writeParcelable(null, flags); //for compatibility
         dest.writeByte((byte) (mLastSceneWindowFocused ? 1 : 0));
     }
+
+    @Nullable
+    public Bundle consumeSavedInstanceState() {
+        Bundle state = this.mPreviousSavedState;
+        this.mPreviousSavedState = null;
+        return state;
+    }
 }

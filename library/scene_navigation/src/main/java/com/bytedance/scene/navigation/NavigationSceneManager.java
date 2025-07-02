@@ -111,6 +111,7 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
     private Configuration mActivityConfiguration = null;
 
     private WindowFocusChangedPendingTask mPendingWindowFocusChangedPendingTask = null;
+    private boolean mRestoreStateInLifecycle = false;
 
     NavigationSceneManager(NavigationScene scene) {
         this.mNavigationScene = scene;
@@ -123,6 +124,7 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
         } else {
             mSceneMessageQueue = new NavigationMessageQueue();
         }
+        this.mRestoreStateInLifecycle = this.mNavigationScene.isRestoreStateInLifecycle();
     }
 
     @NonNull
@@ -1857,8 +1859,13 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
         State targetState = state;
         for (int i = recordList.size() - 1; i >= 0; i--) {
             Record record = recordList.get(i);
+            Bundle previousSavedState = null;
+            if (mRestoreStateInLifecycle) {
+                previousSavedState = record.consumeSavedInstanceState();
+            }
+            boolean modifyViewHierarchy = previousSavedState != null;
             if (i == recordList.size() - 1) {
-                moveState(mNavigationScene, record.mScene, targetState, null, true, operationEndAction);
+                moveState(mNavigationScene, record.mScene, targetState, previousSavedState, !modifyViewHierarchy, operationEndAction);
                 // If the current one is opaque, there is no need to traverse it again.
                 if (!record.mIsTranslucent) {
                     break;
@@ -1875,7 +1882,7 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
                     fixDstState = State.VIEW_CREATED;
                 }
 
-                moveState(mNavigationScene, record.mScene, fixDstState, null, true, operationEndAction);
+                moveState(mNavigationScene, record.mScene, fixDstState, previousSavedState, !modifyViewHierarchy, operationEndAction);
                 if (!record.mIsTranslucent) {
                     break;
                 }
@@ -1921,7 +1928,16 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
         for (int i = 0; i < recordList.size(); i++) {
             Record record = recordList.get(i);
             Scene scene = record.mScene;
-            moveState(mNavigationScene, scene, state, null, causeByActivityLifecycle, null);
+            Bundle previousSavedState = null;
+            if (mRestoreStateInLifecycle) {
+                previousSavedState = record.consumeSavedInstanceState();
+            }
+            boolean modifyViewHierarchy = !causeByActivityLifecycle;
+            if (previousSavedState != null) {
+                //force modify view hierarchy
+                modifyViewHierarchy = true;
+            }
+            moveState(mNavigationScene, scene, state, previousSavedState, !modifyViewHierarchy, null);
         }
         if (operationEndAction != null) {
             operationEndAction.run();
@@ -2067,7 +2083,13 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
             }
         }
 
-        for (int i = firstOpaqueIndex - 1; i >= 0; i--) {
+        int recycleStartIndex = firstOpaqueIndex - 1;
+        if (this.mRestoreStateInLifecycle) {
+            //we want to recycle top scene when it is invisible
+            recycleStartIndex = lastIndex;
+        }
+
+        for (int i = recycleStartIndex; i >= 0; i--) {
             Record record = recordList.get(i);
             Scene scene = record.mScene;
             State sceneState = scene.getState();
