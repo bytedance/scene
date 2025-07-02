@@ -168,6 +168,7 @@ public abstract class Scene implements LifecycleOwner, SavedStateRegistryOwner, 
      * This flag may be called in non UI thread via {@link #isViewDestroyed()}
      */
     private volatile boolean mViewDestroyed = false;
+    private long mDestroyTime = 0;
 
     /**
      * @hide
@@ -639,6 +640,7 @@ public abstract class Scene implements LifecycleOwner, SavedStateRegistryOwner, 
         if (mIsSeparateCreateFromCreateView) {
             setState(State.NONE);
         }
+        mDestroyTime = System.currentTimeMillis();
         mCalled = false;
         dispatchOnPreSceneDestroyed(this, false);
         onDestroy();
@@ -1172,6 +1174,12 @@ public abstract class Scene implements LifecycleOwner, SavedStateRegistryOwner, 
      */
     public final boolean isViewDestroyed() {
         return this.mViewDestroyed;
+    }
+
+    @VisibleForTesting
+    @RestrictTo(LIBRARY_GROUP)
+    public final long getDestroyTime() {
+        return mDestroyTime;
     }
 
     private final boolean validateScopeAndViewModelStoreSceneClassStrategy = SceneGlobalConfig.validateScopeAndViewModelStoreSceneClassStrategy;
