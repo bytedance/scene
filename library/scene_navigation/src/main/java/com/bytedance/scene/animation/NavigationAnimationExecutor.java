@@ -36,7 +36,7 @@ import androidx.annotation.NonNull;
  */
 public abstract class NavigationAnimationExecutor {
     protected ViewGroup mAnimationViewGroup;
-    private Runnable mCustomAnimationEndAction;
+    protected Runnable mCustomAnimationEndAction;
     protected boolean mDisableRemoveView;
 
     public void setAnimationViewGroup(@NonNull ViewGroup viewGroup) {

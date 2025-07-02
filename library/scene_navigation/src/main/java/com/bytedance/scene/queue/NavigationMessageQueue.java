@@ -111,8 +111,9 @@ public class NavigationMessageQueue {
                 return;
             }
 
-            LoggerManager.getInstance().i(TAG, "run loop task " + currentTask.toString());
+            LoggerManager.getInstance().i(TAG, "run loop task start" + currentTask.toString());
             currentTask.run();
+            LoggerManager.getInstance().i(TAG, "run loop task finish " + currentTask.toString());
         }
     };
 
