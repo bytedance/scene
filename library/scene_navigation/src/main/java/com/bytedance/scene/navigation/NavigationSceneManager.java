@@ -24,6 +24,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Looper;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -114,6 +115,7 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
     private WindowFocusChangedPendingTask mPendingWindowFocusChangedPendingTask = null;
     private boolean mRestoreStateInLifecycle = false;
     private int mConfigurationChangesAllowList = 0;
+    private Scene mCurrentSyncingStateScene = null;
 
     NavigationSceneManager(NavigationScene scene) {
         this.mNavigationScene = scene;
@@ -901,10 +903,19 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
         } else {
             LoggerManager.getInstance().i(TAG, "Sync Scene " + scene.toString() + " Lifecycle [" + scene.getState().name + " -> " + to.name + "] without saved State");
         }
-        if (mIsSeparateCreateFromCreateView) {
-            moveStateWithSeparation(navigationScene, scene, to, bundle, causedByActivityLifeCycle, afterOnActivityCreatedAction, endAction);
-        } else {
-            moveStateNonSeparation(navigationScene, scene, to, bundle, causedByActivityLifeCycle, afterOnActivityCreatedAction, endAction);
+        if (this.mCurrentSyncingStateScene != null) {
+            LoggerManager.getInstance().e(TAG, "Something error, previous Scene " + this.mCurrentSyncingStateScene.toString() + " sync lifecycle is not finished, it will throw exception in the future \n" + Log.getStackTraceString(new Throwable()));
+        }
+
+        try {
+            this.mCurrentSyncingStateScene = scene;
+            if (mIsSeparateCreateFromCreateView) {
+                moveStateWithSeparation(navigationScene, scene, to, bundle, causedByActivityLifeCycle, afterOnActivityCreatedAction, endAction);
+            } else {
+                moveStateNonSeparation(navigationScene, scene, to, bundle, causedByActivityLifeCycle, afterOnActivityCreatedAction, endAction);
+            }
+        } finally {
+            this.mCurrentSyncingStateScene = null;
         }
     }
 
