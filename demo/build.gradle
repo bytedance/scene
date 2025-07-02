@@ -17,6 +17,23 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
+    buildFeatures {
+        // Enables Jetpack Compose for this module
+        compose true
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+
+    composeOptions {
+        kotlinCompilerExtensionVersion '1.4.0-alpha02'
+    }
 }
 
 dependencies {
@@ -28,6 +45,13 @@ dependencies {
     implementation project(path: ':library:scene_shared_element_animation')
     implementation project(path: ':library:scene_ktx')
     implementation project(path: ':library:scene_dialog')
+
+    // Compose Material Design
+    implementation 'androidx.compose.material:material:1.1.1'
+    // Tooling support (Previews, etc.)
+    implementation 'androidx.compose.ui:ui-tooling:1.1.1'
+    // When using a AppCompat theme
+    implementation "com.google.accompanist:accompanist-appcompat-theme:0.16.0"
 
     implementation KOTLIN_LIB
 

@@ -8,6 +8,7 @@
     <string name="main_scene_title_architecture_patterns">设计模式</string>
     <string name="main_scene_title_activity_compatibility">Activity兼容</string>
     <string name="main_scene_title_migrate">迁移</string>
+    <string name="main_scene_title_compose">Compose</string>
     <string name="main_scene_title_benchmark">Benchmark</string>
     <string name="main_scene_title_extreme_case">极端Case</string>
     <string name="main_scene_title_other_library">其他库</string>
