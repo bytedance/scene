@@ -299,6 +299,7 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
                     }
                 };
                 mCurrentScheduledStackOperationCount++;
+                LoggerManager.getInstance().i(TAG, "post " + operation + " async to message queue because previous tasks are not finished");
                 requireMessageQueue().postAsync(task);
             } else {
                 NavigationRunnable task = new NavigationRunnable() {
@@ -314,9 +315,12 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
                 };
 
                 if (async) {
+                    LoggerManager.getInstance().i(TAG, "post " + operation + " async to message queue because of async argument");
                     requireMessageQueue().postAsync(task);
                 } else {
+                    LoggerManager.getInstance().i(TAG, "post " + operation + " sync to message queue start");
                     requireMessageQueue().postSync(task);
+                    LoggerManager.getInstance().i(TAG, "post " + operation + " sync to message queue finish");
                 }
             }
         } else {
@@ -324,6 +328,7 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
              * navigation stack operation can't be executed before NavigationScene's state is State.ACTIVITY_CREATED, otherwise
              * animation can't be execute without view
              */
+            LoggerManager.getInstance().i(TAG, "add " + operation + " to pending list because of NavigationScene state is not ready");
             mPendingActionList.addLast(operation);
             mLastPendingActionListItemTimestamp = System.currentTimeMillis();
         }
@@ -499,7 +504,7 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
         if (this.mPendingActionList.size() == 0 || !canExecuteNavigationStackOperation()) {
             return;
         }
-        LoggerManager.getInstance().i(TAG, "executePendingOperation");
+        LoggerManager.getInstance().i(TAG, "executePendingOperation start");
 
         this.requireMessageQueue().postSync(new Runnable() {
             @Override
@@ -531,6 +536,7 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
                 SceneTrace.endSection();
             }
         });
+        LoggerManager.getInstance().i(TAG, "executePendingOperation finish");
     }
 
     public boolean canPop() {
@@ -1854,9 +1860,13 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
                 if (sceneInstance != null && sceneInstance.getParentScene() != null) {
                     throw new IllegalArgumentException("SceneComponentFactory instantiateScene return Scene already has a parent");
                 }
+                if (sceneInstance != null) {
+                    LoggerManager.getInstance().i(TAG, "RecreateOperation create new Scene by SceneComponentFactory");
+                }
                 newSceneInstance = sceneInstance;
             }
             if (newSceneInstance == null) {
+                LoggerManager.getInstance().i(TAG, "RecreateOperation create new Scene directly");
                 Class<?> sceneClass = scene.getClass();
                 newSceneInstance = SceneInstanceUtility.getInstanceFromClass(sceneClass, null);
             }
@@ -2171,7 +2181,7 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
     //TODO dispatch to other visible Scenes
     @Override
     public void onConfigurationChanged(@NonNull Configuration newConfig) {
-        LoggerManager.getInstance().i(TAG, "Activity dispatch onConfigurationChanged");
+        LoggerManager.getInstance().i(TAG, "Activity dispatch onConfigurationChanged start");
         executePendingOperation();//make sure all pending operations have finished
         this.mActivityConfiguration = new Configuration(newConfig);
 
@@ -2184,6 +2194,7 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
                 executeOperationSafely(new RecreateOperation(value), null);
             }
         });
+        LoggerManager.getInstance().i(TAG, "Activity dispatch onConfigurationChanged finish");
     }
 
     @Override
@@ -2217,13 +2228,15 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
         if (newConfig == null) {
             return false;
         }
-        LoggerManager.getInstance().i(TAG, "PopOperation dispatch onConfigurationChanged");
-        return dispatchOnConfigurationChangedToRecordInternal(record, scene, newConfig, mConfigurationChangesAllowList, new Action1<Scene>() {
+        LoggerManager.getInstance().i(TAG, "PopOperation dispatch onConfigurationChanged start");
+        boolean result = dispatchOnConfigurationChangedToRecordInternal(record, scene, newConfig, mConfigurationChangesAllowList, new Action1<Scene>() {
             @Override
             public void execute(Scene value) {
                 executeOperationSafely(new RecreateOperation(value), null);
             }
         });
+        LoggerManager.getInstance().i(TAG, "PopOperation dispatch onConfigurationChanged finish");
+        return result;
     }
 
     //make sure Scene has invoked onCreateView, then dispatch onConfigurationChanged
