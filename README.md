@@ -1,9 +1,6 @@
 <div align="center">
     <h1>Scene Framework</h1>
     <p>Android Single Activity Framework compatible with Fragment.</p>
-    <p>English&nbsp;&nbsp;|&nbsp;&nbsp;
-    <a target="_blank" href="https://github.com/bytedance/scene/blob/master/README_cn.md">简体中文</a>&nbsp;&nbsp;|&nbsp;&nbsp;
-    <a target="_blank" href="https://github.com/bytedance/scene/blob/main/README_ja.md">日本語</a>&nbsp;&nbsp;
     <br/>
 </div>
 
