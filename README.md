@@ -9,42 +9,27 @@
 [![](https://jitpack.io/v/bytedance/scene.svg)](https://jitpack.io/#bytedance/scene)
 [![API](https://img.shields.io/badge/api-21%2B-green)](https://developer.android.com/about/dashboards)
 
-**Scene** is a lightweight library of navigation and ui composition based on view.
+**Scene** is a lightweight library of navigation and UI composition based on view.
 
-- [x] Compatible with Fragment framework
-- [x] Simple navigation stack management, support multi-navigation-stack
-- [x] Improved lifecycle management and distribution
-- [x] Easier to implement complex cross-page and shared-element animation
-- [x] Supports modification and automatic restoration of Activity and Window properties
-- [x] Support exchange data between Scenes, support request and grant permissions in Scene
-- [x] Support save and recovery parcable state of Scene
-- [x] No R8 / Proguard configuration required
+- ✅ Fully compatible with the Jetpack Fragment framework
+- ✅ Simple navigation stack management, with support for multiple navigation stacks
+- ✅ Enhanced lifecycle management and event distribution
+- ✅ Simplifies complex cross-page and shared element animations
+- ✅ Supports modification and automatic restoration of Activity and Window properties
+- ✅ Enables data exchange between Scenes, including permission requests and grants within a Scene
+- ✅ Supports saving and restoring Scene state via Parcelable
+- ✅ No R8/Proguard configuration required
 
 [Download the latest Sample APK](https://github.com/bytedance/scene/blob/master/misc/latest_sample.apk)
 
 Introduction
 -------------
-Scene is designed to replace the use of Activity and Fragment on navigation and page segmentation.
+**Scene** is designed to replace the use of Activities and Fragments for navigation and page segmentation in Android applications. It addresses the following issues:
+1. **Activity**, Poor performance, with the average startup time of even an empty Activity exceeding 100ms.
+2. **Fragment**, Poor compatibility, [Google Navigation Component](https://developer.android.com/guide/navigation) destroys a Fragment’s view when it becomes invisible.
 
-The main problems of **Activity**:
-1. The stack management of Activity is weak, Intent and LaunchMode are confusing, even if various of hacks still can't completely avoid issues like black screen
-2. The performance of Activity is poor, average startup time of an empty Activity is more than 60ms (on Samsung S9)
-3. Because the Activity is forced to support states recovery, it causes some problems:
-   - Transition animation has limited ability, difficult to implement complex interactive animations.
-   - Shared-element animation is basically unavailable, and there are some crashes unresolved in Android Framework.
-   - Every time starting a new Activity, onSaveInstance() of the previous Activity must be executed completely first, which will lose much performance.
-4. Activity relies on the Manifest file to cause injection difficulties, which also result in that Activity dynamics requires a variety of hacks
-
-The main problems of **Fragment**:
-1. [Google Navigation Component](https://developer.android.com/guide/navigation) will destory Fragment' view when it is invisible
-2. There are many crashes that the Google official can't solve for a long time. Even if you don't use Fragment, it may still trigger a crash in the OnBackPressed() of AppCompatActivity.
-3. The add/remove/hide/show operation is not executed immediately. With nest Fragments even if you use commitNow(), the status update of the sub Fragments cannot be guaranteed.
-
-The Scene framework tries to solve these problems of the Activity and Fragment mentioned above.
-
-Provides a simple, reliable, and extensible API for a lightweight navigation and page segmentation solution
-
-At the same time, we provide a series of migration solutions to help developers gradually migrate from Activity and Fragment to Scene.
+Scene provides a simple, reliable, and extensible API for lightweight, high-performance navigation and page management.
+We also offer a set of migration solutions to help developers gradually transition from Activities and Fragments to Scene.
 
 Get Started
 -------------
