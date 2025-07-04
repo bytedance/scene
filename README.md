@@ -78,6 +78,7 @@ dependencies {
 	implementation 'com.github.bytedance.scene:scene:$latest_version'
 	implementation 'com.github.bytedance.scene:scene_navigation:$latest_version'
 	implementation 'com.github.bytedance.scene:scene_ui:$latest_version'
+	implementation 'com.github.bytedance.scene:scene_fragment:$latest_version'
 	implementation 'com.github.bytedance.scene:scene_dialog:$latest_version'
 	implementation 'com.github.bytedance.scene:scene_shared_element_animation:$latest_version'
 	implementation 'com.github.bytedance.scene:scene_ktx:$latest_version'
@@ -92,6 +93,7 @@ dependencies {
     implementation ("com.github.bytedance.scene:scene:$latest_version")
     implementation ("com.github.bytedance.scene:scene_navigation:$latest_version")
     implementation ("com.github.bytedance.scene:scene_ui:$latest_version")
+    implementation ("com.github.bytedance.scene:scene_fragment:$latest_version")
     implementation ("com.github.bytedance.scene:scene_dialog:$latest_version")
     implementation ("com.github.bytedance.scene:scene_shared_element_animation:$latest_version")
     implementation ("com.github.bytedance.scene:scene_ktx:$latest_version")
@@ -162,24 +164,30 @@ class ChildScene : Scene() {
 
 Fragment
 -------------
-copy [FragmentScene](https://github.com/bytedance/scene/wiki/Scene-load-Fragment) to your project
 
 ```kotlin
+import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import androidx.fragment.app.Fragment
+import com.bytedance.scene.fragment.getNavigationScene
+import com.bytedance.scene.fragment.push
+
 class YourFragment : Fragment() {
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
-    ): View {
-        return View(requireContext())
-    }
+   override fun onCreateView(
+      inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
+   ): View {
+      return View(requireContext())
+   }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        val parentScene = ViewUtlity.findScene(this.view()) as YourFragmentScene
-    }
-}
-
-class YourFragmentScene : FragmentScene() {
-    override val fragmentClass = YourFragment::class.java
+   override fun onActivityCreated(savedInstanceState: Bundle?) {
+      super.onActivityCreated(savedInstanceState)
+      val navigationScene = getNavigationScene()
+      requireView().setOnClickListener {
+         navigationScene?.push(YourFragment())
+      }
+   }
 }
 ```
 
