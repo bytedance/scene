@@ -1,4 +1,5 @@
 apply plugin: 'com.android.library'
+apply plugin: 'maven-publish'
 apply plugin: 'kotlin-android'
 
 android {
@@ -51,7 +52,7 @@ tasks.withType(Test) {
 task javadoc(type: Javadoc) {
     source = android.sourceSets.main.java.srcDirs
     classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
-    destinationDir = file("../javadoc/scene_ktx/")
+    destinationDir = file("../javadoc/scene_fragment/")
     failOnError false
     title = null
 
@@ -60,5 +61,19 @@ task javadoc(type: Javadoc) {
         docletpath(new File(project.rootDir, "tools/doclava-1.0.6.jar"))
         locale "en_US"
         encoding "UTF-8"
+    }
+}
+
+afterEvaluate {
+    publishing {
+        publications {
+            // Creates a Maven publication called "release".
+            release(MavenPublication) {
+                from components.release
+                groupId = 'com.github.bytedance.scene'
+                artifactId = 'scene_fragment'
+                version = '1.3.0'
+            }
+        }
     }
 }
