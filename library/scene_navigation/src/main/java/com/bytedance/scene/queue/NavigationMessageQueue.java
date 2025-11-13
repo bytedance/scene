@@ -36,17 +36,11 @@ import java.util.LinkedList;
  *
  * @author jiangqi@bytedance.com
  * <p>
- * 一个是单次导航操作的内部调度
- * 另外一个是多次导航操作
- * <p>
- * 我只能保证导航的顺序，一定是之前的结束才继续下一个
- * <p>
- * BadCase，postAsync 的操作可能需要等到之前的 Operation 结束后才能执行，会被一定的延后
- *
- *
- * 单元测试，保证之前 postAsync 的任务都在 postSync 之前执行完，包括 postAsync 内部结束后又 postAsyncAtHead 的任务
- *
- * 其实 postAsyncAtHead 还是有点危险的
+ * An Android Handler MessageQueue wrapper that ensures navigation operations are scheduled and executed as expected.
+ * For example, a single navigation operation may involve multiple Handler messages.
+ * While one navigation operation is still in progress, additional navigation requests may be made.
+ * However, each new operation will be queued and executed only after the current operation has completed,
+ * ensuring that navigation actions are processed sequentially and without conflict.
  */
 
 /**
@@ -60,6 +54,11 @@ public class NavigationMessageQueue {
     private boolean mIsRunningPostSync = false;
     private IdleRunnable mIdleRunnable = null;
 
+    /**
+     * post task at the end of queue
+     *
+     * @param runnable
+     */
     public void postAsync(final NavigationRunnable runnable) {
         ThreadUtility.checkUIThread();
         this.forceExecuteIdleTask();
@@ -67,6 +66,11 @@ public class NavigationMessageQueue {
         this.mHandler.post(this.mSceneNavigationTask);
     }
 
+    /**
+     * post task at the front of queue
+     *
+     * @param runnable
+     */
     public void postAsyncAtHead(final NavigationRunnable runnable) {
         this.forceExecuteIdleTask();
         this.mPendingTask.add(0, runnable);
@@ -117,6 +121,11 @@ public class NavigationMessageQueue {
         }
     };
 
+    /**
+     * force execute all previous tasks and then execute target task
+     *
+     * @param runnable
+     */
     public void postSync(Runnable runnable) {
         ThreadUtility.checkUIThread();
 
