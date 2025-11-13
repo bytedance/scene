@@ -1966,8 +1966,9 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
                 moveState(mNavigationScene, scene, State.NONE, null, true, null);
                 Utility.removeFromParentView(view);
                 //create a new Scene instance to replace previous one
-                record.mScene = this.mBackStackList.createNewSceneInstance(mNavigationScene.requireActivity(), i, record, mNavigationScene.mRootSceneComponentFactory);
-                LoggerManager.getInstance().i(TAG, "recycle scene " + scene + " from state " + sceneState.getName() + " completed");
+                Scene newScene = RecordStack.createNewSceneInstance(mNavigationScene.requireActivity(), i, record, mNavigationScene.mRootSceneComponentFactory);
+                record.mScene = newScene;
+                LoggerManager.getInstance().i(TAG, "recycle scene " + scene + " from state " + sceneState.getName() + " completed, replace it to " + newScene.toString());
             } else {
                 //skip because Scene is visible or disable restore
                 LoggerManager.getInstance().i(TAG, "recycle scene skip " + scene.toString() + " because it is visible or disable restore");
