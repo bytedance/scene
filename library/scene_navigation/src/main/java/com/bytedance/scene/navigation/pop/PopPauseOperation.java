@@ -1,13 +1,15 @@
 package com.bytedance.scene.navigation.pop;
 
+import android.os.Bundle;
+
 import com.bytedance.scene.Scene;
+import com.bytedance.scene.SceneGlobalConfig;
 import com.bytedance.scene.State;
 import com.bytedance.scene.navigation.NavigationManagerAbility;
 import com.bytedance.scene.navigation.NavigationScene;
 import com.bytedance.scene.navigation.Operation;
 import com.bytedance.scene.navigation.Record;
-
-import java.util.List;
+import com.bytedance.scene.utlity.SceneInternalException;
 
 /**
  * Created by jiangqi on 2023/11/19
@@ -18,10 +20,12 @@ public class PopPauseOperation implements Operation {
     private final NavigationManagerAbility mManagerAbility;
     private final NavigationScene mNavigationScene;
     private final Scene mCurrentScene;
+    private final Record mCurrentRecord;
 
-    public PopPauseOperation(NavigationManagerAbility navigationManagerAbility, Scene currentScene) {
+    public PopPauseOperation(NavigationManagerAbility navigationManagerAbility, Record currentRecord, Scene currentScene) {
         this.mManagerAbility = navigationManagerAbility;
         this.mNavigationScene = navigationManagerAbility.getNavigationScene();
+        this.mCurrentRecord = currentRecord;
         this.mCurrentScene = currentScene;
     }
 
@@ -32,7 +36,14 @@ public class PopPauseOperation implements Operation {
          * then animate the two Scenes.
          */
         if (mCurrentScene != null) {
-            this.mManagerAbility.moveState(this.mNavigationScene, mCurrentScene, State.STARTED, null, false, null);
+            Bundle previousSavedState = null;
+            if (SceneGlobalConfig.usePreviousSavedStateWhenPauseIfPossible) {
+                previousSavedState = this.mCurrentRecord.consumeSavedInstanceState();
+                if (previousSavedState != null && this.mCurrentScene.getState() != State.NONE) {
+                    throw new SceneInternalException("Scene' previous saved state still exists when its state is " + this.mCurrentScene.getState().name);
+                }
+            }
+            this.mManagerAbility.moveState(this.mNavigationScene, this.mCurrentScene, State.STARTED, previousSavedState, false, null);
         }
 
         operationEndAction.run();

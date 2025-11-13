@@ -9,4 +9,5 @@ public class SceneGlobalConfig {
     public static volatile boolean validateScopeAndViewModelStoreSceneClassStrategy = false;
     public static volatile boolean sceneLifecycleCallbackObjectCreationOpt = false;
     public static volatile boolean shouldSkipDispatchWindowFocusChangeToNotReadyScene = false;
+    public static volatile boolean usePreviousSavedStateWhenPauseIfPossible = false;
 }
