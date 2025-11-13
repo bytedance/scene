@@ -32,6 +32,7 @@ import androidx.annotation.Nullable;
 import androidx.core.util.Pair;
 
 import com.bytedance.scene.Scene;
+import com.bytedance.scene.SceneStateSaveReason;
 import com.bytedance.scene.SceneTrace;
 import com.bytedance.scene.State;
 import com.bytedance.scene.SuppressOperationAware;
@@ -539,12 +540,14 @@ class GroupSceneManager {
     void saveToBundle(@NonNull Bundle bundle) {
         this.mSceneList.saveToBundle(bundle);
 
+        int saveStateReason = bundle.getInt(SceneStateSaveReason.KEY_SCENE_SAVE_STATE_REASON, SceneStateSaveReason.PARENT_SAVED);
         ArrayList<Bundle> bundleList = new ArrayList<>();
         List<Scene> childSceneList = this.getChildSceneList();
         for (int i = 0; i <= childSceneList.size() - 1; i++) {
             Scene scene = childSceneList.get(i);
             if (scene.isSceneRestoreEnabled()) {
                 Bundle sceneBundle = new Bundle();
+                sceneBundle.putInt(SceneStateSaveReason.KEY_SCENE_SAVE_STATE_REASON, saveStateReason);
                 scene.dispatchSaveInstanceState(sceneBundle);
                 bundleList.add(sceneBundle);
             } else {

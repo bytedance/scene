@@ -7,6 +7,8 @@ import android.os.Looper
 import android.view.ViewGroup
 import androidx.annotation.IdRes
 import com.bytedance.scene.Scene
+import com.bytedance.scene.SceneStateSaveReason.KEY_SCENE_SAVE_STATE_REASON
+import com.bytedance.scene.SceneStateSaveReason.PARENT_SAVED
 import com.bytedance.scene.SceneStateSaveStrategy
 import com.bytedance.scene.Scope
 import com.bytedance.scene.ViewFinder
@@ -245,8 +247,15 @@ class SceneSafeLifecycleDispatcher(
             check(this.state != State.NONE) { "invoke onActivityCreated() first, current state " + this.state.toString() }
             if (this.supportRestore) {
                 outState.putString("SCENE", this.rootScene.javaClass.name)
+                val saveStateReason =
+                    outState.getInt(KEY_SCENE_SAVE_STATE_REASON, PARENT_SAVED)
+
                 if (this.sceneStateSaveStrategy != null) {
                     val sceneOutState = Bundle()
+                    sceneOutState.putInt(
+                        KEY_SCENE_SAVE_STATE_REASON,
+                        saveStateReason
+                    )
                     this.rootScene.dispatchSaveInstanceState(sceneOutState)
                     sceneOutState.putBoolean(
                         SCENE_LIFECYCLE_MANAGER_ON_SAVE_INSTANCE_STATE_TAG,
@@ -254,6 +263,10 @@ class SceneSafeLifecycleDispatcher(
                     )
                     this.sceneStateSaveStrategy.onSaveInstanceState(outState, sceneOutState)
                 } else {
+                    outState.putInt(
+                        KEY_SCENE_SAVE_STATE_REASON,
+                        saveStateReason
+                    )
                     this.rootScene.dispatchSaveInstanceState(outState)
                     outState.putBoolean(
                         SCENE_LIFECYCLE_MANAGER_ON_SAVE_INSTANCE_STATE_TAG,

@@ -194,12 +194,16 @@ public class SceneLifecycleManager<T extends Scene & SceneParent> {
         }
         log("onSaveInstanceState");
 
+        int saveStateReason = outState.getInt(SceneStateSaveReason.KEY_SCENE_SAVE_STATE_REASON, SceneStateSaveReason.PARENT_SAVED);
+
         if (this.mSceneStateSaveStrategy != null) {
             Bundle sceneOutState = new Bundle();
+            sceneOutState.putInt(SceneStateSaveReason.KEY_SCENE_SAVE_STATE_REASON, saveStateReason);
             this.mScene.dispatchSaveInstanceState(sceneOutState);
             sceneOutState.putBoolean(SCENE_LIFECYCLE_MANAGER_ON_SAVE_INSTANCE_STATE_TAG, true);
             this.mSceneStateSaveStrategy.onSaveInstanceState(outState, sceneOutState);
         } else {
+            outState.putInt(SceneStateSaveReason.KEY_SCENE_SAVE_STATE_REASON, saveStateReason);
             this.mScene.dispatchSaveInstanceState(outState);
             outState.putBoolean(SCENE_LIFECYCLE_MANAGER_ON_SAVE_INSTANCE_STATE_TAG, true);
         }

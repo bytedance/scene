@@ -37,6 +37,7 @@ import androidx.lifecycle.LifecycleOwner;
 
 import com.bytedance.scene.Scene;
 import com.bytedance.scene.SceneComponentFactory;
+import com.bytedance.scene.SceneStateSaveReason;
 import com.bytedance.scene.SceneGlobalConfig;
 import com.bytedance.scene.SceneTrace;
 import com.bytedance.scene.State;
@@ -149,6 +150,7 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
         if (currentRecord != null) {
             currentRecord.saveActivityStatus();
         }
+        int saveStateReason = bundle.getInt(SceneStateSaveReason.KEY_SCENE_SAVE_STATE_REASON, SceneStateSaveReason.PARENT_SAVED);
 
         this.mBackStackList.saveToBundle(bundle);
 
@@ -165,6 +167,7 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
             }
             if (scene.isSceneRestoreEnabled()) {
                 Bundle sceneBundle = new Bundle();
+                sceneBundle.putInt(SceneStateSaveReason.KEY_SCENE_SAVE_STATE_REASON, saveStateReason);
                 scene.dispatchSaveInstanceState(sceneBundle);
                 bundleList.add(sceneBundle);
             } else {
@@ -1649,6 +1652,7 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
             LoggerManager.getInstance().i(TAG, "RecreateOperation current Scene save latest data, current Scene instance " + scene.toString());
 
             Bundle savedInstanceState = new Bundle();
+            savedInstanceState.putInt(SceneStateSaveReason.KEY_SCENE_SAVE_STATE_REASON, SceneStateSaveReason.CONFIGURATION_CHANGED);
             this.scene.dispatchSaveInstanceState(savedInstanceState);
 
             LoggerManager.getInstance().i(TAG, "RecreateOperation current Scene destroy itself, current Scene instance " + scene.toString());
@@ -1973,6 +1977,7 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
             State sceneState = scene.getState();
             if ((sceneState == State.ACTIVITY_CREATED || sceneState == State.VIEW_CREATED) && scene.isSceneRestoreEnabled()) {
                 Bundle sceneBundle = new Bundle();
+                sceneBundle.putInt(SceneStateSaveReason.KEY_SCENE_SAVE_STATE_REASON, SceneStateSaveReason.RECYCLING);
                 scene.dispatchSaveInstanceState(sceneBundle);
                 record.mPreviousSavedState = sceneBundle;
                 View view = scene.getView();
