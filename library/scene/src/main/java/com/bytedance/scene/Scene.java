@@ -945,6 +945,32 @@ public abstract class Scene implements LifecycleOwner, SavedStateRegistryOwner, 
     }
 
     /**
+     * Change a alive Scene' parent Scene to another parent Scene
+     * @param replacementParentScene
+     */
+    public final void replaceParentScene(@NonNull Scene replacementParentScene) {
+        Scene currentParentScene = this.mParentScene;
+        if (currentParentScene == null) {
+            throw new IllegalStateException("Scene has not created or has destroyed");
+        }
+        if (currentParentScene instanceof SceneParent) {
+            SceneParent currentSceneParent = (SceneParent) currentParentScene;
+            if (!currentSceneParent.isSupportChildReplaceParentScene()) {
+                throw new IllegalArgumentException("Current Parent Scene don't support child replace parent Scene");
+            }
+        }
+        if (!(replacementParentScene instanceof SceneParent)) {
+            throw new IllegalArgumentException("Parent Scene must implement SceneParent");
+        }
+        if (!((SceneParent) replacementParentScene).isSupportChildReplaceParentScene()) {
+            throw new IllegalArgumentException("Parent Scene isSupportChildReplaceParentScene is false");
+        }
+        LoggerManager.getInstance().i(TAG, "Replace " + this.toString() + " parent Scene to " + replacementParentScene.toString());
+        this.mParentScene = replacementParentScene;
+        this.mScope.replaceParentScope(replacementParentScene.mScope);
+    }
+
+    /**
      * Returns the parent NavigationScene or GroupScene containing this Scene.
      *
      * @throws IllegalStateException if this Scene is attached directly to an Activity or

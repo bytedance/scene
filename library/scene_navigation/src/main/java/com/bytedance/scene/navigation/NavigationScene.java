@@ -277,6 +277,11 @@ public final class NavigationScene extends Scene implements NavigationListener, 
         return this.mSupportRestore;
     }
 
+    @Override
+    public boolean isSupportChildReplaceParentScene() {
+        return false;
+    }
+
     public void setInitRootSceneOnCreate(boolean initRootSceneOnCreate) {
         this.mIsInitRootSceneOnCreate = initRootSceneOnCreate;
     }

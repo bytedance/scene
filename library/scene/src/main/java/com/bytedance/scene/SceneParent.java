@@ -33,6 +33,8 @@ public interface SceneParent {
      */
     boolean isSupportRestore();
 
+    boolean isSupportChildReplaceParentScene();
+
     @Nullable
     String getSceneDebugInfo(@NonNull Scene scene);
 }

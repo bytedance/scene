@@ -51,7 +51,7 @@ public class Scope {
         }
     };
 
-    private final Scope mParentScope;
+    private Scope mParentScope;
     private final String mScopeKey;
     @Nullable
     private final Class<? extends Scene> mSceneClass;
@@ -90,6 +90,15 @@ public class Scope {
         this.mParentScope = parentScope;
         this.mSceneClass = sceneClass;
         this.mScopeKey = scopeKey;
+    }
+
+    void replaceParentScope(Scope replacementParentScope) {
+        this.mParentScope.mChildrenScopes.remove(this.mScopeKey);
+        if (replacementParentScope.mChildrenScopes.containsKey(this.mScopeKey)) {
+            throw new SceneInternalException("Duplicate Scope key");
+        }
+        replacementParentScope.mChildrenScopes.put(this.mScopeKey, this);
+        this.mParentScope = replacementParentScope;
     }
 
     public void register(@NonNull Object key, @NonNull Object service) {

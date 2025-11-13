@@ -209,6 +209,11 @@ public abstract class GroupScene extends Scene implements SceneParent {
         return this.mSupportRestore;
     }
 
+    @Override
+    public boolean isSupportChildReplaceParentScene() {
+        return false;
+    }
+
     @Nullable
     public final <T extends Scene> T findSceneByTag(@NonNull String tag) {
         ThreadUtility.checkUIThread();
