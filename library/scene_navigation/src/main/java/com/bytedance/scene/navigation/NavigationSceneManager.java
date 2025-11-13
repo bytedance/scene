@@ -899,7 +899,7 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
             LoggerManager.getInstance().i(TAG, "Sync Scene " + scene.toString() + " Lifecycle [" + scene.getState().name + " -> " + to.name + "] with previous saved State");
         } else {
             LoggerManager.getInstance().i(TAG, "Sync Scene " + scene.toString() + " Lifecycle [" + scene.getState().name + " -> " + to.name + "] without saved State");
-            if (scene.getState() == State.NONE && to.value > State.NONE.value) {
+            if (scene.getState() == State.NONE && to.value > State.NONE.value && scene.getArguments() == null) {
                 LoggerManager.getInstance().e(TAG, "Something error, Scene restore from State.NONE to " + to.name + " but without saved State \n" + Log.getStackTraceString(new Throwable()));
             }
         }
