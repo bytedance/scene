@@ -483,7 +483,7 @@ public class NavigationMessageQueueTests {
                 log.append("2");
             }
         });
-        messageQueue.executeWhenIdleOrTimeLimit(new NavigationRunnable() {
+        messageQueue.postAsyncDelayed(new NavigationRunnable() {
             @Override
             public void run() {
                 log.append("3");
@@ -524,7 +524,7 @@ public class NavigationMessageQueueTests {
                 log.append("2");
             }
         });
-        messageQueue.executeWhenIdleOrTimeLimit(new NavigationRunnable() {
+        messageQueue.postAsyncDelayed(new NavigationRunnable() {
             @Override
             public void run() {
                 log.append("3");
@@ -560,7 +560,7 @@ public class NavigationMessageQueueTests {
                 log.append("2");
             }
         });
-        messageQueue.executeWhenIdleOrTimeLimit(new NavigationRunnable() {
+        messageQueue.postAsyncDelayed(new NavigationRunnable() {
             @Override
             public void run() {
                 log.append("1");

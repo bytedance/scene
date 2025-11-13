@@ -20,6 +20,7 @@ import static androidx.annotation.RestrictTo.Scope.LIBRARY;
 import android.os.Handler;
 import android.os.Looper;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RestrictTo;
 import androidx.annotation.VisibleForTesting;
@@ -64,7 +65,7 @@ public class NavigationMessageQueue {
      *
      * @param runnable
      */
-    public void postAsync(final NavigationRunnable runnable) {
+    public void postAsync(@NonNull final NavigationRunnable runnable) {
         ThreadUtility.checkUIThread();
         this.forceExecuteIdleTask();
         this.mPendingTask.add(runnable);
@@ -76,7 +77,7 @@ public class NavigationMessageQueue {
      *
      * @param runnable
      */
-    public void postAsyncAtHead(final NavigationRunnable runnable) {
+    public void postAsyncAtHead(@NonNull final NavigationRunnable runnable) {
         this.forceExecuteIdleTask();
         this.mPendingTask.add(0, runnable);
         this.mHandler.post(this.mSceneNavigationTask);
@@ -96,11 +97,11 @@ public class NavigationMessageQueue {
         }
     }
 
-    public void executeWhenIdleOrTimeLimit(final NavigationRunnable runnable, long timeOutMillis) {
-        this.executeWhenIdleOrTimeLimit(runnable, null, null, timeOutMillis);
+    public void postAsyncDelayed(@NonNull final NavigationRunnable runnable, long timeOutMillis) {
+        this.postAsyncDelayed(runnable, null, null, timeOutMillis);
     }
 
-    public void executeWhenIdleOrTimeLimit(final NavigationRunnable runnable, @Nullable TaskStartSignal addIdleHandlerSignal, @Nullable CancellationSignal cancellationSignal, long timeOutMillis) {
+    public void postAsyncDelayed(@NonNull final NavigationRunnable runnable, @Nullable TaskStartSignal taskStartSignal, @Nullable CancellationSignal cancellationSignal, long timeOutMillis) {
         this.forceExecuteIdleTask();
 
         if (this.mIdleRunnable != null) {
@@ -113,7 +114,7 @@ public class NavigationMessageQueue {
         }
 
         this.mPendingTask.add(0, runnable);
-        this.mIdleRunnable = new IdleRunnable(this.mHandler, this.mSceneNavigationTask, addIdleHandlerSignal, cancellationSignal, timeOutMillis);
+        this.mIdleRunnable = new IdleRunnable(this.mHandler, this.mSceneNavigationTask, taskStartSignal, cancellationSignal, timeOutMillis);
         this.mIdleRunnable.start();
     }
 
@@ -144,7 +145,7 @@ public class NavigationMessageQueue {
      *
      * @param runnable
      */
-    public void postSync(Runnable runnable) {
+    public void postSync(@NonNull Runnable runnable) {
         ThreadUtility.checkUIThread();
 
         if (this.mIsRunningPostSync) {

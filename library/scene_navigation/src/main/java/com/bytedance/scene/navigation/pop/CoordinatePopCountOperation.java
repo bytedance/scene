@@ -178,7 +178,7 @@ public class CoordinatePopCountOperation implements Operation {
                         }
                     });
 
-                    mMessageQueue.executeWhenIdleOrTimeLimit(popDestroyOperationV2Task, taskStartSignal, animationOperationV2.cancellationSignalList, TimeUnit.SECONDS.toMillis(Constants.SCENE_DESTROY_MAX_TIMEOUT_SECONDS));
+                    mMessageQueue.postAsyncDelayed(popDestroyOperationV2Task, taskStartSignal, animationOperationV2.cancellationSignalList, TimeUnit.SECONDS.toMillis(Constants.SCENE_DESTROY_MAX_TIMEOUT_SECONDS));
                     mManagerAbility.endSuppressStackOperation(suppressTag);
                     SceneTrace.endSection();
                 }
@@ -255,7 +255,7 @@ public class CoordinatePopCountOperation implements Operation {
                             SceneTrace.endSection();
                         }
                     };
-                    mMessageQueue.executeWhenIdleOrTimeLimit(popDestroyOperationV2Task, null, null, TimeUnit.SECONDS.toMillis(Constants.SCENE_DESTROY_MAX_TIMEOUT_SECONDS));
+                    mMessageQueue.postAsyncDelayed(popDestroyOperationV2Task, null, null, TimeUnit.SECONDS.toMillis(Constants.SCENE_DESTROY_MAX_TIMEOUT_SECONDS));
                 }
                 mManagerAbility.endSuppressStackOperation(suppressTag);
                 SceneTrace.endSection();

@@ -181,7 +181,7 @@ public class CoordinatePushOptionOperation implements Operation {
                                     @Override
                                     public void run() {
                                         if (mPushOptions.isUseIdleWhenStop()) {
-                                            mMessageQueue.executeWhenIdleOrTimeLimit(stopPreviousSceneTask, TimeUnit.SECONDS.toMillis(10));
+                                            mMessageQueue.postAsyncDelayed(stopPreviousSceneTask, TimeUnit.SECONDS.toMillis(10));
                                         } else {
                                             mMessageQueue.postAsyncAtHead(stopPreviousSceneTask);
                                         }
@@ -189,7 +189,7 @@ public class CoordinatePushOptionOperation implements Operation {
                                 });
                             } else {
                                 if (mPushOptions.isUseIdleWhenStop()) {
-                                    mMessageQueue.executeWhenIdleOrTimeLimit(stopPreviousSceneTask, TimeUnit.SECONDS.toMillis(10));
+                                    mMessageQueue.postAsyncDelayed(stopPreviousSceneTask, TimeUnit.SECONDS.toMillis(10));
                                 } else {
                                     mMessageQueue.postAsyncAtHead(stopPreviousSceneTask);
                                 }
