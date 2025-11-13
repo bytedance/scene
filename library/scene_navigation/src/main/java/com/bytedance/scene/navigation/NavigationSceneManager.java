@@ -1980,9 +1980,7 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
                 sceneBundle.putInt(SceneStateSaveReason.KEY_SCENE_SAVE_STATE_REASON, SceneStateSaveReason.RECYCLING);
                 scene.dispatchSaveInstanceState(sceneBundle);
                 record.mPreviousSavedState = sceneBundle;
-                View view = scene.getView();
-                moveState(mNavigationScene, scene, State.NONE, null, true, null);
-                Utility.removeFromParentView(view);
+                moveState(mNavigationScene, scene, State.NONE, null, false, null);
                 //create a new Scene instance to replace previous one
                 Scene newScene = RecordStack.createNewSceneInstance(mNavigationScene.requireActivity(), i, record, mNavigationScene.mRootSceneComponentFactory);
                 record.mScene = newScene;
