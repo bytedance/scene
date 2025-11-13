@@ -10,6 +10,7 @@ import androidx.annotation.Nullable;
 import androidx.core.util.Pair;
 
 import com.bytedance.scene.Scene;
+import com.bytedance.scene.SceneGlobalConfig;
 import com.bytedance.scene.SceneLifecycleManager;
 import com.bytedance.scene.interfaces.PushOptions;
 
@@ -57,6 +58,7 @@ public class NavigationScene_RecycleInvisibleSceneTests {
 
     @Test
     public void testRecycleInvisibleScenes() {
+        SceneGlobalConfig.cancelAnimationWhenForceExecutePendingNavigationOperation = true;
         List<MyScene> list = createScenes();
         MyScene scene1 = list.get(0);
         MyScene scene2 = list.get(1);
@@ -75,6 +77,7 @@ public class NavigationScene_RecycleInvisibleSceneTests {
         navigationScene.pop();
         navigationScene.forceExecutePendingNavigationOperation();
         assertMyScene1NotRecycle(navigationScene);
+        SceneGlobalConfig.cancelAnimationWhenForceExecutePendingNavigationOperation = false;
     }
 
     @Test
@@ -107,6 +110,7 @@ public class NavigationScene_RecycleInvisibleSceneTests {
 
     @Test
     public void testRecycleInvisibleScenes_TopSceneTranslucent() {
+        SceneGlobalConfig.cancelAnimationWhenForceExecutePendingNavigationOperation = true;
         List<MyScene> list = createScenes();
         MyScene scene1 = list.get(0);
         MyScene scene2 = list.get(1);
@@ -132,6 +136,42 @@ public class NavigationScene_RecycleInvisibleSceneTests {
         navigationScene.forceExecutePendingNavigationOperation();
 
         assertMyScene1NotRecycle(navigationScene);
+        SceneGlobalConfig.cancelAnimationWhenForceExecutePendingNavigationOperation = false;
+    }
+
+    @Test
+    public void testSuppressRecycle() {
+        SceneGlobalConfig.cancelAnimationWhenForceExecutePendingNavigationOperation = true;
+
+        List<MyScene> list = createScenes();
+        MyScene scene1 = list.get(0);
+        MyScene scene2 = list.get(1);
+        MyScene scene3 = list.get(2);
+
+        Pair<SceneLifecycleManager<NavigationScene>, NavigationScene> pair = createAndPushScene(scene1, scene2, scene3, false);
+        NavigationScene navigationScene = pair.second;
+
+        navigationScene.suppressRecycle(true);
+        navigationScene.recycleInvisibleScenes();
+
+        List<Scene> scenes = navigationScene.getSceneList();
+        Assert.assertEquals(3, scenes.size());
+
+        assertMyScene3NotRecycle(navigationScene);
+        Assert.assertNotNull(scenes.get(1).getView());
+        Assert.assertNotNull(scenes.get(0).getView());
+
+        navigationScene.suppressRecycle(false);
+        navigationScene.recycleInvisibleScenes();
+
+        scenes = navigationScene.getSceneList();
+        Assert.assertEquals(3, scenes.size());
+
+        assertMyScene3NotRecycle(navigationScene);
+        Assert.assertNull(scenes.get(1).getView());
+        Assert.assertNull(scenes.get(0).getView());
+
+        SceneGlobalConfig.cancelAnimationWhenForceExecutePendingNavigationOperation = false;
     }
 
     @Test

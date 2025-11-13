@@ -23,6 +23,7 @@ import android.view.ViewTreeObserver;
 import com.bytedance.scene.Scene;
 import com.bytedance.scene.State;
 import com.bytedance.scene.navigation.NavigationScene;
+import com.bytedance.scene.utlity.Action1;
 import com.bytedance.scene.utlity.CancellationSignal;
 import com.bytedance.scene.utlity.CancellationSignalList;
 import com.bytedance.scene.utlity.Utility;
@@ -56,8 +57,10 @@ public abstract class NavigationAnimationExecutor {
                                         @NonNull final AnimationInfo fromInfo,
                                         @NonNull final AnimationInfo toInfo,
                                         @NonNull final CancellationSignalList cancellationSignal,
+                                        @NonNull final Action1<Boolean> suppressRecycleAction,
                                         @NonNull final Runnable endAction) {
         navigationScene.requestDisableTouchEvent(true);
+        suppressRecycleAction.execute(true);
         final View fromView = fromInfo.mSceneView;
         final View toView = toInfo.mSceneView;
         // In the case of pushAndClear, it is possible that the Scene come from has been destroyed.
@@ -75,6 +78,7 @@ public abstract class NavigationAnimationExecutor {
             @Override
             public void run() {
                 navigationScene.requestDisableTouchEvent(false);
+                suppressRecycleAction.execute(false);
 
                 if (!mDisableRemoveView) {
                     if (fromInfo.mSceneState.value < State.VIEW_CREATED.value) {
@@ -145,12 +149,15 @@ public abstract class NavigationAnimationExecutor {
                                        @NonNull final AnimationInfo fromInfo,
                                        @NonNull final AnimationInfo toInfo,
                                        @NonNull final CancellationSignalList cancellationSignal,
+                                       @NonNull final Action1<Boolean> suppressRecycleAction,
                                        @NonNull final Runnable endAction) {
         navigationScene.requestDisableTouchEvent(true);
+        suppressRecycleAction.execute(true);
         final Runnable popEndAction = new Runnable() {
             @Override
             public void run() {
                 navigationScene.requestDisableTouchEvent(false);
+                suppressRecycleAction.execute(false);
                 endAction.run();
                 if (mCustomAnimationEndAction != null) {
                     mCustomAnimationEndAction.run();

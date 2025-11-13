@@ -38,6 +38,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.annotation.RestrictTo;
+import androidx.annotation.VisibleForTesting;
 import androidx.collection.LruCache;
 import androidx.core.view.ViewCompat;
 import androidx.lifecycle.Lifecycle;
@@ -1337,6 +1338,11 @@ public final class NavigationScene extends Scene implements NavigationListener, 
     public void recycleInvisibleScenes() {
         ThreadUtility.checkUIThread();
         mNavigationSceneManager.recycleInvisibleScenes();
+    }
+
+    @VisibleForTesting
+    void suppressRecycle(boolean suppressRecycle) {
+        mNavigationSceneManager.suppressRecycle(suppressRecycle);
     }
 
     @Override

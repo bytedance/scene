@@ -86,7 +86,7 @@ public class LegacyPushStopOperation implements Operation {
 
             navigationAnimationExecutor.executePushChange(mNavigationScene,
                     mNavigationScene.getView().getRootView(),
-                    fromInfo, toInfo, cancellationSignalList, new Runnable() {
+                    fromInfo, toInfo, cancellationSignalList, mManagerAbility::suppressRecycle, new Runnable() {
                         @Override
                         public void run() {
                             mManagerAbility.getCancellationSignalManager().remove(cancellationSignalList);

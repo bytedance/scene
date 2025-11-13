@@ -89,7 +89,7 @@ public class PopAnimationOperationV2 implements Operation {
              * At this time, both height and width are 0, and it has no parent.
              * As the animation cannot be executed, so we need to correct this case.
              */
-            navigationAnimationExecutor.executePopChange(mNavigationScene, mNavigationScene.getView().getRootView(), fromInfo, toInfo, cancellationSignalList, endAction);
+            navigationAnimationExecutor.executePopChange(mNavigationScene, mNavigationScene.getView().getRootView(), fromInfo, toInfo, cancellationSignalList, mManagerAbility::suppressRecycle, endAction);
         } else {
             operationEndAction.run();
         }

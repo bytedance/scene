@@ -114,6 +114,7 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
     private boolean mRestoreStateInLifecycle = false;
     private int mConfigurationChangesAllowList = 0;
     private Scene mCurrentSyncingStateScene = null;
+    private boolean mSuppressRecycle = false;
 
     NavigationSceneManager(NavigationScene scene) {
         this.mNavigationScene = scene;
@@ -1133,7 +1134,7 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
                  */
                 navigationAnimationExecutor.executePopChange(mNavigationScene,
                         mNavigationScene.getView().getRootView(),
-                        fromInfo, toInfo, cancellationSignalList, endAction);
+                        fromInfo, toInfo, cancellationSignalList, NavigationSceneManager.this::suppressRecycle, endAction);
             } else {
                 mNavigationScene.addToReuseCache(currentRecord.mScene);
                 operationEndAction.run();
@@ -1600,7 +1601,7 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
 
                     navigationAnimationExecutor.executePushChange(mNavigationScene,
                             mNavigationScene.getView().getRootView(),
-                            fromInfo, toInfo, cancellationSignalList, new Runnable() {
+                            fromInfo, toInfo, cancellationSignalList, NavigationSceneManager.this::suppressRecycle, new Runnable() {
                                 @Override
                                 public void run() {
                                     mCancellationSignalManager.remove(cancellationSignalList);
@@ -1908,6 +1909,9 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
 
     @Override
     public void forceExecutePendingNavigationOperation() {
+        if (SceneGlobalConfig.cancelAnimationWhenForceExecutePendingNavigationOperation) {
+            this.cancelCurrentRunningAnimation();
+        }
         this.requireMessageQueue().postSync(new Runnable() {
             @Override
             public void run() {
@@ -1917,8 +1921,17 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
     }
 
     @Override
+    public void suppressRecycle(boolean suppress) {
+        this.mSuppressRecycle = suppress;
+    }
+
+    @Override
     public void recycleInvisibleScenes() {
         if (!this.mOnlyRestoreVisibleScene) {
+            return;
+        }
+        if (this.mSuppressRecycle) {
+            LoggerManager.getInstance().i(TAG, "recycleInvisibleScenes skip because of mSuppressRecycle true");
             return;
         }
         if (!this.mAnySceneStateChanged) {

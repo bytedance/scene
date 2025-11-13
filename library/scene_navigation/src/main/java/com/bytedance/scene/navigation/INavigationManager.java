@@ -91,6 +91,8 @@ public interface INavigationManager {
 
     public void recycleInvisibleScenes();
 
+    public void suppressRecycle(boolean suppress);
+
     public void onConfigurationChanged(@NonNull Configuration newConfig);
 
     public void onWindowFocusChanged(boolean hasFocus);

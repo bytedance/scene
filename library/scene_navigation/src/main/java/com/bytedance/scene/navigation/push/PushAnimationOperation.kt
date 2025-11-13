@@ -22,6 +22,7 @@ import com.bytedance.scene.navigation.NavigationManagerAbility
 import com.bytedance.scene.navigation.NavigationScene
 import com.bytedance.scene.navigation.Operation
 import com.bytedance.scene.navigation.Record
+import com.bytedance.scene.utlity.Action1
 import com.bytedance.scene.utlity.AnimatorUtility
 import com.bytedance.scene.utlity.CancellationSignalList
 
@@ -75,6 +76,9 @@ internal class PushAnimationOperation(private val managerAbility: NavigationMana
 
             navigationAnimationExecutor.executePushChange(
                 navigationScene, navigationScene.view.rootView, fromInfo, toInfo, cancellationSignalList,
+                Action1 {
+                    managerAbility.suppressRecycle(it)
+                },
                 Runnable {
                     managerAbility.cancellationSignalManager.remove(cancellationSignalList)
                     managerAbility.notifyNavigationAnimationEnd(finalCurrentScene, topRecord.mScene, true)

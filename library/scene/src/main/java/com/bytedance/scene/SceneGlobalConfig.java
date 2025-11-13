@@ -10,4 +10,5 @@ public class SceneGlobalConfig {
     public static volatile boolean sceneLifecycleCallbackObjectCreationOpt = false;
     public static volatile boolean shouldSkipDispatchWindowFocusChangeToNotReadyScene = false;
     public static volatile boolean usePreviousSavedStateWhenPauseIfPossible = false;
+    public static volatile boolean cancelAnimationWhenForceExecutePendingNavigationOperation = false;
 }

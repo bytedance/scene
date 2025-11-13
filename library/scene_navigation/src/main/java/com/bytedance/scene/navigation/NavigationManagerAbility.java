@@ -90,4 +90,6 @@ public interface NavigationManagerAbility {
      * @param currentRecord The current active record
      */
     void destroyByRecord(Record record, Record currentRecord);
+
+    void suppressRecycle(boolean suppress);
 }

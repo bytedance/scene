@@ -102,7 +102,7 @@ public class PopDestroyOperation implements Operation {
              */
             navigationAnimationExecutor.executePopChange(mNavigationScene,
                     mNavigationScene.getView().getRootView(),
-                    fromInfo, toInfo, cancellationSignalList, endAction);
+                    fromInfo, toInfo, cancellationSignalList, mManagerAbility::suppressRecycle, endAction);
         } else {
             mNavigationScene.addToReuseCache(mCurrentRecord.mScene);
             operationEndAction.run();
