@@ -22,7 +22,6 @@ public class NavigationSourceUtility {
                 null,
                 rootScene.getClass(),
                 createSceneComponentFactory(rootScene),
-                false,
                 false);
     }
 
@@ -116,7 +115,6 @@ public class NavigationSourceUtility {
 
         options.setOnlyRestoreVisibleScene(true);
 
-        navigationScene.setSeparateCreateFromCreateView(separateCreate);
         navigationScene.setInitRootSceneOnCreate(separateCreate);
         navigationScene.setArguments(options.toBundle());
 

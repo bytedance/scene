@@ -945,10 +945,6 @@ public final class NavigationScene extends Scene implements NavigationListener, 
     public void dispatchCreate(@Nullable Bundle savedInstanceState) {
         super.dispatchCreate(savedInstanceState);
         if (mIsInitRootSceneOnCreate) {
-            if (!isSeparateCreateFromCreateView()) {
-                throw new IllegalStateException("separateCreateFromCreateView must be set to true when initRootSceneOnCreate");
-            }
-
             // dispatch children state
             if (savedInstanceState != null && isSupportRestore()) {
                 this.mNavigationSceneManager.restoreFromBundle(requireActivity(), savedInstanceState, this.mRootSceneComponentFactory, getState());
@@ -1196,9 +1192,7 @@ public final class NavigationScene extends Scene implements NavigationListener, 
     @RestrictTo(LIBRARY)
     @Override
     public void dispatchDestroyView() {
-        if (isSeparateCreateFromCreateView()) {
-            dispatchChildrenState(State.CREATED, State.NONE, true, true);
-        }
+        dispatchChildrenState(State.CREATED, State.NONE, true, true);
         super.dispatchDestroyView();
     }
 
@@ -1208,10 +1202,7 @@ public final class NavigationScene extends Scene implements NavigationListener, 
             mMemoryMonitor.stop();
             mHandler.removeCallbacks(mRecycleInvisibleScenesJob);
         }
-        // TODO should be move to dispatchDestroyView
-        if (!isSeparateCreateFromCreateView()) {
-            dispatchChildrenState(State.NONE, null, true, true);
-        }
+
         this.mOutsideView = null;
         this.mViewOwnedByOutside = false;
 
@@ -1228,9 +1219,7 @@ public final class NavigationScene extends Scene implements NavigationListener, 
     @RestrictTo(LIBRARY)
     @Override
     public void dispatchDestroy() {
-        if (isSeparateCreateFromCreateView()) {
-            dispatchChildrenState(State.NONE, null, true, true);
-        }
+        dispatchChildrenState(State.NONE, null, true, true);
         super.dispatchDestroy();
     }
 

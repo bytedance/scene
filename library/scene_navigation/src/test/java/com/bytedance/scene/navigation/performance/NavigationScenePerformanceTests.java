@@ -184,7 +184,6 @@ public class NavigationScenePerformanceTests {
         NavigationSceneOptions options = new NavigationSceneOptions(rootScene.getClass());
         options.setOnlyRestoreVisibleScene(true);
         options.setLazyLoadNavigationSceneUnnecessaryView(true);
-        navigationScene.setSeparateCreateFromCreateView(true);
         navigationScene.setInitRootSceneOnCreate(true);
         navigationScene.setArguments(options.toBundle());
 

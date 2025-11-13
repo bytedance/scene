@@ -352,8 +352,6 @@ public abstract class GroupScene extends Scene implements SceneParent {
     public final void dispatchAttachScene(@Nullable Scene parentScene) {
         super.dispatchAttachScene(parentScene);
 
-        this.mGroupSceneManager.setSeparateCreateFromCreateView(isSeparateCreateFromCreateView());
-
         if (parentScene == null) {
             //ignore
         } else if (parentScene instanceof SceneParent) {
@@ -369,9 +367,7 @@ public abstract class GroupScene extends Scene implements SceneParent {
     @Override
     public final void dispatchCreate(@Nullable Bundle savedInstanceState) {
         super.dispatchCreate(savedInstanceState);
-        if (isSeparateCreateFromCreateView()) {
-            dispatchChildrenState(State.CREATED);
-        }
+        dispatchChildrenState(State.CREATED);
     }
 
     @Override
@@ -613,11 +609,7 @@ public abstract class GroupScene extends Scene implements SceneParent {
     @RestrictTo(LIBRARY)
     @Override
     public final void dispatchDestroyView() {
-        if (isSeparateCreateFromCreateView()) {
-            dispatchChildrenState(State.CREATED);
-        } else {
-            dispatchChildrenState(State.NONE);
-        }
+        dispatchChildrenState(State.CREATED);
         super.dispatchDestroyView();
     }
 
@@ -627,9 +619,7 @@ public abstract class GroupScene extends Scene implements SceneParent {
     @RestrictTo(LIBRARY)
     @Override
     public final void dispatchDestroy() {
-        if (isSeparateCreateFromCreateView()) {
-            dispatchChildrenState(State.NONE);
-        }
+        dispatchChildrenState(State.NONE);
         super.dispatchDestroy();
     }
 

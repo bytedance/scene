@@ -244,7 +244,7 @@ public class OnSaveInstanceStateChildSceneLifecycleCallbacksTests {
                     throw new IllegalStateException("crash");
                 }
                 assertNotNull(scene.getView());
-                assertSame(State.NONE, scene.getState());
+                assertSame(State.CREATED, scene.getState());
             }
 
             @Override
@@ -322,7 +322,7 @@ public class OnSaveInstanceStateChildSceneLifecycleCallbacksTests {
                     throw new IllegalStateException("crash");
                 }
                 assertNotNull(scene.getView());
-                assertSame(State.NONE, scene.getState());
+                assertSame(State.CREATED, scene.getState());
             }
 
             @Override
@@ -334,6 +334,7 @@ public class OnSaveInstanceStateChildSceneLifecycleCallbacksTests {
                     throw new IllegalStateException("crash");
                 }
                 assertNull(scene.getView());
+                assertSame(State.NONE, scene.getState());
             }
         };
 
@@ -656,7 +657,7 @@ public class OnSaveInstanceStateChildSceneLifecycleCallbacksTests {
                     throw new IllegalStateException("crash");
                 }
                 assertNotNull(scene.getView());
-                assertSame(State.NONE, scene.getState());
+                assertSame(State.CREATED, scene.getState());
             }
 
             @Override
@@ -755,7 +756,7 @@ public class OnSaveInstanceStateChildSceneLifecycleCallbacksTests {
                     throw new IllegalStateException("crash");
                 }
                 assertNotNull(scene.getView());
-                assertSame(State.NONE, scene.getState());
+                assertSame(State.CREATED, scene.getState());
             }
 
             @Override
@@ -770,6 +771,7 @@ public class OnSaveInstanceStateChildSceneLifecycleCallbacksTests {
                     throw new IllegalStateException("crash");
                 }
                 assertNull(scene.getView());
+                assertSame(State.NONE, scene.getState());
             }
         };
 

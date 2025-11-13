@@ -418,7 +418,7 @@ public class GroupSceneLifecycleTests {
 
             List<Scene> list = getSceneList();
             for (Scene scene : list) {
-                checkSceneState(scene, State.NONE,
+                checkSceneState(scene, State.CREATED,
                         scene == findSceneByTag(CHILD_SCENE_CONSTRUCTOR)
                                 || scene == findSceneByTag(CHILD_SCENE_ATTACH)
                                 || scene == findSceneByTag(CHILD_SCENE_CREATE_VIEW));
@@ -436,7 +436,7 @@ public class GroupSceneLifecycleTests {
 
             List<Scene> list = getSceneList();
             for (Scene scene : list) {
-                checkSceneState(scene, State.NONE, scene == findSceneByTag(CHILD_SCENE_CONSTRUCTOR)
+                checkSceneState(scene, State.CREATED, scene == findSceneByTag(CHILD_SCENE_CONSTRUCTOR)
                         || scene == findSceneByTag(CHILD_SCENE_ATTACH)
                         || scene == findSceneByTag(CHILD_SCENE_CREATE_VIEW)
                         || scene == findSceneByTag(CHILD_SCENE_VIEW_CREATED));
@@ -528,7 +528,17 @@ public class GroupSceneLifecycleTests {
 
             List<Scene> list = getSceneList();
             for (Scene scene : list) {
-                checkSceneState(scene, State.NONE, scene == childScene);
+                checkSceneState(scene, State.CREATED, scene == childScene);
+            }
+        }
+
+        @Override
+        public void onDestroy() {
+            super.onDestroy();
+
+            List<Scene> list = getSceneList();
+            for (Scene scene : list) {
+                checkSceneState(scene, State.NONE, false);
             }
         }
     }

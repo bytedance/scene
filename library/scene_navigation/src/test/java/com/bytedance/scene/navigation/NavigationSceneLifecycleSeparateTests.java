@@ -40,18 +40,6 @@ import org.robolectric.annotation.Config;
 @Config(manifest = Config.NONE)
 public class NavigationSceneLifecycleSeparateTests {
 
-    @Test
-    public void test_disable_setSeparateCreateFromCreateView() {
-        final TestScene rootScene = new TestScene();
-        rootScene.setSeparateCreateFromCreateView(true);
-
-        Assert.assertThrows(IllegalStateException.class, new ThrowingRunnable() {
-            @Override
-            public void run() throws Throwable {
-                NavigationSourceUtility.createFromInitSceneLifecycleManager(rootScene);
-            }
-        });
-    }
 
     @Test
     public void test_setSeparateCreateFromCreateView() {
@@ -60,31 +48,14 @@ public class NavigationSceneLifecycleSeparateTests {
         Pair<SceneLifecycleManager<NavigationScene>, NavigationScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(rootScene, true);
         final NavigationScene navigationScene = pair.second;
 
-        Assert.assertThrows(IllegalStateException.class, new ThrowingRunnable() {
-            @Override
-            public void run() throws Throwable {
-                navigationScene.setSeparateCreateFromCreateView(false);
-            }
-        });
 
-        Assert.assertThrows(IllegalStateException.class, new ThrowingRunnable() {
-            @Override
-            public void run() throws Throwable {
-                rootScene.setSeparateCreateFromCreateView(false);
-            }
-        });
+
+
 
         final Scene secondScene = new TestChildScene();
-        secondScene.setSeparateCreateFromCreateView(false);
 
         navigationScene.push(secondScene);
-        Assert.assertTrue(secondScene.isSeparateCreateFromCreateView());
-        Assert.assertThrows(IllegalStateException.class, new ThrowingRunnable() {
-            @Override
-            public void run() throws Throwable {
-                secondScene.setSeparateCreateFromCreateView(false);
-            }
-        });
+
     }
 
     /**
@@ -344,7 +315,6 @@ public class NavigationSceneLifecycleSeparateTests {
         NavigationScene navigationScene = new NavigationScene();
         NavigationSceneOptions options = new NavigationSceneOptions(rootScene.getClass());
         options.setOnlyRestoreVisibleScene(true);
-        navigationScene.setSeparateCreateFromCreateView(true);
         navigationScene.setInitRootSceneOnCreate(false);
         navigationScene.setArguments(options.toBundle());
         Scope.RootScopeFactory rootScopeFactory = new Scope.RootScopeFactory() {
@@ -382,14 +352,12 @@ public class NavigationSceneLifecycleSeparateTests {
 
         navigationScene.dispatchActivityCreated(null);
 
-        assertTrue(rootScene.isSeparateCreateFromCreateView());
 
         navigationScene.push(secondScene);
         assertEquals(secondScene.getState(), State.ACTIVITY_CREATED);
         assertEquals(rootScene.getState(), State.ACTIVITY_CREATED);
         assertNotNull(rootScene.getView());
 
-        assertTrue(secondScene.isSeparateCreateFromCreateView());
 
         View secondSceneView = secondScene.getView();
         navigationScene.pop();
@@ -488,7 +456,6 @@ public class NavigationSceneLifecycleSeparateTests {
         NavigationScene navigationScene = new NavigationScene();
         NavigationSceneOptions options = new NavigationSceneOptions(rootScene.getClass());
         options.setOnlyRestoreVisibleScene(true);
-        navigationScene.setSeparateCreateFromCreateView(true);
         navigationScene.setInitRootSceneOnCreate(true);
         navigationScene.setArguments(options.toBundle());
         Scope.RootScopeFactory rootScopeFactory = new Scope.RootScopeFactory() {
@@ -523,14 +490,12 @@ public class NavigationSceneLifecycleSeparateTests {
         navigationScene.dispatchCreateView(null, testActivity.mFrameLayout);
         assertEquals(State.VIEW_CREATED, rootScene.getState());
         assertNotNull(rootScene.getView());
-        assertTrue(rootScene.isSeparateCreateFromCreateView());
 
         navigationScene.dispatchActivityCreated(null);
         navigationScene.push(secondScene);
         assertEquals(secondScene.getState(), State.ACTIVITY_CREATED);
         assertEquals(rootScene.getState(), State.ACTIVITY_CREATED);
 
-        assertTrue(secondScene.isSeparateCreateFromCreateView());
 
 
         View secondSceneView = secondScene.getView();
@@ -631,7 +596,6 @@ public class NavigationSceneLifecycleSeparateTests {
         NavigationScene navigationScene = new NavigationScene();
         NavigationSceneOptions options = new NavigationSceneOptions(rootScene.getClass());
         options.setOnlyRestoreVisibleScene(true);
-        navigationScene.setSeparateCreateFromCreateView(true);
         navigationScene.setInitRootSceneOnCreate(true);
         navigationScene.setArguments(options.toBundle());
         Scope.RootScopeFactory rootScopeFactory = new Scope.RootScopeFactory() {
@@ -679,7 +643,6 @@ public class NavigationSceneLifecycleSeparateTests {
 
         /// start restore
         NavigationScene navigationScene2 = new NavigationScene();
-        navigationScene2.setSeparateCreateFromCreateView(true);
         navigationScene2.setInitRootSceneOnCreate(true);
         navigationScene2.setArguments(options.toBundle());
         navigationScene2.setRootScopeFactory(rootScopeFactory);

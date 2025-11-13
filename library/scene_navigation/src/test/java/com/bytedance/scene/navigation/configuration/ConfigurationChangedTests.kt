@@ -143,7 +143,6 @@ fun createFromInitSceneLifecycleManager(
     val navigationScene = NavigationScene()
     val options = NavigationSceneOptions(rootScene.javaClass)
     options.setOnlyRestoreVisibleScene(true)
-    navigationScene.isSeparateCreateFromCreateView = separateCreate
     navigationScene.setInitRootSceneOnCreate(separateCreate)
     navigationScene.setArguments(options.toBundle())
     val rootScopeFactory = RootScopeFactory { Scope.DEFAULT_ROOT_SCOPE_FACTORY.rootScope }

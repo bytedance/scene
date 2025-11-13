@@ -23,7 +23,7 @@ abstract class SceneFragmentActivity : AppCompatActivity() {
         this.mDelegate = NavigationSceneUtility.setupWithActivity(
             this, FragmentScene::class.java
         ).rootSceneArguments(arguments).supportRestore(supportRestore())
-            .onlyRestoreVisibleScene(true).separateCreateFromCreateView(true)
+            .onlyRestoreVisibleScene(true)
             .rootSceneComponentFactory { cl, className, bundle ->
                 FragmentScene.newInstance(
                     homeFragmentClass, bundle

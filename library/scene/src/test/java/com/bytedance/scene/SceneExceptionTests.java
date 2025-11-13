@@ -44,7 +44,6 @@ public class SceneExceptionTests {
                         return new View(requireSceneContext());
                     }
                 };
-                scene.setSeparateCreateFromCreateView(true);
                 scene.dispatchCreate(null);
                 scene.dispatchStop();
             }
@@ -60,7 +59,6 @@ public class SceneExceptionTests {
                         return new View(requireSceneContext());
                     }
                 };
-                scene.setSeparateCreateFromCreateView(true);
                 scene.dispatchAttachActivity(testActivity);
                 scene.dispatchCreate(null);
                 scene.dispatchCreateView(null, testActivity.mFrameLayout);

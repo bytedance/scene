@@ -48,7 +48,6 @@ public abstract class SceneActivity extends AppCompatActivity {
                 .rootSceneArguments(arguments)
                 .supportRestore(supportRestore())
                 .onlyRestoreVisibleScene(true)
-                .separateCreateFromCreateView(true)
                 .build();
     }
 

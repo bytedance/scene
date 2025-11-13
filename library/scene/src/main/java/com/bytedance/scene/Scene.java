@@ -163,7 +163,6 @@ public abstract class Scene implements LifecycleOwner, SavedStateRegistryOwner, 
     private FixSceneReuseLifecycleAdapter mLifecycleRegistry;
     private SavedStateRegistryController mSavedStateRegistryController;
 
-    private boolean mIsSeparateCreateFromCreateView = false;
     /**
      * This flag may be called in non UI thread via {@link #isViewDestroyed()}
      */
@@ -255,18 +254,6 @@ public abstract class Scene implements LifecycleOwner, SavedStateRegistryOwner, 
         return this.mSceneRestoreEnabled;
     }
 
-    public final boolean isSeparateCreateFromCreateView() {
-        return mIsSeparateCreateFromCreateView;
-    }
-
-    public final void setSeparateCreateFromCreateView(boolean enable) {
-        if (mActivity != null) {
-            throw new IllegalStateException("setSeparateCreateFromCreateView is only allowed to be called before it is attached to an activity");
-        }
-
-        this.mIsSeparateCreateFromCreateView = enable;
-    }
-
     /** @hide */
     @RestrictTo(LIBRARY_GROUP)
     public void dispatchAttachActivity(@NonNull Activity activity) {
@@ -340,11 +327,6 @@ public abstract class Scene implements LifecycleOwner, SavedStateRegistryOwner, 
     @RestrictTo(LIBRARY_GROUP)
     public void dispatchAttachScene(@Nullable Scene parentScene) {
         if (parentScene != null) {
-            if (parentScene.isSeparateCreateFromCreateView()) {
-                this.mIsSeparateCreateFromCreateView = true;
-            } else if (this.mIsSeparateCreateFromCreateView) {
-                throw new IllegalStateException("Scene must disable CREATE lifecycle state when it's parent is disabled");
-            }
             this.mParentScene = parentScene;
         } else {
             LoggerManager.getInstance().v(TAG, "This Scene is the root Scene " + this);
@@ -390,9 +372,7 @@ public abstract class Scene implements LifecycleOwner, SavedStateRegistryOwner, 
                     + " did not call through to super.onCreate()");
         }
         dispatchOnSceneCreated(this, savedInstanceState, false);
-        if (mIsSeparateCreateFromCreateView) {
-            setState(State.CREATED);
-        }
+        setState(State.CREATED);
     }
 
     @NonNull
@@ -614,11 +594,7 @@ public abstract class Scene implements LifecycleOwner, SavedStateRegistryOwner, 
         if (this.mLifecycleRegistry != null) {
             this.mLifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_DESTROY);
         }
-        if (mIsSeparateCreateFromCreateView) {
-            setState(State.CREATED);
-        } else {
-            setState(State.NONE);
-        }
+        setState(State.CREATED);
         mCalled = false;
         dispatchOnPreSceneViewDestroyed(this, false);
         onDestroyView();
@@ -637,9 +613,7 @@ public abstract class Scene implements LifecycleOwner, SavedStateRegistryOwner, 
     /** @hide */
     @RestrictTo(LIBRARY_GROUP)
     public void dispatchDestroy() {
-        if (mIsSeparateCreateFromCreateView) {
-            setState(State.NONE);
-        }
+        setState(State.NONE);
         mDestroyTime = System.currentTimeMillis();
         mCalled = false;
         dispatchOnPreSceneDestroyed(this, false);

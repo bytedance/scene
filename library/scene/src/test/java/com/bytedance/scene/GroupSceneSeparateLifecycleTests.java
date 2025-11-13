@@ -39,53 +39,6 @@ import java.util.List;
 public class GroupSceneSeparateLifecycleTests {
 
     @Test
-    public void test_disable_setSeparateCreateFromCreateView() {
-        final TestScene rootScene = new TestScene();
-        rootScene.setSeparateCreateFromCreateView(true);
-
-        Assert.assertThrows(IllegalStateException.class, new ThrowingRunnable() {
-            @Override
-            public void run() throws Throwable {
-                NavigationSourceUtility.createFromInitSceneLifecycleManager(rootScene);
-            }
-        });
-    }
-
-    @Test
-    public void test_setSeparateCreateFromCreateView() {
-        final TestScene rootScene = new TestScene();
-
-        Pair<SceneLifecycleManager<GroupScene>, GroupScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(rootScene, true);
-        final GroupScene groupScene = pair.second;
-
-        Assert.assertThrows(IllegalStateException.class, new ThrowingRunnable() {
-            @Override
-            public void run() throws Throwable {
-                groupScene.setSeparateCreateFromCreateView(false);
-            }
-        });
-
-        Assert.assertThrows(IllegalStateException.class, new ThrowingRunnable() {
-            @Override
-            public void run() throws Throwable {
-                rootScene.setSeparateCreateFromCreateView(false);
-            }
-        });
-
-        final Scene childScene = new TestChildScene();
-        childScene.setSeparateCreateFromCreateView(false);
-
-        rootScene.add(rootScene.mId, childScene, "childScene");
-        Assert.assertTrue(childScene.isSeparateCreateFromCreateView());
-        Assert.assertThrows(IllegalStateException.class, new ThrowingRunnable() {
-            @Override
-            public void run() throws Throwable {
-                childScene.setSeparateCreateFromCreateView(false);
-            }
-        });
-    }
-
-    @Test
     public void testAdd() {
         TestEmptyScene testScene = new TestEmptyScene();
         Pair<SceneLifecycleManager<GroupScene>, GroupScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(testScene, true);
@@ -385,7 +338,6 @@ public class GroupSceneSeparateLifecycleTests {
 
         NavigationSourceUtility.TestGroupScene groupScene = new NavigationSourceUtility.TestGroupScene();
         groupScene.disableSupportRestore();
-        groupScene.setSeparateCreateFromCreateView(true);
         Scope.RootScopeFactory rootScopeFactory = new Scope.RootScopeFactory() {
             @Override
             public Scope getRootScope() {
@@ -468,7 +420,6 @@ public class GroupSceneSeparateLifecycleTests {
 
         NavigationSourceUtility.TestGroupScene groupScene = new NavigationSourceUtility.TestGroupScene();
         groupScene.disableSupportRestore();
-        groupScene.setSeparateCreateFromCreateView(true);
         Scope.RootScopeFactory rootScopeFactory = new Scope.RootScopeFactory() {
             @Override
             public Scope getRootScope() {
@@ -521,7 +472,6 @@ public class GroupSceneSeparateLifecycleTests {
 
         NavigationSourceUtility.TestGroupScene groupScene = new NavigationSourceUtility.TestGroupScene();
         groupScene.disableSupportRestore();
-        groupScene.setSeparateCreateFromCreateView(true);
         Scope.RootScopeFactory rootScopeFactory = new Scope.RootScopeFactory() {
             @Override
             public Scope getRootScope() {
@@ -623,7 +573,6 @@ public class GroupSceneSeparateLifecycleTests {
 
         NavigationSourceUtility.TestGroupScene groupScene = new NavigationSourceUtility.TestGroupScene();
         groupScene.disableSupportRestore();
-        groupScene.setSeparateCreateFromCreateView(true);
         Scope.RootScopeFactory rootScopeFactory = new Scope.RootScopeFactory() {
             @Override
             public Scope getRootScope() {
@@ -694,7 +643,6 @@ public class GroupSceneSeparateLifecycleTests {
 
         NavigationSourceUtility.TestGroupScene groupScene = new NavigationSourceUtility.TestGroupScene();
         groupScene.disableSupportRestore();
-        groupScene.setSeparateCreateFromCreateView(true);
         Scope.RootScopeFactory rootScopeFactory = new Scope.RootScopeFactory() {
             @Override
             public Scope getRootScope() {

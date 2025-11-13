@@ -110,7 +110,6 @@ class SAFActivity : AppCompatActivity() {
 
     private fun initScene() {
         val (navigationScene, second) = initSceneEnvironment()
-        navigationScene?.isSeparateCreateFromCreateView = true
         navigationScene?.setInitRootSceneOnCreate(true)
         navigationScene?.addNavigationListener(
             this,

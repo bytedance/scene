@@ -48,7 +48,6 @@ class ConfigurationRestoreTests {
             val navigationScene = NavigationScene()
             val options = NavigationSceneOptions(TestOnConfigurationChangedRestoreScene::class.java)
             options.setOnlyRestoreVisibleScene(true)
-            navigationScene.isSeparateCreateFromCreateView = true
             navigationScene.setInitRootSceneOnCreate(true)
             navigationScene.setArguments(options.toBundle())
             val rootScopeFactory =
@@ -88,7 +87,6 @@ class ConfigurationRestoreTests {
             val navigationScene = NavigationScene()
             val options = NavigationSceneOptions(TestOnConfigurationChangedRestoreScene::class.java)
             options.setOnlyRestoreVisibleScene(true)
-            navigationScene.isSeparateCreateFromCreateView = true
             navigationScene.setInitRootSceneOnCreate(true)
             navigationScene.setArguments(options.toBundle())
             val rootScopeFactory =

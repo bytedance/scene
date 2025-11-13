@@ -62,7 +62,6 @@ public final class NavigationSceneUtility {
         private boolean mImmediate = true;
         private float mAutoRecycleInvisibleScenesThreshold = 0F;
         private boolean mOnlyRestoreVisibleScene = false;
-        private boolean mSeparateCreateFromCreateView = false;
         private boolean mFixOnResultTiming = false;
 
         private Builder(@NonNull Activity activity, @NonNull Class<? extends Scene> rootSceneClazz) {
@@ -153,12 +152,6 @@ public final class NavigationSceneUtility {
         }
 
         @NonNull
-        public Builder separateCreateFromCreateView(boolean separateCreateFromCreateView) {
-            this.mSeparateCreateFromCreateView = separateCreateFromCreateView;
-            return this;
-        }
-
-        @NonNull
         public Builder setFixOnResultTiming(boolean mFixOnResultTiming) {
             this.mFixOnResultTiming = mFixOnResultTiming;
             return this;
@@ -173,7 +166,7 @@ public final class NavigationSceneUtility {
             navigationSceneOptions.setAutoRecycleInvisibleScenesThreshold(this.mAutoRecycleInvisibleScenesThreshold);
             navigationSceneOptions.setOnlyRestoreVisibleScene(this.mOnlyRestoreVisibleScene);
             navigationSceneOptions.setFixOnResultTiming(this.mFixOnResultTiming);
-            return setupWithActivity(this.mActivity, this.mIdRes, navigationSceneOptions, this.mRootSceneComponentFactory, this.mSupportRestore, this.mTag, this.mImmediate, this.mSeparateCreateFromCreateView);
+            return setupWithActivity(this.mActivity, this.mIdRes, navigationSceneOptions, this.mRootSceneComponentFactory, this.mSupportRestore, this.mTag, this.mImmediate);
         }
     }
 
@@ -190,10 +183,9 @@ public final class NavigationSceneUtility {
     @NonNull
     public static SceneDelegate setupWithActivity(@NonNull final Activity activity, @Nullable Bundle savedInstanceState,
                                                   @NonNull Class<? extends Scene> rootScene,
-                                                  boolean supportRestore,
-                                                  final boolean separateCreateFromCreateView) {
+                                                  boolean supportRestore) {
         return setupWithActivity(activity, savedInstanceState,
-                new NavigationSceneOptions(rootScene, null), null, supportRestore, separateCreateFromCreateView);
+                new NavigationSceneOptions(rootScene, null), null, supportRestore);
     }
 
     /**
@@ -204,10 +196,9 @@ public final class NavigationSceneUtility {
     public static SceneDelegate setupWithActivity(@NonNull final Activity activity, @Nullable Bundle savedInstanceState,
                                                   @NonNull Class<? extends Scene> rootScene,
                                                   @Nullable SceneComponentFactory rootSceneComponentFactory,
-                                                  boolean supportRestore,
-                                                  final boolean separateCreateFromCreateView) {
+                                                  boolean supportRestore) {
         return setupWithActivity(activity, savedInstanceState,
-                new NavigationSceneOptions(rootScene, null), rootSceneComponentFactory, supportRestore, separateCreateFromCreateView);
+                new NavigationSceneOptions(rootScene, null), rootSceneComponentFactory, supportRestore);
     }
 
     /**
@@ -217,9 +208,8 @@ public final class NavigationSceneUtility {
     @NonNull
     public static SceneDelegate setupWithActivity(@NonNull final Activity activity, @Nullable Bundle savedInstanceState,
                                                   @NonNull NavigationSceneOptions navigationSceneOptions,
-                                                  boolean supportRestore,
-                                                  final boolean separateCreateFromCreateView) {
-        return setupWithActivity(activity, android.R.id.content, savedInstanceState, navigationSceneOptions, null, supportRestore, separateCreateFromCreateView);
+                                                  boolean supportRestore) {
+        return setupWithActivity(activity, android.R.id.content, savedInstanceState, navigationSceneOptions, null, supportRestore);
     }
 
     /**
@@ -230,9 +220,8 @@ public final class NavigationSceneUtility {
     public static SceneDelegate setupWithActivity(@NonNull final Activity activity, @Nullable Bundle savedInstanceState,
                                                   @NonNull NavigationSceneOptions navigationSceneOptions,
                                                   @Nullable SceneComponentFactory rootSceneComponentFactory,
-                                                  boolean supportRestore,
-                                                  final boolean separateCreateFromCreateView) {
-        return setupWithActivity(activity, android.R.id.content, savedInstanceState, navigationSceneOptions, rootSceneComponentFactory, supportRestore, separateCreateFromCreateView);
+                                                  boolean supportRestore) {
+        return setupWithActivity(activity, android.R.id.content, savedInstanceState, navigationSceneOptions, rootSceneComponentFactory, supportRestore);
     }
 
     /**
@@ -245,10 +234,9 @@ public final class NavigationSceneUtility {
                                                   @Nullable Bundle savedInstanceState,
                                                   @NonNull NavigationSceneOptions navigationSceneOptions,
                                                   @Nullable SceneComponentFactory rootSceneComponentFactory,
-                                                  final boolean supportRestore,
-                                                  final boolean separateCreateFromCreateView) {
+                                                  final boolean supportRestore) {
         return setupWithActivity(activity, idRes, savedInstanceState, navigationSceneOptions,
-                rootSceneComponentFactory, supportRestore, LIFE_CYCLE_FRAGMENT_TAG, true, separateCreateFromCreateView);
+                rootSceneComponentFactory, supportRestore, LIFE_CYCLE_FRAGMENT_TAG, true);
     }
 
     /**
@@ -263,9 +251,8 @@ public final class NavigationSceneUtility {
                                                   @Nullable SceneComponentFactory rootSceneComponentFactory,
                                                   final boolean supportRestore,
                                                   @NonNull String tag,
-                                                  boolean immediate,
-                                                  final boolean separateCreateFromCreateView) {
-        return setupWithActivity(activity, idRes, navigationSceneOptions, rootSceneComponentFactory, supportRestore, tag, immediate, separateCreateFromCreateView);
+                                                  boolean immediate) {
+        return setupWithActivity(activity, idRes, navigationSceneOptions, rootSceneComponentFactory, supportRestore, tag, immediate);
     }
 
     @NonNull
@@ -275,8 +262,7 @@ public final class NavigationSceneUtility {
                                                    @Nullable SceneComponentFactory rootSceneComponentFactory,
                                                    final boolean supportRestore,
                                                    @NonNull String tag,
-                                                   boolean immediate,
-                                                   final boolean separateCreateFromCreateView) {
+                                                   boolean immediate) {
         ThreadUtility.checkUIThread();
         if (tag == null) {
             throw new IllegalArgumentException("tag cant be null");
@@ -285,7 +271,6 @@ public final class NavigationSceneUtility {
 
         final NavigationScene navigationScene = (NavigationScene) SceneInstanceUtility.getInstanceFromClass(NavigationScene.class,
                 navigationSceneOptions.toBundle());
-        navigationScene.setSeparateCreateFromCreateView(separateCreateFromCreateView);
         if (!Utility.isActivityStatusValid(activity)) {
             return new DestroyedSceneDelegate(navigationScene);
         }

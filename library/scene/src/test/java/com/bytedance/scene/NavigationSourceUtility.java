@@ -39,7 +39,6 @@ public class NavigationSourceUtility {
         TestActivity testActivity = controller.get();
         TestGroupScene groupScene = new TestGroupScene();
         groupScene.disableSupportRestore();
-        groupScene.setSeparateCreateFromCreateView(separateCreate);
 
         Scope.RootScopeFactory rootScopeFactory = new Scope.RootScopeFactory() {
             @Override
