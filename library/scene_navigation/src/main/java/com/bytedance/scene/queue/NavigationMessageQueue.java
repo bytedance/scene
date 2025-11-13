@@ -22,7 +22,9 @@ import android.os.Looper;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.RestrictTo;
+import androidx.annotation.VisibleForTesting;
 
+import com.bytedance.scene.SceneGlobalConfig;
 import com.bytedance.scene.logger.LoggerManager;
 import com.bytedance.scene.utlity.CancellationSignal;
 import com.bytedance.scene.utlity.SceneInternalException;
@@ -54,6 +56,9 @@ public class NavigationMessageQueue {
     private boolean mIsRunningPostSync = false;
     private IdleRunnable mIdleRunnable = null;
 
+    private final boolean mFixMessageOrderIncorrect = SceneGlobalConfig.fixNavigationMessageQueueMessageOrderIssue;
+    private int mDelayMessageCount = 0;
+
     /**
      * post task at the end of queue
      *
@@ -77,7 +82,8 @@ public class NavigationMessageQueue {
         this.mHandler.post(this.mSceneNavigationTask);
     }
 
-    private void forceExecuteIdleTask() {
+    @VisibleForTesting
+    public void forceExecuteIdleTask() {
         while (true) {
             IdleRunnable tmp = this.mIdleRunnable;
             this.mIdleRunnable = null;
@@ -101,6 +107,11 @@ public class NavigationMessageQueue {
             throw new SceneInternalException("mIdleRunnable should be null");
         }
 
+        if (this.mFixMessageOrderIncorrect && !this.mPendingTask.isEmpty()) {
+            this.mDelayMessageCount = this.mPendingTask.size();
+            this.mHandler.removeCallbacks(this.mSceneNavigationTask);
+        }
+
         this.mPendingTask.add(0, runnable);
         this.mIdleRunnable = new IdleRunnable(this.mHandler, this.mSceneNavigationTask, addIdleHandlerSignal, cancellationSignal, timeOutMillis);
         this.mIdleRunnable.start();
@@ -109,6 +120,13 @@ public class NavigationMessageQueue {
     private final SceneMainRunnable mSceneNavigationTask = new SceneMainRunnable() {
         @Override
         public void run() {
+            if (mFixMessageOrderIncorrect) {
+                while (mDelayMessageCount > 0) {
+                    mHandler.post(this);
+                    mDelayMessageCount--;
+                }
+            }
+
             NavigationRunnable currentTask = NavigationMessageQueue.this.mPendingTask.poll();
             if (currentTask == null) {
                 LoggerManager.getInstance().i(TAG, "empty return");
@@ -163,5 +181,10 @@ public class NavigationMessageQueue {
 
     public boolean hasPendingTasks() {
         return mPendingTask.size() > 0;
+    }
+
+    @VisibleForTesting
+    public int getDelayMessageCount() {
+        return this.mDelayMessageCount;
     }
 }

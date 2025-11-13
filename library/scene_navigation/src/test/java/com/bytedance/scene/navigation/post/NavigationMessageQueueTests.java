@@ -7,8 +7,11 @@ import static org.robolectric.annotation.LooperMode.Mode.PAUSED;
 import android.os.Handler;
 import android.os.Looper;
 
+import com.bytedance.scene.SceneGlobalConfig;
 import com.bytedance.scene.queue.NavigationMessageQueue;
 import com.bytedance.scene.queue.NavigationRunnable;
+import com.bytedance.scene.utlity.CancellationSignal;
+import com.bytedance.scene.utlity.TaskStartSignal;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -16,6 +19,9 @@ import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 import org.robolectric.annotation.LooperMode;
+import org.robolectric.shadows.ShadowLooper;
+
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by jiangqi on 2023/11/27
@@ -455,5 +461,121 @@ public class NavigationMessageQueueTests {
 
         shadowOf(getMainLooper()).runOneTask();
         Assert.assertEquals(log.toString(), "01234");
+    }
+
+    @LooperMode(PAUSED)
+    @Test
+    public void testExecuteWhenIdleOrTimeLimitWithBug() {
+        SceneGlobalConfig.fixNavigationMessageQueueMessageOrderIssue = false;
+        final StringBuilder log = new StringBuilder();
+
+        NavigationMessageQueue messageQueue = new NavigationMessageQueue();
+
+        messageQueue.postAsync(new NavigationRunnable() {
+            @Override
+            public void run() {
+                log.append("1");
+            }
+        });
+        messageQueue.postAsync(new NavigationRunnable() {
+            @Override
+            public void run() {
+                log.append("2");
+            }
+        });
+        messageQueue.executeWhenIdleOrTimeLimit(new NavigationRunnable() {
+            @Override
+            public void run() {
+                log.append("3");
+            }
+        }, new TaskStartSignal(), null, 5000L);//use TaskStartSignal disable Looper.myQueue().addIdleHandler
+
+        log.append("0");
+
+        Assert.assertEquals("0", log.toString());
+
+        ShadowLooper.idleMainLooper(1000, TimeUnit.MILLISECONDS);
+        Assert.assertEquals("031", log.toString());
+
+        ShadowLooper.idleMainLooper(5000, TimeUnit.MILLISECONDS);
+        Assert.assertEquals("0312", log.toString());
+        Assert.assertEquals(0, messageQueue.getDelayMessageCount());
+
+        SceneGlobalConfig.fixNavigationMessageQueueMessageOrderIssue = false;
+    }
+
+    @LooperMode(PAUSED)
+    @Test
+    public void testExecuteWhenIdleOrTimeLimitWithBugFixed() {
+        SceneGlobalConfig.fixNavigationMessageQueueMessageOrderIssue = true;
+        final StringBuilder log = new StringBuilder();
+
+        NavigationMessageQueue messageQueue = new NavigationMessageQueue();
+
+        messageQueue.postAsync(new NavigationRunnable() {
+            @Override
+            public void run() {
+                log.append("1");
+            }
+        });
+        messageQueue.postAsync(new NavigationRunnable() {
+            @Override
+            public void run() {
+                log.append("2");
+            }
+        });
+        messageQueue.executeWhenIdleOrTimeLimit(new NavigationRunnable() {
+            @Override
+            public void run() {
+                log.append("3");
+            }
+        }, new TaskStartSignal(), null, 5000L);//use TaskStartSignal disable Looper.myQueue().addIdleHandler
+
+        log.append("0");
+
+        Assert.assertEquals("0", log.toString());
+
+        ShadowLooper.idleMainLooper(1000, TimeUnit.MILLISECONDS);//execute Handler posted task
+        Assert.assertEquals("0", log.toString());//nothing happened
+        Assert.assertEquals(2, messageQueue.getDelayMessageCount());//the first and second messages is delayed
+
+        ShadowLooper.idleMainLooper(6000, TimeUnit.MILLISECONDS);//execute Handler posted task
+        Assert.assertEquals("0312", log.toString());
+        Assert.assertEquals(0, messageQueue.getDelayMessageCount());
+
+        SceneGlobalConfig.fixNavigationMessageQueueMessageOrderIssue = false;
+    }
+
+    @LooperMode(PAUSED)
+    @Test
+    public void testExecuteWhenIdleOrTimeLimitCancel() {
+        final StringBuilder log = new StringBuilder();
+
+        NavigationMessageQueue messageQueue = new NavigationMessageQueue();
+
+        CancellationSignal cancellationSignal = new CancellationSignal();
+        cancellationSignal.setOnCancelListener(new CancellationSignal.OnCancelListener() {
+            @Override
+            public void onCancel() {
+                log.append("2");
+            }
+        });
+        messageQueue.executeWhenIdleOrTimeLimit(new NavigationRunnable() {
+            @Override
+            public void run() {
+                log.append("1");
+            }
+        }, new TaskStartSignal(), cancellationSignal, 5000L);//use TaskStartSignal disable Looper.myQueue().addIdleHandler
+
+        log.append("0");
+
+        Assert.assertEquals("0", log.toString());
+
+        ShadowLooper.idleMainLooper(1000, TimeUnit.MILLISECONDS);//execute Handler posted task
+        Assert.assertEquals("0", log.toString());//nothing happened
+
+        messageQueue.forceExecuteIdleTask();
+        cancellationSignal.cancel();
+        Assert.assertEquals("021", log.toString());
     }
 }

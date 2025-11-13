@@ -55,4 +55,8 @@ public class TaskStartSignal {
     public boolean isStarted() {
         return this.mStarted;
     }
+
+    public void cancel() {
+
+    }
 }
