@@ -13,4 +13,5 @@ public class SceneGlobalConfig {
     public static volatile boolean cancelAnimationWhenForceExecutePendingNavigationOperation = false;
     public static final boolean fixNavigationMessageQueueMessageOrderIssue = true;
     public static volatile boolean useStrictPublishResultCallbackEnabled = false;
+    public static volatile boolean checkExceptionBeforeNavigate = false;
 }

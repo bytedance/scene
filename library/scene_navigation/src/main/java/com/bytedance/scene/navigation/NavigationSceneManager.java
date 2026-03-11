@@ -44,6 +44,7 @@ import com.bytedance.scene.State;
 import com.bytedance.scene.animation.AnimationInfo;
 import com.bytedance.scene.animation.NavigationAnimationExecutor;
 import com.bytedance.scene.animation.interaction.InteractionNavigationPopAnimationFactory;
+import com.bytedance.scene.exceptions.PreviousExceptionMistakenlyForceCaughtException;
 import com.bytedance.scene.interfaces.Function;
 import com.bytedance.scene.interfaces.ActivityCompatibleBehavior;
 import com.bytedance.scene.interfaces.PopOptions;
@@ -114,6 +115,8 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
     private Scene mCurrentSyncingStateScene = null;
     private boolean mSuppressRecycle = false;
     private final boolean mStrictPublishResultCallbackEnabled;
+    @Nullable
+    private Throwable mLastException;
 
     NavigationSceneManager(NavigationScene scene) {
         this.mNavigationScene = scene;
@@ -270,6 +273,10 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
     }
 
     private void scheduleToNextUIThreadLoop(@NonNull final Operation operation, boolean async, boolean hasAsyncUrgentHint) {
+        if (SceneGlobalConfig.checkExceptionBeforeNavigate && this.mLastException != null) {
+            throw new PreviousExceptionMistakenlyForceCaughtException("Cant navigate because previous navigation operation encounter error, last exception ", this.mLastException);
+        }
+
         if (canExecuteNavigationStackOperation()) {
             /**
              * when current Handler Message is executing a NavigationScene navigation stack operation or GroupScene operation,
@@ -668,10 +675,11 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
         try {
             operation.execute(operationEndAction);
         } catch (final Throwable throwable) {
+            this.mLastException = throwable;
             if (this.mThrowableHandler == null) {
                 this.mThrowableHandler = new AsyncHandler(Looper.getMainLooper());
             }
-            this.mThrowableHandler.post(new Runnable() {
+            this.mThrowableHandler.postAtFrontOfQueue(new Runnable() {
                 @Override
                 public void run() {
                     throw throwable;
