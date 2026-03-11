@@ -266,10 +266,10 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
      * The only thing is that there may be some problems with Dialog.
      */
     private void scheduleToNextUIThreadLoop(@NonNull final Operation operation) {
-        this.scheduleToNextUIThreadLoop(operation, false);
+        this.scheduleToNextUIThreadLoop(operation, false, false);
     }
 
-    private void scheduleToNextUIThreadLoop(@NonNull final Operation operation, boolean async) {
+    private void scheduleToNextUIThreadLoop(@NonNull final Operation operation, boolean async, boolean hasAsyncUrgentHint) {
         if (canExecuteNavigationStackOperation()) {
             /**
              * when current Handler Message is executing a NavigationScene navigation stack operation or GroupScene operation,
@@ -317,8 +317,14 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
                 };
 
                 if (async) {
-                    LoggerManager.getInstance().i(TAG, "post " + operation + " async to message queue because of async argument");
-                    requireMessageQueue().postAsync(task);
+                    NavigationMessageQueue navigationMessageQueue = requireMessageQueue();
+                    if (hasAsyncUrgentHint && !navigationMessageQueue.hasPendingTasks()) {
+                        LoggerManager.getInstance().i(TAG, "post " + operation + " async to message queue head because of async and urgent argument");
+                        requireMessageQueue().postUrgentAtHead(task);
+                    } else {
+                        LoggerManager.getInstance().i(TAG, "post " + operation + " async to message queue because of async argument");
+                        requireMessageQueue().postAsync(task);
+                    }
                 } else {
                     LoggerManager.getInstance().i(TAG, "post " + operation + " sync to message queue start");
                     requireMessageQueue().postSync(task);
@@ -420,7 +426,7 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
     public void pop(PopOptions popOptions) {
         LoggerManager.getInstance().i(TAG, "pop with PopOptions");
         if (popOptions.isUsePost()) {
-            scheduleToNextUIThreadLoop(new CoordinatePopOptionOperation(this, requireMessageQueue(), popOptions), popOptions.isUsePostWhenPause());
+            scheduleToNextUIThreadLoop(new CoordinatePopOptionOperation(this, requireMessageQueue(), popOptions), popOptions.isUsePostWhenPause(), false);
         } else {
             scheduleToNextUIThreadLoop(new PopOptionOperation(popOptions));
         }
@@ -474,7 +480,7 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
         }
         if (pushOptions.isUsePost()) {
             LoggerManager.getInstance().i(TAG, "push " + scene.toString() + " by post");
-            scheduleToNextUIThreadLoop(new CoordinatePushOptionOperation(this, requireMessageQueue(), scene, pushOptions), pushOptions.isUsePostWhenPause());
+            scheduleToNextUIThreadLoop(new CoordinatePushOptionOperation(this, requireMessageQueue(), scene, pushOptions), pushOptions.isUsePostWhenPause(), pushOptions.isUsePostWhenPauseUrgentHint());
         } else {
             LoggerManager.getInstance().i(TAG, "push " + scene.toString());
             scheduleToNextUIThreadLoop(new PushOptionOperation(scene, pushOptions));
