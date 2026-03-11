@@ -46,9 +46,6 @@ public class PopDestroyOperation implements Operation {
     public void execute(final Runnable operationEndAction) {
         //cache view before destroy it
         View currentSceneView = this.mCurrentScene.getView();
-        if (currentSceneView == null) {
-            throw new SceneInternalException("Current Scene view can't be null");
-        }
 
         for (final Record record : this.mDestroyRecordList) {
             this.mManagerAbility.destroyByRecord(record, mCurrentRecord);
@@ -81,6 +78,10 @@ public class PopDestroyOperation implements Operation {
         final boolean isNavigationSceneInAnimationState = mNavigationScene.getState().value >= State.STARTED.value;
 
         if (!this.mManagerAbility.isDisableNavigationAnimation() && isNavigationSceneInAnimationState && navigationAnimationExecutor != null && navigationAnimationExecutor.isSupport(mCurrentRecord.mScene.getClass(), mReturnRecord.mScene.getClass())) {
+            if (currentSceneView == null) {
+                throw new SceneInternalException("Current Scene view can't be null");
+            }
+
             ViewGroup animationContainer = mNavigationScene.getAnimationContainer();
             // Ensure that the Z-axis is correct
             AnimatorUtility.bringAnimationViewToFrontIfNeeded(mNavigationScene);
