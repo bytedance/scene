@@ -34,9 +34,10 @@ import com.bytedance.scene.utlity.Utility;
  * Created by JiangQi on 8/4/25.
  */
 public class SceneLifecycleStateScheduler {
-    public static void transition(@NonNull NavigationScene navigationScene, @NonNull Scene scene, @NonNull State to, @Nullable Bundle bundle,
+    public static void transition(@NonNull NavigationScene navigationScene,
+                                  @NonNull Scene scene, @NonNull State to, @Nullable Bundle bundle,
                                   boolean skipModifyViewTreeHierarchy,
-                                  @Nullable Function<Scene, Void> afterOnActivityCreatedAction, @Nullable Runnable endAction) {
+                                  @Nullable LifecycleHooks lifecycleHooks, @Nullable Runnable endAction) {
         State currentState = scene.getState();
         if (currentState == to) {
             if (endAction != null) {
@@ -51,7 +52,7 @@ public class SceneLifecycleStateScheduler {
                     scene.dispatchAttachActivity(navigationScene.requireActivity());
                     scene.dispatchAttachScene(navigationScene);
                     scene.dispatchCreate(bundle);
-                    transition(navigationScene, scene, to, bundle, skipModifyViewTreeHierarchy, afterOnActivityCreatedAction, endAction);
+                    transition(navigationScene, scene, to, bundle, skipModifyViewTreeHierarchy, lifecycleHooks, endAction);
                     break;
                 case CREATED:
                     ViewGroup containerView = navigationScene.getSceneContainer();
@@ -86,12 +87,15 @@ public class SceneLifecycleStateScheduler {
                         }
                     }
                     scene.getView().setVisibility(View.GONE);
-                    transition(navigationScene, scene, to, bundle, skipModifyViewTreeHierarchy, afterOnActivityCreatedAction, endAction);
+                    transition(navigationScene, scene, to, bundle, skipModifyViewTreeHierarchy, lifecycleHooks, endAction);
                     break;
                 case VIEW_CREATED:
                     scene.dispatchActivityCreated(bundle);
-                    if (afterOnActivityCreatedAction != null) {
-                        afterOnActivityCreatedAction.apply(scene);
+                    if (lifecycleHooks != null) {
+                        Function<Scene, Void> afterOnActivityCreatedAction = lifecycleHooks.getAfterActivityCreated();
+                        if (afterOnActivityCreatedAction != null) {
+                            afterOnActivityCreatedAction.apply(scene);
+                        }
                     }
                     transition(navigationScene, scene, to, bundle, skipModifyViewTreeHierarchy, null, endAction);
                     break;
@@ -103,10 +107,28 @@ public class SceneLifecycleStateScheduler {
                         doAttachWhenReuse(navigationScene, scene, bundle);
                     }
                     scene.dispatchStart();
+                    if (lifecycleHooks != null) {
+                        Function<Scene, Void> afterOnStartAction = lifecycleHooks.getAfterStart();
+                        if (afterOnStartAction != null) {
+                            afterOnStartAction.apply(scene);
+                        }
+                    }
                     transition(navigationScene, scene, to, bundle, skipModifyViewTreeHierarchy, null, endAction);
                     break;
                 case STARTED:
+                    if (lifecycleHooks != null) {
+                        Function<Scene, Void> beforeOnResumeAction = lifecycleHooks.getBeforeResume();
+                        if (beforeOnResumeAction != null) {
+                            beforeOnResumeAction.apply(scene);
+                        }
+                    }
                     scene.dispatchResume();
+                    if (lifecycleHooks != null) {
+                        Function<Scene, Void> afterOnResumeAction = lifecycleHooks.getAfterResume();
+                        if (afterOnResumeAction != null) {
+                            afterOnResumeAction.apply(scene);
+                        }
+                    }
                     ((NavigationSceneManager) navigationScene.mNavigationSceneManager).onSceneResumedWindowFocusChanged(scene);
                     transition(navigationScene, scene, to, bundle, skipModifyViewTreeHierarchy, null, endAction);
                     break;

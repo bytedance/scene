@@ -157,6 +157,40 @@ public class NavigationStackLaunchModeTests {
     }
 
     /**
+     * this have bug, because NoAnimationExecutor will still suppress recycle for skipDrawUntilViewMeasureReady
+     * TODO, fix NoAnimationExecutor issue
+     */
+    @Test
+    public void testPushSingleTask_With_Recycle() {
+        final TestScene groupScene = new TestScene();
+        Pair<SceneLifecycleManager<NavigationScene>, NavigationScene> pair = NavigationSourceUtility.createFromInitSceneLifecycleManager(groupScene);
+
+        SceneLifecycleManager sceneLifecycleManager = pair.first;
+        NavigationScene navigationScene = pair.second;
+
+        sceneLifecycleManager.onStart();
+        sceneLifecycleManager.onResume();
+
+        navigationScene.push(TestChildScene.class, null, new PushOptions.Builder().setAnimation(new NoAnimationExecutor()).build());
+        assertEquals(2, navigationScene.getSceneList().size());
+
+        for (int i = 0; i < 100; i++) {
+            navigationScene.push(CountChildScene.class, null, new PushOptions.Builder().setAnimation(new NoAnimationExecutor()).build());
+        }
+        assertEquals(102, navigationScene.getSceneList().size());
+
+        navigationScene.recycleInvisibleScenes();
+        navigationScene.push(TestChildScene.class, null, new PushOptions.Builder().setLaunchMode(LaunchMode.SINGLE_TASK).setAnimation(new NoAnimationExecutor()).build());
+        assertEquals(2, navigationScene.getSceneList().size());
+        assertTrue(((TestChildScene) navigationScene.getSceneList().get(1)).mOnNewIntentInvoked);
+
+        ((TestChildScene) navigationScene.getSceneList().get(1)).mOnNewIntentInvoked = false;
+        navigationScene.recycleInvisibleScenes();
+        navigationScene.push(TestChildScene.class, null, new PushOptions.Builder().setLaunchMode(LaunchMode.SINGLE_TASK).setAnimation(new NoAnimationExecutor()).build());
+        assertTrue(((TestChildScene) navigationScene.getSceneList().get(1)).mOnNewIntentInvoked);
+    }
+
+    /**
      * Restore
      */
     @Test

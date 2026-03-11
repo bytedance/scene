@@ -619,11 +619,20 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
     }
 
     @Override
-    public void moveState(@NonNull NavigationScene navigationScene,
+    public void moveState(@NonNull NavigationScene navigationScene, @NonNull Scene scene, @NonNull State to, @Nullable Bundle bundle, boolean causedByActivityLifeCycle, @Nullable Function<Scene, Void> afterOnActivityCreatedAction, @Nullable Runnable endAction) {
+        LifecycleHooks lifecycleHooks = null;
+        if (afterOnActivityCreatedAction != null) {
+            lifecycleHooks = new LifecycleHooks();
+            lifecycleHooks.setAfterActivityCreated(afterOnActivityCreatedAction);
+        }
+        this.transition(navigationScene, scene, to, bundle, causedByActivityLifeCycle, lifecycleHooks, endAction);
+    }
+
+    private void transition(@NonNull NavigationScene navigationScene,
                                  @NonNull Scene scene, @NonNull State to,
                                  @Nullable Bundle bundle,
                                  boolean causedByActivityLifeCycle,
-                                 @Nullable Function<Scene, Void> afterOnActivityCreatedAction,
+                                 @Nullable LifecycleHooks lifecycleHooks,
                                  @Nullable Runnable endAction) {
         if (bundle != null) {
             LoggerManager.getInstance().i(TAG, "Sync Scene " + scene.toString() + " Lifecycle [" + scene.getState().name + " -> " + to.name + "] with previous saved State");
@@ -639,7 +648,7 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
 
         try {
             this.mCurrentSyncingStateScene = scene;
-            SceneLifecycleStateScheduler.transition(navigationScene, scene, to, bundle, causedByActivityLifeCycle, afterOnActivityCreatedAction, endAction);
+            SceneLifecycleStateScheduler.transition(navigationScene, scene, to, bundle, causedByActivityLifeCycle, lifecycleHooks, endAction);
         } finally {
             this.mCurrentSyncingStateScene = null;
         }
