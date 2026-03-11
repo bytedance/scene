@@ -42,6 +42,14 @@ public class SceneLifecycleManager<T extends Scene & SceneParent> {
     private static final String TAG = "SceneLifecycleManager";
     private static final String SCENE_LIFECYCLE_MANAGER_ON_SAVE_INSTANCE_STATE_TAG = "SceneLifecycleManager_onSaveInstanceState_TAG";
 
+    private static final String TRACE_ACTIVITY_CREATED_TAG = "SceneLifecycleDispatcher#OnActivityCreated";
+    private static final String TRACE_START_TAG = "SceneLifecycleDispatcher#OnStart";
+    private static final String TRACE_RESUME_TAG = "SceneLifecycleDispatcher#OnResume";
+    private static final String TRACE_PAUSE_TAG = "SceneLifecycleDispatcher#OnPause";
+    private static final String TRACE_STOP_TAG = "SceneLifecycleDispatcher#OnStop";
+    private static final String TRACE_DESTROY_VIEW_TAG = "SceneLifecycleDispatcher#OnDestroyView";
+    private static final String TRACE_SAVE_INSTANCE_STATE_TAG = "SceneLifecycleDispatcher#OnSaveInstance";
+
     private T mScene;
     @NonNull
     private SceneLifecycleManagerState mState = SceneLifecycleManagerState.NONE;
@@ -81,6 +89,7 @@ public class SceneLifecycleManager<T extends Scene & SceneParent> {
                                   @Nullable SceneStateSaveStrategy sceneStateSaveStrategy,
                                   boolean supportRestore,
                                   @Nullable Bundle savedInstanceState) {
+        SceneTrace.beginSection(TRACE_ACTIVITY_CREATED_TAG);
         if (this.mState != SceneLifecycleManagerState.NONE) {
             throw new IllegalStateException("invoke onDestroyView() first, current state " + this.mState.toString());
         }
@@ -123,9 +132,11 @@ public class SceneLifecycleManager<T extends Scene & SceneParent> {
         this.mScene.dispatchCreateView(sceneSavedInstanceState, viewGroup);
         viewGroup.addView(this.mScene.requireView(), new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         this.mScene.dispatchActivityCreated(sceneSavedInstanceState);
+        SceneTrace.endSection();
     }
 
     public void onStart() {
+        SceneTrace.beginSection(TRACE_START_TAG);
         if (this.mState != SceneLifecycleManagerState.ACTIVITY_CREATED && this.mState != SceneLifecycleManagerState.STOP) {
             throw new IllegalStateException("invoke onActivityCreated() or onStop() first, current state " + this.mState.toString());
         }
@@ -133,9 +144,11 @@ public class SceneLifecycleManager<T extends Scene & SceneParent> {
         log("onStart");
         this.mScene.dispatchStart();
         this.mStateSaved = false;
+        SceneTrace.endSection();
     }
 
     public void onResume() {
+        SceneTrace.beginSection(TRACE_RESUME_TAG);
         if (this.mState != SceneLifecycleManagerState.START && this.mState != SceneLifecycleManagerState.PAUSE) {
             throw new IllegalStateException("invoke onStart() or onPause() first, current state " + this.mState.toString());
         }
@@ -143,24 +156,29 @@ public class SceneLifecycleManager<T extends Scene & SceneParent> {
         log("onResume");
         this.mScene.dispatchResume();
         this.mStateSaved = false;
+        SceneTrace.endSection();
     }
 
     public void onPause() {
+        SceneTrace.beginSection(TRACE_PAUSE_TAG);
         if (this.mState != SceneLifecycleManagerState.RESUME) {
             throw new IllegalStateException("invoke onResume() first, current state " + this.mState.toString());
         }
         this.mState = SceneLifecycleManagerState.PAUSE;
         log("onPause");
         this.mScene.dispatchPause();
+        SceneTrace.endSection();
     }
 
     public void onStop() {
+        SceneTrace.beginSection(TRACE_STOP_TAG);
         if (this.mState != SceneLifecycleManagerState.PAUSE && this.mState != SceneLifecycleManagerState.START) {
             throw new IllegalStateException("invoke onPause() or onStart() first, current state " + this.mState.toString());
         }
         this.mState = SceneLifecycleManagerState.STOP;
         log("onStop");
         this.mScene.dispatchStop();
+        SceneTrace.endSection();
     }
 
     /**
@@ -173,6 +191,7 @@ public class SceneLifecycleManager<T extends Scene & SceneParent> {
      * LifCycleFragment/LifeCycleCompatFragment will skip onStart()/onResume()/onPause()/onStop() too
      */
     public void onDestroyView() {
+        SceneTrace.beginSection(TRACE_DESTROY_VIEW_TAG);
         if (this.mState != SceneLifecycleManagerState.STOP && this.mState != SceneLifecycleManagerState.ACTIVITY_CREATED) {
             throw new IllegalStateException("invoke onStop() or onActivityCreated() first, current state " + this.mState.toString());
         }
@@ -195,9 +214,11 @@ public class SceneLifecycleManager<T extends Scene & SceneParent> {
             this.mSceneStateSaveStrategy = null;
         }
         this.mScene = null;
+        SceneTrace.endSection();
     }
 
     public void onSaveInstanceState(@NonNull Bundle outState) {
+        SceneTrace.beginSection(TRACE_SAVE_INSTANCE_STATE_TAG);
         Utility.requireNonNull(outState, "outState can't be null");
         if (this.mState == SceneLifecycleManagerState.NONE) {
             throw new IllegalStateException("invoke onActivityCreated() first, current state " + this.mState.toString());
@@ -221,6 +242,7 @@ public class SceneLifecycleManager<T extends Scene & SceneParent> {
             outState.putBoolean(SCENE_LIFECYCLE_MANAGER_ON_SAVE_INSTANCE_STATE_TAG, true);
         }
         this.mStateSaved = true;
+        SceneTrace.endSection();
     }
 
     private void log(@NonNull String log) {
