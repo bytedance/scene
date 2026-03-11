@@ -48,20 +48,20 @@ public class PushOptions {
     private final boolean mUsePostWhenPause;
     private final boolean mUsePostWhenPauseUrgentHint;
     private final boolean mUseIdleWhenStop;
-    private final boolean mUseAnimationBeforePause;
+    private final boolean mUseAnimationBeforeStop;
     private final LaunchMode mLaunchMode;
     private final LaunchModeBehavior mLaunchModeBehavior;
     private final boolean mUseSceneFromReusePool;
     private final ReuseBehavior mReuseBehavior;
 
-    private PushOptions(Predicate<Scene> removePredicate, boolean isTranslucent, boolean usePost, boolean usePostWhenPause, boolean usePostWhenPauseUrgentHint, boolean useIdleWhenStop, boolean useAnimationBeforePause, PushResultCallback pushResultCallback, NavigationAnimationExecutor navigationAnimationExecutor, LaunchMode launchMode, LaunchModeBehavior launchModeBehavior, boolean useSceneFromReusePool, ReuseBehavior reuseBehavior) {
+    private PushOptions(Predicate<Scene> removePredicate, boolean isTranslucent, boolean usePost, boolean usePostWhenPause, boolean usePostWhenPauseUrgentHint, boolean useIdleWhenStop, boolean useAnimationBeforeStop, PushResultCallback pushResultCallback, NavigationAnimationExecutor navigationAnimationExecutor, LaunchMode launchMode, LaunchModeBehavior launchModeBehavior, boolean useSceneFromReusePool, ReuseBehavior reuseBehavior) {
         this.mRemovePredicate = removePredicate;
         this.mIsTranslucent = isTranslucent;
         this.mUsePost = usePost;
         this.mUsePostWhenPause = usePostWhenPause;
         this.mUsePostWhenPauseUrgentHint = usePostWhenPauseUrgentHint;
         this.mUseIdleWhenStop = useIdleWhenStop;
-        this.mUseAnimationBeforePause = useAnimationBeforePause;
+        this.mUseAnimationBeforeStop = useAnimationBeforeStop;
         this.mPushResultCallback = pushResultCallback;
         this.mNavigationAnimationExecutor = navigationAnimationExecutor;
         this.mLaunchMode = launchMode;
@@ -94,8 +94,8 @@ public class PushOptions {
         return this.mUseIdleWhenStop;
     }
 
-    public boolean isUseAnimationBeforePause() {
-        return this.mUseAnimationBeforePause;
+    public boolean isUseAnimationBeforeStop() {
+        return this.mUseAnimationBeforeStop;
     }
 
     public NavigationAnimationExecutor getNavigationAnimationFactory() {
@@ -155,7 +155,7 @@ public class PushOptions {
         private boolean mUsePostWhenPause = false;
         private boolean mUsePostWhenPauseUrgentHint = false;
         private boolean mUseIdleWhenStop = false;
-        private boolean mUseAnimationBeforePause = false;
+        private boolean mUseAnimationBeforeStop = false;
         private LaunchMode mLaunchMode;
         private LaunchModeBehavior mLaunchModeBehavior;
         private boolean mUseSceneFromReusePool = false;
@@ -210,13 +210,22 @@ public class PushOptions {
         }
 
         /**
-         * A -> B, after B onResume, framework will execute B animation immediately first, then execute A onPause/onStop after animation finished
+         * A -> B, after A onPause and B onResume, framework will execute B animation immediately first, then execute A onStop after animation finished
          * Must work together with {@link PushOptions.Builder#setUsePostWhenPause}
          */
         @NonNull
-        public Builder setUseAnimationBeforePause(boolean useAnimationBeforePause) {
-            this.mUseAnimationBeforePause = useAnimationBeforePause;
+        public Builder setUseAnimationBeforeStop(boolean useAnimationBeforeStop) {
+            this.mUseAnimationBeforeStop = useAnimationBeforeStop;
             return this;
+        }
+
+        /**
+         * use setUseAnimationBeforeStop instead
+         */
+        @NonNull
+        @Deprecated
+        public Builder setUseAnimationBeforePause(boolean useAnimationBeforeStop) {
+            return this.setUseAnimationBeforeStop(useAnimationBeforeStop);
         }
 
         @NonNull
@@ -269,7 +278,7 @@ public class PushOptions {
 
         @NonNull
         public PushOptions build() {
-            return new PushOptions(this.mRemovePredicate, this.mIsTranslucent, this.mUsePost, this.mUsePostWhenPause, this.mUsePostWhenPauseUrgentHint, this.mUseIdleWhenStop, this.mUseAnimationBeforePause, this.mPushResultCallback, this.mNavigationAnimationExecutor, this.mLaunchMode, this.mLaunchModeBehavior, this.mUseSceneFromReusePool, this.mReuseBehavior);
+            return new PushOptions(this.mRemovePredicate, this.mIsTranslucent, this.mUsePost, this.mUsePostWhenPause, this.mUsePostWhenPauseUrgentHint, this.mUseIdleWhenStop, this.mUseAnimationBeforeStop, this.mPushResultCallback, this.mNavigationAnimationExecutor, this.mLaunchMode, this.mLaunchModeBehavior, this.mUseSceneFromReusePool, this.mReuseBehavior);
         }
     }
 

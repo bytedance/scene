@@ -142,7 +142,7 @@ public class CoordinatePushOptionOperation implements Operation {
         Operation stopPreviousSceneOperation = null;
         PushAnimationOperation pushAnimationOperation = null;
 
-        if (mPushOptions.isUseAnimationBeforePause()) {
+        if (mPushOptions.isUseAnimationBeforeStop()) {
             //stop previous scene
             stopPreviousSceneOperation = new PushStopOperation(mManagerAbility, currentRecord);
 
