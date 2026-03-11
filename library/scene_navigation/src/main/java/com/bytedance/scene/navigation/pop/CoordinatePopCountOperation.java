@@ -101,7 +101,6 @@ public class CoordinatePopCountOperation implements Operation {
         final Scene returnScene = returnRecord.mScene;
         final Record currentRecord = this.mManagerAbility.getCurrentRecord();
         final Scene currentScene = currentRecord.mScene;
-        final View currentSceneView = currentScene.getView();
 
         //pause current scene
         PopPauseOperation popPauseOperation = new PopPauseOperation(this.mManagerAbility, currentRecord, currentScene);
@@ -121,7 +120,7 @@ public class CoordinatePopCountOperation implements Operation {
         boolean delayStopToAnimEnd =  mPopOptions != null && mPopOptions.isStopAfterAnimation();
         boolean delayed = delayStopToAnimEnd;
         if (mPopOptions == null || !delayed) {
-            final PopDestroyOperation popDestroyOperation = new PopDestroyOperation(this.mManagerAbility, mAnimationFactory, destroyRecordList, currentRecord, returnRecord, currentScene, currentSceneView);
+            final PopDestroyOperation popDestroyOperation = new PopDestroyOperation(this.mManagerAbility, mAnimationFactory, destroyRecordList, currentRecord, returnRecord, currentScene);
             final NavigationRunnable tmpPopDestroyTask = new NavigationRunnable() {
                 @Override
                 public void run() {
@@ -135,9 +134,9 @@ public class CoordinatePopCountOperation implements Operation {
             };
             popDestroyTask = tmpPopDestroyTask;
         } else {
-            final PopDestroyMiddlePageOperationV2 clearMiddlePageOperationV2 = new PopDestroyMiddlePageOperationV2(this.mManagerAbility, mAnimationFactory, destroyRecordList, currentRecord, returnRecord, currentScene, currentSceneView);
-            final PopAnimationOperationV2 animationOperationV2 = new PopAnimationOperationV2(this.mManagerAbility, mAnimationFactory, destroyRecordList, currentRecord, returnRecord, currentScene, currentSceneView, delayStopToAnimEnd);
-            final PopDestroyOperationV2 popDestroyOperationV2 = new PopDestroyOperationV2(this.mManagerAbility, mAnimationFactory, destroyRecordList, currentRecord, returnRecord, currentScene, currentSceneView);
+            final PopDestroyMiddlePageOperationV2 clearMiddlePageOperationV2 = new PopDestroyMiddlePageOperationV2(this.mManagerAbility, mAnimationFactory, destroyRecordList, currentRecord, returnRecord, currentScene);
+            final PopAnimationOperationV2 animationOperationV2 = new PopAnimationOperationV2(this.mManagerAbility, mAnimationFactory, destroyRecordList, currentRecord, returnRecord, currentScene, delayStopToAnimEnd);
+            final PopDestroyOperationV2 popDestroyOperationV2 = new PopDestroyOperationV2(this.mManagerAbility, mAnimationFactory, destroyRecordList, currentRecord, returnRecord, currentScene);
 
             final NavigationRunnable popDestroyOperationV2Task = new NavigationRunnable() {
                 @Override
@@ -191,10 +190,9 @@ public class CoordinatePopCountOperation implements Operation {
 
     private void executeNoAnimationOperation(PopPauseOperation popPauseOperation, PopResumeOperation popResumeOperation, Record returnRecord, Record currentRecord, List<Record> destroyRecordList, final Runnable operationEndAction) {
         final Scene currentScene = currentRecord.mScene;
-        final View currentSceneView = currentScene.getView();
 
-        final PopDestroyMiddlePageOperationV2 clearMiddlePageOperationV2 = new PopDestroyMiddlePageOperationV2(this.mManagerAbility, mAnimationFactory, destroyRecordList, currentRecord, returnRecord, currentScene, currentSceneView);
-        final PopDestroyOperationV2 popDestroyOperationV2 = new PopDestroyOperationV2(this.mManagerAbility, mAnimationFactory, destroyRecordList, currentRecord, returnRecord, currentScene, currentSceneView);
+        final PopDestroyMiddlePageOperationV2 clearMiddlePageOperationV2 = new PopDestroyMiddlePageOperationV2(this.mManagerAbility, mAnimationFactory, destroyRecordList, currentRecord, returnRecord, currentScene);
+        final PopDestroyOperationV2 popDestroyOperationV2 = new PopDestroyOperationV2(this.mManagerAbility, mAnimationFactory, destroyRecordList, currentRecord, returnRecord, currentScene);
 
         //skip animation if return target Scene is already destroyed and need to restore
         SceneTrace.beginSection(NavigationSceneManager.TRACE_EXECUTE_OPERATION_TAG);

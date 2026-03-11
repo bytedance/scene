@@ -13,6 +13,7 @@ import com.bytedance.scene.navigation.Operation;
 import com.bytedance.scene.navigation.Record;
 import com.bytedance.scene.utlity.AnimatorUtility;
 import com.bytedance.scene.utlity.CancellationSignalList;
+import com.bytedance.scene.utlity.SceneInternalException;
 
 import java.util.List;
 
@@ -29,10 +30,9 @@ public class PopDestroyOperation implements Operation {
     private final Record mCurrentRecord;
     private final Record mReturnRecord;
     private final Scene mCurrentScene;
-    private final View mCurrentSceneView;
 
     public PopDestroyOperation(NavigationManagerAbility navigationManagerAbility, NavigationAnimationExecutor animationFactory,
-                               List<Record> destroyRecordList, Record currentRecord, Record returnRecord, Scene currentScene, View currentSceneView) {
+                               List<Record> destroyRecordList, Record currentRecord, Record returnRecord, Scene currentScene) {
         this.mManagerAbility = navigationManagerAbility;
         this.mAnimationFactory = animationFactory;
         this.mNavigationScene = navigationManagerAbility.getNavigationScene();
@@ -40,11 +40,16 @@ public class PopDestroyOperation implements Operation {
         this.mCurrentRecord = currentRecord;
         this.mReturnRecord = returnRecord;
         this.mCurrentScene = currentScene;
-        this.mCurrentSceneView = currentSceneView;
     }
 
     @Override
     public void execute(final Runnable operationEndAction) {
+        //cache view before destroy it
+        View currentSceneView = this.mCurrentScene.getView();
+        if (currentSceneView == null) {
+            throw new SceneInternalException("Current Scene view can't be null");
+        }
+
         for (final Record record : this.mDestroyRecordList) {
             this.mManagerAbility.destroyByRecord(record, mCurrentRecord);
         }
@@ -92,7 +97,7 @@ public class PopDestroyOperation implements Operation {
                 }
             };
 
-            final AnimationInfo fromInfo = new AnimationInfo(mCurrentScene, mCurrentSceneView, mCurrentScene.getState(), mCurrentRecord.mIsTranslucent);
+            final AnimationInfo fromInfo = new AnimationInfo(mCurrentScene, currentSceneView, mCurrentScene.getState(), mCurrentRecord.mIsTranslucent);
             final AnimationInfo toInfo = new AnimationInfo(mReturnRecord.mScene, mReturnRecord.mScene.getView(), mReturnRecord.mScene.getState(), mReturnRecord.mIsTranslucent);
 
             this.mManagerAbility.getCancellationSignalManager().add(cancellationSignalList);

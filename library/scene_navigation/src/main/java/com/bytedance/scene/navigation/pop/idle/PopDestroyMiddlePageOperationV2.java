@@ -20,7 +20,7 @@ public class PopDestroyMiddlePageOperationV2 implements Operation {
     private final List<Record> mDestroyRecordList;
     private final Record mCurrentRecord;
 
-    public PopDestroyMiddlePageOperationV2(NavigationManagerAbility navigationManagerAbility, NavigationAnimationExecutor animationFactory, List<Record> destroyRecordList, Record currentRecord, Record returnRecord, Scene currentScene, View currentSceneView) {
+    public PopDestroyMiddlePageOperationV2(NavigationManagerAbility navigationManagerAbility, NavigationAnimationExecutor animationFactory, List<Record> destroyRecordList, Record currentRecord, Record returnRecord, Scene currentScene) {
         this.mManagerAbility = navigationManagerAbility;
         this.mDestroyRecordList = destroyRecordList;
         this.mCurrentRecord = currentRecord;

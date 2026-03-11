@@ -22,7 +22,7 @@ public class PopDestroyOperationV2 implements Operation {
     private final Record mCurrentRecord;
     private final Record mReturnRecord;
 
-    public PopDestroyOperationV2(NavigationManagerAbility navigationManagerAbility, NavigationAnimationExecutor animationFactory, List<Record> destroyRecordList, Record currentRecord, Record returnRecord, Scene currentScene, View currentSceneView) {
+    public PopDestroyOperationV2(NavigationManagerAbility navigationManagerAbility, NavigationAnimationExecutor animationFactory, List<Record> destroyRecordList, Record currentRecord, Record returnRecord, Scene currentScene) {
         this.mManagerAbility = navigationManagerAbility;
         this.mNavigationScene = navigationManagerAbility.getNavigationScene();
         this.mCurrentRecord = currentRecord;
