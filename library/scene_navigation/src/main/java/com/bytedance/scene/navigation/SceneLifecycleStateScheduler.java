@@ -34,7 +34,9 @@ import com.bytedance.scene.utlity.Utility;
  * Created by JiangQi on 8/4/25.
  */
 public class SceneLifecycleStateScheduler {
-    public static void transition(@NonNull NavigationScene navigationScene, @NonNull Scene scene, @NonNull State to, @Nullable Bundle bundle, boolean causedByActivityLifeCycle, @Nullable Function<Scene, Void> afterOnActivityCreatedAction, @Nullable Runnable endAction) {
+    public static void transition(@NonNull NavigationScene navigationScene, @NonNull Scene scene, @NonNull State to, @Nullable Bundle bundle,
+                                  boolean skipModifyViewTreeHierarchy,
+                                  @Nullable Function<Scene, Void> afterOnActivityCreatedAction, @Nullable Runnable endAction) {
         State currentState = scene.getState();
         if (currentState == to) {
             if (endAction != null) {
@@ -49,7 +51,7 @@ public class SceneLifecycleStateScheduler {
                     scene.dispatchAttachActivity(navigationScene.requireActivity());
                     scene.dispatchAttachScene(navigationScene);
                     scene.dispatchCreate(bundle);
-                    transition(navigationScene, scene, to, bundle, causedByActivityLifeCycle, afterOnActivityCreatedAction, endAction);
+                    transition(navigationScene, scene, to, bundle, skipModifyViewTreeHierarchy, afterOnActivityCreatedAction, endAction);
                     break;
                 case CREATED:
                     ViewGroup containerView = navigationScene.getSceneContainer();
@@ -58,7 +60,7 @@ public class SceneLifecycleStateScheduler {
                         Record record = navigationScene.findRecordByScene(scene);
                         navigationScene.mNavigationSceneManager.saveActivityCompatibleInfo(record);
                     }
-                    if (!causedByActivityLifeCycle) {
+                    if (!skipModifyViewTreeHierarchy) {
                         if (scene.getView().getBackground() == null) {
                             Record record = navigationScene.findRecordByScene(scene);
                             if (!record.mIsTranslucent && navigationScene.mNavigationSceneOptions.fixSceneBackground()) {
@@ -84,14 +86,14 @@ public class SceneLifecycleStateScheduler {
                         }
                     }
                     scene.getView().setVisibility(View.GONE);
-                    transition(navigationScene, scene, to, bundle, causedByActivityLifeCycle, afterOnActivityCreatedAction, endAction);
+                    transition(navigationScene, scene, to, bundle, skipModifyViewTreeHierarchy, afterOnActivityCreatedAction, endAction);
                     break;
                 case VIEW_CREATED:
                     scene.dispatchActivityCreated(bundle);
                     if (afterOnActivityCreatedAction != null) {
                         afterOnActivityCreatedAction.apply(scene);
                     }
-                    transition(navigationScene, scene, to, bundle, causedByActivityLifeCycle, null, endAction);
+                    transition(navigationScene, scene, to, bundle, skipModifyViewTreeHierarchy, null, endAction);
                     break;
                 case ACTIVITY_CREATED:
                     scene.getView().setVisibility(View.VISIBLE);
@@ -101,12 +103,12 @@ public class SceneLifecycleStateScheduler {
                         doAttachWhenReuse(navigationScene, scene, bundle);
                     }
                     scene.dispatchStart();
-                    transition(navigationScene, scene, to, bundle, causedByActivityLifeCycle, null, endAction);
+                    transition(navigationScene, scene, to, bundle, skipModifyViewTreeHierarchy, null, endAction);
                     break;
                 case STARTED:
                     scene.dispatchResume();
                     ((NavigationSceneManager) navigationScene.mNavigationSceneManager).onSceneResumedWindowFocusChanged(scene);
-                    transition(navigationScene, scene, to, bundle, causedByActivityLifeCycle, null, endAction);
+                    transition(navigationScene, scene, to, bundle, skipModifyViewTreeHierarchy, null, endAction);
                     break;
                 default:
                     throw new SceneInternalException("unreachable state case " + currentState.getName());
@@ -116,14 +118,14 @@ public class SceneLifecycleStateScheduler {
                 case RESUMED:
                     scene.dispatchPause();
                     ((NavigationSceneManager) navigationScene.mNavigationSceneManager).onScenePausedWindowFocusChanged(scene);
-                    transition(navigationScene, scene, to, bundle, causedByActivityLifeCycle, null, endAction);
+                    transition(navigationScene, scene, to, bundle, skipModifyViewTreeHierarchy, null, endAction);
                     break;
                 case STARTED:
                     scene.dispatchStop();
-                    if (!causedByActivityLifeCycle) {
+                    if (!skipModifyViewTreeHierarchy) {
                         scene.getView().setVisibility(View.GONE);
                     }
-                    transition(navigationScene, scene, to, bundle, causedByActivityLifeCycle, null, endAction);
+                    transition(navigationScene, scene, to, bundle, skipModifyViewTreeHierarchy, null, endAction);
                     break;
                 case ACTIVITY_CREATED:
                     if (to == State.VIEW_CREATED) {
@@ -134,16 +136,16 @@ public class SceneLifecycleStateScheduler {
                     ActivityCompatibleInfoCollector.clearHolder(scene);
                     View view = scene.getView();
                     scene.dispatchDestroyView();
-                    if (!causedByActivityLifeCycle) {
+                    if (!skipModifyViewTreeHierarchy) {
                         Utility.removeFromParentView(view);
                     }
-                    transition(navigationScene, scene, to, bundle, causedByActivityLifeCycle, null, endAction);
+                    transition(navigationScene, scene, to, bundle, skipModifyViewTreeHierarchy, null, endAction);
                     break;
                 case CREATED:
                     scene.dispatchDestroy();
                     scene.dispatchDetachScene();
                     scene.dispatchDetachActivity();
-                    transition(navigationScene, scene, to, bundle, causedByActivityLifeCycle, null, endAction);
+                    transition(navigationScene, scene, to, bundle, skipModifyViewTreeHierarchy, null, endAction);
                     break;
                 default:
                     throw new SceneInternalException("unreachable state case " + currentState.getName());
