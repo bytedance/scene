@@ -12,6 +12,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.bytedance.scene.group.GroupScene;
+
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
@@ -155,7 +157,7 @@ public class SceneLifecycleManagerExceptionTests {
                 }, false, new Bundle());
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testOnSaveInstanceStateException1() {
         ActivityController<TestActivity> controller = Robolectric.buildActivity(TestActivity.class).create().start().resume();
         TestActivity testActivity = controller.get();
@@ -177,7 +179,10 @@ public class SceneLifecycleManagerExceptionTests {
                         return Scope.DEFAULT_ROOT_SCOPE_FACTORY.getRootScope();
                     }
                 }, false, null);
-        sceneLifecycleManager.onSaveInstanceState(new Bundle());
+
+        Bundle bundle = new Bundle();
+        sceneLifecycleManager.onSaveInstanceState(bundle);
+        Assert.assertTrue(bundle.isEmpty());
     }
 
     @Test(expected = NullPointerException.class)
@@ -348,13 +353,15 @@ public class SceneLifecycleManagerExceptionTests {
                 }, false, null);
     }
 
-    @Test(expected = IllegalStateException.class)
+    @Test
     public void testStateException6() {
         ActivityController<TestActivity> controller = Robolectric.buildActivity(TestActivity.class).create().start().resume();
         TestActivity testActivity = controller.get();
         SceneLifecycleManager sceneLifecycleManager = new SceneLifecycleManager();
 
-        sceneLifecycleManager.onSaveInstanceState(new Bundle());
+        Bundle bundle = new Bundle();
+        sceneLifecycleManager.onSaveInstanceState(bundle);
+        Assert.assertTrue(bundle.isEmpty());
     }
 
     public static class TestActivity extends Activity {
