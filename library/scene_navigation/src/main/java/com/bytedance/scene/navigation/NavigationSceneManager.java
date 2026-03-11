@@ -61,7 +61,6 @@ import com.bytedance.scene.utlity.Action1;
 import com.bytedance.scene.utlity.AnimatorUtility;
 import com.bytedance.scene.utlity.CancellationSignalList;
 import com.bytedance.scene.utlity.ConfigurationUtility;
-import com.bytedance.scene.utlity.NavigationSceneViewUtility;
 import com.bytedance.scene.utlity.NonNullPair;
 import com.bytedance.scene.utlity.Predicate;
 import com.bytedance.scene.utlity.SceneInstanceUtility;
@@ -614,158 +613,6 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
         return false;
     }
 
-    /**
-     * Ensures a reused scene's view is properly attached to the view hierarchy
-     * and calls onPrepare only when the view needs to be re-attached.
-     *
-     * @param navigationScene The parent NavigationScene
-     * @param scene The Scene being reused
-     * @param bundle The saved state bundle, if any
-     */
-    static void doAttachWhenReuse(@NonNull NavigationScene navigationScene, @NonNull Scene scene, @Nullable Bundle bundle) {
-        View sceneView = scene.getView();
-        boolean isAttached = sceneView.isAttachedToWindow();
-        boolean hasParent = sceneView.getParent() != null;
-        ViewGroup container = navigationScene.getSceneContainer();
-
-        if (!isAttached && !hasParent && (container != null)) {
-            //The view is removed and needs to be added back to the container
-            if (bundle != null) {
-                int viewIndex = NavigationSceneViewUtility.targetViewIndexOfScene(navigationScene, navigationScene.mNavigationSceneOptions, scene);
-                container.addView(sceneView, viewIndex);
-            } else {
-                container.addView(sceneView);
-            }
-
-            if (!(scene instanceof IReuseScene)) {
-                throw new SceneInternalException("This Scene should implement IReuseScene");
-            }
-            ((IReuseScene) scene).onPrepare(bundle);
-        }
-    }
-
-    public static void moveStateWithSeparation(@NonNull NavigationScene navigationScene,
-                                  @NonNull Scene scene, @NonNull State to,
-                                  @Nullable Bundle bundle,
-                                  boolean causedByActivityLifeCycle,
-                                  @Nullable Function<Scene, Void> afterOnActivityCreatedAction,
-                                  @Nullable Runnable endAction) {
-        State currentState = scene.getState();
-        if (currentState == to) {
-            if (endAction != null) {
-                endAction.run();
-            }
-            return;
-        }
-
-        if (currentState.value < to.value) {
-            switch (currentState) {
-                case NONE:
-                    scene.dispatchAttachActivity(navigationScene.requireActivity());
-                    scene.dispatchAttachScene(navigationScene);
-                    scene.dispatchCreate(bundle);
-                    moveStateWithSeparation(navigationScene, scene, to, bundle, causedByActivityLifeCycle, afterOnActivityCreatedAction, endAction);
-                    break;
-                case CREATED:
-                    ViewGroup containerView = navigationScene.getSceneContainer();
-                    scene.dispatchCreateView(bundle, containerView);
-                    if (ActivityCompatibleInfoCollector.isTargetSceneType(scene)) {
-                        Record record = navigationScene.findRecordByScene(scene);
-                        navigationScene.mNavigationSceneManager.saveActivityCompatibleInfo(record);
-                    }
-                    if (!causedByActivityLifeCycle) {
-                        if (scene.getView().getBackground() == null) {
-                            Record record = navigationScene.findRecordByScene(scene);
-                            if (!record.mIsTranslucent && navigationScene.mNavigationSceneOptions.fixSceneBackground()) {
-                                int resId = navigationScene.mNavigationSceneOptions.getSceneBackgroundResId();
-                                if (resId > 0) {
-                                    scene.getView().setBackgroundDrawable(scene.requireSceneContext().getResources().getDrawable(resId));
-                                } else {
-                                    scene.getView().setBackgroundDrawable(Utility.getWindowBackground(scene.requireSceneContext()));
-                                }
-                                record.mSceneBackgroundSet = true;
-                            }
-                        }
-                        /*
-                         * TODO: What if the NavigationScene has been destroyed at this time?
-                         * TODO: What to do with serialization
-                         */
-                        if (bundle != null) {
-                            //Scene restore from save and restore path
-                            int viewIndex = NavigationSceneViewUtility.targetViewIndexOfScene(navigationScene, navigationScene.mNavigationSceneOptions, scene);
-                            containerView.addView(scene.getView(), viewIndex);
-                        } else {
-                            containerView.addView(scene.getView());
-                        }
-                    }
-                    scene.getView().setVisibility(View.GONE);
-                    moveStateWithSeparation(navigationScene, scene, to, bundle, causedByActivityLifeCycle, afterOnActivityCreatedAction, endAction);
-                    break;
-                case VIEW_CREATED:
-                    scene.dispatchActivityCreated(bundle);
-                    if (afterOnActivityCreatedAction != null) {
-                        afterOnActivityCreatedAction.apply(scene);
-                    }
-                    moveStateWithSeparation(navigationScene, scene, to, bundle, causedByActivityLifeCycle, null, endAction);
-                    break;
-                case ACTIVITY_CREATED:
-                    scene.getView().setVisibility(View.VISIBLE);
-                    if (navigationScene.isReusing(scene)) {
-                        // The view may have been removed by NavigationAnimationExecutor in the reuse process,
-                        // so we need to re-attach it to the view tree and prepare it for reuse if necessary.
-                        doAttachWhenReuse(navigationScene, scene, bundle);
-                    }
-                    scene.dispatchStart();
-                    moveStateWithSeparation(navigationScene, scene, to, bundle, causedByActivityLifeCycle, null, endAction);
-                    break;
-                case STARTED:
-                    scene.dispatchResume();
-                    ((NavigationSceneManager)navigationScene.mNavigationSceneManager).onSceneResumedWindowFocusChanged(scene);
-                    moveStateWithSeparation(navigationScene, scene, to, bundle, causedByActivityLifeCycle, null, endAction);
-                    break;
-                default:
-                    throw new SceneInternalException("unreachable state case " + currentState.getName());
-            }
-        } else {
-            switch (currentState) {
-                case RESUMED:
-                    scene.dispatchPause();
-                    ((NavigationSceneManager)navigationScene.mNavigationSceneManager).onScenePausedWindowFocusChanged(scene);
-                    moveStateWithSeparation(navigationScene, scene, to, bundle, causedByActivityLifeCycle, null, endAction);
-                    break;
-                case STARTED:
-                    scene.dispatchStop();
-                    if (!causedByActivityLifeCycle) {
-                        scene.getView().setVisibility(View.GONE);
-                    }
-                    moveStateWithSeparation(navigationScene, scene, to, bundle, causedByActivityLifeCycle, null, endAction);
-                    break;
-                case ACTIVITY_CREATED:
-                    if (to == State.VIEW_CREATED) {
-                        throw new IllegalArgumentException("cant switch state ACTIVITY_CREATED to VIEW_CREATED");
-                    }
-                    //continue
-                case VIEW_CREATED:
-                    ActivityCompatibleInfoCollector.clearHolder(scene);
-                    View view = scene.getView();
-                    scene.dispatchDestroyView();
-                    if (!causedByActivityLifeCycle) {
-                        Utility.removeFromParentView(view);
-                    }
-                    moveStateWithSeparation(navigationScene, scene, to, bundle, causedByActivityLifeCycle, null, endAction);
-                    break;
-                case CREATED:
-                    scene.dispatchDestroy();
-                    scene.dispatchDetachScene();
-                    scene.dispatchDetachActivity();
-                    moveStateWithSeparation(navigationScene, scene, to, bundle, causedByActivityLifeCycle, null, endAction);
-                    break;
-                default:
-                    throw new SceneInternalException("unreachable state case " + currentState.getName());
-            }
-        }
-    }
-
     @Override
     public void moveState(@NonNull NavigationScene navigationScene, @NonNull Scene scene, @NonNull State to, @Nullable Bundle bundle, boolean causedByActivityLifeCycle, @Nullable Runnable endAction) {
         this.moveState(navigationScene, scene, to, bundle, causedByActivityLifeCycle, null, endAction);
@@ -792,7 +639,7 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
 
         try {
             this.mCurrentSyncingStateScene = scene;
-            moveStateWithSeparation(navigationScene, scene, to, bundle, causedByActivityLifeCycle, afterOnActivityCreatedAction, endAction);
+            SceneLifecycleStateScheduler.transition(navigationScene, scene, to, bundle, causedByActivityLifeCycle, afterOnActivityCreatedAction, endAction);
         } finally {
             this.mCurrentSyncingStateScene = null;
         }
@@ -2100,7 +1947,7 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
         record.mLastSceneWindowFocused = hasFocus;
     }
 
-    private void onSceneResumedWindowFocusChanged(Scene scene) {
+    void onSceneResumedWindowFocusChanged(Scene scene) {
         if (!this.mNavigationScene.mNavigationSceneOptions.getUseWindowFocusChangedDispatch()) {
             return;
         }
@@ -2119,7 +1966,7 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
         }
     }
 
-    private void onScenePausedWindowFocusChanged(Scene scene) {
+    void onScenePausedWindowFocusChanged(Scene scene) {
         if (!this.mNavigationScene.mNavigationSceneOptions.getUseWindowFocusChangedDispatch()) {
             return;
         }
