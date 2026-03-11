@@ -10,6 +10,7 @@ import com.bytedance.scene.SceneLifecycleManager
 import com.bytedance.scene.Scope
 import com.bytedance.scene.Scope.RootScopeFactory
 import com.bytedance.scene.animation.animatorexecutor.NoAnimationExecutor
+import com.bytedance.scene.interfaces.CallerAwarePushResultCallback
 import com.bytedance.scene.interfaces.PopOptions
 import com.bytedance.scene.interfaces.PushOptions
 import com.bytedance.scene.navigation.NavigationScene
@@ -28,17 +29,19 @@ import java.util.UUID
 /**
  * Created by sunyongsheng.aengus on 2025/3/27
  * @author sunyongsheng.aengus@bytedance.com
+ *
+ * SceneGlobalConfig.useStrictPublishResultCallbackEnabled = true
  */
 @RunWith(RobolectricTestRunner::class)
 @Config(manifest = Config.NONE)
-class PushResultCallbackTests {
+class PushResultCallbackWithStrictTests {
 
     /**
      * Ensure navigationScene.currentScene is correct in pushResultCallback
      */
     @Test
     fun popWithUsePost() {
-        SceneGlobalConfig.useStrictPublishResultCallbackEnabled = false
+        SceneGlobalConfig.useStrictPublishResultCallbackEnabled = true
         val sceneLifecycleManager = SceneLifecycleManager<NavigationScene>()
         val navigationScene = NavigationScene()
         val controller = Robolectric.buildActivity(NavigationSourceUtility.TestActivity::class.java)
@@ -71,17 +74,20 @@ class PushResultCallbackTests {
         val secondId = secondScene.id
         var pushResultCallback = false
         val builder = PushOptions.Builder()
-            .setPushResultCallback {
-                pushResultCallback = true
-                Assert.assertEquals(secondId, it)
-                Assert.assertEquals(navigationScene.currentScene, rootScene)
-            }
+            .setPushResultCallback(object : CallerAwarePushResultCallback(requireNotNull(navigationScene.currentScene)) {
+                override fun onResult(it: Any?) {
+                    pushResultCallback = true
+                    Assert.assertEquals(secondId, it)
+                    Assert.assertEquals(navigationScene.currentScene, rootScene)
+                }
+            })
         navigationScene.push(secondScene, builder.build())
         navigationScene.pop(PopOptions.Builder().setUsePost(true).build())
 
         ShadowLooper.runUiThreadTasks()
 
         Assert.assertTrue(pushResultCallback)
+        SceneGlobalConfig.useStrictPublishResultCallbackEnabled = false;
     }
 
     /**
@@ -89,7 +95,7 @@ class PushResultCallbackTests {
      */
     @Test
     fun popWithUsePost_incorrect() {
-        SceneGlobalConfig.useStrictPublishResultCallbackEnabled = false
+        SceneGlobalConfig.useStrictPublishResultCallbackEnabled = true
         val sceneLifecycleManager = SceneLifecycleManager<NavigationScene>()
         val navigationScene = NavigationScene()
         val controller = Robolectric.buildActivity(NavigationSourceUtility.TestActivity::class.java)
@@ -122,17 +128,20 @@ class PushResultCallbackTests {
         val secondId = secondScene.id
         var pushResultCallback = false
         val builder = PushOptions.Builder()
-            .setPushResultCallback {
-                pushResultCallback = true
-                Assert.assertEquals(secondId, it)
-                Assert.assertEquals(navigationScene.currentScene, secondScene)
-            }
+            .setPushResultCallback(object : CallerAwarePushResultCallback(requireNotNull(navigationScene.currentScene)) {
+                override fun onResult(it: Any?) {
+                    pushResultCallback = true
+                    Assert.assertEquals(secondId, it)
+                    Assert.assertEquals(navigationScene.currentScene, rootScene)
+                }
+            })
         navigationScene.push(secondScene, builder.build())
         navigationScene.pop(PopOptions.Builder().setUsePost(true).build())
 
         ShadowLooper.runUiThreadTasks()
 
         Assert.assertTrue(pushResultCallback)
+        SceneGlobalConfig.useStrictPublishResultCallbackEnabled = false;
     }
 
     class TestScene : Scene() {

@@ -8,6 +8,7 @@ import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import com.bytedance.scene.Scene
+import com.bytedance.scene.interfaces.CallerAwarePushResultCallback
 import com.bytedance.scene.interfaces.PushOptions
 import com.bytedance.scene.ktx.navigationScene
 import com.bytedance.scene.ktx.requireNavigationScene
@@ -34,13 +35,16 @@ class SceneResultScene_0 : Scene() {
         btn.text = getString(R.string.nav_result_scene_to_scene_btn_0)
         btn.setOnClickListener {
             requireNavigationScene().push(SceneResultScene_1::class.java, null,
-                    PushOptions.Builder().setPushResultCallback { result ->
+                PushOptions.Builder().setPushResultCallback(object : CallerAwarePushResultCallback(this) {
+                    override fun onResult(result: Any?) {
                         if (result != null) {
                             Toast.makeText(activity, result.toString(), Toast.LENGTH_SHORT).show()
                         } else {
                             Toast.makeText(activity, "null", Toast.LENGTH_SHORT).show()
                         }
-                    }.build())
+                    }
+                }).build()
+            )
         }
 
         val btn2 = view.findViewById<Button>(R.id.btn2)
@@ -48,13 +52,15 @@ class SceneResultScene_0 : Scene() {
         btn2.text = getString(R.string.nav_result_scene_to_scene_btn_1)
         btn2.setOnClickListener {
             requireNavigationScene().push(SceneResultScene_0::class.java, null,
-                    PushOptions.Builder().clearTask().setPushResultCallback { result ->
-                        if (result != null) {
-                            Toast.makeText(activity, result.toString(), Toast.LENGTH_SHORT).show()
-                        } else {
-                            Toast.makeText(activity, "null", Toast.LENGTH_SHORT).show()
+                    PushOptions.Builder().clearTask().setPushResultCallback(object : CallerAwarePushResultCallback(this) {
+                        override fun onResult(result: Any?) {
+                            if (result != null) {
+                                Toast.makeText(activity, result.toString(), Toast.LENGTH_SHORT).show()
+                            } else {
+                                Toast.makeText(activity, "null", Toast.LENGTH_SHORT).show()
+                            }
                         }
-                    }.build())
+                    }).build())
         }
     }
 }

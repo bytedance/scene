@@ -1,6 +1,26 @@
+/*
+ * Copyright (C) 2019 ByteDance Inc
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.bytedance.scene.navigation
 
+import com.bytedance.scene.Scene
+import com.bytedance.scene.interfaces.CallerAwarePushResultCallback
 import com.bytedance.scene.interfaces.PushOptions
+import com.bytedance.scene.interfaces.PushResultCallback
+import com.bytedance.scene.logger.LoggerManager
+import com.bytedance.scene.utlity.SceneInternalException
 
 /**
  * A -> B
@@ -12,6 +32,7 @@ interface INavigationResultActionHandler {
     fun saveCallback(calleeRecord: Record, pushOptions: PushOptions)
     fun saveResult(calleeRecord: Record, result: Any?)
     fun deliverResultLegacy(calleeRecord: Record)
+    fun deliverResult(callerRecord: Record)
 }
 
 class LegacyNavigationResultActionHandler : INavigationResultActionHandler {
@@ -26,5 +47,95 @@ class LegacyNavigationResultActionHandler : INavigationResultActionHandler {
     override fun deliverResultLegacy(calleeRecord: Record) {
         // Ensure that the requesting Scene is correct
         calleeRecord.mPushResultCallback?.onResult(calleeRecord.mPushResult)
+    }
+
+    override fun deliverResult(callerRecord: Record) {
+
+    }
+}
+
+class NavigationResultActionHandler(private val managerAbility: NavigationManagerAbility) :
+    INavigationResultActionHandler {
+    private val TAG = "NavigationResultActionHandler"
+
+    override fun saveCallback(calleeRecord: Record, pushOptions: PushOptions) {
+        val pushResultCallback = pushOptions.pushResultCallback ?: return
+
+        require(pushResultCallback is CallerAwarePushResultCallback) {
+            "PushResultCallback must extends CallerAwarePushResultCallback"
+        }
+
+        var callerScene = pushResultCallback.callerSceneRef.get()
+        if (callerScene == null) {
+            LoggerManager.getInstance().e(
+                TAG, "This scene is already destroyed, has been garbage collected"
+            )
+            return
+        }
+
+        if (callerScene.parentScene == null) {
+            LoggerManager.getInstance().e(TAG, "This scene is not created or already destroyed")
+            return
+        }
+
+        val navigationScene = this.managerAbility.navigationScene
+        if (callerScene.parentScene != navigationScene) {
+            throw IllegalArgumentException("This scene is not belong to current NavigationScene")
+        }
+
+        callerScene = findTargetChildScene(callerScene, navigationScene)
+
+        val callerRecord = managerAbility.getRecordByScene(callerScene)
+            ?: throw IllegalArgumentException("Caller record not found")
+        bindCallerAndCalleeTogether(callerRecord, calleeRecord, pushResultCallback)
+    }
+
+    private fun findTargetChildScene(scene: Scene, navigationScene: NavigationScene): Scene {
+        if (scene.parentScene == navigationScene) {
+            return scene
+        } else {
+            return findTargetChildScene(requireNotNull(scene.parentScene), navigationScene)
+        }
+    }
+
+    override fun saveResult(calleeRecord: Record, result: Any?) {
+        val handler = calleeRecord.mSceneResultHandler
+        if (handler != null) {
+            handler.setCalleeResult(result)
+        } else {
+            LoggerManager.getInstance().e(
+                TAG,
+                "ignore setResult because this Scene is not started by PushResultCallback"
+            )
+        }
+    }
+
+    override fun deliverResultLegacy(calleeRecord: Record) {
+
+    }
+
+    override fun deliverResult(callerRecord: Record) {
+        callerRecord.mSceneResultHandler?.deliverResults()
+    }
+
+    private fun bindCallerAndCalleeTogether(
+        callerRecord: Record, calleeRecord: Record, pushResultCallback: PushResultCallback
+    ) {
+        var callerSceneResultHandler = callerRecord.mSceneResultHandler
+        if (callerSceneResultHandler == null) {
+            callerSceneResultHandler = SceneResultHandler(null)
+            callerRecord.mSceneResultHandler = callerSceneResultHandler
+        }
+
+        val callerHandler = CallerHandler(pushResultCallback)
+        callerSceneResultHandler.callerHandlerList.add(callerHandler)
+
+        if (calleeRecord.mSceneResultHandler != null) {
+            throw SceneInternalException("Callee SceneResultHandler already exists")
+        }
+
+        calleeRecord.mSceneResultHandler = SceneResultHandler {
+            callerHandler.cacheResult(it)
+        }
     }
 }

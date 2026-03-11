@@ -56,9 +56,14 @@ public class Record implements Parcelable {
     /**
      * In case of A starts B,
      * the attached callback will be placed in B's Record's mPushResultCallback
+     * <p>
+     * use SceneResultHandler instead
      */
     @Nullable
+    @Deprecated
     public PushResultCallback mPushResultCallback;
+    @Nullable
+    public SceneResultHandler mSceneResultHandler;
 
     String mSceneClassName;
 

@@ -54,6 +54,8 @@ public class PopDestroyOperation implements Operation {
             this.mManagerAbility.obtainNavigationResultActionHandler().deliverResultLegacy(mCurrentRecord);
         }
 
+        this.mManagerAbility.obtainNavigationResultActionHandler().deliverResult(mReturnRecord);
+
         this.mManagerAbility.restoreActivityStatus(mReturnRecord.mActivityStatusRecord);
         this.mManagerAbility.getNavigationListener().navigationChange(mCurrentRecord.mScene, mReturnRecord.mScene, false);
 

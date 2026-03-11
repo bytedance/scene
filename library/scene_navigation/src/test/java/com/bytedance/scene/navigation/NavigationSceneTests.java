@@ -9,6 +9,7 @@ import android.widget.FrameLayout;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.bytedance.scene.Scene;
+import com.bytedance.scene.SceneGlobalConfig;
 import com.bytedance.scene.group.ReuseGroupScene;
 import com.bytedance.scene.interfaces.PushOptions;
 import com.bytedance.scene.interfaces.PushResultCallback;
@@ -65,6 +66,7 @@ public class NavigationSceneTests {
 
     @Test
     public void testSetResult() {
+        SceneGlobalConfig.useStrictPublishResultCallbackEnabled = false;
         Scene rootScene = new Scene() {
             @NonNull
             @Override
@@ -101,6 +103,7 @@ public class NavigationSceneTests {
 
     @Test
     public void testSetResultNullValue() {
+        SceneGlobalConfig.useStrictPublishResultCallbackEnabled = false;
         Scene rootScene = new Scene() {
             @NonNull
             @Override

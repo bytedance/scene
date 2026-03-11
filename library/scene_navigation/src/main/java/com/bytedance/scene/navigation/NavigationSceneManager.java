@@ -113,6 +113,7 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
     private int mConfigurationChangesAllowList = 0;
     private Scene mCurrentSyncingStateScene = null;
     private boolean mSuppressRecycle = false;
+    private final boolean mStrictPublishResultCallbackEnabled;
 
     NavigationSceneManager(NavigationScene scene) {
         this.mNavigationScene = scene;
@@ -126,6 +127,7 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
         }
         this.mRestoreStateInLifecycle = this.mNavigationScene.isRestoreStateInLifecycle();
         this.mConfigurationChangesAllowList = this.mNavigationScene.getConfigurationChangesAllowList();
+        this.mStrictPublishResultCallbackEnabled = SceneGlobalConfig.useStrictPublishResultCallbackEnabled;
     }
 
     @NonNull
@@ -801,6 +803,8 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
                 obtainNavigationResultActionHandler().deliverResultLegacy(currentRecord);
             }
 
+            obtainNavigationResultActionHandler().deliverResult(returnRecord);
+
             /*
              * In case of multiple translucent overlays of an opaque Scene,
              * after returning, it is necessary to set the previous translucent Scene to STARTED
@@ -1359,7 +1363,11 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
     public INavigationResultActionHandler obtainNavigationResultActionHandler() {
         INavigationResultActionHandler navigationResultActionHandler = this.mNavigationResultActionHandler;
         if (navigationResultActionHandler == null) {
-            navigationResultActionHandler = new LegacyNavigationResultActionHandler();
+            if (this.mStrictPublishResultCallbackEnabled) {
+                navigationResultActionHandler = new NavigationResultActionHandler(this);
+            } else {
+                navigationResultActionHandler = new LegacyNavigationResultActionHandler();
+            }
             this.mNavigationResultActionHandler = navigationResultActionHandler;
         }
         return navigationResultActionHandler;
