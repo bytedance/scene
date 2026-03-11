@@ -138,23 +138,18 @@ public class CoordinatePushOptionOperation implements Operation {
         //execute new scene's lifecycle
         final PushCreateOperation createAndResumeNewSceneOperation = new PushCreateOperation(mManagerAbility, mScene, mPushOptions);
 
-        //stop previous scene and execute animation if needed
-        Operation stopPreviousSceneOperation = null;
-        PushAnimationOperation pushAnimationOperation = null;
-
         //stop previous scene
-        stopPreviousSceneOperation = new PushStopOperation(mManagerAbility, currentRecord);
+        final Operation stopPreviousSceneOperation = new PushStopOperation(mManagerAbility, currentRecord);
 
         //execute animation if needed
-        pushAnimationOperation = new PushAnimationOperation(mManagerAbility, currentRecord);
+        final PushAnimationOperation pushAnimationOperation = new PushAnimationOperation(mManagerAbility, currentRecord);
 
-        Operation finalStopPreviousSceneOperation = stopPreviousSceneOperation;
         final NavigationRunnable stopPreviousSceneTask = new NavigationRunnable() {
             @Override
             public void run() {
                 SceneTrace.beginSection(NavigationSceneManager.TRACE_EXECUTE_OPERATION_TAG);
                 String suppressTag = mManagerAbility.beginSuppressStackOperation("NavigationManager execute operation directly");
-                mManagerAbility.executeOperationSafely(finalStopPreviousSceneOperation, operationEndAction);
+                mManagerAbility.executeOperationSafely(stopPreviousSceneOperation, operationEndAction);
                 mManagerAbility.endSuppressStackOperation(suppressTag);
                 mManagerAbility.notifySceneStateChanged();
                 SceneTrace.endSection();
@@ -162,7 +157,6 @@ public class CoordinatePushOptionOperation implements Operation {
         };
 
         if (currentRecord != null) {
-            PushAnimationOperation finalPushAnimationOperation = pushAnimationOperation;
             final NavigationRunnable createAndResumeNewSceneTask = new NavigationRunnable() {
                 @Override
                 public void run() {
@@ -172,7 +166,7 @@ public class CoordinatePushOptionOperation implements Operation {
                         @Override
                         public void run() {
                             //first execute animation, then execute stop
-                            mManagerAbility.executeOperationSafely(finalPushAnimationOperation, new Runnable() {
+                            mManagerAbility.executeOperationSafely(pushAnimationOperation, new Runnable() {
                                 @Override
                                 public void run() {
                                     if (mPushOptions.isUseIdleWhenStop()) {
