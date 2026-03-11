@@ -79,7 +79,7 @@ public class SceneLifecycleManager<T extends Scene & SceneParent> {
                                   boolean supportRestore,
                                   @Nullable Bundle savedInstanceState) {
         ViewGroup viewGroup = viewFinder.requireViewById(sceneContainerViewId);
-        this.onActivityCreated(activity, viewGroup, scene, rootScopeFactory, null, supportRestore, savedInstanceState);
+        this.onActivityCreated(activity, viewGroup, scene, rootScopeFactory, sceneStateSaveStrategy, supportRestore, savedInstanceState);
     }
 
     public void onActivityCreated(@NonNull Activity activity,
