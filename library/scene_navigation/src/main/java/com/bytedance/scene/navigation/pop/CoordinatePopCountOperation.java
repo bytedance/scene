@@ -118,9 +118,8 @@ public class CoordinatePopCountOperation implements Operation {
             return;
         }
 
-        boolean delayStopToIdle = mPopOptions != null && mPopOptions.isUseIdleWhenStop();
         boolean delayStopToAnimEnd =  mPopOptions != null && mPopOptions.isStopAfterAnimation();
-        boolean delayed = delayStopToIdle || delayStopToAnimEnd;
+        boolean delayed = delayStopToAnimEnd;
         if (mPopOptions == null || !delayed) {
             final PopDestroyOperation popDestroyOperation = new PopDestroyOperation(this.mManagerAbility, mAnimationFactory, destroyRecordList, currentRecord, returnRecord, currentScene, currentSceneView);
             final NavigationRunnable tmpPopDestroyTask = new NavigationRunnable() {
@@ -159,26 +158,6 @@ public class CoordinatePopCountOperation implements Operation {
                     String suppressTag = mManagerAbility.beginSuppressStackOperation("NavigationManager execute operation directly");
                     mManagerAbility.executeOperationSafely(clearMiddlePageOperationV2, null);
                     mManagerAbility.executeOperationSafely(animationOperationV2, () -> mMessageQueue.postAsyncAtHead(popDestroyOperationV2Task));
-                    mManagerAbility.endSuppressStackOperation(suppressTag);
-                    SceneTrace.endSection();
-                }
-            };
-
-            if (delayStopToIdle) popDestroyTask = new NavigationRunnable() {
-                @Override
-                public void run() {
-                    SceneTrace.beginSection(NavigationSceneManager.TRACE_EXECUTE_OPERATION_TAG);
-                    String suppressTag = mManagerAbility.beginSuppressStackOperation("NavigationManager execute operation directly");
-                    mManagerAbility.executeOperationSafely(clearMiddlePageOperationV2, null);
-                    TaskStartSignal taskStartSignal = new TaskStartSignal();
-                    mManagerAbility.executeOperationSafely(animationOperationV2, new Runnable() {
-                        @Override
-                        public void run() {
-                            taskStartSignal.start();
-                        }
-                    });
-
-                    mMessageQueue.postAsyncDelayed(popDestroyOperationV2Task, taskStartSignal, animationOperationV2.cancellationSignalList, TimeUnit.SECONDS.toMillis(Constants.SCENE_DESTROY_MAX_TIMEOUT_SECONDS));
                     mManagerAbility.endSuppressStackOperation(suppressTag);
                     SceneTrace.endSection();
                 }
@@ -240,23 +219,8 @@ public class CoordinatePopCountOperation implements Operation {
                 mManagerAbility.executeOperationSafely(popResumeOperation, () -> {
 
                 });
-                if (mPopOptions == null || !mPopOptions.isUseIdleWhenStop()) {
-                    mManagerAbility.executeOperationSafely(popDestroyOperationV2, operationEndAction);
-                    mManagerAbility.notifySceneStateChanged();
-                } else {
-                    final NavigationRunnable popDestroyOperationV2Task = new NavigationRunnable() {
-                        @Override
-                        public void run() {
-                            SceneTrace.beginSection(NavigationSceneManager.TRACE_EXECUTE_OPERATION_TAG);
-                            String suppressTag = mManagerAbility.beginSuppressStackOperation("NavigationManager SkipPopAnimation execute popDestroyOperationV2Task operation directly");
-                            mManagerAbility.executeOperationSafely(popDestroyOperationV2, operationEndAction);
-                            mManagerAbility.endSuppressStackOperation(suppressTag);
-                            mManagerAbility.notifySceneStateChanged();
-                            SceneTrace.endSection();
-                        }
-                    };
-                    mMessageQueue.postAsyncDelayed(popDestroyOperationV2Task, null, null, TimeUnit.SECONDS.toMillis(Constants.SCENE_DESTROY_MAX_TIMEOUT_SECONDS));
-                }
+                mManagerAbility.executeOperationSafely(popDestroyOperationV2, operationEndAction);
+                mManagerAbility.notifySceneStateChanged();
                 mManagerAbility.endSuppressStackOperation(suppressTag);
                 SceneTrace.endSection();
             }

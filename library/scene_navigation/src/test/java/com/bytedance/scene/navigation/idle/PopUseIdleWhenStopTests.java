@@ -35,7 +35,7 @@ public class PopUseIdleWhenStopTests {
         ChildScene childScene = new ChildScene();
         navigationScene.push(childScene);
 
-        PopOptions popOptions = new PopOptions.Builder().setUsePost(true).setUseIdleWhenStop(true).build();
+        PopOptions popOptions = new PopOptions.Builder().setUsePost(true).build();
         navigationScene.pop(popOptions);
         navigationScene.forceExecutePendingNavigationOperation();
 

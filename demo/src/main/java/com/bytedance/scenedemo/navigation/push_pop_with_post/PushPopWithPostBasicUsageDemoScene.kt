@@ -59,7 +59,7 @@ class PushPopWithPostBasicUsageDemoScene : Scene() {
         })
 
         addButton(layout, "Back", View.OnClickListener {
-            requireNavigationScene().pop(PopOptions.Builder().setUsePost(true).setUseIdleWhenStop(true).build())
+            requireNavigationScene().pop(PopOptions.Builder().setUsePost(true).build())
         })
 
         addSpace(layout, 100)

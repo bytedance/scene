@@ -34,15 +34,13 @@ public class PopOptions {
     private final Predicate<Scene> mPopUtilPredicate;
     private final boolean mUsePost;
     private final boolean mUsePostWhenPause;
-    private final boolean mUseIdleWhenStop;
     private final boolean mStopAfterAnimation;
 
-    private PopOptions(NavigationAnimationExecutor navigationAnimatorExecutor, Predicate<Scene> popUtilPredicate, boolean usePost, boolean usePostWhenPause, boolean useIdleWhenStop, boolean mStopAfterAnimation) {
+    private PopOptions(NavigationAnimationExecutor navigationAnimatorExecutor, Predicate<Scene> popUtilPredicate, boolean usePost, boolean usePostWhenPause, boolean mStopAfterAnimation) {
         this.mNavigationAnimationExecutor = navigationAnimatorExecutor;
         this.mPopUtilPredicate = popUtilPredicate;
         this.mUsePost = usePost;
         this.mUsePostWhenPause = usePostWhenPause;
-        this.mUseIdleWhenStop = useIdleWhenStop;
         this.mStopAfterAnimation = mStopAfterAnimation;
     }
 
@@ -62,10 +60,6 @@ public class PopOptions {
         return this.mUsePostWhenPause;
     }
 
-    public boolean isUseIdleWhenStop() {
-        return this.mUseIdleWhenStop;
-    }
-
     public boolean isStopAfterAnimation() { return this.mStopAfterAnimation; }
 
     public static class Builder {
@@ -73,7 +67,6 @@ public class PopOptions {
         private Predicate<Scene> mPopUtilPredicate;
         private boolean mUsePost;
         private boolean mUsePostWhenPause = false;
-        private boolean mUseIdleWhenStop = false;
         private boolean mStopAfterAnimation = false;
 
         public Builder() {
@@ -111,12 +104,6 @@ public class PopOptions {
         }
 
         @NonNull
-        public Builder setUseIdleWhenStop(boolean useIdleWhenStop) {
-            this.mUseIdleWhenStop = useIdleWhenStop;
-            return this;
-        }
-
-        @NonNull
         public Builder setStopAfterAnimation(boolean stopAfterAnimation) {
             this.mStopAfterAnimation = stopAfterAnimation;
             return this;
@@ -124,7 +111,7 @@ public class PopOptions {
 
         @NonNull
         public PopOptions build() {
-            return new PopOptions(this.mNavigationAnimationExecutor, this.mPopUtilPredicate, this.mUsePost, this.mUsePostWhenPause, this.mUseIdleWhenStop, this.mStopAfterAnimation);
+            return new PopOptions(this.mNavigationAnimationExecutor, this.mPopUtilPredicate, this.mUsePost, this.mUsePostWhenPause, this.mStopAfterAnimation);
         }
     }
 

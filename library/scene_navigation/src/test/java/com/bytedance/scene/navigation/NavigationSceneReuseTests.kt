@@ -188,11 +188,6 @@ open class NavigationSceneReuseTests {
     }
 
     @Test
-    fun testReuseSceneLifecycleWithUseIdleWhenStop() {
-        testReuseSceneLifecycle(PopOptions.Builder().setUseIdleWhenStop(true).build())
-    }
-
-    @Test
     fun testReuseSceneLifecycleWithUsePost() {
         testReuseSceneLifecycle(PopOptions.Builder().setUsePost(true).build())
     }
