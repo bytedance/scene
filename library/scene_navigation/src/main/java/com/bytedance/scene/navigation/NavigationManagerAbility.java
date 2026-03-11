@@ -92,4 +92,10 @@ public interface NavigationManagerAbility {
     void destroyByRecord(Record record, Record currentRecord);
 
     void suppressRecycle(boolean suppress);
+
+    @Nullable
+    Record getRecordByScene(Scene scene);
+
+    @NonNull
+    INavigationResultActionHandler obtainNavigationResultActionHandler();
 }

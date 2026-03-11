@@ -87,6 +87,7 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
 
     private final NavigationScene mNavigationScene;
     private final RecordStack mBackStackList = new RecordStack();
+    private INavigationResultActionHandler mNavigationResultActionHandler = null;
     private final NavigationListener mNavigationListener;
     private AsyncHandler mThrowableHandler = null;
 
@@ -394,7 +395,7 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
         if (record == null) {
             throw new IllegalArgumentException("Scene is not found in stack");
         }
-        record.mPushResult = result;
+        obtainNavigationResultActionHandler().saveResult(record, result);
     }
 
     private static final Runnable EMPTY_RUNNABLE = new Runnable() {
@@ -797,7 +798,7 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
             }
             // Ensure that the requesting Scene is correct
             if (currentRecord.mPushResultCallback != null) {
-                currentRecord.mPushResultCallback.onResult(currentRecord.mPushResult);
+                obtainNavigationResultActionHandler().deliverResultLegacy(currentRecord);
             }
 
             /*
@@ -1292,7 +1293,7 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
 
             final NavigationAnimationExecutor animationFactory = pushOptions.getNavigationAnimationFactory();
             final Record record = Record.newInstance(scene, isSceneTranslucent, animationFactory);
-            record.mPushResultCallback = pushOptions.getPushResultCallback();
+            obtainNavigationResultActionHandler().saveCallback(record, pushOptions);
             mBackStackList.push(record);
 
             if (isTaskRootReplaced) {
@@ -1351,6 +1352,17 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
                 operationEndAction.run();
             }
         }
+    }
+
+    @Override
+    @NonNull
+    public INavigationResultActionHandler obtainNavigationResultActionHandler() {
+        INavigationResultActionHandler navigationResultActionHandler = this.mNavigationResultActionHandler;
+        if (navigationResultActionHandler == null) {
+            navigationResultActionHandler = new LegacyNavigationResultActionHandler();
+            this.mNavigationResultActionHandler = navigationResultActionHandler;
+        }
+        return navigationResultActionHandler;
     }
 
     private class RecreateOperation implements Operation {
@@ -1659,6 +1671,12 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
     @Override
     public void suppressRecycle(boolean suppress) {
         this.mSuppressRecycle = suppress;
+    }
+
+    @Nullable
+    @Override
+    public Record getRecordByScene(Scene scene) {
+        return this.mBackStackList.getRecordByScene(scene);
     }
 
     @Override

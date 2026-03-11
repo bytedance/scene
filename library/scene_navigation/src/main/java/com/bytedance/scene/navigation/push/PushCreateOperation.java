@@ -5,7 +5,6 @@ import com.bytedance.scene.animation.NavigationAnimationExecutor;
 import com.bytedance.scene.interfaces.PushOptions;
 import com.bytedance.scene.navigation.NavigationManagerAbility;
 import com.bytedance.scene.navigation.NavigationScene;
-import com.bytedance.scene.navigation.NavigationSceneManager;
 import com.bytedance.scene.navigation.Operation;
 import com.bytedance.scene.navigation.Record;
 import com.bytedance.scene.navigation.SceneTranslucent;
@@ -30,7 +29,7 @@ public class PushCreateOperation implements Operation {
         //add new scene to record list
         NavigationAnimationExecutor animationFactory = this.mPushOptions.getNavigationAnimationFactory();
         Record record = Record.newInstance(this.mScene, this.mIsSceneTranslucent, animationFactory);
-        record.mPushResultCallback = this.mPushOptions.getPushResultCallback();
+        this.mManagerAbility.obtainNavigationResultActionHandler().saveCallback(record, this.mPushOptions);
 
         this.mManagerAbility.pushRecord(record);
 

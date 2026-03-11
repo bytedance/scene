@@ -37,6 +37,8 @@ class SceneResultScene_0 : Scene() {
                     PushOptions.Builder().setPushResultCallback { result ->
                         if (result != null) {
                             Toast.makeText(activity, result.toString(), Toast.LENGTH_SHORT).show()
+                        } else {
+                            Toast.makeText(activity, "null", Toast.LENGTH_SHORT).show()
                         }
                     }.build())
         }
@@ -49,6 +51,8 @@ class SceneResultScene_0 : Scene() {
                     PushOptions.Builder().clearTask().setPushResultCallback { result ->
                         if (result != null) {
                             Toast.makeText(activity, result.toString(), Toast.LENGTH_SHORT).show()
+                        } else {
+                            Toast.makeText(activity, "null", Toast.LENGTH_SHORT).show()
                         }
                     }.build())
         }

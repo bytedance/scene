@@ -51,7 +51,7 @@ public class PopDestroyOperation implements Operation {
 
         // Ensure that the requesting Scene is correct
         if (mCurrentRecord.mPushResultCallback != null && mNavigationScene.isFixOnResultTiming()) {
-            mCurrentRecord.mPushResultCallback.onResult(mCurrentRecord.mPushResult);
+            this.mManagerAbility.obtainNavigationResultActionHandler().deliverResultLegacy(mCurrentRecord);
         }
 
         this.mManagerAbility.restoreActivityStatus(mReturnRecord.mActivityStatusRecord);

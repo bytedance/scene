@@ -3,7 +3,6 @@ package com.bytedance.scene.navigation.pop.idle;
 import android.view.View;
 
 import com.bytedance.scene.Scene;
-import com.bytedance.scene.State;
 import com.bytedance.scene.animation.NavigationAnimationExecutor;
 import com.bytedance.scene.navigation.NavigationManagerAbility;
 import com.bytedance.scene.navigation.NavigationScene;
@@ -36,7 +35,7 @@ public class PopDestroyOperationV2 implements Operation {
 
         // Ensure that the requesting Scene is correct
         if (mCurrentRecord.mPushResultCallback != null && mNavigationScene.isFixOnResultTiming()) {
-            mCurrentRecord.mPushResultCallback.onResult(mCurrentRecord.mPushResult);
+            this.mManagerAbility.obtainNavigationResultActionHandler().deliverResultLegacy(mCurrentRecord);
         }
 
         this.mManagerAbility.restoreActivityStatus(mReturnRecord.mActivityStatusRecord);
