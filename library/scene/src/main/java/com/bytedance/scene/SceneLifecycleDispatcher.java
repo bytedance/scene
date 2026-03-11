@@ -34,7 +34,6 @@ import androidx.annotation.RestrictTo;
  */
 @RestrictTo(LIBRARY_GROUP)
 public class SceneLifecycleDispatcher<T extends Scene & SceneParent> implements SceneContainerLifecycleCallback {
-    private static final String TAG = "SCENE";
 
     @IdRes
     private final int mSceneContainerViewId;
@@ -100,9 +99,6 @@ public class SceneLifecycleDispatcher<T extends Scene & SceneParent> implements 
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
-        if (this.mSupportRestore) {
-            outState.putString(TAG, this.mScene.getClass().getName());
-            this.mLifecycleManager.onSaveInstanceState(outState);
-        }
+        this.mLifecycleManager.onSaveInstanceState(outState);
     }
 }

@@ -28,6 +28,7 @@ import androidx.annotation.Nullable;
 import androidx.annotation.RestrictTo;
 
 import com.bytedance.scene.exceptions.OnSaveInstanceStateMethodMissingException;
+import com.bytedance.scene.logger.LoggerManager;
 import com.bytedance.scene.utlity.Utility;
 
 
@@ -40,6 +41,8 @@ import com.bytedance.scene.utlity.Utility;
 public class SceneLifecycleManager<T extends Scene & SceneParent> {
     private static final boolean DEBUG = false;
     private static final String TAG = "SceneLifecycleManager";
+    private static final String SCENE_TAG = "SceneLifecycleManager#SCENE";
+
     private static final String SCENE_LIFECYCLE_MANAGER_ON_SAVE_INSTANCE_STATE_TAG = "SceneLifecycleManager_onSaveInstanceState_TAG";
 
     private static final String TRACE_ACTIVITY_CREATED_TAG = "SceneLifecycleDispatcher#OnActivityCreated";
@@ -218,15 +221,19 @@ public class SceneLifecycleManager<T extends Scene & SceneParent> {
     }
 
     public void onSaveInstanceState(@NonNull Bundle outState) {
+        if (!this.mSupportRestore) {
+            LoggerManager.getInstance().e(TAG, "cant invoke onSaveInstanceState when not support restore");
+            return;
+        }
+
         SceneTrace.beginSection(TRACE_SAVE_INSTANCE_STATE_TAG);
         Utility.requireNonNull(outState, "outState can't be null");
         if (this.mState == SceneLifecycleManagerState.NONE) {
             throw new IllegalStateException("invoke onActivityCreated() first, current state " + this.mState.toString());
         }
-        if (!this.mSupportRestore) {
-            throw new IllegalArgumentException("cant invoke onSaveInstanceState when not support restore");
-        }
+
         log("onSaveInstanceState");
+        outState.putString(SCENE_TAG, this.mScene.getClass().getName());
 
         int saveStateReason = outState.getInt(SceneStateSaveReason.KEY_SCENE_SAVE_STATE_REASON, SceneStateSaveReason.PARENT_SAVED);
 
