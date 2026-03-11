@@ -78,8 +78,7 @@ public class SceneLifecycleDispatcher<T extends Scene & SceneParent> implements 
     @Override
     public void onActivityCreated(@NonNull Activity activity, @Nullable Bundle savedInstanceState) {
         SceneTrace.beginSection(TRACE_ACTIVITY_CREATED_TAG);
-        ViewGroup viewGroup = this.mViewFinder.requireViewById(this.mSceneContainerViewId);
-        this.mLifecycleManager.onActivityCreated(activity, viewGroup, this.mScene, this.mRootScopeFactory,
+        this.mLifecycleManager.onActivityCreated(activity, this.mViewFinder, this.mSceneContainerViewId, this.mScene, this.mRootScopeFactory,
                 this.mSceneStateSaveStrategy, this.mSupportRestore, this.mSupportRestore ? savedInstanceState : null);
         SceneTrace.endSection();
     }

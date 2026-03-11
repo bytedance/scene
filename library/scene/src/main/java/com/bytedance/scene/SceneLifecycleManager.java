@@ -22,6 +22,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.ViewGroup;
 
+import androidx.annotation.IdRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RestrictTo;
@@ -58,6 +59,18 @@ public class SceneLifecycleManager<T extends Scene & SceneParent> {
                                   @NonNull Scope.RootScopeFactory rootScopeFactory,
                                   boolean supportRestore,
                                   @Nullable Bundle savedInstanceState) {
+        this.onActivityCreated(activity, viewGroup, scene, rootScopeFactory, null, supportRestore, savedInstanceState);
+    }
+
+    public void onActivityCreated(@NonNull Activity activity,
+                                  @NonNull ViewFinder viewFinder,
+                                  @IdRes int sceneContainerViewId,
+                                  @NonNull T scene,
+                                  @NonNull Scope.RootScopeFactory rootScopeFactory,
+                                  @Nullable SceneStateSaveStrategy sceneStateSaveStrategy,
+                                  boolean supportRestore,
+                                  @Nullable Bundle savedInstanceState) {
+        ViewGroup viewGroup = viewFinder.requireViewById(sceneContainerViewId);
         this.onActivityCreated(activity, viewGroup, scene, rootScopeFactory, null, supportRestore, savedInstanceState);
     }
 
