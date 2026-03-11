@@ -79,22 +79,26 @@ class NavigationResultActionHandler(private val managerAbility: NavigationManage
         }
 
         val navigationScene = this.managerAbility.navigationScene
-        if (callerScene.parentScene != navigationScene) {
+        callerScene = findTargetChildScene(callerScene, navigationScene)
+
+        if (callerScene == null) {
             throw IllegalArgumentException("This scene is not belong to current NavigationScene")
         }
-
-        callerScene = findTargetChildScene(callerScene, navigationScene)
 
         val callerRecord = managerAbility.getRecordByScene(callerScene)
             ?: throw IllegalArgumentException("Caller record not found")
         bindCallerAndCalleeTogether(callerRecord, calleeRecord, pushResultCallback)
     }
 
-    private fun findTargetChildScene(scene: Scene, navigationScene: NavigationScene): Scene {
-        if (scene.parentScene == navigationScene) {
+    private fun findTargetChildScene(scene: Scene, navigationScene: NavigationScene): Scene? {
+        val parentScene = scene.parentScene
+        if (parentScene == null) {
+            return null
+        }
+        if (parentScene == navigationScene) {
             return scene
         } else {
-            return findTargetChildScene(requireNotNull(scene.parentScene), navigationScene)
+            return findTargetChildScene(parentScene, navigationScene)
         }
     }
 
