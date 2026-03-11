@@ -52,6 +52,7 @@ public class NavigationStackLaunchModeUsePostTests {
 
         SceneLifecycleManager sceneLifecycleManager = pair.first;
         NavigationScene navigationScene = pair.second;
+        navigationScene.setDefaultNavigationAnimationExecutor(null);
 
         sceneLifecycleManager.onStart();
         sceneLifecycleManager.onResume();

@@ -142,15 +142,11 @@ public class CoordinatePushOptionOperation implements Operation {
         Operation stopPreviousSceneOperation = null;
         PushAnimationOperation pushAnimationOperation = null;
 
-        if (mPushOptions.isUseAnimationBeforeStop()) {
-            //stop previous scene
-            stopPreviousSceneOperation = new PushStopOperation(mManagerAbility, currentRecord);
+        //stop previous scene
+        stopPreviousSceneOperation = new PushStopOperation(mManagerAbility, currentRecord);
 
-            //execute animation if needed
-            pushAnimationOperation = new PushAnimationOperation(mManagerAbility, currentRecord);
-        } else {
-            stopPreviousSceneOperation = new LegacyPushStopOperation(mManagerAbility, currentRecord);
-        }
+        //execute animation if needed
+        pushAnimationOperation = new PushAnimationOperation(mManagerAbility, currentRecord);
 
         Operation finalStopPreviousSceneOperation = stopPreviousSceneOperation;
         final NavigationRunnable stopPreviousSceneTask = new NavigationRunnable() {
@@ -175,25 +171,17 @@ public class CoordinatePushOptionOperation implements Operation {
                     mManagerAbility.executeOperationSafely(createAndResumeNewSceneOperation, new Runnable() {
                         @Override
                         public void run() {
-                            if (finalPushAnimationOperation != null) {
-                                //first execute animation, then execute stop
-                                mManagerAbility.executeOperationSafely(finalPushAnimationOperation, new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        if (mPushOptions.isUseIdleWhenStop()) {
-                                            mMessageQueue.postAsyncDelayed(stopPreviousSceneTask, TimeUnit.SECONDS.toMillis(10));
-                                        } else {
-                                            mMessageQueue.postAsyncAtHead(stopPreviousSceneTask);
-                                        }
+                            //first execute animation, then execute stop
+                            mManagerAbility.executeOperationSafely(finalPushAnimationOperation, new Runnable() {
+                                @Override
+                                public void run() {
+                                    if (mPushOptions.isUseIdleWhenStop()) {
+                                        mMessageQueue.postAsyncDelayed(stopPreviousSceneTask, TimeUnit.SECONDS.toMillis(10));
+                                    } else {
+                                        mMessageQueue.postAsyncAtHead(stopPreviousSceneTask);
                                     }
-                                });
-                            } else {
-                                if (mPushOptions.isUseIdleWhenStop()) {
-                                    mMessageQueue.postAsyncDelayed(stopPreviousSceneTask, TimeUnit.SECONDS.toMillis(10));
-                                } else {
-                                    mMessageQueue.postAsyncAtHead(stopPreviousSceneTask);
                                 }
-                            }
+                            });
                         }
                     });
                     mManagerAbility.endSuppressStackOperation(suppressTag);
