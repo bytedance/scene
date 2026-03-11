@@ -465,49 +465,7 @@ public class NavigationMessageQueueTests {
 
     @LooperMode(PAUSED)
     @Test
-    public void testExecuteWhenIdleOrTimeLimitWithBug() {
-        SceneGlobalConfig.fixNavigationMessageQueueMessageOrderIssue = false;
-        final StringBuilder log = new StringBuilder();
-
-        NavigationMessageQueue messageQueue = new NavigationMessageQueue();
-
-        messageQueue.postAsync(new NavigationRunnable() {
-            @Override
-            public void run() {
-                log.append("1");
-            }
-        });
-        messageQueue.postAsync(new NavigationRunnable() {
-            @Override
-            public void run() {
-                log.append("2");
-            }
-        });
-        messageQueue.postAsyncDelayed(new NavigationRunnable() {
-            @Override
-            public void run() {
-                log.append("3");
-            }
-        }, new TaskStartSignal(), null, 5000L);//use TaskStartSignal disable Looper.myQueue().addIdleHandler
-
-        log.append("0");
-
-        Assert.assertEquals("0", log.toString());
-
-        ShadowLooper.idleMainLooper(1000, TimeUnit.MILLISECONDS);
-        Assert.assertEquals("031", log.toString());
-
-        ShadowLooper.idleMainLooper(5000, TimeUnit.MILLISECONDS);
-        Assert.assertEquals("0312", log.toString());
-        Assert.assertEquals(0, messageQueue.getDelayMessageCount());
-
-        SceneGlobalConfig.fixNavigationMessageQueueMessageOrderIssue = false;
-    }
-
-    @LooperMode(PAUSED)
-    @Test
     public void testExecuteWhenIdleOrTimeLimitWithBugFixed() {
-        SceneGlobalConfig.fixNavigationMessageQueueMessageOrderIssue = true;
         final StringBuilder log = new StringBuilder();
 
         NavigationMessageQueue messageQueue = new NavigationMessageQueue();
@@ -542,8 +500,6 @@ public class NavigationMessageQueueTests {
         ShadowLooper.idleMainLooper(6000, TimeUnit.MILLISECONDS);//execute Handler posted task
         Assert.assertEquals("0312", log.toString());
         Assert.assertEquals(0, messageQueue.getDelayMessageCount());
-
-        SceneGlobalConfig.fixNavigationMessageQueueMessageOrderIssue = false;
     }
 
     @LooperMode(PAUSED)

@@ -8,9 +8,9 @@ package com.bytedance.scene;
 public class SceneGlobalConfig {
     public static volatile boolean validateScopeAndViewModelStoreSceneClassStrategy = false;
     public static volatile boolean sceneLifecycleCallbackObjectCreationOpt = false;
-    public static volatile boolean shouldSkipDispatchWindowFocusChangeToNotReadyScene = false;
-    public static volatile boolean usePreviousSavedStateWhenPauseIfPossible = false;
+    public static final boolean shouldSkipDispatchWindowFocusChangeToNotReadyScene = true;
+    public static final boolean usePreviousSavedStateWhenPauseIfPossible = true;
     public static volatile boolean cancelAnimationWhenForceExecutePendingNavigationOperation = false;
-    public static volatile boolean fixNavigationMessageQueueMessageOrderIssue = false;
+    public static final boolean fixNavigationMessageQueueMessageOrderIssue = true;
     public static volatile boolean useStrictPublishResultCallbackEnabled = false;
 }
