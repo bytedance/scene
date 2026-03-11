@@ -1,15 +1,9 @@
 package com.bytedance.scene.navigation.pop.idle;
 
-import android.view.View;
-
-import com.bytedance.scene.Scene;
-import com.bytedance.scene.animation.NavigationAnimationExecutor;
 import com.bytedance.scene.navigation.NavigationManagerAbility;
 import com.bytedance.scene.navigation.NavigationScene;
 import com.bytedance.scene.navigation.Operation;
 import com.bytedance.scene.navigation.Record;
-
-import java.util.List;
 
 /**
  * Created by jiangqi on 2023/11/19
@@ -22,7 +16,7 @@ public class PopDestroyOperationV2 implements Operation {
     private final Record mCurrentRecord;
     private final Record mReturnRecord;
 
-    public PopDestroyOperationV2(NavigationManagerAbility navigationManagerAbility, NavigationAnimationExecutor animationFactory, List<Record> destroyRecordList, Record currentRecord, Record returnRecord, Scene currentScene) {
+    public PopDestroyOperationV2(NavigationManagerAbility navigationManagerAbility, Record currentRecord, Record returnRecord) {
         this.mManagerAbility = navigationManagerAbility;
         this.mNavigationScene = navigationManagerAbility.getNavigationScene();
         this.mCurrentRecord = currentRecord;

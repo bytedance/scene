@@ -1,9 +1,5 @@
 package com.bytedance.scene.navigation.pop.idle;
 
-import android.view.View;
-
-import com.bytedance.scene.Scene;
-import com.bytedance.scene.animation.NavigationAnimationExecutor;
 import com.bytedance.scene.navigation.NavigationManagerAbility;
 import com.bytedance.scene.navigation.Operation;
 import com.bytedance.scene.navigation.Record;
@@ -20,7 +16,7 @@ public class PopDestroyMiddlePageOperationV2 implements Operation {
     private final List<Record> mDestroyRecordList;
     private final Record mCurrentRecord;
 
-    public PopDestroyMiddlePageOperationV2(NavigationManagerAbility navigationManagerAbility, NavigationAnimationExecutor animationFactory, List<Record> destroyRecordList, Record currentRecord, Record returnRecord, Scene currentScene) {
+    public PopDestroyMiddlePageOperationV2(NavigationManagerAbility navigationManagerAbility, List<Record> destroyRecordList, Record currentRecord) {
         this.mManagerAbility = navigationManagerAbility;
         this.mDestroyRecordList = destroyRecordList;
         this.mCurrentRecord = currentRecord;
