@@ -62,6 +62,10 @@ class DefaultReusePool : IReusePool {
         return reuseStates[scene] ?: ReuseState.INITED
     }
 
+    override fun isEmpty(): Boolean {
+        return reusePool.isEmpty()
+    }
+
     override fun clear() {
         reusePool.clear()
         reuseStates.clear()

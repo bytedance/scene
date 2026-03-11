@@ -53,6 +53,14 @@ interface IReusePool {
     fun getSceneState(scene: IReuseScene): ReuseState?
 
     /**
+     * Check if the reuse pool is completely empty.
+     * This should be a fast operation that doesn't involve complex scene matching.
+     *
+     * @return true if the pool contains no scenes, false otherwise
+     */
+    fun isEmpty(): Boolean
+
+    /**
      * Clear the reuse pool
      */
     fun clear()

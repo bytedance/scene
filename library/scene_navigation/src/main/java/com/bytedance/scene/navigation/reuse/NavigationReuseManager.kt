@@ -54,6 +54,16 @@ class NavigationReuseManager(
     }
 
     /**
+     * Check if the reuse pool is completely empty.
+     * This is a lightweight operation that doesn't involve scene matching logic.
+     *
+     * @return true if the reuse pool contains no scenes, false otherwise
+     */
+    fun isEmpty(): Boolean {
+        return reusePool.isEmpty()
+    }
+
+    /**
      * Destroy all caches
      */
     fun clear() {

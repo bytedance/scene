@@ -333,6 +333,10 @@ open class NavigationSceneReuseTests {
                 return reuseStates[scene] ?: ReuseState.INITED
             }
 
+            override fun isEmpty(): Boolean {
+                return reusePool.isEmpty()
+            }
+
             override fun clear() {
                 reusePool.clear()
                 reuseStates.clear()
@@ -426,6 +430,10 @@ open class NavigationSceneReuseTests {
                 return reuseStates[scene] ?: ReuseState.INITED
             }
 
+            override fun isEmpty(): Boolean {
+                return reusePool.isEmpty()
+            }
+
             override fun clear() {
                 reusePool.clear()
                 reuseStates.clear()
@@ -470,6 +478,44 @@ open class NavigationSceneReuseTests {
         // New scenarios should be created, not reused
         Assert.assertNotSame(reuseScene1, navigationScene.currentScene)
         Assert.assertNotSame(reuseScene2, navigationScene.currentScene)
+    }
+
+    /**
+     * Test isEmpty functionality for reuse pool optimization
+     */
+    @Test
+    fun testReusePoolIsEmpty() {
+        val rootScene: Scene = object : Scene() {
+            override fun onCreateView(
+                inflater: LayoutInflater,
+                container: ViewGroup,
+                savedInstanceState: Bundle?
+            ): View {
+                return View(requireSceneContext())
+            }
+        }
+
+        val navigationScene = NavigationSourceUtility.createFromSceneLifecycleManager(rootScene)
+        navigationScene.defaultNavigationAnimationExecutor = null
+
+        // Initially, reuse pool should be empty
+        Assert.assertTrue("Reuse pool should be empty initially", navigationScene.isReusePoolEmpty())
+
+        // Add a reusable scene
+        val reuseScene = ReuseScene().apply { reuse = true }
+        navigationScene.push(reuseScene)
+        navigationScene.remove(reuseScene) // This should add scene to reuse pool
+
+        // Now reuse pool should not be empty
+        Assert.assertFalse("Reuse pool should not be empty after adding scene", navigationScene.isReusePoolEmpty())
+
+        // Use the scene from reuse pool
+        val pushOption = PushOptions.Builder().setUseSceneFromReusePool(true).build()
+        val scene = navigationScene.acquireScene(ReuseScene::class.java, null, pushOption)
+        navigationScene.push(scene, pushOption)
+
+        // After reusing the scene, pool should be empty again
+        Assert.assertTrue("Reuse pool should be empty after reusing scene", navigationScene.isReusePoolEmpty())
     }
 
     /**

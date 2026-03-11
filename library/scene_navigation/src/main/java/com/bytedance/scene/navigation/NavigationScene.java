@@ -312,6 +312,23 @@ public final class NavigationScene extends Scene implements NavigationListener, 
     }
 
     /**
+     * Check if the reuse pool is completely empty.
+     * This is a lightweight check to determine if any scenes are available for reuse.
+     *
+     * @return true if the reuse pool is empty, false otherwise
+     */
+    public boolean isReusePoolEmpty() {
+        // Check reuse manager without creating it
+        // If mReuseManager is null, it means no reuse operations have occurred yet
+        if (mReuseManager == null) {
+            return true; // No reuse manager means pool is empty
+        }
+
+        // If reuse manager exists, delegate to its isEmpty check
+        return mReuseManager.isEmpty();
+    }
+
+    /**
      * Gets or creates the NavigationReuseManager instance if the NavigationScene is in a valid state.
      * Returns null if the NavigationScene has been destroyed.
      *
@@ -1436,6 +1453,9 @@ public final class NavigationScene extends Scene implements NavigationListener, 
         clazz = AnimationContainerLayout.class;
         clazz = NavigationSceneGetter.class;
         clazz = ActivityCompatibleBehavior.class;
+        clazz = ReuseGroupScene.class;
+        clazz = NavigationReuseManager.class;
+        clazz = DefaultReuseBehavior.class;
     }
 
     /**
