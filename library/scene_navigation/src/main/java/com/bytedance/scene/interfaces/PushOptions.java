@@ -52,14 +52,16 @@ public class PushOptions {
     private final LaunchModeBehavior mLaunchModeBehavior;
     private final boolean mUseSceneFromReusePool;
     private final ReuseBehavior mReuseBehavior;
+    private final boolean mIncreaseMessagePriority;
 
-    private PushOptions(Predicate<Scene> removePredicate, boolean isTranslucent, boolean usePost, boolean usePostWhenPause, boolean usePostWhenPauseUrgentHint, boolean useIdleWhenStop, PushResultCallback pushResultCallback, NavigationAnimationExecutor navigationAnimationExecutor, LaunchMode launchMode, LaunchModeBehavior launchModeBehavior, boolean useSceneFromReusePool, ReuseBehavior reuseBehavior) {
+    private PushOptions(Predicate<Scene> removePredicate, boolean isTranslucent, boolean usePost, boolean usePostWhenPause, boolean usePostWhenPauseUrgentHint, boolean useIdleWhenStop, boolean increaseMessagePriority, PushResultCallback pushResultCallback, NavigationAnimationExecutor navigationAnimationExecutor, LaunchMode launchMode, LaunchModeBehavior launchModeBehavior, boolean useSceneFromReusePool, ReuseBehavior reuseBehavior) {
         this.mRemovePredicate = removePredicate;
         this.mIsTranslucent = isTranslucent;
         this.mUsePost = usePost;
         this.mUsePostWhenPause = usePostWhenPause;
         this.mUsePostWhenPauseUrgentHint = usePostWhenPauseUrgentHint;
         this.mUseIdleWhenStop = useIdleWhenStop;
+        this.mIncreaseMessagePriority = increaseMessagePriority;
         this.mPushResultCallback = pushResultCallback;
         this.mNavigationAnimationExecutor = navigationAnimationExecutor;
         this.mLaunchMode = launchMode;
@@ -98,6 +100,10 @@ public class PushOptions {
 
     public PushResultCallback getPushResultCallback() {
         return this.mPushResultCallback;
+    }
+
+    public boolean getIncreaseMessagePriority() {
+        return this.mIncreaseMessagePriority;
     }
 
     public LaunchMode getLaunchMode(){
@@ -149,6 +155,7 @@ public class PushOptions {
         private boolean mUsePostWhenPause = false;
         private boolean mUsePostWhenPauseUrgentHint = false;
         private boolean mUseIdleWhenStop = false;
+        private boolean mIncreaseMessagePriority = false;
         private LaunchMode mLaunchMode;
         private LaunchModeBehavior mLaunchModeBehavior;
         private boolean mUseSceneFromReusePool = false;
@@ -202,6 +209,13 @@ public class PushOptions {
             return this;
         }
 
+        /**
+         * A -> B, after A onPause, framework wil execute B onCreate before other messages
+         */
+        public void setIncreaseMessagePriority(boolean value) {
+            this.mIncreaseMessagePriority = value;
+        }
+
         @NonNull
         public Builder clearCurrent() {
             return setRemovePredicate(new ReplacePredicate());
@@ -252,7 +266,7 @@ public class PushOptions {
 
         @NonNull
         public PushOptions build() {
-            return new PushOptions(this.mRemovePredicate, this.mIsTranslucent, this.mUsePost, this.mUsePostWhenPause, this.mUsePostWhenPauseUrgentHint, this.mUseIdleWhenStop, this.mPushResultCallback, this.mNavigationAnimationExecutor, this.mLaunchMode, this.mLaunchModeBehavior, this.mUseSceneFromReusePool, this.mReuseBehavior);
+            return new PushOptions(this.mRemovePredicate, this.mIsTranslucent, this.mUsePost, this.mUsePostWhenPause, this.mUsePostWhenPauseUrgentHint, this.mUseIdleWhenStop, this.mIncreaseMessagePriority, this.mPushResultCallback, this.mNavigationAnimationExecutor, this.mLaunchMode, this.mLaunchModeBehavior, this.mUseSceneFromReusePool, this.mReuseBehavior);
         }
     }
 

@@ -186,7 +186,7 @@ public class CoordinatePushOptionOperation implements Operation {
                 @Override
                 public void run() {
                     //但是这个逃不掉啊，不然当前这个任务就得走 postSync 了
-                    if (mNavigationScene.getIncreaseMessagePriority()) {
+                    if (mNavigationScene.getIncreaseMessagePriority() || mPushOptions.getIncreaseMessagePriority()) {
                         mMessageQueue.postUrgentAtHead(createAndResumeNewSceneTask);
                     } else {
                         mMessageQueue.postAsyncAtHead(createAndResumeNewSceneTask);
