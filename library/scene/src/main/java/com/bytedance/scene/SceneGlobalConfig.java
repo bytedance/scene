@@ -11,7 +11,6 @@ public class SceneGlobalConfig {
     public static final boolean shouldSkipDispatchWindowFocusChangeToNotReadyScene = true;
     public static final boolean usePreviousSavedStateWhenPauseIfPossible = true;
     public static volatile boolean cancelAnimationWhenForceExecutePendingNavigationOperation = false;
-    public static final boolean fixNavigationMessageQueueMessageOrderIssue = true;
     public static volatile boolean useStrictPublishResultCallbackEnabled = false;
     public static volatile boolean checkExceptionBeforeNavigate = false;
 }

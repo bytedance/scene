@@ -57,7 +57,6 @@ public class NavigationMessageQueue {
     private boolean mIsRunningPostSync = false;
     private IdleRunnable mIdleRunnable = null;
 
-    private final boolean mFixMessageOrderIncorrect = SceneGlobalConfig.fixNavigationMessageQueueMessageOrderIssue;
     private int mDelayMessageCount = 0;
 
     /**
@@ -123,7 +122,7 @@ public class NavigationMessageQueue {
             throw new SceneInternalException("mIdleRunnable should be null");
         }
 
-        if (this.mFixMessageOrderIncorrect && !this.mPendingTask.isEmpty()) {
+        if (!this.mPendingTask.isEmpty()) {
             this.mDelayMessageCount = this.mPendingTask.size();
             this.mHandler.removeCallbacks(this.mSceneNavigationTask);
         }
@@ -136,11 +135,9 @@ public class NavigationMessageQueue {
     private final SceneMainRunnable mSceneNavigationTask = new SceneMainRunnable() {
         @Override
         public void run() {
-            if (mFixMessageOrderIncorrect) {
-                while (mDelayMessageCount > 0) {
-                    mHandler.post(this);
-                    mDelayMessageCount--;
-                }
+            while (mDelayMessageCount > 0) {
+                mHandler.post(this);
+                mDelayMessageCount--;
             }
 
             NavigationRunnable currentTask = NavigationMessageQueue.this.mPendingTask.poll();
