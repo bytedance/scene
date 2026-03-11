@@ -94,6 +94,10 @@ public class NavigationMessageQueue {
         this.mHandler.post(this.mSceneNavigationTask);
     }
 
+    public boolean remove(@NonNull final NavigationRunnable runnable) {
+        return this.mPendingTask.remove(runnable);
+    }
+
     @VisibleForTesting
     public void forceExecuteIdleTask() {
         while (true) {
