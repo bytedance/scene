@@ -123,7 +123,7 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
         if (this.mReduceColdStartCallStack) {
             mSceneMessageQueue = null;
         } else {
-            mSceneMessageQueue = new NavigationMessageQueue(scene.getIncreaseMessagePriority());
+            mSceneMessageQueue = new NavigationMessageQueue();
         }
         this.mRestoreStateInLifecycle = this.mNavigationScene.isRestoreStateInLifecycle();
         this.mConfigurationChangesAllowList = this.mNavigationScene.getConfigurationChangesAllowList();
@@ -133,7 +133,7 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
     @NonNull
     private NavigationMessageQueue requireMessageQueue() {
         if (this.mSceneMessageQueue == null) {
-            this.mSceneMessageQueue = new NavigationMessageQueue(this.mNavigationScene.getIncreaseMessagePriority());
+            this.mSceneMessageQueue = new NavigationMessageQueue();
         }
         return this.mSceneMessageQueue;
     }

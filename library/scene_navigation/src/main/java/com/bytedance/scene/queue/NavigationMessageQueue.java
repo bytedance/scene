@@ -59,15 +59,6 @@ public class NavigationMessageQueue {
 
     private final boolean mFixMessageOrderIncorrect = SceneGlobalConfig.fixNavigationMessageQueueMessageOrderIssue;
     private int mDelayMessageCount = 0;
-    private final boolean mIncreaseMessagePriority;
-
-    public NavigationMessageQueue() {
-        this(false);
-    }
-
-    public NavigationMessageQueue(boolean increaseMessagePriority) {
-        this.mIncreaseMessagePriority = increaseMessagePriority;
-    }
 
     /**
      * post task at the end of queue
@@ -82,6 +73,17 @@ public class NavigationMessageQueue {
     }
 
     /**
+     * post task at the front of system queue and framework queue
+     *
+     * @param runnable
+     */
+    public void postUrgentAtHead(@NonNull final NavigationRunnable runnable) {
+        this.forceExecuteIdleTask();
+        this.mPendingTask.add(0, runnable);
+        this.mHandler.postAtFrontOfQueue(this.mSceneNavigationTask);
+    }
+
+    /**
      * post task at the front of queue
      *
      * @param runnable
@@ -89,11 +91,7 @@ public class NavigationMessageQueue {
     public void postAsyncAtHead(@NonNull final NavigationRunnable runnable) {
         this.forceExecuteIdleTask();
         this.mPendingTask.add(0, runnable);
-        if (this.mIncreaseMessagePriority) {
-            this.mHandler.postAtFrontOfQueue(this.mSceneNavigationTask);
-        } else {
-            this.mHandler.post(this.mSceneNavigationTask);
-        }
+        this.mHandler.post(this.mSceneNavigationTask);
     }
 
     @VisibleForTesting
