@@ -477,6 +477,25 @@ public final class NavigationScene extends Scene implements NavigationListener, 
     public Scene acquireScene(@NonNull Class<? extends Scene> clazz,
                               @Nullable Bundle argument,
                               @Nullable PushOptions pushOptions) {
+        Scene scene = tryGetCachedScene(clazz, pushOptions);
+
+        // Create new instance if no reusable scene found
+        if (scene == null) {
+            scene = SceneInstanceUtility.getInstanceFromClass(clazz, argument);
+        } else {
+            // Set arguments for reused scene
+            if (argument != null) {
+                scene.setArguments(argument);
+            }
+        }
+
+        return scene;
+    }
+
+
+    @Nullable
+    public Scene tryGetCachedScene(@NonNull Class<? extends Scene> clazz,
+                                       @Nullable PushOptions pushOptions) {
         Scene scene = null;
         // Check ReuseGroupScene LRU cache first
         if (ReuseGroupScene.class.isAssignableFrom(clazz)) {
@@ -498,17 +517,6 @@ public final class NavigationScene extends Scene implements NavigationListener, 
                 }
             }
         }
-
-        // Create new instance if no reusable scene found
-        if (scene == null) {
-            scene = SceneInstanceUtility.getInstanceFromClass(clazz, argument);
-        } else {
-            // Set arguments for reused scene
-            if (argument != null) {
-                scene.setArguments(argument);
-            }
-        }
-
         return scene;
     }
 
