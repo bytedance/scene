@@ -2022,17 +2022,23 @@ public class NavigationSceneManager implements INavigationManager, NavigationMan
     /**
      * Method to properly destroy and handle scene reuse
      */
-    @Override public void destroyByRecord(Record record, Record currentRecord) {
+    @Override
+    public void destroyByRecord(Record record, Record currentRecord) {
         Scene scene = record.mScene;
         State to = State.NONE;
+        boolean isSceneScheduledToReuse = false;
         if (scene instanceof IReuseScene && ((IReuseScene) scene).isReusable()) {
             to = State.ACTIVITY_CREATED;
+            isSceneScheduledToReuse = true;
         }
         this.moveState(this.getNavigationScene(), scene, to, null, false, null);
         this.removeRecord(record);
 
         if (record != currentRecord) {
             this.getNavigationScene().addToReuseCache(scene);
+        }
+        if (isSceneScheduledToReuse && scene.getView() != null && scene.getView().getParent() != null) {
+            Utility.removeFromParentView(scene.getView());
         }
     }
 }
