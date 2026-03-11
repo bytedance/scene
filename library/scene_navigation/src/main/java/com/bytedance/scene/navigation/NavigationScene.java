@@ -171,6 +171,7 @@ public final class NavigationScene extends Scene implements NavigationListener, 
     private boolean mLifecycleAndSavedStateRegistryEnabled = true;
     private boolean mRestoreStateInLifecycle = false;
     private int mConfigurationChangesAllowList = 0;
+    private boolean mIncreaseMessagePriority = false;
 
     @MainThread
     public void addNavigationListener(@NonNull final LifecycleOwner lifecycleOwner, @NonNull final NavigationListener listener) {
@@ -2176,5 +2177,13 @@ public final class NavigationScene extends Scene implements NavigationListener, 
             return;
         }
         dispatchCurrentChildState(curNavigationSceneState);
+    }
+
+    public void setIncreaseMessagePriority(boolean value) {
+        this.mIncreaseMessagePriority = value;
+    }
+
+    public boolean getIncreaseMessagePriority() {
+        return this.mIncreaseMessagePriority;
     }
 }
